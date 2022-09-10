@@ -1,2 +1,2 @@
-# thesis
-DLSU thesis repository
+# Welcome
+This is a repository for my thesis
