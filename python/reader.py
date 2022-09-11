@@ -76,6 +76,7 @@ def interpet_command(data):
         if(data.get("MESSAGE") == "Jesse"):
             writeFile("isDeploying", "True")
             send("DEPLOY-REPLY", "True")
+            # run computer vision, bro
 
 
 # Starting line
