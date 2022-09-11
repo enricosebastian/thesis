@@ -8,6 +8,7 @@ StaticJsonDocument<200> sent;
 StaticJsonDocument<200> received;
 
 LinkedList<String> drones;
+LinkedList<String> readyDrones;
 
 String command = "";
 String message = "";
@@ -21,7 +22,8 @@ bool readCommand() {
     owner = received["OWNER"].as<String>();
     return true;
   } else {
-    Serial.print(err.c_str());
+    Serial.println("Corrupted data received");
+    sendMessage("REPLY", "FAIL");
     while(HC12.available() > 0) {
       HC12.read();
     }
@@ -80,19 +82,27 @@ void addDrone() {
   }
   drones.add(owner);
   Serial.println("Successfully added drone.");
+  sendMessage("CONNECT-REPLY", "True");
 }
 
 void startDeployment() {
-  digitalWrite(12, HIGH);
-
-  Serial.println("\n\nDeploying...");
-  for(int i = 0; i< drones.size(); i++) {
-    sendMessage("DEPLOY",drones.get(i));
-    Serial.println(drones.get(i));
-  }
-  
   while(true) {
-    // do nothing
+    if(hasReceivedMessage()) {
+      if(command == "DEPLOY-REPLY") {
+        if(message == "True") {
+          readyDrones.add(owner);
+          if(readyDrones.size() == drones.size()) {
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  Serial.println("Starting deployment");
+  digitalWrite(12, HIGH);
+  while(true) {
+    //do nothing
   }
 }
 
