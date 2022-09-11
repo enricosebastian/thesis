@@ -11,18 +11,22 @@ LinkedList<String> myDrones;
 
 String command = "";
 String message = "";
+String owner = "";
 
-String readCommand() {
+bool readCommand() {
   DeserializationError err = deserializeJson(received, HC12);
   if(err == DeserializationError::Ok) {
-    return received["COMMAND"].as<String>();;
+    command = received["COMMAND"].as<String>();
+    message = received["MESSAGE"].as<String>();
+    owner = received["OWNER"].as<String>();
+    return true;
   } else {
     Serial.print(err.c_str());
     while(HC12.available() > 0) {
       HC12.read();
     }
   }
-  return "ERROR";
+  return false;
 }
 
 bool hasReceivedMessage() {
@@ -46,10 +50,11 @@ void setup() {
 
 void loop() {
   if(hasReceivedMessage()) {
-    command = readCommand();
-    if(command == "HELLO") {
-      digitalWrite(10, HIGH);
-      delay(1000);
+    if(readCommand()) {
+      if(owner == "Jesse") {
+        digitalWrite(10, HIGH);
+        delay(1000);
+      }
     }
   }
   digitalWrite(10, LOW);
