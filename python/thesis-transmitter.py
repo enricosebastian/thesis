@@ -4,6 +4,8 @@ import serial
 import requests
 import json
 
+print("Transmitter terminal") # Just to indicate that this is the receiver script
+
 line = ''
 
 ser = serial.Serial(
@@ -18,6 +20,8 @@ ser = serial.Serial(
 def sendCommand(command):
     data = {}
     data["COMMAND"] = command
+    data["MESSAGE"] = "this is a message"
+    data["OWNER"] = "Jesse"
     data = json.dumps(data)
     
     if ser.isOpen():

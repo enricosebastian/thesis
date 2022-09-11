@@ -4,6 +4,8 @@ import serial
 import requests
 import json
 
+print("Receiver terminal") # Just to indicate that this is the receiver script
+
 line = ''
 
 ser = serial.Serial(
