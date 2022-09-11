@@ -1,7 +1,7 @@
 
-<p align="center">
-    <img src="readme/images/linda.jpg" width="50%" height="50%">
-</p>
+
+![Image of prototype](readme/images/linda.JPG "Our prototype")
+
 
 # Welcome message
 This is a repository for my group's thesis: a swarm of surface vehicles that are able to communicate with one another in cleaning oceans
