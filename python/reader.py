@@ -42,9 +42,6 @@ def read(ch):
         if(raw_data[0] == '{' and raw_data[len(raw_data)-1] == '}'):
             data = json.loads(raw_data)
             interpet_command(data)
-            
-            # print(jsonLine.get("command"))
-            # print(jsonLine.get("message"))
     
         raw_data = '' # Resets message
     else:
