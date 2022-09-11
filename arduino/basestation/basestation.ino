@@ -7,7 +7,7 @@ SoftwareSerial HC12(6, 7); // HC-12 TX Pin, HC-12 RX Pin
 StaticJsonDocument<200> sent;
 StaticJsonDocument<200> received;
 
-LinkedList<String> myDrones;
+LinkedList<String> drones;
 
 String command = "";
 String message = "";
@@ -29,9 +29,19 @@ bool readCommand() {
   return false;
 }
 
+bool sendMessage(String cmd, String msg) {
+  sent["COMMAND"] = cmd;
+  sent["MESSAGE"] = msg;
+  sent["OWNER"] = "basestation";
+  serializeJson(sent, HC12);
+  return true;
+}
+
 bool hasReceivedMessage() {
   if(HC12.available()) {
-    return true;
+    if(readCommand()) {
+      return true;
+    }
   }
   return false;
 }
@@ -48,14 +58,50 @@ void setup() {
   pinMode(9, INPUT);
 }
 
-void loop() {
+void searchForDrones() {
   if(hasReceivedMessage()) {
-    if(readCommand()) {
-      if(owner == "Jesse") {
-        digitalWrite(10, HIGH);
-        delay(1000);
-      }
+    if(command == "CONNECT") {
+      addDrone();
     }
   }
-  digitalWrite(10, LOW);
+}
+
+void addDrone() {
+  for(int i = 0; i< drones.size(); i++) {
+    if(drones.get(i) == owner) {
+      Serial.println("This drone has already been listed.");
+
+      //remove later0
+      digitalWrite(11, HIGH);
+      delay(1000);
+      digitalWrite(11, LOW);
+      return;
+    }
+  }
+  drones.add(owner);
+  Serial.println("Successfully added drone.");
+}
+
+void startDeployment() {
+  digitalWrite(12, HIGH);
+
+  Serial.println("\n\nDeploying...");
+  for(int i = 0; i< drones.size(); i++) {
+    sendMessage("DEPLOY",drones.get(i));
+    Serial.println(drones.get(i));
+  }
+  
+  while(true) {
+    // do nothing
+  }
+}
+
+void loop() {
+  if(digitalRead(8) == HIGH) {
+    // stop searching for stations, and start deployment
+    startDeployment();
+  }
+  
+  //keep searching for drones
+  searchForDrones();
 }
