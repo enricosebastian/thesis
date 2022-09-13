@@ -3,6 +3,13 @@ import time
 import serial
 import requests
 import json
+import detect
+
+import RPi.GPIO as GPIO
+
+
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(13, GPIO.IN)
 
 
 raw_data = ''
@@ -48,12 +55,12 @@ def read(ch):
         raw_data += ch
 
 def writeFile(fileName, value):
-    f = open(fileName+".txt","w+")
+    f = open("../triggers/"+fileName+".txt","w+")
     f.write(value)
     f.close()
     
 def readFile(fileName):
-    f = open(fileName+".txt", "r")
+    f = open("../triggers/"+fileName+".txt", "r")
     if f.mode == "r":
         value = f.readline().strip("\n")
         return value
@@ -73,7 +80,7 @@ def interpet_command(data):
         if(data.get("MESSAGE") == "Jesse"):
             writeFile("isDeploying", "True")
             send("DEPLOY-REPLY", "True")
-            # run computer vision, bro
+            # detect.main()
 
 
 # Starting line
@@ -86,4 +93,7 @@ while True:
     
     if ch != '':
         read(ch)
+        
+    if GPIO.input(13) == GPIO.HIGH:
+        print("Restart")
         

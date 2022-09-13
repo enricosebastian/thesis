@@ -5,6 +5,4 @@ cd /home/pi/Desktop/thesis/python
 
 lxterminal -e python initial.py
 lxterminal -e python reader.py
-
-cd /home/pi/Desktop/thesis/detect
 lxterminal -e python detect.py

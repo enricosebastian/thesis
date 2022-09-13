@@ -24,11 +24,6 @@ ser = serial.Serial(
 )
 
 
-f = open("isConnected.txt","w+")
-f.write("False\n")
-f.close()
-
-
 def read(ch):
     global raw_data
     global data
@@ -62,8 +57,16 @@ def send(command, message):
 
 print("Initializing drone...") # Starting line
 
+f = open("../triggers/isConnected.txt","w+")
+f.write("False\n")
+f.close()
+
+f = open("../triggers/isDeploying.txt","w+")
+f.write("False\n")
+f.close()
+
 while True:
-    f = open("isConnected.txt", "r")
+    f = open("../triggers/isConnected.txt", "r")
     if f.mode == "r":
         isConnected = f.readline().strip("\n")
         if isConnected == "True":
