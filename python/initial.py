@@ -27,7 +27,6 @@ ser = serial.Serial(
 def read(ch):
     global raw_data
     global data
-    
     if(ch == '}'): # This is the end of message
         raw_data += ch
         

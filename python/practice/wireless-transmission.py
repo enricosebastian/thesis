@@ -4,6 +4,7 @@ import serial
 import requests
 import json
 
+
 import RPi.GPIO as GPIO
 
 
@@ -31,14 +32,12 @@ def send(command, message):
     data["MESSAGE"] = message
     data["OWNER"] = "Jesse" # Change this
     
-    print("Sending: ")
+    print("Sending:")
     print(data)
-    print("\n")
-    
     data = json.dumps(data)
     
     if ser.isOpen():
-        ser.write(data.encode('ascii'))
+        ser.write(data.encode('utf-8'))
         ser.flush()
         
 
@@ -51,50 +50,16 @@ def read(ch):
         
         if(raw_data[0] == '{' and raw_data[len(raw_data)-1] == '}'):
             data = json.loads(raw_data)
-            
-            print("Receiving: ")
+            print("Received:")
             print(data)
-            print("\n")
-            
-            interpet_command(data)
     
         raw_data = '' # Resets message
     else:
         raw_data += ch
 
-def writeFile(fileName, value):
-    f = open("../triggers/"+fileName+".txt","w+")
-    f.write(value)
-    f.close()
-    
-def readFile(fileName):
-    f = open("../triggers/"+fileName+".txt", "r")
-    if f.mode == "r":
-        value = f.readline().strip("\n")
-        return value
-    
-    return "False"
-
-def interpet_command(data):
-    if(data.get("COMMAND") == "CONNECT-REPLY"):
-        if(data.get("MESSAGE") == "True"):
-            writeFile("isConnected", "True")
-            
-    elif(data.get("COMMAND") == "REPLY"):
-        if(data.get("MESSAGE") == "False"):
-            print("Whoa, something went wrong...")
-            
-    elif(data.get("COMMAND") == "DEPLOY"):
-        if(data.get("MESSAGE") == "Jesse"):
-            writeFile("isDeploying", "True")
-            send("DEPLOY-REPLY", "True")
-            # detect.main()
-
 
 # Starting line
-print("Command reader...") 
-writeFile("isDeploying", "False") # Make sure they're all false first...
-writeFile("isConnected", "False")
+print("Testing wireless transmission...") 
 
 while True:
     ch = ser.read(1).decode('utf-8') #Continously reads the input
