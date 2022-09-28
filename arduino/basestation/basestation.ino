@@ -86,6 +86,8 @@ void addDrone() {
 }
 
 void startDeployment() {
+  
+  
   while(true) {
     if(hasReceivedMessage()) {
       if(command == "DEPLOY-REPLY") {
@@ -101,6 +103,7 @@ void startDeployment() {
 
   Serial.println("Starting deployment");
   digitalWrite(12, HIGH);
+  
   while(true) {
     //do nothing
   }
@@ -110,6 +113,7 @@ void loop() {
   if(digitalRead(8) == HIGH) {
     // stop searching for stations, and start deployment
     startDeployment();
+    // sendMessage("Yeet","Message");
   }
   
   //keep searching for drones
