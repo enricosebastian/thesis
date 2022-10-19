@@ -44,21 +44,29 @@ def readFile(fileName):
     return "False"
   
 def controlMotors(detection_result):
-  ser = serial.Serial('/dev/ttyACM0', 9600, timeout=0)
-  ser.flush()
-  data = {}
-  
   if(len(detection_result.detections) > 0):
+    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=0)
+    ser.flush()
+    data = {}
+    data["is_found"] = True
     data["width"] = detection_result.detections[0].bounding_box.width
     data["height"] = detection_result.detections[0].bounding_box.height
     data["origin_x"] = detection_result.detections[0].bounding_box.origin_x
     data["origin_y"] = detection_result.detections[0].bounding_box.origin_y
-    data["is_found"] = True
+    data = json.dumps(data)
+    print(data)
+    ser.write(data.encode('utf-8'))
+
   else:
-    data["is_found"] = False
+    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=0)
+    ser.flush()
     
-  data = json.dumps(data)
-  ser.write(data.encode('utf-8'))
+    data = {}  
+    data["is_found"] = False
+    data = json.dumps(data)
+    print(data)
+    ser.write(data.encode('utf-8'))
+    
 
 
 def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
