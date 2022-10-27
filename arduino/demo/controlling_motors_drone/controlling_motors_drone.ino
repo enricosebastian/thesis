@@ -8,41 +8,40 @@ Servo ESC_R;
 Servo ESC_L;
 StaticJsonDocument<300> doc;
 
-int speedVal = 0;
-int speedR = speedVal;
-int speedL = speedVal;
+int speedR = 0;
+int speedL = 0;
 
 void setup() {
   Serial.begin(9600);
-  ESC_R.attach(9,1000,2000);
+  HC12.begin(9600);
+
   ESC_L.attach(10,1000,2000);
+  ESC_R.attach(11,1000,2000);
   
-  ESC_L.write(speedL);
-  ESC_R.write(speedR);
+  ESC_L.write(0);
+  ESC_R.write(0);
+  delay(2000);
 }
 
 void loop() {
-  if(Serial.available()) {
-    DeserializationError err = deserializeJson(doc, Serial);
+  if(HC12.available()) {
+    DeserializationError err = deserializeJson(doc, HC12);
 
     if(err == DeserializationError::Ok) {
       String motor = doc["motor"].as<String>();
-      
-      if(motor == "both") {
-        speedVal = 5;
-        speedL = speedVal;
-        speedR = speedVal;
-      } else if (motor == "left") {
-        speedVal = 5;
-        speedL = speedVal;
-        speedR = 0;
+      Serial.println(motor);
+      if (motor == "left") {
+        if(speedL == 0) {
+          speedL = 10;
+        } else {
+          speedL = 0;
+        }
       } else if (motor == "right") {
-        speedVal = 5;
-        speedL = 0;
-        speedR = speedVal;
-      } else {
-        speedL = 0;
-        speedR = 0;
+        if(speedR == 0) {
+          speedR = 10;
+        } else {
+          speedR = 0;
+        }
       }
       ESC_L.write(speedL);
       ESC_R.write(speedR);
