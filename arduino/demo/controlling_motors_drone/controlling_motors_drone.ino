@@ -1,0 +1,51 @@
+#include <Servo.h>
+#include <ArduinoJson.h>
+#include <SoftwareSerial.h>
+
+SoftwareSerial HC12(6, 7); // HC-12 TX Pin, HC-12 RX Pin
+
+Servo ESC_R;
+Servo ESC_L;
+StaticJsonDocument<300> doc;
+
+int speedVal = 0;
+int speedR = speedVal;
+int speedL = speedVal;
+
+void setup() {
+  Serial.begin(9600);
+  ESC_R.attach(9,1000,2000);
+  ESC_L.attach(10,1000,2000);
+  
+  ESC_L.write(speedL);
+  ESC_R.write(speedR);
+}
+
+void loop() {
+  if(Serial.available()) {
+    DeserializationError err = deserializeJson(doc, Serial);
+
+    if(err == DeserializationError::Ok) {
+      String motor = doc["motor"].as<String>();
+      
+      if(motor == "both") {
+        speedVal = 5;
+        speedL = speedVal;
+        speedR = speedVal;
+      } else if (motor == "left") {
+        speedVal = 5;
+        speedL = speedVal;
+        speedR = 0;
+      } else if (motor == "right") {
+        speedVal = 5;
+        speedL = 0;
+        speedR = speedVal;
+      } else {
+        speedL = 0;
+        speedR = 0;
+      }
+      ESC_L.write(speedL);
+      ESC_R.write(speedR);
+    }
+  }
+}
