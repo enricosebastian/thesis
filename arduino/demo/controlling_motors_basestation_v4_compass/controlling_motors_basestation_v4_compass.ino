@@ -27,6 +27,9 @@ int allowance = 5;
 int escThreshold = 20;
 float mainHeading = 0;
 
+unsigned long myEndTime;
+unsigned long duration;
+
 void setup() {
   Serial.println("start...");
   Serial.begin(9600);
@@ -53,10 +56,13 @@ void loop() {
 
     if(err == DeserializationError::Ok) {
       String command = doc["command"].as<String>();
-      int motorSpeedRight = doc["motorSpeedRight"].as<int>();
-      int motorSpeedLeft = doc["motorSpeedLeft"].as<int>();
+      motorSpeedRight = doc["motorSpeedRight"].as<int>();
+      motorSpeedLeft = doc["motorSpeedLeft"].as<int>();
+      duration = doc["duration"].as<unsigned long>();
       
       if(command == "GO") {
+        myEndTime = millis() + 60000*duration;
+        
         mainHeading = Compass.GetHeadingDegrees();
         Serial.print("Main heading: ");
         Serial.println(mainHeading);
@@ -67,7 +73,7 @@ void loop() {
         Serial.print("Right: ");
         Serial.println(motorSpeedRight);
         
-        while(true) {
+        while(millis() < myEndTime) {
           float heading = Compass.GetHeadingDegrees();
 
           Serial.print("Main heading: ");
@@ -104,8 +110,9 @@ void loop() {
           
           escLeft.write(motorSpeedLeft);
           escRight.write(motorSpeedRight);
-          delay(1000);
         }
+        escLeft.write(0);
+        escRight.write(0);
       }
     }
   }
