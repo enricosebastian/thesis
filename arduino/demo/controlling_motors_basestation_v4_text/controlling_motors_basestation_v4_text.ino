@@ -37,6 +37,7 @@ void loop() {
     Serial.print(motorSpeedRight);
     Serial.println("}");
     Serial.println("\n{Left motor, Right motor}:");
+    sent["command"] = "GO";
     sent["motorSpeedLeft"] = motorSpeedLeft;
     sent["motorSpeedRight"] = motorSpeedRight;
     serializeJson(sent, HC12);
