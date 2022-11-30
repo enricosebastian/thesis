@@ -37,9 +37,15 @@ void loop() {
     Serial.print(motorSpeedRight);
     Serial.println("}");
     Serial.println("\n{Left motor, Right motor}:");
-    sent["command"] = "GO";
+    if(motorSpeedLeft == 0 && motorSpeedRight == 0) {
+      sent["command"] = "STOP";
+    } else {
+      sent["command"] = "GO";
+    }
     sent["motorSpeedLeft"] = motorSpeedLeft;
     sent["motorSpeedRight"] = motorSpeedRight;
+    sent["duration"] = 1;
+    sent["controllerDelay"] = 1000;
     serializeJson(sent, HC12);
   }
 }
