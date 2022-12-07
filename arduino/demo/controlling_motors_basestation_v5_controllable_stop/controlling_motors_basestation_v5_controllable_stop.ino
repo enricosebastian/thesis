@@ -5,6 +5,7 @@
 SoftwareSerial HC12(6, 7); // HC-12 TX Pin, HC-12 RX Pin
 
 StaticJsonDocument<200> sent;
+StaticJsonDocument<200> received;
 
 String input;
 
@@ -47,5 +48,21 @@ void loop() {
     sent["duration"] = 1;
     sent["controllerDelay"] = 1000;
     serializeJson(sent, HC12);
+  }
+
+  if(HC12.available()) {
+    DeserializationError err = deserializeJson(received, HC12);
+    if(err == DeserializationError::Ok) {
+      int motorSpeedLeftReceived = received["motorSpeedLeft"].as<int>();
+      int motorSpeedRightReceived = received["motorSpeedRight"].as<int>();
+      String commentReceived = received["comment"].as<String>();
+
+      Serial.print("Received: \t");
+      Serial.print(motorSpeedLeftReceived);
+      Serial.print(" - ");
+      Serial.print(motorSpeedRightReceived);
+      Serial.print(" - ");
+      Serial.println(commentReceived);
+    }
   }
 }
