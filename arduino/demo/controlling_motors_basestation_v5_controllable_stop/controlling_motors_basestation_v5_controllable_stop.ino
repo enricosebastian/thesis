@@ -46,7 +46,7 @@ void loop() {
     sent["motorSpeedLeft"] = motorSpeedLeft;
     sent["motorSpeedRight"] = motorSpeedRight;
     sent["duration"] = 1;
-    sent["controllerDelay"] = 1000;
+    sent["controllerDelay"] = 500;
     serializeJson(sent, HC12);
   }
 
