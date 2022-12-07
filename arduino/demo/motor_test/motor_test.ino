@@ -6,7 +6,7 @@ SoftwareSerial HC12(6, 7); // HC-12 TX Pin, HC-12 RX Pin
 Servo ESC_L;
 StaticJsonDocument<300> doc;
 
-int speedVal = 0;
+int speedVal = 10;
 int speedL = speedVal;
 
 void setup() {
