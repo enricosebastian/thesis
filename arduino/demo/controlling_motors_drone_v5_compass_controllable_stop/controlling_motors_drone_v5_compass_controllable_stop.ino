@@ -105,14 +105,14 @@ void loop() {
       comment = "Too much left...";
       if(motorSpeedLeft <= 0 || motorSpeedLeft < escThreshold) {
         motorSpeedLeft += 1;
-      } else if(motorSpeedLeft >= escThreshold) {
+      } else if(motorSpeedRight > 0 && motorSpeedLeft >= escThreshold) {
         motorSpeedRight -= 1;
       }
     } else if (heading > mainHeading+allowance) {
       comment = "Too much right...";
       if(motorSpeedRight <= 0 || motorSpeedRight < escThreshold) {
         motorSpeedRight += 1;
-      } else if(motorSpeedRight >= escThreshold) {
+      } else if(motorSpeedLeft > 0 && motorSpeedRight >= escThreshold) {
         motorSpeedLeft -= 1;
       }
     } else {
