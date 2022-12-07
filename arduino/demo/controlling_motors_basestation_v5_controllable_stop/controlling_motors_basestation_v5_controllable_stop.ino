@@ -55,14 +55,20 @@ void loop() {
     if(err == DeserializationError::Ok) {
       int motorSpeedLeftReceived = received["motorSpeedLeft"].as<int>();
       int motorSpeedRightReceived = received["motorSpeedRight"].as<int>();
+      float mainHeadingReceived = received["mainHeading"].as<float>();
+      float headingReceived = received["heading"].as<float>();
       String commentReceived = received["comment"].as<String>();
 
-      Serial.print("Received: \t");
+      Serial.print("Received:    ");
       Serial.print(motorSpeedLeftReceived);
       Serial.print(" - ");
       Serial.print(motorSpeedRightReceived);
       Serial.print(" - ");
-      Serial.println(commentReceived);
+      Serial.print(commentReceived);
+      Serial.print(" - ");
+      Serial.print(mainHeadingReceived);
+      Serial.print(" - ");
+      Serial.println(headingReceived);
     }
   }
 }
