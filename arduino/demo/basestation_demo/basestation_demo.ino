@@ -9,23 +9,12 @@ StaticJsonDocument<200> received;
 
 LinkedList<String> drones;
 
-String input;
 const String myName = "BaseStation";
-
-String recipientName = "";
 
 int deployBtn = 13;
 bool hasDeployed = false;
 
-String receivedCommand = "";
-
-// Received JSON string format
-String command = "";
-String sender = "";
-String details = "";
-bool response = false;
-////////////////////////////
-
+String input;
 int index = 0;
 int motorSpeedLeft;
 int motorSpeedRight;
@@ -66,7 +55,7 @@ void deployDrones() {
     String sentCommand = "DEPLOY";
     String sentToName = drones.get(i);
     String sentDetails = "Initialize deployment.";
-    bool sentRespone = true;
+    bool sentResponse = true;
     
     while(!sendCommand(sentCommand, sentToName, sentDetails, sentResponse)) {
       //Keep sending the command until it's a success
@@ -88,7 +77,7 @@ void addDrone(String droneName) {
       String sentCommand = "CONNECT-REPLY";
       String sentToName = droneName;
       String sentDetails = "This drone already exists in list";
-      bool sentRespone = false;
+      bool sentResponse = false;
       
       Serial.println(sentDetails);
       while(!sendCommand(sentCommand, sentToName, sentDetails, sentResponse)) {
@@ -106,7 +95,7 @@ void addDrone(String droneName) {
   String sentCommand = "CONNECT-REPLY";
   String sentToName = droneName;
   String sentDetails = "Succesfully added";
-  bool sentRespone = true;
+  bool sentResponse = true;
   
   while(!sendCommand(sentCommand, sentToName, sentDetails, sentResponse)) {
     //Keep sending the command until it's a success
@@ -135,7 +124,7 @@ bool sendCommand(String sentCommand, String sentToName, String sentDetails, bool
   serializeJson(sent, HC12);
   
   unsigned long startTime = millis();
-  while(!receiveReply()) {
+  while(!receiveCommand()) {
     Serial.println("Waiting for handshake...");
     if((millis() - startTime) >= 5000) {
       Serial.println("Handshake failed...");
@@ -174,10 +163,10 @@ bool receiveCommand() {
       Serial.println(receivedResponse);
 
       if(receivedCommand == "REPLY" && receivedToName == myName) {
-        return response;
+        return receivedResponse;
       } else if(receivedCommand == "CONNECT" && receivedToName == myName) {
         addDrone(receivedFromName);
-        return response;
+        return receivedResponse;
       } else {
         Serial.print("The command '");
         Serial.print(receivedCommand);
