@@ -113,10 +113,9 @@ bool isDeployed() {
 
 void connectToBaseStation() {
   sent["command"] = "CONNECT";
+  sent["to"] = "BaseStation";
   if(sendCommand(sent)) {
     isConnected = true;
-  } else {
-    isConnected = false;
   }
   Serial.print("CONNECTED TO BASE STATION: ");
   Serial.println(isConnected);

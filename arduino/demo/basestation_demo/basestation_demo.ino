@@ -10,11 +10,12 @@ StaticJsonDocument<200> received;
 LinkedList<String> drones;
 
 String input;
-const String senderName = "BaseStation";
+const String myName = "BaseStation";
 
 String recipientName = "";
 
-int hasDeployed = 13;
+int deployBtn = 13;
+bool hasDeployed = false;
 
 String receivedCommand = "";
 
@@ -33,22 +34,27 @@ void setup() {
   Serial.begin(9600);
   HC12.begin(9600);
   Serial.println("System initializing...");
-  pinMode(hasDeployed, INPUT);
+  pinMode(deployBtn, INPUT);
 }
 
 void loop() {
-  
   //Task 1: Find drones
-  while(digitalRead(hasDeployed) == LOW){
+  while(!hasDeployed){
     findDrones();
+    if(digitalRead(deployBtn) == HIGH) {
+      hasDeployed = true;
+    }
   }
-  
+
   //Task 2: Deploy drones
-  deployDrones();
+  if(hasDeployed) {
+    Serial.println("Deploying drones.");
+    //deployDrones();
+  }
 
   //Task 3: Continuously wait for messages sent by drones
   while(true) {
-    Serial.println("boop");
+    Serial.println("Deployed!");
   }
 }
 
@@ -56,41 +62,36 @@ void deployDrones() {
   for(int i = 0; i < drones.size(); i++) {
     Serial.print("Deploying ");
     Serial.println(drones.get(i));
+
+    String sentCommand = "DEPLOY";
+    String sentToName = drones.get(i);
+    String sentDetails = "Initialize deployment.";
+    bool sentRespone = true;
     
-    sent["command"] = "DEPLOY";
-    sent["details"] = drones.get(i);
-    sent["to"] = drones.get(i);
-    sent["response"] = true;
-    while(!sendCommand(sent)) {
+    while(!sendCommand(sentCommand, sentToName, sentDetails, sentResponse)) {
       //Keep sending the command until it's a success
     }
   }
 }
 
 void findDrones() {
-  if(HC12.available()) {
-    DeserializationError err = deserializeJson(received, HC12);
-    if(err == DeserializationError::Ok) {
-      Serial.println("Received a request...");
-      receivedCommand = received["command"].as<String>();
-      sender = received["from"].as<String>();
-      if(receivedCommand == "CONNECT") {
-        addDrone(sender);
-      }
-    }
+  Serial.println("Finding drones...");
+  if(receiveCommand()) {
+    Serial.println("Found a drone.");
   }
 }
 
-void addDrone(String drone) {
+void addDrone(String droneName) {
   //Task 1: Check if drone already exists in list
   for(int i = 0; i < drones.size(); i++) {
-    if(drones.get(i) == drone) {
-      Serial.println("This drone has already been listed");
-      sent["command"] = "REPLY";
-      sent["details"] = "Drone already exists in list";
-      sent["response"] = false;
+    if(drones.get(i) == droneName) {
+      String sentCommand = "CONNECT-REPLY";
+      String sentToName = droneName;
+      String sentDetails = "This drone already exists in list";
+      bool sentRespone = false;
       
-      while(!sendCommand(sent)) {
+      Serial.println(sentDetails);
+      while(!sendCommand(sentCommand, sentToName, sentDetails, sentResponse)) {
         //Keep sending the command until it's a success
       }
       return;
@@ -98,21 +99,39 @@ void addDrone(String drone) {
   }
 
   //Task 2: If not, add it to the list
-  drones.add(drone);
-  Serial.println("Succesfully added drone");
+  drones.add(droneName);
+  Serial.print("Succesfully added: ");
+  Serial.println(droneName);
 
-  sent["command"] = "REPLY";
-  sent["details"] = "Added drone";
-  sent["to"] = drone;
-  sent["response"] = true;
+  String sentCommand = "CONNECT-REPLY";
+  String sentToName = droneName;
+  String sentDetails = "Succesfully added";
+  bool sentRespone = true;
   
-  while(!sendCommand(sent)) {
+  while(!sendCommand(sentCommand, sentToName, sentDetails, sentResponse)) {
     //Keep sending the command until it's a success
   }
+  return;
 }
 
-bool sendCommand(StaticJsonDocument<200> sent) {
-  sent["from"] = senderName;
+bool sendCommand(String sentCommand, String sentToName, String sentDetails, bool sentResponse) {
+  Serial.print("sentCommand: ");
+  Serial.println(sentCommand);
+
+  Serial.print("sentToName: ");
+  Serial.println(sentToName);
+
+  Serial.print("sentDetails: ");
+  Serial.println(sentDetails);
+
+  Serial.print("sentResponse: ");
+  Serial.println(sentResponse);
+
+  sent["command"] = sentCommand;
+  sent["toName"] = sentToName;
+  sent["fromName"] = myName;
+  sent["details"] = sentDetails;
+  sent["response"] = sentResponse;
   serializeJson(sent, HC12);
   
   unsigned long startTime = millis();
@@ -127,21 +146,58 @@ bool sendCommand(StaticJsonDocument<200> sent) {
   return true;
 }
 
-bool receiveReply() {
+bool receiveCommand() {
   if(HC12.available()) {
     DeserializationError err = deserializeJson(received, HC12);
     if(err == DeserializationError::Ok) {
       Serial.println("Received a clean command...");
-      receivedCommand = received["command"].as<String>();
-      response = received["response"].as<bool>();
-      recipientName = received["to"].as<String>();
-      return (receivedCommand == "REPLY" && response && recipientName == senderName);
+
+      String receivedCommand = received["command"].as<String>();
+      String receivedToName = received["toName"].as<String>();
+      String receivedFromName = received["fromName"].as<String>();
+      String receivedDetails = received["details"].as<String>();
+      bool receivedResponse = received["response"].as<bool>();
+
+      Serial.print("receivedCommand: ");
+      Serial.println(receivedCommand);
+    
+      Serial.print("receivedToName: ");
+      Serial.println(receivedToName);
+    
+      Serial.print("receivedFromName: ");
+      Serial.println(receivedFromName);
+
+      Serial.print("receivedDetails: ");
+      Serial.println(receivedDetails);
+    
+      Serial.print("receivedResponse: ");
+      Serial.println(receivedResponse);
+
+      if(receivedCommand == "REPLY" && receivedToName == myName) {
+        return response;
+      } else if(receivedCommand == "CONNECT" && receivedToName == myName) {
+        addDrone(receivedFromName);
+        return response;
+      } else {
+        Serial.print("The command '");
+        Serial.print(receivedCommand);
+        Serial.println("' is not recognized.");
+        return false;
+      }
     } else {
       Serial.println("Received a choppy command...");
     }
   }
   return false;
 }
+
+
+
+
+
+
+
+
 
 //void loop() {
 //  if(Serial.available()) {
