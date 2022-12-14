@@ -31,11 +31,12 @@ const int redLed = 13;
 const int greenLed = 12;
 
 String command = "";
+String recipientName = "";
 
 String receivedCommand = "";
-String reply = "";
+bool response = false;
 
-String comment = "";
+String details = "";
 bool isConnected = false;
 
 int motorSpeedLeft = 0;
@@ -75,23 +76,43 @@ void setup() {
 }
 
 void loop() {
-  
+
+  //Task 1: Establish connection with base station
   while(!isConnected) {
-    digitalWrite(greenLed, LOW);
-    digitalWrite(redLed, HIGH);
     connectToBaseStation();
   }
+
+  //Task 2: Indicate that you are connected to base station
+  Serial.println("Connected. Ready for deployment.");
+  digitalWrite(greenLed, LOW);
+  digitalWrite(redLed, HIGH);
   
-  while(true) {
+  //Task 3: Wait for deployment
+  while(isDeployed()) {
     digitalWrite(greenLed, HIGH);
     digitalWrite(redLed, LOW);
-    Serial.println("Connected...");
+    Serial.println("Deployed");
   }
+}
+
+bool isDeployed() {
+  if(HC12.available()) {
+    DeserializationError err = deserializeJson(received, HC12);
+    if(err == DeserializationError::Ok) {
+      Serial.println("Received a clean command...");
+      receivedCommand = received["command"].as<String>();
+      response = received["response"].as<bool>();
+      recipientName = received["to"].as<String>();
+      return (receivedCommand == "DEPLOY" && response && recipientName == senderName);
+    } else {
+      Serial.println("Received a choppy command...");
+    }
+  }
+  return false;
 }
 
 void connectToBaseStation() {
   sent["command"] = "CONNECT";
-  sent["sender"] = senderName;
   if(sendCommand(sent)) {
     isConnected = true;
   } else {
@@ -102,10 +123,11 @@ void connectToBaseStation() {
 }
 
 bool sendCommand(StaticJsonDocument<200> sent) {
+  sent["from"] = senderName;
   serializeJson(sent, HC12);
   
   unsigned long startTime = millis();
-  while(!receiveCommand()) {
+  while(!receiveReply()) {
     Serial.println("Waiting for handshake...");
     if((millis() - startTime) >= 5000) {
       Serial.println("Handshake failed...");
@@ -116,14 +138,15 @@ bool sendCommand(StaticJsonDocument<200> sent) {
   return true;
 }
 
-bool receiveCommand() {
+bool receiveReply() {
   if(HC12.available()) {
     DeserializationError err = deserializeJson(received, HC12);
     if(err == DeserializationError::Ok) {
       Serial.println("Received a clean command...");
       receivedCommand = received["command"].as<String>();
-      reply = received["reply"].as<bool>();
-      return (receivedCommand == "REPLY" && reply);
+      response = received["response"].as<bool>();
+      recipientName = received["to"].as<String>();
+      return (receivedCommand == "REPLY" && response && recipientName == senderName);
     } else {
       Serial.println("Received a choppy command...");
     }
