@@ -10,8 +10,8 @@ StaticJsonDocument<200> received;
 LinkedList<String> drones;
 
 const String myName = "BaseStation";
+const int deployBtn = 13;
 
-int deployBtn = 13;
 bool hasDeployed = false;
 
 String input;

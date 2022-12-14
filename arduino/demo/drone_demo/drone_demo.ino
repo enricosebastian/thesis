@@ -26,18 +26,13 @@ Servo escLeft;
 
 StaticJsonDocument<200> sent;
 StaticJsonDocument<200> received;
-const String senderName = "Drone1";
+
+const String myName = "Drone1";
 const int redLed = 13;
 const int greenLed = 12;
 
-String command = "";
-String recipientName = "";
-
-String receivedCommand = "";
-bool response = false;
-
-String details = "";
 bool isConnected = false;
+bool isDeployed = false;
 
 int motorSpeedLeft = 0;
 int motorSpeedRight = 0;
@@ -88,45 +83,52 @@ void loop() {
   digitalWrite(redLed, HIGH);
   
   //Task 3: Wait for deployment
-  while(isDeployed()) {
-    digitalWrite(greenLed, HIGH);
-    digitalWrite(redLed, LOW);
-    Serial.println("Deployed");
+  while(!isDeployed) {
+    receiveCommand();
   }
-}
 
-bool isDeployed() {
-  if(HC12.available()) {
-    DeserializationError err = deserializeJson(received, HC12);
-    if(err == DeserializationError::Ok) {
-      Serial.println("Received a clean command...");
-      receivedCommand = received["command"].as<String>();
-      response = received["response"].as<bool>();
-      recipientName = received["to"].as<String>();
-      return (receivedCommand == "DEPLOY" && response && recipientName == senderName);
-    } else {
-      Serial.println("Received a choppy command...");
-    }
+  //Task 4: Deploy. Do stuff.
+  while(true) {
+    Serial.println("Deployed!");
   }
-  return false;
 }
 
 void connectToBaseStation() {
-  sent["command"] = "CONNECT";
-  sent["to"] = "BaseStation";
-  if(sendCommand(sent)) {
-    isConnected = true;
+  Serial.println("Connecting to base station...");
+
+  String sentCommand = "CONNECT";
+  String sentToName = "BaseStation";
+  String sentDetails = "Connecting to base station...";
+  bool sentResponse = true;
+  
+  while(!sendCommand(sentCommand, sentToName, sentDetails, sentResponse)) {
+    //Keep sending the command until it's a success
   }
-  Serial.print("CONNECTED TO BASE STATION: ");
-  Serial.println(isConnected);
+  isConnected = true;
 }
 
-bool sendCommand(StaticJsonDocument<200> sent) {
-  sent["from"] = senderName;
+bool sendCommand(String sentCommand, String sentToName, String sentDetails, bool sentResponse) {
+  Serial.print("sentCommand: ");
+  Serial.println(sentCommand);
+
+  Serial.print("sentToName: ");
+  Serial.println(sentToName);
+
+  Serial.print("sentDetails: ");
+  Serial.println(sentDetails);
+
+  Serial.print("sentResponse: ");
+  Serial.println(sentResponse);
+
+  sent["command"] = sentCommand;
+  sent["toName"] = sentToName;
+  sent["fromName"] = myName;
+  sent["details"] = sentDetails;
+  sent["response"] = sentResponse;
   serializeJson(sent, HC12);
   
   unsigned long startTime = millis();
-  while(!receiveReply()) {
+  while(!receiveCommand()) {
     Serial.println("Waiting for handshake...");
     if((millis() - startTime) >= 5000) {
       Serial.println("Handshake failed...");
@@ -137,21 +139,53 @@ bool sendCommand(StaticJsonDocument<200> sent) {
   return true;
 }
 
-bool receiveReply() {
+bool receiveCommand() {
   if(HC12.available()) {
     DeserializationError err = deserializeJson(received, HC12);
     if(err == DeserializationError::Ok) {
       Serial.println("Received a clean command...");
-      receivedCommand = received["command"].as<String>();
-      response = received["response"].as<bool>();
-      recipientName = received["to"].as<String>();
-      return (receivedCommand == "REPLY" && response && recipientName == senderName);
+
+      String receivedCommand = received["command"].as<String>();
+      String receivedToName = received["toName"].as<String>();
+      String receivedFromName = received["fromName"].as<String>();
+      String receivedDetails = received["details"].as<String>();
+      bool receivedResponse = received["response"].as<bool>();
+
+      Serial.print("receivedCommand: ");
+      Serial.println(receivedCommand);
+    
+      Serial.print("receivedToName: ");
+      Serial.println(receivedToName);
+    
+      Serial.print("receivedFromName: ");
+      Serial.println(receivedFromName);
+
+      Serial.print("receivedDetails: ");
+      Serial.println(receivedDetails);
+    
+      Serial.print("receivedResponse: ");
+      Serial.println(receivedResponse);
+
+      if(receivedCommand == "REPLY" && receivedToName == myName) {
+        return receivedResponse;
+      } else if(receivedCommand == "CONNECT-REPLY" && receivedToName == myName) {
+        return receivedResponse;
+      } else if(receivedCommand == "DEPLOY" && receivedToName == myName) {
+        isDeployed = true;
+        return receivedResponse;
+      } else {
+        Serial.print("The command '");
+        Serial.print(receivedCommand);
+        Serial.println("' is not recognized.");
+        return false;
+      }
     } else {
       Serial.println("Received a choppy command...");
     }
   }
   return false;
 }
+
 
 
 
