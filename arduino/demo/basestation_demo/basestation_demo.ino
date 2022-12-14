@@ -38,7 +38,7 @@ void loop() {
   //Task 2: Deploy drones
   if(hasDeployed) {
     Serial.println("Deploying drones.");
-    //deployDrones();
+    deployDrones();
   }
 
   //Task 3: Continuously wait for messages sent by drones
@@ -54,7 +54,7 @@ void deployDrones() {
 
     String sentCommand = "DEPLOY";
     String sentToName = drones.get(i);
-    String sentDetails = "Initialize deployment.";
+    String sentDetails = "Initialize deployment";
     bool sentResponse = true;
     
     while(!sendCommand(sentCommand, sentToName, sentDetails, sentResponse)) {
@@ -76,7 +76,7 @@ void addDrone(String droneName) {
     if(drones.get(i) == droneName) {
       String sentCommand = "CONNECT-REPLY";
       String sentToName = droneName;
-      String sentDetails = "This drone already exists in list";
+      String sentDetails = "Drone already exists";
       bool sentResponse = false;
       
       Serial.println(sentDetails);
@@ -97,9 +97,8 @@ void addDrone(String droneName) {
   String sentDetails = "Succesfully added";
   bool sentResponse = true;
   
-  while(!sendCommand(sentCommand, sentToName, sentDetails, sentResponse)) {
-    //Keep sending the command until it's a success
-  }
+  sendCommand(sentCommand, sentToName, sentDetails, sentResponse);
+
   return;
 }
 
@@ -115,6 +114,7 @@ bool sendCommand(String sentCommand, String sentToName, String sentDetails, bool
 
   Serial.print("sentResponse: ");
   Serial.println(sentResponse);
+  Serial.println("\n");
 
   sent["command"] = sentCommand;
   sent["toName"] = sentToName;
@@ -127,7 +127,7 @@ bool sendCommand(String sentCommand, String sentToName, String sentDetails, bool
   while(!receiveCommand()) {
     Serial.println("Waiting for handshake...");
     if((millis() - startTime) >= 5000) {
-      Serial.println("Handshake failed...");
+      Serial.println("Handshake failed...\n");
       return false; //Stop waiting. Handshake failed.
     }
   }
