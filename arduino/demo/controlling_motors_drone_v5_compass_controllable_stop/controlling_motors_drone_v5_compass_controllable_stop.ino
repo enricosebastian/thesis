@@ -63,15 +63,17 @@ void loop() {
     DeserializationError err = deserializeJson(received, HC12);
     
     if(err == DeserializationError::Ok) {
-      String receivedCommand = received["command"].as<String>();
-      Serial.print("COMMAND RECEIVED: ");
-      Serial.println(receivedCommand);
-      
-      if(receivedCommand == "GO") {
+      motorSpeedRight = received["motorSpeedRight"].as<int>();
+      motorSpeedLeft = received["motorSpeedLeft"].as<int>();
+
+      if(motorSpeedRight == 0 && motorSpeedLeft == 0) {
+        escLeft.write(0);
+        escRight.write(0);
+        while(true) {
+          //do nothing lmao
+        }
+      } else if(motorSpeedRight != 0 || motorSpeedLeft != 0) {
         currentCommand = "GO";
-        motorSpeedRight = received["motorSpeedRight"].as<int>();
-        motorSpeedLeft = received["motorSpeedLeft"].as<int>();
-        duration = received["duration"].as<unsigned long>();
         controllerDelay = received["controllerDelay"].as<int>();
         
         mainHeading = Compass.GetHeadingDegrees();
@@ -83,12 +85,12 @@ void loop() {
   
         Serial.print("Right: ");
         Serial.println(motorSpeedRight);
-      } else if(receivedCommand == "STOP") {
-        currentCommand = "STOP";
-        motorSpeedLeft = 0;
-        motorSpeedRight = 0;
       } else {
-        currentCommand = "";
+        escLeft.write(0);
+        escRight.write(0);
+        while(true) {
+          //do nothing lmao
+        }
       }
     }
   }
@@ -137,20 +139,5 @@ void loop() {
     serializeJson(sent, HC12);
     
     delay(controllerDelay);
-  } else if(currentCommand == "STOP") {
-    Serial.println("Stopped running...");
-    escLeft.write(0);
-    escRight.write(0);
-
-    sent["motorSpeedLeft"] = motorSpeedLeft;
-    sent["motorSpeedRight"] = motorSpeedRight;
-    sent["mainHeading"] = mainHeading;
-    sent["heading"] = heading;
-    sent["comment"] = "Stopped";
-    serializeJson(sent, HC12);
-  } else {
-    Serial.println("Null command...");
-    escLeft.write(0);
-    escRight.write(0);
   }
 }
