@@ -52,12 +52,12 @@ void deployDrones() {
     Serial.print("Deploying ");
     Serial.println(drones.get(i));
 
-    String sentCommand = "DEPLOY";
+    String sentCommand = "DPLY";
     String sentToName = drones.get(i);
-    String sentDetails = "Initialize deployment";
+    String sentDetails = "deploy";
     bool sentResponse = true;
     
-    while(receiveCommand() != "DEPLOY-REPLY") {
+    while(receiveCommand() != "DPLY-REP") {
       //If handshake failed, send again.
       sendCommand(sentCommand, sentToName, sentDetails, sentResponse);
     }
@@ -67,7 +67,7 @@ void deployDrones() {
 
 void findDrones() {
   Serial.println("Finding drones...");
-  if(receiveCommand() == "CONNECT") {
+  if(receiveCommand() == "CNCT") {
     Serial.println("Found a drone.");
   }
 }
@@ -76,13 +76,13 @@ void addDrone(String droneName) {
   //Task 1: Check if drone already exists in list
   for(int i = 0; i < drones.size(); i++) {
     if(drones.get(i) == droneName) {
-      String sentCommand = "CONNECT-REPLY";
+      String sentCommand = "CNCT-REP";
       String sentToName = droneName;
-      String sentDetails = "Drone already exists";
+      String sentDetails = "already listed";
       bool sentResponse = false;
       
       Serial.println(sentDetails);
-      while(receiveCommand() != "REPLY") {
+      while(receiveCommand() != "REP") {
         //If handshake failed, send again.
         sendCommand(sentCommand, sentToName, sentDetails, sentResponse);
       }
@@ -95,12 +95,12 @@ void addDrone(String droneName) {
   Serial.print("Succesfully added: ");
   Serial.println(droneName);
 
-  String sentCommand = "CONNECT-REPLY";
+  String sentCommand = "CNCT-REP";
   String sentToName = droneName;
   String sentDetails = "Succesfully added";
   bool sentResponse = true;
 
-  while(receiveCommand() != "REPLY") {
+  while(receiveCommand() != "REP") {
     //If handshake failed, send again.
     sendCommand(sentCommand, sentToName, sentDetails, sentResponse);
   }
@@ -108,9 +108,9 @@ void addDrone(String droneName) {
 }
 
 void finalReply() {
-  String sentCommand = "REPLY";
+  String sentCommand = "REP";
   String sentToName = "BaseStation";
-  String sentDetails = "Last handshake";
+  String sentDetails = "last";
   bool sentResponse = true;
   
   for(int i = 0; i<5; i++) {

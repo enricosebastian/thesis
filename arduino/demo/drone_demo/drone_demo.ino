@@ -61,7 +61,7 @@ void loop() {
   digitalWrite(redLed, HIGH);
   
   //Task 3: Wait for deployment
-  while(receiveCommand() != "DEPLOY") {
+  while(receiveCommand() != "DPLY") {
     //do nothing
   }
 
@@ -75,14 +75,14 @@ void loop() {
 }
 
 void connectToBaseStation() {
-  String sentCommand = "CONNECT";
+  String sentCommand = "CNCT";
   String sentToName = "BaseStation";
-  String sentDetails = "Connecting to BaseStation";
+  String sentDetails = "connecting";
   bool sentResponse = true;
 
   Serial.println(sentDetails);
   
-  while(receiveCommand() != "CONNECT-REPLY") {
+  while(receiveCommand() != "CNCT-REP") {
     //If handshake failed, send again.
     sendCommand(sentCommand, sentToName, sentDetails, sentResponse);
   }
@@ -91,9 +91,9 @@ void connectToBaseStation() {
 }
 
 void finalReply() {
-  String sentCommand = "REPLY";
+  String sentCommand = "REP";
   String sentToName = "BaseStation";
-  String sentDetails = "Last handshake";
+  String sentDetails = "Last";
   bool sentResponse = true;
   
   for(int i = 0; i<5; i++) {
@@ -149,16 +149,16 @@ String receiveCommand() {
       Serial.print("receivedResponse: ");
       Serial.println(receivedResponse);
 
-      if(receivedCommand == "REPLY" && receivedToName == myName) {
+      if(receivedCommand == "REP" && receivedToName == myName) {
         return receivedCommand;
-      } else if(receivedCommand == "CONNECT-REPLY" && receivedToName == myName) {
+      } else if(receivedCommand == "CNCT-REP" && receivedToName == myName) {
         return receivedCommand;
-      } else if(receivedCommand == "DEPLOY" && receivedToName == myName) {
-        String sentCommand = "DEPLOY-REPLY";
+      } else if(receivedCommand == "DPLY" && receivedToName == myName) {
+        String sentCommand = "DPLY-REP";
         String sentToName = receivedFromName;
-        String sentDetails = "Deploy-reply";
+        String sentDetails = "rep";
         bool sentResponse = true;
-        while(receiveCommand() != "REPLY") {
+        while(receiveCommand() != "REP") {
           //If handshake failed, send again.
           sendCommand(sentCommand, sentToName, sentDetails, sentResponse);
         }
