@@ -56,18 +56,18 @@ void deployDrones() {
     String sentToName = drones.get(i);
     String sentDetails = "Initialize deployment";
     bool sentResponse = true;
-
-    sendCommand(sentCommand, sentToName, sentDetails, sentResponse);
     
-//    while(!sendCommand(sentCommand, sentToName, sentDetails, sentResponse)) {
-//      //Keep sending the command until it's a success
-//    }
+    while(receiveCommand() != "DEPLOY-REPLY") {
+      //If handshake failed, send again.
+      sendCommand(sentCommand, sentToName, sentDetails, sentResponse);
+    }
+    finalReply();
   }
 }
 
 void findDrones() {
   Serial.println("Finding drones...");
-  if(receiveCommand()) {
+  if(receiveCommand() == "CONNECT") {
     Serial.println("Found a drone.");
   }
 }
@@ -82,8 +82,9 @@ void addDrone(String droneName) {
       bool sentResponse = false;
       
       Serial.println(sentDetails);
-      while(!sendCommand(sentCommand, sentToName, sentDetails, sentResponse)) {
-        //Keep sending the command until it's a success
+      while(receiveCommand() != "REPLY") {
+        //If handshake failed, send again.
+        sendCommand(sentCommand, sentToName, sentDetails, sentResponse);
       }
       return;
     }
@@ -98,13 +99,26 @@ void addDrone(String droneName) {
   String sentToName = droneName;
   String sentDetails = "Succesfully added";
   bool sentResponse = true;
-  
-  sendCommand(sentCommand, sentToName, sentDetails, sentResponse);
 
+  while(receiveCommand() != "REPLY") {
+    //If handshake failed, send again.
+    sendCommand(sentCommand, sentToName, sentDetails, sentResponse);
+  }
   return;
 }
 
-bool sendCommand(String sentCommand, String sentToName, String sentDetails, bool sentResponse) {
+void finalReply() {
+  String sentCommand = "REPLY";
+  String sentToName = "BaseStation";
+  String sentDetails = "Last handshake";
+  bool sentResponse = true;
+  
+  for(int i = 0; i<5; i++) {
+    sendCommand(sentCommand, sentToName, sentDetails, sentResponse);
+  }
+}
+
+void sendCommand(String sentCommand, String sentToName, String sentDetails, bool sentResponse) {
   Serial.print("sentCommand: ");
   Serial.println(sentCommand);
 
@@ -124,20 +138,9 @@ bool sendCommand(String sentCommand, String sentToName, String sentDetails, bool
   sent["details"] = sentDetails;
   sent["response"] = sentResponse;
   serializeJson(sent, HC12);
-  
-  unsigned long startTime = millis();
-  while(!receiveCommand()) {
-    Serial.println("Waiting for handshake...");
-    if((millis() - startTime) >= 5000) {
-      Serial.println("Handshake failed...\n");
-      return false; //Stop waiting. Handshake failed.
-    }
-  }
-  Serial.println("Handshake succeeded...");
-  return true;
 }
 
-bool receiveCommand() {
+String receiveCommand() {
   if(HC12.available()) {
     DeserializationError err = deserializeJson(received, HC12);
     if(err == DeserializationError::Ok) {
@@ -165,21 +168,23 @@ bool receiveCommand() {
       Serial.println(receivedResponse);
 
       if(receivedCommand == "REPLY" && receivedToName == myName) {
-        return receivedResponse;
+        return receivedCommand;
       } else if(receivedCommand == "CONNECT" && receivedToName == myName) {
         addDrone(receivedFromName);
-        return receivedResponse;
+        return receivedCommand;
+      } else if(receivedCommand == "DEPLOY-REPLY" && receivedToName == myName) {
+        return receivedCommand;
       } else {
         Serial.print("The command '");
         Serial.print(receivedCommand);
         Serial.println("' is not recognized.");
-        return false;
+        return "ERR";
       }
     } else {
       Serial.println("Received a choppy command...");
     }
   }
-  return false;
+  return "ERR";
 }
 
 

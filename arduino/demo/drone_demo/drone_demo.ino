@@ -61,8 +61,8 @@ void loop() {
   digitalWrite(redLed, HIGH);
   
   //Task 3: Wait for deployment
-  while(!isDeployed) {
-    receiveCommand();
+  while(receiveCommand() != "DEPLOY") {
+    //do nothing
   }
 
   //Task 4: Deploy. Do stuff.
@@ -82,14 +82,26 @@ void connectToBaseStation() {
 
   Serial.println(sentDetails);
   
-  while(!sendCommand(sentCommand, sentToName, sentDetails, sentResponse)) {
-    //Keep sending the command until it's a success
+  while(receiveCommand() != "CONNECT-REPLY") {
+    //If handshake failed, send again.
+    sendCommand(sentCommand, sentToName, sentDetails, sentResponse);
   }
-  
   isConnected = true;
+  finalReply();
 }
 
-bool sendCommand(String sentCommand, String sentToName, String sentDetails, bool sentResponse) {
+void finalReply() {
+  String sentCommand = "REPLY";
+  String sentToName = "BaseStation";
+  String sentDetails = "Last handshake";
+  bool sentResponse = true;
+  
+  for(int i = 0; i<5; i++) {
+    sendCommand(sentCommand, sentToName, sentDetails, sentResponse);
+  }
+}
+
+void sendCommand(String sentCommand, String sentToName, String sentDetails, bool sentResponse) {
   Serial.print("sentCommand: ");
   Serial.println(sentCommand);
 
@@ -108,20 +120,9 @@ bool sendCommand(String sentCommand, String sentToName, String sentDetails, bool
   sent["details"] = sentDetails;
   sent["response"] = sentResponse;
   serializeJson(sent, HC12);
-  
-  unsigned long startTime = millis();
-  while(!receiveCommand()) {
-    Serial.println("Waiting for handshake...");
-    if((millis() - startTime) >= 5000) {
-      Serial.println("Handshake failed...");
-      return false; //Stop waiting. Handshake failed.
-    }
-  }
-  Serial.println("Handshake succeeded...");
-  return true;
 }
 
-bool receiveCommand() {
+String receiveCommand() {
   if(HC12.available()) {
     DeserializationError err = deserializeJson(received, HC12);
     if(err == DeserializationError::Ok) {
@@ -149,23 +150,30 @@ bool receiveCommand() {
       Serial.println(receivedResponse);
 
       if(receivedCommand == "REPLY" && receivedToName == myName) {
-        return receivedResponse;
+        return receivedCommand;
       } else if(receivedCommand == "CONNECT-REPLY" && receivedToName == myName) {
-        return receivedResponse;
+        return receivedCommand;
       } else if(receivedCommand == "DEPLOY" && receivedToName == myName) {
-        isDeployed = true;
-        return receivedResponse;
+        String sentCommand = "DEPLOY-REPLY";
+        String sentToName = receivedFromName;
+        String sentDetails = "Deploy-reply";
+        bool sentResponse = true;
+        while(receiveCommand() != "REPLY") {
+          //If handshake failed, send again.
+          sendCommand(sentCommand, sentToName, sentDetails, sentResponse);
+        }
+        return receivedCommand;
       } else {
         Serial.print("The command '");
         Serial.print(receivedCommand);
         Serial.println("' is not recognized.");
-        return false;
+        return "ERR";
       }
     } else {
       Serial.println("Received a choppy command...");
     }
   }
-  return false;
+  return "ERR";
 }
 
 
