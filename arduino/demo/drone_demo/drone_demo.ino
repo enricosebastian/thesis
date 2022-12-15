@@ -6,7 +6,7 @@ SoftwareSerial HC12(6, 7); // HC-12 TX Pin, HC-12 RX Pin
 StaticJsonDocument<200> sent;
 StaticJsonDocument<200> received;
 
-const String myName = "Drone1";
+const String myName = "Drone2";
 const int redLed = 13;
 const int greenLed = 12;
 

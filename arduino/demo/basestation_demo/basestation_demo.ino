@@ -56,10 +56,12 @@ void deployDrones() {
     String sentToName = drones.get(i);
     String sentDetails = "Initialize deployment";
     bool sentResponse = true;
+
+    sendCommand(sentCommand, sentToName, sentDetails, sentResponse);
     
-    while(!sendCommand(sentCommand, sentToName, sentDetails, sentResponse)) {
-      //Keep sending the command until it's a success
-    }
+//    while(!sendCommand(sentCommand, sentToName, sentDetails, sentResponse)) {
+//      //Keep sending the command until it's a success
+//    }
   }
 }
 
