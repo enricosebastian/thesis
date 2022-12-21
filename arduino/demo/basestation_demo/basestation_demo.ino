@@ -167,12 +167,12 @@ String receiveCommand() {
       Serial.print("receivedResponse: ");
       Serial.println(receivedResponse);
 
-      if(receivedCommand == "REPLY" && receivedToName == myName) {
+      if(receivedCommand == "REP" && receivedToName == myName) {
         return receivedCommand;
-      } else if(receivedCommand == "CONNECT" && receivedToName == myName) {
+      } else if(receivedCommand == "CNCT" && receivedToName == myName) {
         addDrone(receivedFromName);
         return receivedCommand;
-      } else if(receivedCommand == "DEPLOY-REPLY" && receivedToName == myName) {
+      } else if(receivedCommand == "DPLY-REP" && receivedToName == myName) {
         return receivedCommand;
       } else {
         Serial.print("The command '");
