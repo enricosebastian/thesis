@@ -16,7 +16,7 @@ void setup() {
 }
 
 void loop() {
-  
+  forBaseStation();
 }
 
 void forDrone() {
