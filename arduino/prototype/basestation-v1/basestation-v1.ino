@@ -73,7 +73,7 @@ bool receivedCommand() {
 
       Serial.print("receivedDetails: ");
       Serial.println(received["details"].as<String>());
-      Serial.println("===============================");
+      Serial.println("===============================\n\n");
       return true;
     } else {
       Serial.println("====Received a choppy command====");
@@ -89,11 +89,11 @@ bool receivedCommand() {
 
       Serial.print("receivedDetails: ");
       Serial.println(received["details"].as<String>());
-      Serial.println("===============================");
+      Serial.println("===============================\n\n");
       return false;
     }
   }
-  Serial.println("\nReceived no command...");
+  Serial.println("\nReceived no command...\n");
   received["command"] = "";
   received["toName"] = "";
   received["fromName"] = "";
@@ -117,7 +117,7 @@ void sendCommand(String command, String toName, String details) {
 
   Serial.print("details: ");
   Serial.println(details);
-  Serial.println("=====================");
+  Serial.println("=====================\n\n");
   
   sent["command"] = command;
   sent["toName"] = toName;
@@ -130,8 +130,8 @@ bool sentCommandSuccessfully(String command, String toName, String details) {
   unsigned long startTime = millis();
   while(!(receivedCommand() && received["toName"].as<String>() == myName && received["command"].as<String>() == command+"REP")) {
     sendCommand(command, toName, details);
-    if((millis() - startTime) >= 5000) {
-      Serial.println("sentCommandSuccessfully: Waited too long...");
+    if((millis() - startTime) >= waitingTime) {
+      Serial.println("sentCommandSuccessfully: Waited too long...\n");
       return false;
     }
   }
