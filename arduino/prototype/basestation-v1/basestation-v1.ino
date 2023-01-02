@@ -128,8 +128,15 @@ void sendCommand(String command, String toName, String details) {
 
 bool sentCommandSuccessfully(String command, String toName, String details) {
   unsigned long startTime = millis();
+  unsigned long lappedTime = millis();
   while(!(receivedCommand() && received["toName"].as<String>() == myName && received["command"].as<String>() == command+"REP")) {
-    sendCommand(command, toName, details);
+    
+    if(millis() - lappedTime >= 5000) {
+      lappedTime = millis();
+      Serial.println("No acknowledgement. Resending command\n");
+      sendCommand(command, toName, details);
+    }
+    
     if((millis() - startTime) >= waitingTime) {
       Serial.println("sentCommandSuccessfully: Waited too long...\n");
       return false;
