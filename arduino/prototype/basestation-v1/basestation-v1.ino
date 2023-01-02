@@ -5,23 +5,37 @@
 SoftwareSerial HC12(6, 7); // HC-12 TX Pin, HC-12 RX Pin
 LinkedList<String> drones;
 
-const String myName = "BaseStation";
-const int deployBtn = 13;
+const String myName = "DRO1";
+const int waitingTime = 10000; //in milliseconds
 StaticJsonDocument<200> received; //Only received strings need to be global variables...
+
+const int redLed = 13;
+const int greenLed = 12;
 
 void setup() {
   Serial.begin(9600);
   HC12.begin(9600);
   Serial.println("Base station initializing...");
+
+  pinMode(redLed, OUTPUT);
+  pinMode(greenLed, OUTPUT);
+  digitalWrite(greenLed, LOW);
+  digitalWrite(redLed, HIGH);
+  
+  //for drone
+  
 }
 
 void loop() {
+  //for base station
   
 }
 
 void forDrone() {
   if(sentCommandSuccessfully("TEST", "BaseStation", "HELL")) {
     Serial.println("Sent and acknowledged!");
+    digitalWrite(greenLed, HIGH);
+    digitalWrite(redLed, LOW);
     while(true) {
       //do nothing
     }
@@ -125,14 +139,14 @@ bool sentCommandSuccessfully(String command, String toName, String details) {
 bool receivedSpecificCommand(String command) {
   unsigned long startTime = millis(); //Take the time now. Save for later.
   while(!(receivedCommand() && received["toName"].as<String>() == myName && received["command"].as<String>() == command)) {
-    if((millis() - startTime) >= 5000) {
+    if((millis() - startTime) >= waitingTime) {
       Serial.println("receivedSpecificCommand: Waited too long...");
       return false;
     }
   }
   Serial.println("Received intended command. Sending acknowledgement");
   startTime = millis();
-  while((millis() - startTime) <= 5000) {
+  while((millis() - startTime) <= waitingTime) {
     sendCommand(received["command"].as<String>()+"REP", received["fromName"].as<String>(), "SUCC");
   }
   return true;
