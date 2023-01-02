@@ -5,7 +5,7 @@
 SoftwareSerial HC12(6, 7); // HC-12 TX Pin, HC-12 RX Pin
 LinkedList<String> drones;
 
-const String myName = "BaseStation";
+const String myName = "DRO1";
 const int deployBtn = 13;
 StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
@@ -13,6 +13,7 @@ void setup() {
   Serial.begin(9600);
   HC12.begin(9600);
   Serial.println("Base station initializing...");
+  forDrone();
 }
 
 void loop() {
@@ -20,8 +21,11 @@ void loop() {
 }
 
 void forDrone() {
-  if(sentCommandSuccessfully("TEST", "DRO1", "HELL")) {
+  if(sentCommandSuccessfully("TEST", "BaseStation", "HELL")) {
     Serial.println("Sent and acknowledged!");
+    while(true) {
+      //do nothing
+    }
   }
 }
 
@@ -29,7 +33,7 @@ void forBaseStation() {
   while(!receivedSpecificCommand("TEST")) {
     //continue waiting
   }
-  Serial.println("Received command we wanted.");
+  Serial.println("Received command we wanted!");
   while(true) {
     //do nothing now
   }
@@ -63,7 +67,7 @@ bool receivedCommand() {
       return false;
     }
   }
-  Serial.println("Received no command...");
+  Serial.println("\n\nReceived no command...\n\n");
   received["command"] = "";
   received["toName"] = "";
   received["fromName"] = "";
@@ -100,7 +104,7 @@ bool sentCommandSuccessfully(String command, String toName, String details) {
   unsigned long startTime = millis();
   while(!(receivedCommand() && received["toName"].as<String>() == myName && received["command"].as<String>() == command+"REP")) {
     sendCommand(command, toName, details);
-    if(millis() - startTime == 5000) {
+    if((millis() - startTime) >= 5000) {
       Serial.println("sentCommandSuccessfully: Waited too long...");
       return false;
     }
@@ -111,7 +115,7 @@ bool sentCommandSuccessfully(String command, String toName, String details) {
 bool receivedSpecificCommand(String command) {
   unsigned long startTime = millis(); //Take the time now. Save for later.
   while(!(receivedCommand() && received["toName"].as<String>() == myName && received["command"].as<String>() == command)) {
-    if(millis() - startTime == 5000) {
+    if((millis() - startTime) >= 5000) {
       Serial.println("receivedSpecificCommand: Waited too long...");
       return false;
     }
