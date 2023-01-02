@@ -16,6 +16,7 @@ void setup() {
 }
 
 void loop() {
+  
 }
 
 void forDrone() {
@@ -59,13 +60,24 @@ bool receivedCommand() {
       Serial.println("===============================");
       return true;
     } else {
-      Serial.println("Received a choppy command...");
-      received["command"] = "";
-      received["details"] = "CHOPP";
+      Serial.println("====Received a choppy====");
+      
+      Serial.print("receivedCommand: ");
+      Serial.println(received["command"].as<String>());
+    
+      Serial.print("receivedToName: ");
+      Serial.println(received["toName"].as<String>());
+    
+      Serial.print("receivedFromName: ");
+      Serial.println(received["fromName"].as<String>());
+
+      Serial.print("receivedDetails: ");
+      Serial.println(received["details"].as<String>());
+      Serial.println("===============================");
       return false;
     }
   }
-  Serial.println("\n\nReceived no command...\n\n");
+  Serial.println("\nReceived no command...\n");
   received["command"] = "";
   received["toName"] = "";
   received["fromName"] = "";
