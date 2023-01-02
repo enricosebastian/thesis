@@ -5,7 +5,7 @@
 SoftwareSerial HC12(6, 7); // HC-12 TX Pin, HC-12 RX Pin
 LinkedList<String> drones;
 
-const String myName = "DRO1";
+const String myName = "BaseStation";
 const int deployBtn = 13;
 StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
@@ -13,7 +13,6 @@ void setup() {
   Serial.begin(9600);
   HC12.begin(9600);
   Serial.println("Base station initializing...");
-  forDrone();
 }
 
 void loop() {
