@@ -11,6 +11,7 @@ StaticJsonDocument<200> received; //Only received strings need to be global vari
 
 const int redLed = 13;
 const int greenLed = 12;
+const int btn = 8;
 
 void setup() {
   Serial.begin(9600);
@@ -19,6 +20,7 @@ void setup() {
 
   pinMode(redLed, OUTPUT);
   pinMode(greenLed, OUTPUT);
+  pinMode(btn, INPUT);
   digitalWrite(greenLed, LOW);
   digitalWrite(redLed, HIGH);
   
@@ -31,26 +33,84 @@ void loop() {
   
 }
 
-void forDrone() {
-  if(sentCommandSuccessfully("TEST", "BaseStation", "HELL")) {
-    Serial.println("Sent and acknowledged!");
+void forBaseStation() {
+  bool isDeployed = false;
+
+  while(!isDeployed) {
+    lookForDrones();
+    isDeployed = (digitalRead(btn) == HIGH);
+  }
+
+  if(isDeployed) {
+    deployDrones();
+    Serial.println("Deployed!");
     digitalWrite(greenLed, HIGH);
     digitalWrite(redLed, LOW);
+    
     while(true) {
-      //do nothing
+      //do nothing...
     }
+  }  
+}
+
+void forDrone() {
+  while(!sentCommandSuccessfully("CONN", "BaseStation", "HELL")) {
+    //do nothing
+  }
+  Serial.println("\nSuccessfully detected by base station. Waiting for deployment.\n");
+
+  while(!receivedSpecificCommand("DEPL")) {
+    //continue to wait for DEPL command
+  }
+
+  Serial.println("Deploying drones...");
+  digitalWrite(greenLed, HIGH);
+  digitalWrite(redLed, LOW);
+
+  while (true) {
+    //do nothing...
   }
 }
 
-void forBaseStation() {
-  while(!receivedSpecificCommand("TEST")) {
-    //continue waiting
+///////Specific functions/////////
+void lookForDrones() {
+  if(receivedSpecificCommand("CONN")) {
+    addDrone(received["fromName"].as<String>());
   }
-  Serial.println("Received command we wanted!");
-  digitalWrite(greenLed, HIGH);
-  digitalWrite(redLed, LOW);
-  while(true) {
-    //do nothing now
+}
+
+void addDrone(String droneName) {
+  //Check first if drone already exists in list
+  for(int i = 0; i < drones.size(); i++) {
+    if(drones.get(i) == droneName) {
+      Serial.print("\n");
+      Serial.print(droneName);
+      Serial.println(" was already added\n");
+      return;
+    }
+  }
+  drones.add(droneName);
+  Serial.print("\nSuccessfully added ");
+  Serial.print(droneName);
+  Serial.println(" to the list\n\nCurrent drones:");
+  for(int i = 0; i < drones.size(); i++) {
+    Serial.println(drones.get(i));
+  }
+  Serial.println("===============\n");
+}
+
+void deployDrones() {
+  for(int i = 0; i < drones.size(); i++) {
+    Serial.print("Trying to deploy ");
+    Serial.println(drones.get(i));
+    Serial.println("\n");
+
+    while(!sentCommandSuccessfully("DEPL", drones.get(i), "HELL")) {
+      //do nothing
+    }
+    Serial.print("Successfully deployed ");
+    Serial.println(drones.get(i));
+    Serial.println("\n");
   }
 }
 
