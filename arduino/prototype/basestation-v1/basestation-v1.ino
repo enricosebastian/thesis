@@ -97,11 +97,11 @@ void sendCommand(String command, String toName, String details) {
 }
 
 bool sentCommandSuccessfully(String command, String toName, String details) {
-
-  while(!(receivedCommand() && received["toName"] == myName && received["command"] == command+"REP")) {
+  unsigned long startTime = millis();
+  while(!(receivedCommand() && received["toName"].as<String>() == myName && received["command"].as<String>() == command+"REP")) {
     sendCommand(command, toName, details);
     if(millis() - startTime == 5000) {
-      Serial.println("Waited too long...")
+      Serial.println("sentCommandSuccessfully: Waited too long...");
       return false;
     }
   }
@@ -110,15 +110,15 @@ bool sentCommandSuccessfully(String command, String toName, String details) {
 
 bool receivedSpecificCommand(String command) {
   unsigned long startTime = millis(); //Take the time now. Save for later.
-  while(!(receivedCommand() && received["toName"] == myName && received["command"] == command)) {
+  while(!(receivedCommand() && received["toName"].as<String>() == myName && received["command"].as<String>() == command)) {
     if(millis() - startTime == 5000) {
-      Serial.println("Waited too long...")
+      Serial.println("receivedSpecificCommand: Waited too long...");
       return false;
     }
   }
   Serial.println("Received intended command. Sending acknowledgement");
   for(int i=0; i<5; i++) {
-    sendCommand(received["command"]+"REP", received["fromName"], "SUCC");
+    sendCommand(received["command"].as<String>()+"REP", received["fromName"].as<String>(), "SUCC");
   }
   return true;
 }
