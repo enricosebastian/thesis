@@ -60,7 +60,7 @@ bool receivedCommand() {
     DeserializationError err = deserializeJson(received, HC12); //Deserialize it into different possible variables
     
     if(err == DeserializationError::Ok) {
-      if(received["toName"].as<String>() == myName)) {
+      if(received["toName"].as<String>() == myName) {
         Serial.println("====Received a command====");
       
         Serial.print("receivedCommand: ");
@@ -78,7 +78,7 @@ bool receivedCommand() {
       } else {
         Serial.println("Received a command not for this entity");
       }
-      return (received["toName"].as<String>() == myName));
+      return (received["toName"].as<String>() == myName);
     } else {
       Serial.println("====Received a choppy command====");
       
