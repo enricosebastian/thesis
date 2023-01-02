@@ -47,6 +47,8 @@ void forBaseStation() {
     //continue waiting
   }
   Serial.println("Received command we wanted!");
+  digitalWrite(greenLed, HIGH);
+  digitalWrite(redLed, LOW);
   while(true) {
     //do nothing now
   }
@@ -74,7 +76,7 @@ bool receivedCommand() {
       Serial.println("===============================");
       return true;
     } else {
-      Serial.println("====Received a choppy====");
+      Serial.println("====Received a choppy command====");
       
       Serial.print("receivedCommand: ");
       Serial.println(received["command"].as<String>());
@@ -91,7 +93,7 @@ bool receivedCommand() {
       return false;
     }
   }
-  Serial.println("\nReceived no command...\n");
+  Serial.println("\nReceived no command...");
   received["command"] = "";
   received["toName"] = "";
   received["fromName"] = "";
