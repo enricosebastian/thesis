@@ -120,7 +120,8 @@ bool receivedSpecificCommand(String command) {
     }
   }
   Serial.println("Received intended command. Sending acknowledgement");
-  for(int i=0; i<5; i++) {
+  startTime = millis();
+  while((millis() - startTime) <= 5000) {
     sendCommand(received["command"].as<String>()+"REP", received["fromName"].as<String>(), "SUCC");
   }
   return true;
