@@ -6,7 +6,7 @@ SoftwareSerial HC12(6, 7); // HC-12 TX Pin, HC-12 RX Pin
 LinkedList<String> drones;
 
 const String myName = "DRO1";
-const int waitingTime = 10000; //in milliseconds
+const int waitingTime = 20000; //in milliseconds
 StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
 const int redLed = 13;
