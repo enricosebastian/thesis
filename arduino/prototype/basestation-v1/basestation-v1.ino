@@ -7,6 +7,7 @@ LinkedList<String> drones;
 
 const String myName = "BaseStation";
 const int deployBtn = 13;
+StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
 void setup() {
   Serial.begin(9600);
@@ -15,31 +16,32 @@ void setup() {
 }
 
 void loop() {
-  //Task 1: Look for drones
-  bool isDeploying = false;
-  while(!isDeploying) {
-    lookForDrones();
-    isDeploying = (digitalRead(deployBtn) == HIGH);
-  }
   
-  //Task 2: Deploy drones
-  bool isDeployed = false;
-  while(!isDeployed) {
-    //deploy each drone
-  }
+}
 
-  //Task 3: Continuously wait for messages sent by drones
+void forDrone() {
+  if(sentCommandSuccessfully("TEST", "DRO1", "HELL")) {
+    Serial.println("Sent and acknowledged!");
+  }
+}
+
+void forBaseStation() {
+  while(!receivedSpecificCommand("TEST")) {
+    //continue waiting
+  }
+  Serial.println("Received command we wanted.");
+  while(true) {
+    //do nothing now
+  }
 }
 
 ///////General functions/////////
-StaticJsonDocument<200> receiveCommand() {
-  StaticJsonDocument<200> received; //Create a JSON variable
-  
+bool receivedCommand() {
   if(HC12.available()) {
     DeserializationError err = deserializeJson(received, HC12); //Deserialize it into different possible variables
     
     if(err == DeserializationError::Ok) {
-      Serial.println("====Received a clean command====");
+      Serial.println("====Received a command====");
       
       Serial.print("receivedCommand: ");
       Serial.println(received["command"].as<String>());
@@ -52,99 +54,71 @@ StaticJsonDocument<200> receiveCommand() {
 
       Serial.print("receivedDetails: ");
       Serial.println(received["details"].as<String>());
-      Serial.println("========");
-      return received;
+      Serial.println("===============================");
+      return true;
     } else {
       Serial.println("Received a choppy command...");
       received["command"] = "";
       received["details"] = "CHOPP";
-      return received;
+      return false;
     }
   }
-  
+  Serial.println("Received no command...");
   received["command"] = "";
   received["toName"] = "";
   received["fromName"] = "";
   received["details"] = "";
-  return received;
+  return false;
 }
 
-void sendCommand(StaticJsonDocument<200> sent) {
-  sent["fromName"] = myName; //Indicate that you're the sender
+void sendCommand(String command, String toName, String details) {
+  StaticJsonDocument<200> sent;
 
   Serial.println("====Sending a command====");
       
-  Serial.print("sentCommand: ");
-  Serial.println(sent["command"].as<String>());
+  Serial.print("command: ");
+  Serial.println(command);
 
-  Serial.print("sentToName: ");
-  Serial.println(sent["toName"].as<String>());
+  Serial.print("toName: ");
+  Serial.println(toName);
 
-  Serial.print("sentFromName: ");
-  Serial.println(sent["fromName"].as<String>());
+  Serial.print("fromName: ");
+  Serial.println(myName);
 
-  Serial.print("sentDetails: ");
-  Serial.println(sent["details"].as<String>());
-  Serial.println("========");
+  Serial.print("details: ");
+  Serial.println(details);
+  Serial.println("=====================");
+  
+  sent["command"] = command;
+  sent["toName"] = toName;
+  sent["fromName"] = myName;
+  sent["details"] = details;
   serializeJson(sent, HC12);
 }
 
-bool acknowledgeCommand(StaticJsonDocument<200> sent, String acknowledgeCommand) {
-  StaticJsonDocument<200> received; //Create a JSON variable
-  unsigned long startTime = millis(); //Take the time now. Save for later.
-  
-  while( !(received["toName"].as<String>() == myName && received["command"].as<String>() == acknowledgeCommand) ) {
-    received = receiveCommand();
-    sendCommand(sent);
+bool sentCommandSuccessfully(String command, String toName, String details) {
+
+  while(!(receivedCommand() && received["toName"] == myName && received["command"] == command+"REP")) {
+    sendCommand(command, toName, details);
     if(millis() - startTime == 5000) {
-      Serial.println("Acknowledgement timed out.");
+      Serial.println("Waited too long...")
       return false;
     }
   }
   return true;
 }
 
-StaticJsonDocument<200> waitForCommand(String command) {
-  StaticJsonDocument<200> received; //Create a JSON variable
+bool receivedSpecificCommand(String command) {
   unsigned long startTime = millis(); //Take the time now. Save for later.
-  
-  while( !(received["toName"].as<String>() == myName && received["command"].as<String>() == command) ) {
-    received = receiveCommand();
+  while(!(receivedCommand() && received["toName"] == myName && received["command"] == command)) {
     if(millis() - startTime == 5000) {
-      Serial.println("Waiting timed out.");
-      received["command"] = "";
-      received["toName"] = "";
-      received["fromName"] = "";
-      received["details"] = "";
-      return received;
+      Serial.println("Waited too long...")
+      return false;
     }
   }
-  return received;
-}
-
-///////Drone-specific functions/////////
-void lookForDrones() {
-  String waitCommand = "DEPL";
-  StaticJsonDocument<200> received = waitForCommand(waitCommand);
-  if(received["toName"].as<String>() == myName && received["command"].as<String>() == waitCommand) {
-    //add to list
-    addDrone(received["fromName"].as<String>());
+  Serial.println("Received intended command. Sending acknowledgement");
+  for(int i=0; i<5; i++) {
+    sendCommand(received["command"]+"REP", received["fromName"], "SUCC");
   }
-}
-
-void addDrone(String droneName) {
-  //Check if drone already exists in List
-  for(int i = 0; i < drones.size(); i++) {
-    if(drones.get(i) == droneName) {
-      Serial.print(droneName);
-      Serial.println(" already exists.");
-      return;
-    }
-  }
-
-  //If not, add it to List
-  drones.add(droneName);
-  Serial.print(droneName);
-  Serial.println(" successfully added.");
-  return;
+  return true;
 }
