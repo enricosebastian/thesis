@@ -62,7 +62,6 @@ void sendCommand(StaticJsonDocument<200> sent) {
 
   Serial.print("sentDetails: ");
   Serial.println(sent["details"].as<String>());
-  Serial.println("========");
   serializeJson(sent, HC12);
 }
 
@@ -134,8 +133,11 @@ void setup() {
 
   StaticJsonDocument<200> sent;
   sent["command"] = "TEST";
-  sent["sentToName"] = "drone1";
-  sent["sentDetails"] = "MSG";
+  sent["toName"] = "drone1";
+  sent["details"] = "MSG";
+  Serial.println("========preview===========");
+  Serial.println(sent["toName"].as<String>());
+  Serial.println("============\n");
   acknowledgeCommand(sent, "TESTREP");
 }
 
