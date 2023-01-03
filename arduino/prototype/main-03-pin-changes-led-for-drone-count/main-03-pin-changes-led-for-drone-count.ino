@@ -118,6 +118,10 @@ void lookForDrones() {
     digitalWrite(redLed, HIGH);
     digitalWrite(yellowLed, HIGH);
     digitalWrite(greenLed, HIGH);
+  } else {
+    digitalWrite(redLed, LOW);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(greenLed, LOW);
   }
 }
 
