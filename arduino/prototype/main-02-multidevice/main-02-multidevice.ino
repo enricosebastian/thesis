@@ -5,7 +5,7 @@
 SoftwareSerial HC12(6, 7); // HC-12 TX Pin, HC-12 RX Pin
 LinkedList<String> drones;
 
-const String myName = "DRO1"; //Change name here
+const String myName = "DRO2"; //Change name here
 const int waitingTime = 10000; //in milliseconds
 StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
@@ -16,7 +16,8 @@ const int btn = 8;
 void setup() {
   Serial.begin(9600);
   HC12.begin(9600);
-  Serial.println("Base station initializing...");
+  Serial.println(myName);
+  Serial.println(" system initializing");
 
   pinMode(redLed, OUTPUT);
   pinMode(greenLed, OUTPUT);
@@ -59,7 +60,7 @@ void forDrone() {
   }
   Serial.println("\nSuccessfully detected by base station. Waiting for deployment.\n");
 
-  while(!receivedSpecificCommand("DEPL")) {
+  while(!receivedCommandSuccessfully("DEPL")) {
     //continue to wait for DEPL command
   }
 
@@ -74,7 +75,7 @@ void forDrone() {
 
 ///////Specific functions/////////
 void lookForDrones() {
-  if(receivedSpecificCommand("CONN")) {
+  if(receivedCommandSuccessfully("CONN")) {
     addDrone(received["fromName"].as<String>());
   }
 }
@@ -210,11 +211,11 @@ bool sentCommandSuccessfully(String command, String toName, String details) {
   return true;
 }
 
-bool receivedSpecificCommand(String command) {
+bool receivedCommandSuccessfully(String command) {
   unsigned long startTime = millis(); //Take the time now. Save for later.
   while(!(receivedCommand() && received["command"].as<String>() == command)) {
     if((millis() - startTime) >= waitingTime) {
-      Serial.println("receivedSpecificCommand: Waited too long...");
+      Serial.println("receivedCommandSuccessfully: Waited too long...");
       return false;
     }
   }
