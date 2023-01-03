@@ -2,7 +2,7 @@
 #include <SoftwareSerial.h>
 #include <LinkedList.h>
 
-SoftwareSerial HC12(6, 7); // HC-12 TX Pin, HC-12 RX Pin
+SoftwareSerial HC12(8, 9); // (Green TX, Blue RX)
 LinkedList<String> drones;
 
 const String myName = "DRO1"; //Change name here
@@ -10,28 +10,40 @@ const int waitingTime = 10000; //in milliseconds
 StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
 const int redLed = 13;
-const int greenLed = 12;
+const int yellowLed = 12;
+const int greenLed = 11;
 const int btn = 8;
 
 void setup() {
   Serial.begin(9600);
   HC12.begin(9600);
   Serial.print(myName);
-  Serial.println(" system initializing");
+  Serial.println(" is initializing");
 
   pinMode(redLed, OUTPUT);
-  pinMode(greenLed, OUTPUT);
-  pinMode(btn, INPUT);
-  digitalWrite(greenLed, LOW);
   digitalWrite(redLed, HIGH);
   
-  //for drone
+  pinMode(yellowLed, OUTPUT);
+  digitalWrite(yellowLed, HIGH);
+  
+  pinMode(greenLed, OUTPUT);
+  digitalWrite(greenLed, HIGH);
+
+  pinMode(btn, INPUT);
+
+  delay(500);
+  digitalWrite(redLed, HIGH);
+  digitalWrite(yellowLed, LOW);
+  digitalWrite(greenLed, LOW);
+  
   
 }
 
 void loop() {
   //for base station
-
+  
+  //for drone
+  
 }
 
 void forBaseStation() {
@@ -61,17 +73,25 @@ void forDrone() {
     //do nothing
   }
   Serial.println("\nSuccessfully detected by base station. Waiting for deployment.\n");
+  digitalWrite(redLed, LOW);
+  digitalWrite(yellowLed, HIGH);
+  digitalWrite(greenLed, LOW);
+  
+  
 
   while(!receivedCommandSuccessfully("DEPL")) {
     //continue to wait for DEPL command
   }
 
-  Serial.println("Deploying drones...");
-  digitalWrite(greenLed, HIGH);
+  Serial.println("Deploying drone");
   digitalWrite(redLed, LOW);
+  digitalWrite(yellowLed, LOW);
+  digitalWrite(greenLed, HIGH);
 
+  Serial.println("Moving. Also waiting for next command.");
   while (true) {
     //do nothing...
+    
   }
 }
 
