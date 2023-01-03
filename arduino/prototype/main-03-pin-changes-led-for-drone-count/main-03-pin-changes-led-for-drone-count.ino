@@ -12,7 +12,7 @@ StaticJsonDocument<200> received; //Only received strings need to be global vari
 const int redLed = 13;
 const int yellowLed = 12;
 const int greenLed = 11;
-const int btn = 8;
+const int btn = 7;
 
 void setup() {
   Serial.begin(9600);
@@ -48,12 +48,15 @@ void loop() {
 
 void forBaseStation() {
   bool isDeployed = false;
+  digitalWrite(redLed, LOW);
+  digitalWrite(yellowLed, LOW);
+  digitalWrite(greenLed, LOW);
 
   while(!isDeployed) {
     lookForDrones();
     isDeployed = (digitalRead(btn) == HIGH);
   }
-
+  
   Serial.println("Button pressed. Starting deployment initialization.");
 
   if(isDeployed) {
@@ -99,6 +102,21 @@ void forDrone() {
 void lookForDrones() {
   if(receivedCommandSuccessfully("CONN")) {
     addDrone(received["fromName"].as<String>());
+  }
+
+  //Drone size indicator
+  if(drones.size() == 1) {
+    digitalWrite(redLed, HIGH);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(greenLed, LOW);
+  } else if(drones.size() == 2) {
+    digitalWrite(redLed, HIGH);
+    digitalWrite(yellowLed, HIGH);
+    digitalWrite(greenLed, LOW);
+  } else if(drones.size() == 3) {
+    digitalWrite(redLed, HIGH);
+    digitalWrite(yellowLed, HIGH);
+    digitalWrite(greenLed, HIGH);
   }
 }
 
