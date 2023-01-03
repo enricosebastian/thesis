@@ -5,7 +5,7 @@
 SoftwareSerial HC12(6, 7); // HC-12 TX Pin, HC-12 RX Pin
 LinkedList<String> drones;
 
-const String myName = "DRO2"; //Change name here
+const String myName = "DRO1"; //Change name here
 const int waitingTime = 10000; //in milliseconds
 StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
@@ -16,7 +16,7 @@ const int btn = 8;
 void setup() {
   Serial.begin(9600);
   HC12.begin(9600);
-  Serial.println(myName);
+  Serial.print(myName);
   Serial.println(" system initializing");
 
   pinMode(redLed, OUTPUT);
@@ -31,7 +31,7 @@ void setup() {
 
 void loop() {
   //for base station
-  
+
 }
 
 void forBaseStation() {
@@ -41,6 +41,8 @@ void forBaseStation() {
     lookForDrones();
     isDeployed = (digitalRead(btn) == HIGH);
   }
+
+  Serial.println("Button pressed. Starting deployment initialization.");
 
   if(isDeployed) {
     deployDrones();
