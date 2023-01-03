@@ -62,8 +62,9 @@ void forBaseStation() {
   if(isDeployed) {
     deployDrones();
     Serial.println("Deployed!");
-    digitalWrite(greenLed, HIGH);
     digitalWrite(redLed, LOW);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(greenLed, HIGH);
     
     while(true) {
       //do nothing...
