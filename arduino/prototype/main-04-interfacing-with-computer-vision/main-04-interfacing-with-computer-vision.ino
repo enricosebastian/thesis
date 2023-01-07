@@ -71,7 +71,19 @@ void forBaseStation() {
     
     while(isDeployed) {
       //do nothing
-
+      Serial.print("COMMAND: ");
+      String command = Serial.readString();
+      Serial.print("TO: ");
+      String toName = Serial.readString();
+      Serial.print("DETAILS: ");
+      String details = Serial.readString();
+      if(sentCommandSuccessfully(command, toName, details)) {
+        Serial.print("Command sent succesfully!");
+      } else {
+        Serial.print("Command was not received properly by ");
+        Serial.print(toName);
+        Serial.println(". Try again.");
+      }
     }
   }
 }
@@ -99,10 +111,16 @@ void forDrone() {
 
   unsigned long startTime = millis();
   while (isDeployed) {
+
+    //Constantly make sure the drone is moving
     if((millis() - startTime) >= 5000) {
       moveDrone();
     }
-    //checkIfReceivedCommand()
+
+    //But also constantly check if serial port received any messages...
+    if(receivedCommandSuccessfully("DETE")) {
+      Serial.println("Detected garbage somewhere specific. Going to there...");
+    }
   }
 }
 
