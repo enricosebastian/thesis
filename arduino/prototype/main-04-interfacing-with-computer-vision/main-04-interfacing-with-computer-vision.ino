@@ -5,7 +5,7 @@
 SoftwareSerial HC12(8, 9); // (Green TX, Blue RX)
 LinkedList<String> drones;
 
-const String myName = "DRO1"; //Change name here
+const String myName = "BaseStation"; //Change name here
 const int waitingTime = 10000; //in milliseconds
 StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
@@ -44,94 +44,9 @@ void setup() {
 
 void loop() {
   //for base station
-  
+  forBaseStation();
   //for drone
   
-}
-
-void forBaseStation() {
-  bool isDeployed = false;
-  digitalWrite(redLed, LOW);
-  digitalWrite(yellowLed, LOW);
-  digitalWrite(greenLed, LOW);
-
-  while(!isDeployed) {
-    lookForDrones();
-    isDeployed = (digitalRead(btn) == HIGH);
-  }
-  
-  Serial.println("Button pressed. Starting deployment initialization.");
-
-  if(isDeployed) {
-    deployDrones();
-    Serial.println("Drones have been deployed. Send commands if you want.");
-    digitalWrite(redLed, LOW);
-    digitalWrite(yellowLed, LOW);
-    digitalWrite(greenLed, HIGH);
-    
-    while(isDeployed) {
-      //do nothing
-      Serial.print("COMMAND: ");
-      String command = Serial.readString();
-      Serial.print("TO: ");
-      String toName = Serial.readString();
-      Serial.print("DETAILS: ");
-      String details = Serial.readString();
-      if(sentCommandSuccessfully(command, toName, details)) {
-        Serial.print("Command sent succesfully!");
-      } else {
-        Serial.print("Command was not received properly by ");
-        Serial.print(toName);
-        Serial.println(". Try again.");
-      }
-    }
-  }
-}
-
-void forDrone() {
-  while(!sentCommandSuccessfully("CONN", "BaseStation", "HELL")) {
-    //do nothing
-  }
-  Serial.println("\nSuccessfully detected by base station. Waiting for deployment.\n");
-  digitalWrite(redLed, LOW);
-  digitalWrite(yellowLed, HIGH);
-  digitalWrite(greenLed, LOW);
-  
-  while(!receivedCommandSuccessfully("DEPL")) {
-    //continue to wait for DEPL command
-  }
-
-  bool isDeployed = true;
-  Serial.println("Deploying drone");
-  digitalWrite(redLed, LOW);
-  digitalWrite(yellowLed, LOW);
-  digitalWrite(greenLed, HIGH);
-
-  Serial.println("Moving. Also waiting for next command.");
-
-  unsigned long startTime = millis();
-  while (isDeployed) {
-    //Constantly make sure the drone is moving
-    if((millis() - startTime) >= 2000) {
-      moveDrone();
-    }
-
-    //But also constantly check if serial port received any messages...
-    //NOTE: We cannot use receivedCommandSuccessfully because it has a waiting time. This has to be instant.
-    if(receivedSpecificCommand("DETE")) {
-      Serial.println("Detected garbage somewhere specific. Moving drone there...");
-    }
-
-    if(receivedSpecificCommand("STOP")) {
-      Serial.println("Stopping deployment. Going back home.");
-      isDeployed = false;
-    }
-  }
-
-  Serial.println("Gone home.");
-  while(true) {
-    //do nothing...
-  }
 }
 
 ///////Specific functions/////////
@@ -328,4 +243,95 @@ bool receivedCommandSuccessfully(String command) {
 
 bool receivedSpecificCommand(String command) {
   return (receivedCommand() && received["command"].as<String>() == command);  
+}
+
+
+// for commands
+void forDrone() {
+  while(!sentCommandSuccessfully("CONN", "BaseStation", "HELL")) {
+    //do nothing
+  }
+  Serial.println("\nSuccessfully detected by base station. Waiting for deployment.\n");
+  digitalWrite(redLed, LOW);
+  digitalWrite(yellowLed, HIGH);
+  digitalWrite(greenLed, LOW);
+  
+  while(!receivedCommandSuccessfully("DEPL")) {
+    //continue to wait for DEPL command
+  }
+
+  bool isDeployed = true;
+  Serial.println("Deploying drone");
+  digitalWrite(redLed, LOW);
+  digitalWrite(yellowLed, LOW);
+  digitalWrite(greenLed, HIGH);
+
+  Serial.println("Moving. Also waiting for next command.");
+
+  unsigned long startTime = millis();
+  while (isDeployed) {
+    //Constantly make sure the drone is moving
+    if((millis() - startTime) >= 2000) {
+      moveDrone();
+    }
+
+    //But also constantly check if serial port received any messages...
+    //NOTE: We cannot use receivedCommandSuccessfully because it has a waiting time. This has to be instant.
+    if(receivedSpecificCommand("DETE")) {
+      Serial.println("Detected garbage somewhere specific. Moving drone there...");
+    }
+
+    if(receivedSpecificCommand("STOP")) {
+      Serial.println("Stopping deployment. Going back home.");
+      isDeployed = false;
+    }
+  }
+
+  Serial.println("Gone home.");
+  while(true) {
+    //do nothing...
+  }
+}
+
+void forBaseStation() {
+  bool isDeployed = false;
+  digitalWrite(redLed, LOW);
+  digitalWrite(yellowLed, LOW);
+  digitalWrite(greenLed, LOW);
+
+  while(!isDeployed) {
+    lookForDrones();
+    isDeployed = (digitalRead(btn) == HIGH);
+  }
+  
+  Serial.println("Button pressed. Starting deployment initialization.");
+
+  if(isDeployed) {
+    deployDrones();
+    Serial.println("Drones have been deployed. Send commands if you want.");
+    digitalWrite(redLed, LOW);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(greenLed, HIGH);
+
+    while(isDeployed) {
+      if(Serial.available()) {
+        String input = Serial.readStringUntil('\n');
+        int endIndex = input.indexOf(' '); 
+
+        String command = input.substring(0, endIndex);
+        input = input.substring(endIndex+1);
+
+        endIndex = input.indexOf(' ');
+        String toName = input.substring(0, endIndex);
+        String details = input.substring(endIndex+1);
+
+        Serial.print("COMMAND: ");
+        Serial.println(command);
+        Serial.print("TO NAME: ");
+        Serial.println(toName);
+        Serial.print("DETAILS: ");
+        Serial.println(details);
+      }
+    }
+  }
 }
