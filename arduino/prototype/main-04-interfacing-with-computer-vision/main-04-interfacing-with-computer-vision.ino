@@ -111,16 +111,26 @@ void forDrone() {
 
   unsigned long startTime = millis();
   while (isDeployed) {
-
     //Constantly make sure the drone is moving
-    if((millis() - startTime) >= 5000) {
+    if((millis() - startTime) >= 2000) {
       moveDrone();
     }
 
     //But also constantly check if serial port received any messages...
-    if(receivedCommandSuccessfully("DETE")) {
-      Serial.println("Detected garbage somewhere specific. Going to there...");
+    //NOTE: We cannot use receivedCommandSuccessfully because it has a waiting time. This has to be instant.
+    if(receivedSpecificCommand("DETE")) {
+      Serial.println("Detected garbage somewhere specific. Moving drone there...");
     }
+
+    if(receivedSpecificCommand("STOP")) {
+      Serial.println("Stopping deployment. Going back home.");
+      isDeployed = false;
+    }
+  }
+
+  Serial.println("Gone home.");
+  while(true) {
+    //do nothing...
   }
 }
 
@@ -284,7 +294,7 @@ bool sentCommandSuccessfully(String command, String toName, String details) {
   unsigned long startTime = millis();
   unsigned long lappedTime = millis();
   sendCommand(command, toName, details); //Initial sending
-  while(!(receivedCommand() && received["command"].as<String>() == command+"REP")) {
+  while(!receivedSpecificCommand(command+"REP")) {
     
     if(millis() - lappedTime >= 5000) {
       lappedTime = millis();
@@ -302,7 +312,7 @@ bool sentCommandSuccessfully(String command, String toName, String details) {
 
 bool receivedCommandSuccessfully(String command) {
   unsigned long startTime = millis(); //Take the time now. Save for later.
-  while(!(receivedCommand() && received["command"].as<String>() == command)) {
+  while(!receivedSpecificCommand(command)) {
     if((millis() - startTime) >= waitingTime) {
       Serial.println("receivedCommandSuccessfully: Waited too long...");
       return false;
@@ -314,4 +324,8 @@ bool receivedCommandSuccessfully(String command) {
     sendCommand(received["command"].as<String>()+"REP", received["fromName"].as<String>(), "SUCC");
   }
   return true;
+}
+
+bool receivedSpecificCommand(String command) {
+  return (receivedCommand() && received["command"].as<String>() == command);  
 }
