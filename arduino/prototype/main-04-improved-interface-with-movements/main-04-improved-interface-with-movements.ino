@@ -98,6 +98,7 @@ void forBaseStation() {
       
       while(!receivedSpecificCommand("DEPLREP") && !(received["fromName"].as<String>() == drones.get(i))) {
         if(millis() - startTime >= 5000) {
+          startTime = millis();
           Serial.print("Deployment command was not acknowledged by '");
           Serial.print(drones.get(i));
           Serial.println("'. Trying again.");
@@ -170,9 +171,9 @@ void forDrone() {
 
   //TASK 3: Keep sending acknowledgements at least for 5 seconds or so...
   if(isConnected && isAcknowledging && !isDeployed) {
-    if(millis() - startTime <= 10000) {
+    if(millis() - startTime <= 5000) {
       sendCommand("DEPLREP", received["fromName"].as<String>(), "SUCC");
-    } else if(millis() - startTime > 10000) {
+    } else if(millis() - startTime > 5000) {
       isAcknowledging = false;
       isDeployed = true;
     }
