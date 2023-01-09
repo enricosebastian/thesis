@@ -57,7 +57,7 @@ void setup() {
 
 void loop() {
   //for base station
-  forBaseStation();
+  
   //for drone
   
 }
