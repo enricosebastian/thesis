@@ -44,7 +44,7 @@ void setup() {
 
 void loop() {
   //for base station
-  
+  forBaseStation();
   //for drone
   
 }
@@ -151,7 +151,20 @@ bool receivedCommand() {
         Serial.println(received["details"].as<String>());
         Serial.println("===============================\n\n");
       } else {
-        Serial.println("Received a command not for this entity");
+        Serial.println("===Received a command not for this entity===");
+      
+        Serial.print("receivedCommand: ");
+        Serial.println(received["command"].as<String>());
+      
+        Serial.print("receivedToName: ");
+        Serial.println(received["toName"].as<String>());
+      
+        Serial.print("receivedFromName: ");
+        Serial.println(received["fromName"].as<String>());
+  
+        Serial.print("receivedDetails: ");
+        Serial.println(received["details"].as<String>());
+        Serial.println("===============================\n\n");
       }
       return (received["toName"].as<String>() == myName);
     } else {
