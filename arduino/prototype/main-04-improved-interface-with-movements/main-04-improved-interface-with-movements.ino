@@ -201,20 +201,24 @@ void forDrone() {
     }
 
     if(millis() - startTime >= 5000) {
-      if(posY % 2 == 0) {
-        posX++;
-      } else if(posY % 2 != 0) {
-        posX--;
-      }
-
-      if(posX >= 10 || posX <= 0) {
-        posY++;
-      }
+      startTime = millis();
       Serial.print("Position: (");
       Serial.print(posX);
       Serial.print(", ");
       Serial.print(posY);
       Serial.println(")");
+
+      if(posY % 2 == 0) {
+        if(posX < 10)
+          posX++;
+        else 
+          posY++;
+      } else if(posY % 2 != 0) {
+        if(posX > 0)
+          pos--;
+        else
+         posY++;
+      }
     }
   }
 }
