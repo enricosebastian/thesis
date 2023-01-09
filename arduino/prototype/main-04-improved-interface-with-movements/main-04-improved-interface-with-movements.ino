@@ -134,23 +134,6 @@ void forBaseStation() {
       String details = input.substring(endIndex+1);
       sendCommand(command, toName, details);
     }
-
-    if(millis() - startTime >= 5000) {
-      if(posY % 2 == 0) {
-        posX++;
-      } else if(posY % 2 != 0) {
-        posX--;
-      }
-
-      if(posX >= 10 || posX <= 0) {
-        posY++;
-      }
-      Serial.print("Position: (");
-      Serial.print(posX);
-      Serial.print(", ");
-      Serial.print(posY);
-      Serial.println(")");
-    }
   }
 }
 
@@ -196,6 +179,7 @@ void forDrone() {
     } else if(millis() - startTime > 10000) {
       isAcknowledging = false;
       isDeployed = true;
+      startTime = millis();
     }
   }
 
@@ -214,6 +198,23 @@ void forDrone() {
       digitalWrite(redLed, LOW);
       digitalWrite(yellowLed, HIGH);
       digitalWrite(greenLed, LOW);
+    }
+
+    if(millis() - startTime >= 5000) {
+      if(posY % 2 == 0) {
+        posX++;
+      } else if(posY % 2 != 0) {
+        posX--;
+      }
+
+      if(posX >= 10 || posX <= 0) {
+        posY++;
+      }
+      Serial.print("Position: (");
+      Serial.print(posX);
+      Serial.print(", ");
+      Serial.print(posY);
+      Serial.println(")");
     }
   }
 }
