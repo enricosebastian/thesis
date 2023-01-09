@@ -138,7 +138,7 @@ void forDrone() {
   if(!isConnected && !isDeployed) {
     if(!receivedSpecificCommand("CONNREP")) {
       if(millis() - startTime >= 5000) {
-        Serial.println("Reply 'CONNEREP' was not received. Resending message again.");
+        Serial.println("Reply 'CONNREP' was not received. Resending message again.");
         startTime = millis();
         sendCommand("CONN", "BASE", "HELL");
       }
@@ -170,9 +170,9 @@ void forDrone() {
 
   //TASK 3: Keep sending acknowledgements at least for 5 seconds or so...
   if(isConnected && isAcknowledging && !isDeployed) {
-    if(millis() - startTime <= 5000) {
+    if(millis() - startTime <= 10000) {
       sendCommand("DEPLREP", received["fromName"].as<String>(), "SUCC");
-    } else if(millis() - startTime > 5000) {
+    } else if(millis() - startTime > 10000) {
       isAcknowledging = false;
       isDeployed = true;
     }
