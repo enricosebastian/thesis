@@ -44,7 +44,7 @@ void setup() {
 
 void loop() {
   //for base station
-  forBaseStation();
+  
   //for drone
   
 }
@@ -325,12 +325,11 @@ void forBaseStation() {
         String toName = input.substring(0, endIndex);
         String details = input.substring(endIndex+1);
 
-        Serial.print("COMMAND: ");
-        Serial.println(command);
-        Serial.print("TO NAME: ");
-        Serial.println(toName);
-        Serial.print("DETAILS: ");
-        Serial.println(details);
+        if(sentCommandSuccessfully(command, toName, details)) {
+          Serial.println("Send more commands if you want.");
+        } else {
+          Serial.println("Command failed to be sent. Resend command if you want.");
+        }
       }
     }
   }
