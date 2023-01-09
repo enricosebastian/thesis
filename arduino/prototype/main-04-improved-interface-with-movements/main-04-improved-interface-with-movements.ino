@@ -5,8 +5,7 @@
 SoftwareSerial HC12(8, 9); // (Green TX, Blue RX)
 LinkedList<String> drones;
 
-const String myName = "DRO1"; //Change name here
-const int waitingTime = 10000; //in milliseconds
+const String myName = "BaseStation"; //Change name here
 StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
 const int redLed = 13;
@@ -20,7 +19,6 @@ bool isDeployed = false;
 bool isAcknowledging = false;
 
 unsigned long startTime = 0;
-String command = "";
 
 void setup() {
   Serial.begin(9600);
@@ -48,7 +46,7 @@ void setup() {
 
 void loop() {
   //for base station
-  
+
   //for drone
   
 }
@@ -102,7 +100,7 @@ void forBaseStation() {
       Serial.println(drones.get(i));
       Serial.println("\n");
     }
-    Serial.println("All drones have been deployed.");
+    Serial.println("All drones have been deployed. Start sending random commands.");
     digitalWrite(redLed, LOW);
     digitalWrite(yellowLed, LOW);
     digitalWrite(greenLed, HIGH);
@@ -225,21 +223,6 @@ void addDrone(String droneName) {
   }
 }
 
-void deployDrones() {
-  for(int i = 0; i < drones.size(); i++) {
-    Serial.print("Trying to deploy ");
-    Serial.println(drones.get(i));
-    Serial.println("\n");
-
-    while(!sentCommandSuccessfully("DEPL", drones.get(i), "HELL")) {
-      //do nothing
-    }
-    Serial.print("Successfully deployed ");
-    Serial.println(drones.get(i));
-    Serial.println("\n");
-  }
-}
-
 ///////General functions/////////
 bool receivedCommand() {
   if(HC12.available()) {
@@ -314,42 +297,6 @@ void sendCommand(String command, String toName, String details) {
   sent["fromName"] = myName;
   sent["details"] = details;
   serializeJson(sent, HC12);
-}
-
-bool sentCommandSuccessfully(String command, String toName, String details) {
-  unsigned long startTime = millis();
-  unsigned long lappedTime = millis();
-  sendCommand(command, toName, details); //Initial sending
-  while(!(receivedCommand() && received["command"].as<String>() == command+"REP")) {
-    
-    if(millis() - lappedTime >= 5000) {
-      lappedTime = millis();
-      Serial.println("No acknowledgement. Resending command\n");
-      sendCommand(command, toName, details);
-    }
-    
-    if((millis() - startTime) >= waitingTime) {
-      Serial.println("sentCommandSuccessfully: Waited too long...\n");
-      return false;
-    }
-  }
-  return true;
-}
-
-bool receivedCommandSuccessfully(String command) {
-  unsigned long startTime = millis(); //Take the time now. Save for later.
-  while(!(receivedCommand() && received["command"].as<String>() == command)) {
-    if((millis() - startTime) >= waitingTime) {
-      Serial.println("receivedCommandSuccessfully: Waited too long...");
-      return false;
-    }
-  }
-  Serial.println("Received intended command. Sending acknowledgement");
-  startTime = millis();
-  while((millis() - startTime) <= waitingTime) {
-    sendCommand(received["command"].as<String>()+"REP", received["fromName"].as<String>(), "SUCC");
-  }
-  return true;
 }
 
 bool receivedSpecificCommand(String command) {
