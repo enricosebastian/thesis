@@ -57,7 +57,8 @@ void setup() {
 
 void loop() {
   //for base station
-  
+  forBaseStation();
+
   //for drone
   
 }
@@ -133,6 +134,9 @@ void forBaseStation() {
       String toName = input.substring(0, endIndex);
       String details = input.substring(endIndex+1);
       sendCommand(command, toName, details);
+    }
+
+    if(receivedCommand()) {        
     }
   }
 }
