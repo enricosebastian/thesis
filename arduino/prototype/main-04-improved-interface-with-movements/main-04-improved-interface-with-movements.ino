@@ -5,7 +5,7 @@
 SoftwareSerial HC12(8, 9); // (Green TX, Blue RX)
 LinkedList<String> drones;
 
-const String myName = "BaseStation"; //Change name here
+const String myName = "BASE"; //Change name here
 StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
 const int redLed = 13;
@@ -38,9 +38,17 @@ void setup() {
   pinMode(btn, INPUT);
 
   delay(500);
-  digitalWrite(redLed, HIGH);
-  digitalWrite(yellowLed, LOW);
-  digitalWrite(greenLed, LOW);
+
+  if(myName == "BASE") {
+    digitalWrite(redLed, LOW);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(greenLed, LOW);
+  } else {
+    digitalWrite(redLed, HIGH);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(greenLed, LOW);
+  }
+  
   startTime = millis();
 }
 
@@ -120,13 +128,7 @@ void forBaseStation() {
       endIndex = input.indexOf(' ');
       String toName = input.substring(0, endIndex);
       String details = input.substring(endIndex+1);
-
-      Serial.print("COMMAND: ");
-      Serial.println(command);
-      Serial.print("TO NAME: ");
-      Serial.println(toName);
-      Serial.print("DETAILS: ");
-      Serial.println(details);
+      sendCommand(command, toName, details);
     }
   }
 }
@@ -138,7 +140,7 @@ void forDrone() {
       if(millis() - startTime >= 5000) {
         Serial.println("Reply 'CONNEREP' was not received. Resending message again.");
         startTime = millis();
-        sendCommand("CONN", "BaseStation", "HELL");
+        sendCommand("CONN", "BASE", "HELL");
       }
     } else {
       isConnected = true;
@@ -160,6 +162,9 @@ void forDrone() {
       isAcknowledging = true;
       Serial.println("Base station wants to start deploying.");
       startTime = millis();
+      digitalWrite(redLed, LOW);
+      digitalWrite(yellowLed, LOW);
+      digitalWrite(greenLed, HIGH);
     }
   }
 
@@ -170,9 +175,6 @@ void forDrone() {
     } else if(millis() - startTime > 5000) {
       isAcknowledging = false;
       isDeployed = true;
-      digitalWrite(redLed, LOW);
-      digitalWrite(yellowLed, LOW);
-      digitalWrite(greenLed, HIGH);
     }
   }
 
