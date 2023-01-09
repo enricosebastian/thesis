@@ -20,6 +20,9 @@ bool isAcknowledging = false;
 
 unsigned long startTime = 0;
 
+int posX = 0;
+int posY = 0;
+
 void setup() {
   Serial.begin(9600);
   HC12.begin(9600);
@@ -114,11 +117,11 @@ void forBaseStation() {
     digitalWrite(yellowLed, LOW);
     digitalWrite(greenLed, HIGH);
     isDeployed = true;
+    startTime = millis();
   }
 
   //TASK 4: Since every drone is deployed, try to send them random commands while they're running.
   if(isDeploying && isDeployed) {
-    //do nothing
     if(Serial.available()) {
       String input = Serial.readStringUntil('\n');
       int endIndex = input.indexOf(' '); 
@@ -130,6 +133,23 @@ void forBaseStation() {
       String toName = input.substring(0, endIndex);
       String details = input.substring(endIndex+1);
       sendCommand(command, toName, details);
+    }
+
+    if(millis() - startTime >= 5000) {
+      if(posY % 2 == 0) {
+        posX++;
+      } else if(posY % 2 != 0) {
+        posX--;
+      }
+
+      if(posX >= 10 && posX <= 0) {
+        posY++;
+      }
+      Serial.print("Position: (");
+      Serial.print(posX);
+      Serial.print(", ");
+      Serial.print(posY);
+      Serial.println(")");
     }
   }
 }
@@ -171,9 +191,9 @@ void forDrone() {
 
   //TASK 3: Keep sending acknowledgements at least for 5 seconds or so...
   if(isConnected && isAcknowledging && !isDeployed) {
-    if(millis() - startTime <= 5000) {
+    if(millis() - startTime <= 10000) {
       sendCommand("DEPLREP", received["fromName"].as<String>(), "SUCC");
-    } else if(millis() - startTime > 5000) {
+    } else if(millis() - startTime > 10000) {
       isAcknowledging = false;
       isDeployed = true;
     }
