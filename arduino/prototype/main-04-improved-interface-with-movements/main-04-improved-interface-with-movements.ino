@@ -215,7 +215,7 @@ void forDrone() {
           posY++;
       } else if(posY % 2 != 0) {
         if(posX > 0)
-          pos--;
+          posX--;
         else
          posY++;
       }
