@@ -54,7 +54,7 @@ void setup() {
 
 void loop() {
   //for base station
-
+  forBaseStation();
   //for drone
   
 }
@@ -181,7 +181,19 @@ void forDrone() {
   //TASK 3: Start moving. All the while, look for commands.
   if(isConnected && !isAcknowledging && isDeployed) {
     //continue reading for commands
-    receivedCommand();
+    if(receivedCommand() && received["command"] == "RED") {
+      digitalWrite(redLed, HIGH);
+      digitalWrite(yellowLed, LOW);
+      digitalWrite(greenLed, LOW);
+    } else if(receivedCommand() && received["command"] == "GREE") {
+      digitalWrite(redLed, LOW);
+      digitalWrite(yellowLed, LOW);
+      digitalWrite(greenLed, HIGH);
+    } else if(receivedCommand() && received["command"] == "YELL") {
+      digitalWrite(redLed, LOW);
+      digitalWrite(yellowLed, HIGH);
+      digitalWrite(greenLed, LOW);
+    }
   }
 }
 
