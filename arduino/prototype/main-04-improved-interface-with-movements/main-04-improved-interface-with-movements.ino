@@ -142,7 +142,7 @@ void forBaseStation() {
         posX--;
       }
 
-      if(posX >= 10 && posX <= 0) {
+      if(posX >= 10 || posX <= 0) {
         posY++;
       }
       Serial.print("Position: (");
