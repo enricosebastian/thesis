@@ -226,7 +226,7 @@ void forDrone() {
 
     //TASK 3.3: Watch out for any objects found by Raspi
     if(detectedObject()) {
-      Serial.println("Found an object");
+      Serial.println("Found an object!");
     }
   }
 }
