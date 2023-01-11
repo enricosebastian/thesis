@@ -59,11 +59,11 @@ void setup() {
 }
 
 void loop() {
-  //for base station
-
-  //for drone
-  forDrone();
-  
+  if(myName == "BASE") {
+    forBaseStation();
+  } else {
+    forDrone();
+  }
 }
 
 void forBaseStation() {
@@ -136,7 +136,14 @@ void forBaseStation() {
       endIndex = input.indexOf(' ');
       String toName = input.substring(0, endIndex);
       String details = input.substring(endIndex+1);
-      sendCommand(command, toName, details);
+      startTime = millis();
+      while(!receivedSpecificCommand(command+"REP")) {
+        if(millis() - startTime >= 5000) {
+          startTime = millis();
+          sendCommand(command, toName, details);
+        }
+      }
+      Serial.println("Command sent successfully!");
     }
 
     if(receivedCommand()) {        
