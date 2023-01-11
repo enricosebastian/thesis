@@ -1,36 +1,49 @@
 #include <ArduinoJson.h>
 
-String message;
-int HEIGHT = 480;
-int WIDTH = 640;
-int CENTER_WIDTH = WIDTH/2;
-int CENTER_HEIGHT = HEIGHT/2;
+const int redLed = 13;
+const int yellowLed = 12;
+const int greenLed = 11;
 
 void setup() {
   Serial.begin(9600);
+  
+  pinMode(redLed, OUTPUT);
+  digitalWrite(redLed, HIGH);
+  
+  pinMode(yellowLed, OUTPUT);
+  digitalWrite(yellowLed, HIGH);
+  
+  pinMode(greenLed, OUTPUT);
+  digitalWrite(greenLed, HIGH);
+
+  delay(500);
+  
+  digitalWrite(redLed, LOW);
+  digitalWrite(yellowLed, HIGH);
+  digitalWrite(greenLed, LOW);
 }
 
 void loop() {
   if(Serial.available()) {
-    StaticJsonDocument<300> doc;
-    DeserializationError err = deserializeJson(doc, Serial);
+    StaticJsonDocument<300> received;
+    DeserializationError err = deserializeJson(received, Serial);
 
     if(err == DeserializationError::Ok) {
-      int width = doc["width"].as<int>();
-      int height = doc["height"].as<int>();
-      int origin_x = doc["origin_x"].as<int>();
-      int origin_y = doc["origin_y"].as<int>();
-      
-      if(origin_x >= CENTER_WIDTH-50 && origin_x <= CENTER_WIDTH+50) {
-        //two motors
-      } else if (origin_x < CENTER_WIDTH-50) {
-        //right motor / rotate counterclockwise
-      } else if (origin_x > CENTER_WIDTH+50) {
-        //left motor / rotate clockwise
-      }
+      if(received["details"].as<String>() == "GREE") {
+        digitalWrite(redLed, LOW);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(greenLed, HIGH);
+      } else if(received["details"].as<String>() == "RED") {
+        digitalWrite(redLed, HIGH);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(greenLed, LOW);
+      } else if(received["details"].as<String>() == "YELL") {
+        digitalWrite(redLed, LOW);
+        digitalWrite(yellowLed, HIGH);
+        digitalWrite(greenLed, LOW);
+      } 
     }
       
   }
-
-  
+  Serial.println("Hello");
 }

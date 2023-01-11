@@ -5,7 +5,7 @@
 SoftwareSerial HC12(8, 9); // (Green TX, Blue RX)
 LinkedList<String> drones;
 
-const String myName = "BASE"; //Change name here
+const String myName = "DRO1"; //Change name here
 StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
 const int redLed = 13;
@@ -57,9 +57,9 @@ void setup() {
 
 void loop() {
   //for base station
-  forBaseStation();
 
   //for drone
+  forDrone();
   
 }
 
@@ -209,7 +209,8 @@ void forDrone() {
     String coordMessage = "(" + String(posX) + "," + String(posY) + ")";
     if(millis() - startTime >= 5000) {
       startTime = millis();
-      Serial.println("Position: "+coordMessage);
+      //Print out coordinates at this time.
+      //Serial.println("Position: "+coordMessage);
 
       if(posY % 2 == 0) {
         if(posX < 10)
@@ -225,8 +226,18 @@ void forDrone() {
     }
 
     //TASK 3.3: Watch out for any objects found by Raspi
-    if(detectedObject()) {
-      Serial.println("Found an object!");
+    if(detectedObject() && received["details"].as<String>() == "YELL") {
+      digitalWrite(redLed, LOW);
+      digitalWrite(yellowLed, HIGH);
+      digitalWrite(greenLed, LOW);
+    } else if(detectedObject() && received["details"].as<String>() == "RED") {
+      digitalWrite(redLed, HIGH);
+      digitalWrite(yellowLed, LOW);
+      digitalWrite(greenLed, LOW);
+    } else if(detectedObject() && received["details"].as<String>() == "GREE") {
+      digitalWrite(redLed, LOW);
+      digitalWrite(yellowLed, LOW);
+      digitalWrite(greenLed, HIGH);
     }
   }
 }
@@ -314,7 +325,9 @@ bool detectedObject() {
       return false;
     }
   }
-  Serial.println("\nReceived no command...\n");
+
+  //This means you received no command at all...
+  //Serial.println("\nReceived no command...\n");
   received["command"] = "";
   received["toName"] = "";
   received["fromName"] = "";
@@ -364,7 +377,9 @@ bool receivedCommand() {
       return false;
     }
   }
-  Serial.println("\nReceived no command...\n");
+
+  //This means you received no command at all...
+  //Serial.println("\nReceived no command...\n");
   received["command"] = "";
   received["toName"] = "";
   received["fromName"] = "";
