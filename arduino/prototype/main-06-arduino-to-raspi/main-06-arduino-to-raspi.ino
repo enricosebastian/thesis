@@ -209,8 +209,6 @@ void forDrone() {
     String coordMessage = "(" + String(posX) + "," + String(posY) + ")";
     if(millis() - startTime >= 5000) {
       startTime = millis();
-      //Print out coordinates at this time.
-      //Serial.println("Position: "+coordMessage);
 
       if(posY % 2 == 0) {
         if(posX < 10)
@@ -246,21 +244,10 @@ void forDrone() {
 void addDrone(String droneName) {
   //Check first if drone already exists in list
   for(int i = 0; i < drones.size(); i++) {
-    if(drones.get(i) == droneName) {
-      Serial.print("\n");
-      Serial.print(droneName);
-      Serial.println(" was already added\n");
+    if(drones.get(i) == droneName)
       return;
-    }
   }
-  drones.add(droneName);
-  Serial.print("\nSuccessfully added ");
-  Serial.print(droneName);
-  Serial.println(" to the list\n\nCurrent drones:");
-  for(int i = 0; i < drones.size(); i++) {
-    Serial.println(drones.get(i));
-  }
-  Serial.println("===============\n");
+  drones.add(droneName); //Successfully added this drone.
 
   //Drone size indicator
   if(drones.size() == 1) {
@@ -284,50 +271,16 @@ void addDrone(String droneName) {
 
 ///////General functions/////////
 bool detectedObject() {
-  if(Serial.available()) {
+  if(Serial.available()){
     DeserializationError err = deserializeJson(received, Serial); //Deserialize it into different possible variables
     
-    if(err == DeserializationError::Ok) {
-      if(received["toName"].as<String>() == myName) {
-        Serial.println("====Received a command====");
-      
-        Serial.print("receivedCommand: ");
-        Serial.println(received["command"].as<String>());
-      
-        Serial.print("receivedToName: ");
-        Serial.println(received["toName"].as<String>());
-      
-        Serial.print("receivedFromName: ");
-        Serial.println(received["fromName"].as<String>());
-  
-        Serial.print("receivedDetails: ");
-        Serial.println(received["details"].as<String>());
-        Serial.println("===============================\n\n");
-      } else {
-        Serial.println("Received a command not for this entity");
-      }
-      return (received["toName"].as<String>() == myName);
-    } else {
-      Serial.println("====Received a choppy command====");
-      
-      Serial.print("receivedCommand: ");
-      Serial.println(received["command"].as<String>());
-    
-      Serial.print("receivedToName: ");
-      Serial.println(received["toName"].as<String>());
-    
-      Serial.print("receivedFromName: ");
-      Serial.println(received["fromName"].as<String>());
-
-      Serial.print("receivedDetails: ");
-      Serial.println(received["details"].as<String>());
-      Serial.println("===============================\n\n");
+    if (err == DeserializationError::Ok) 
+      return (received["toName"].as<String>() == myName) && (received["command"].as<String>() == "DETE");
+    else
       return false;
-    }
   }
 
   //This means you received no command at all...
-  //Serial.println("\nReceived no command...\n");
   received["command"] = "";
   received["toName"] = "";
   received["fromName"] = "";
@@ -339,47 +292,13 @@ bool receivedCommand() {
   if(HC12.available()) {
     DeserializationError err = deserializeJson(received, HC12); //Deserialize it into different possible variables
     
-    if(err == DeserializationError::Ok) {
-      if(received["toName"].as<String>() == myName) {
-        Serial.println("====Received a command====");
-      
-        Serial.print("receivedCommand: ");
-        Serial.println(received["command"].as<String>());
-      
-        Serial.print("receivedToName: ");
-        Serial.println(received["toName"].as<String>());
-      
-        Serial.print("receivedFromName: ");
-        Serial.println(received["fromName"].as<String>());
-  
-        Serial.print("receivedDetails: ");
-        Serial.println(received["details"].as<String>());
-        Serial.println("===============================\n\n");
-      } else {
-        Serial.println("Received a command not for this entity");
-      }
+    if(err == DeserializationError::Ok)
       return (received["toName"].as<String>() == myName);
-    } else {
-      Serial.println("====Received a choppy command====");
-      
-      Serial.print("receivedCommand: ");
-      Serial.println(received["command"].as<String>());
-    
-      Serial.print("receivedToName: ");
-      Serial.println(received["toName"].as<String>());
-    
-      Serial.print("receivedFromName: ");
-      Serial.println(received["fromName"].as<String>());
-
-      Serial.print("receivedDetails: ");
-      Serial.println(received["details"].as<String>());
-      Serial.println("===============================\n\n");
+    else
       return false;
-    }
   }
 
   //This means you received no command at all...
-  //Serial.println("\nReceived no command...\n");
   received["command"] = "";
   received["toName"] = "";
   received["fromName"] = "";
@@ -389,22 +308,6 @@ bool receivedCommand() {
 
 void sendCommand(String command, String toName, String details) {
   StaticJsonDocument<200> sent;
-
-  Serial.println("====Sending a command====");
-      
-  Serial.print("command: ");
-  Serial.println(command);
-
-  Serial.print("toName: ");
-  Serial.println(toName);
-
-  Serial.print("fromName: ");
-  Serial.println(myName);
-
-  Serial.print("details: ");
-  Serial.println(details);
-  Serial.println("=====================\n\n");
-  
   sent["command"] = command;
   sent["toName"] = toName;
   sent["fromName"] = myName;
