@@ -209,28 +209,21 @@ void forDrone() {
     if(!hasDetectedObject && hasReceivedCommand) {
       if(millis() - startTime <= 10000) {
         sendCommand(received["command"].as<String>()+"REP", received["fromName"].as<String>(), "SUCC");
-        if(received["details"].as<String>() == "RED") {
-          digitalWrite(redLed, HIGH);
-          digitalWrite(yellowLed, LOW);
-          digitalWrite(greenLed, LOW);
-        } else if(received["details"].as<String>() == "YELL") {
-          digitalWrite(redLed, LOW);
-          digitalWrite(yellowLed, HIGH);
-          digitalWrite(greenLed, LOW);
-        } else if(received["details"].as<String>() == "GREE") {
-          digitalWrite(redLed, LOW);
-          digitalWrite(yellowLed, LOW);
-          digitalWrite(greenLed, HIGH);
-        }
       } else if(millis() - startTime > 10000) {
         hasReceivedCommand = false;
+      }
+      
+      if(received["command"].as<String>() == "ALL") {
+        digitalWrite(redLed, HIGH);
+        digitalWrite(yellowLed, HIGH);
+        digitalWrite(greenLed, HIGH);
       }
     }
 
     //TASK 3.2: Ensure that you are moving
     if(!hasDetectedObject && !hasReceivedCommand) {
       String coordMessage = "(" + String(posX) + "," + String(posY) + ")";
-      if(millis() - startTime >= 5000) {
+      if(millis() - startTime >= 1000) {
         startTime = millis();
         digitalWrite(redLed, !digitalRead(redLed));
   
@@ -249,7 +242,7 @@ void forDrone() {
     }
 
     //TASK 3.3: Watch out for any objects found by Raspi
-    if(detectedObject()) {
+    if(!hasDetectedObject && !hasReceivedCommand && detectedObject()) {
       hasDetectedObject = true;
       startTime = millis();
     }
@@ -257,22 +250,23 @@ void forDrone() {
     if(!hasReceivedCommand && hasDetectedObject) {
       if(millis() - startTime <= 10000) {
         sendCommand("DETEREP", received["fromName"].as<String>(), "SUCC");
-        if(received["details"].as<String>() == "RED") {
-          digitalWrite(redLed, HIGH);
-          digitalWrite(yellowLed, LOW);
-          digitalWrite(greenLed, LOW);
-        } else if(received["details"].as<String>() == "YELL") {
-          digitalWrite(redLed, LOW);
-          digitalWrite(yellowLed, HIGH);
-          digitalWrite(greenLed, LOW);
-        } else if(received["details"].as<String>() == "GREE") {
-          digitalWrite(redLed, LOW);
-          digitalWrite(yellowLed, LOW);
-          digitalWrite(greenLed, HIGH);
-        }
       } else if(millis() - startTime > 10000) {
         hasDetectedObject = false;
         startTime = millis();
+      }
+
+      if(received["details"].as<String>() == "RED") {
+        digitalWrite(redLed, HIGH);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(greenLed, LOW);
+      } else if(received["details"].as<String>() == "YELL") {
+        digitalWrite(redLed, LOW);
+        digitalWrite(yellowLed, HIGH);
+        digitalWrite(greenLed, LOW);
+      } else if(received["details"].as<String>() == "GREE") {
+        digitalWrite(redLed, LOW);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(greenLed, HIGH);
       }
     }
   }
