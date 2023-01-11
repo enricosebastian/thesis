@@ -18,6 +18,9 @@ bool isDeploying = false;
 bool isDeployed = false;
 bool isAcknowledging = false;
 
+bool hasReceivedCommand = false;
+bool hasDetectedObject = false;
+
 unsigned long startTime = 0;
 
 int posX = 0;
@@ -189,20 +192,32 @@ void forDrone() {
 
   //TASK 3: Start moving. All the while, look for commands.
   if(isConnected && !isAcknowledging && isDeployed) {
-    
-    //TASK 3.1: Continue reading for wireless commands from base station
-    if(receivedCommand() && received["command"] == "RED") {
-      digitalWrite(redLed, HIGH);
-      digitalWrite(yellowLed, LOW);
-      digitalWrite(greenLed, LOW);
-    } else if(receivedCommand() && received["command"] == "GREE") {
-      digitalWrite(redLed, LOW);
-      digitalWrite(yellowLed, LOW);
-      digitalWrite(greenLed, HIGH);
-    } else if(receivedCommand() && received["command"] == "YELL") {
-      digitalWrite(redLed, LOW);
-      digitalWrite(yellowLed, HIGH);
-      digitalWrite(greenLed, LOW);
+
+    //TASK 3.1: Continue reading for wireless commands coming from base station
+    if(!hasDetectedObject && !hasReceivedCommand && receivedCommand()) {
+      hasReceivedCommand = true;
+      startTime = millis();
+    }
+
+    if(!hasDetectedObject && hasReceivedCommand) {
+      if(millis() - startTime <= 10000) {
+        sendCommand(received["command"].as<String>()+"REP", received["fromName"].as<String>(), "SUCC");
+        if(received["details"].as<String>() == "RED") {
+          digitalWrite(redLed, HIGH);
+          digitalWrite(yellowLed, LOW);
+          digitalWrite(greenLed, LOW);
+        } else if(received["details"].as<String>() == "YELL") {
+          digitalWrite(redLed, LOW);
+          digitalWrite(yellowLed, HIGH);
+          digitalWrite(greenLed, LOW);
+        } else if(received["details"].as<String>() == "GREE") {
+          digitalWrite(redLed, LOW);
+          digitalWrite(yellowLed, LOW);
+          digitalWrite(greenLed, HIGH);
+        }
+      } else if(millis() - startTime > 10000) {
+        hasReceivedCommand = false;
+      }
     }
 
     //TASK 3.2: Ensure that you are moving
@@ -224,18 +239,18 @@ void forDrone() {
     }
 
     //TASK 3.3: Watch out for any objects found by Raspi
-    if(detectedObject() && received["details"].as<String>() == "YELL") {
-      digitalWrite(redLed, LOW);
-      digitalWrite(yellowLed, HIGH);
-      digitalWrite(greenLed, LOW);
-    } else if(detectedObject() && received["details"].as<String>() == "RED") {
-      digitalWrite(redLed, HIGH);
-      digitalWrite(yellowLed, LOW);
-      digitalWrite(greenLed, LOW);
-    } else if(detectedObject() && received["details"].as<String>() == "GREE") {
-      digitalWrite(redLed, LOW);
-      digitalWrite(yellowLed, LOW);
-      digitalWrite(greenLed, HIGH);
+    if(detectedObject()) {
+      hasDetectedObject = true;
+      startTime = millis();
+    }
+
+    if(hasDetectedObject) {
+      if(millis() - startTime <= 10000) {
+        sendCommand("DETEREP", received["fromName"].as<String>(), "SUCC");
+      } else if(millis() - startTime > 10000) {
+        hasDetectedObject = false;
+        startTime = millis();
+      }
     }
   }
 }
@@ -270,24 +285,6 @@ void addDrone(String droneName) {
 }
 
 ///////General functions/////////
-bool detectedObject() {
-  if(Serial.available()){
-    DeserializationError err = deserializeJson(received, Serial); //Deserialize it into different possible variables
-    
-    if (err == DeserializationError::Ok) 
-      return (received["toName"].as<String>() == myName) && (received["command"].as<String>() == "DETE");
-    else
-      return false;
-  }
-
-  //This means you received no command at all...
-  received["command"] = "";
-  received["toName"] = "";
-  received["fromName"] = "";
-  received["details"] = "";
-  return false;
-}
-
 bool receivedCommand() {
   if(HC12.available()) {
     DeserializationError err = deserializeJson(received, HC12); //Deserialize it into different possible variables
@@ -317,4 +314,22 @@ void sendCommand(String command, String toName, String details) {
 
 bool receivedSpecificCommand(String command) {
   return receivedCommand() && received["command"].as<String>() == command;
+}
+
+bool detectedObject() {
+  if(Serial.available()){
+    DeserializationError err = deserializeJson(received, Serial); //Deserialize it into different possible variables
+    
+    if (err == DeserializationError::Ok) 
+      return (received["toName"].as<String>() == myName) && (received["command"].as<String>() == "DETE");
+    else
+      return false;
+  }
+
+  //This means you received no command at all...
+  received["command"] = "";
+  received["toName"] = "";
+  received["fromName"] = "";
+  received["details"] = "";
+  return false;
 }
