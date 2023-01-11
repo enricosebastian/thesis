@@ -226,6 +226,8 @@ void forDrone() {
       if(millis() - startTime >= 1000) {
         startTime = millis();
         digitalWrite(redLed, !digitalRead(redLed));
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(greenLed, LOW);
   
         if(posY % 2 == 0) {
           if(posX < 10)
