@@ -221,20 +221,23 @@ void forDrone() {
     }
 
     //TASK 3.2: Ensure that you are moving
-    String coordMessage = "(" + String(posX) + "," + String(posY) + ")";
-    if(millis() - startTime >= 5000) {
-      startTime = millis();
-
-      if(posY % 2 == 0) {
-        if(posX < 10)
-          posX++;
-        else 
-          posY++;
-      } else if(posY % 2 != 0) {
-        if(posX > 0)
-          posX--;
-        else
-         posY++;
+    if(!hasDetectedObject && !hasReceivedCommand) {
+      String coordMessage = "(" + String(posX) + "," + String(posY) + ")";
+      if(millis() - startTime >= 5000) {
+        startTime = millis();
+        digitalWrite(redLed, !digitalRead(redLed));
+  
+        if(posY % 2 == 0) {
+          if(posX < 10)
+            posX++;
+          else 
+            posY++;
+        } else if(posY % 2 != 0) {
+          if(posX > 0)
+            posX--;
+          else
+           posY++;
+        }
       }
     }
 
@@ -244,9 +247,22 @@ void forDrone() {
       startTime = millis();
     }
 
-    if(hasDetectedObject) {
+    if(!hasReceivedCommand && hasDetectedObject) {
       if(millis() - startTime <= 10000) {
         sendCommand("DETEREP", received["fromName"].as<String>(), "SUCC");
+        if(received["details"].as<String>() == "RED") {
+          digitalWrite(redLed, HIGH);
+          digitalWrite(yellowLed, LOW);
+          digitalWrite(greenLed, LOW);
+        } else if(received["details"].as<String>() == "YELL") {
+          digitalWrite(redLed, LOW);
+          digitalWrite(yellowLed, HIGH);
+          digitalWrite(greenLed, LOW);
+        } else if(received["details"].as<String>() == "GREE") {
+          digitalWrite(redLed, LOW);
+          digitalWrite(yellowLed, LOW);
+          digitalWrite(greenLed, HIGH);
+        }
       } else if(millis() - startTime > 10000) {
         hasDetectedObject = false;
         startTime = millis();
