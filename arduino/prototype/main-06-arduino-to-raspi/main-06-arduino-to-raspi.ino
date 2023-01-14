@@ -257,6 +257,7 @@ void forDrone() {
         startTime = millis();
       }
 
+      //Basically deconstruct the details of the object and its location here
       if(received["details"].as<String>() == "RED") {
         digitalWrite(redLed, HIGH);
         digitalWrite(yellowLed, LOW);
