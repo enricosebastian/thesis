@@ -1,4 +1,4 @@
-![Image of prototype](./readme/images/prototype.JPG "Our prototype")
+![Image of prototype](readme/images/prototype.png "Our prototype")
 
 # Welcome message
 This is a repository for my group's thesis: a swarm of surface vehicles that are able to communicate with one another in cleaning oceans
