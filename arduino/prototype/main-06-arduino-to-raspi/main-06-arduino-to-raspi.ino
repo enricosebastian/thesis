@@ -11,6 +11,7 @@ StaticJsonDocument<200> received; //Only received strings need to be global vari
 const int redLed = 13;
 const int yellowLed = 12;
 const int greenLed = 11;
+const int detectionPin = 10;
 const int btn = 7;
 
 bool isConnected = false;
@@ -40,6 +41,9 @@ void setup() {
   
   pinMode(greenLed, OUTPUT);
   digitalWrite(greenLed, HIGH);
+
+  pinMode(detectionPin, OUTPUT);
+  digitalWrite(detectionPin, LOW);
 
   pinMode(btn, INPUT);
 
@@ -122,6 +126,7 @@ void forBaseStation() {
     digitalWrite(greenLed, HIGH);
     isDeployed = true;
     startTime = millis();
+    digitalWrite(detectionPin, HIGH);
   }
 
   //TASK 4: Since every drone is deployed, try to send them random commands while they're running.

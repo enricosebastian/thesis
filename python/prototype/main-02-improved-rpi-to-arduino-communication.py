@@ -6,12 +6,15 @@ import os
 import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BOARD)
-GPIO.setup(13, GPIO.IN)
+GPIO.setup(11, GPIO.IN)
 
 ser = serial.Serial('/dev/ttyACM0', 9600, timeout=0)
 ser.flush()
 
 myName = "DRO1"
+
+isDeployed = False
+
 
 while True:
     if GPIO.input(11) == GPIO.HIGH:
