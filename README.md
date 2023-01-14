@@ -1,4 +1,5 @@
 <p style="text-align: center;"><img src="./readme/images/prototype.png"/></p>
+
 # Welcome message
 This is a repository for my group's thesis: a swarm of surface vehicles that are able to communicate with one another in cleaning oceans
 
