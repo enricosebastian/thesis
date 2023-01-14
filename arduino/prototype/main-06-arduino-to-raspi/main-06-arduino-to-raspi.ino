@@ -251,7 +251,8 @@ void forDrone() {
 
     if(!hasReceivedCommand && hasDetectedObject) {
       if(millis() - startTime <= 10000) {
-        sendCommand("DETEREP", received["fromName"].as<String>(), "SUCC");
+        //Do we need to acknowledge though? It's physically connected, so data is strong
+        //sendCommand("DETEREP", received["fromName"].as<String>(), "SUCC");
       } else if(millis() - startTime > 10000) {
         hasDetectedObject = false;
         startTime = millis();
