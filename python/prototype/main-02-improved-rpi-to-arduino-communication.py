@@ -18,14 +18,25 @@ isDeployed = False
 
 while True:
     if GPIO.input(11) == GPIO.HIGH:
-        data = {}
-        print("Input your details: ")
-        details = input()
-        data["command"] = "DETE"
-        data["fromName"] = myName
-        data["toName"] = myName
-        data["details"] = details
+        isDeployed = True
+    
+    if GPIO.input(11) == GPIO.LOW:
+        isDeployed = False
         
-        data = json.dumps(data)
-        print(data)
-        ser.write(data.encode('utf-8'))
+    if isDeployed:
+        print("is detecting...")
+        
+    elif not isDeployed:
+        print("is not detecting")
+        
+        # data = {}
+        # print("Hallo ")
+        # details = input()
+        # data["command"] = "DETE"
+        # data["fromName"] = myName
+        # data["toName"] = myName
+        # data["details"] = details
+        
+        # data = json.dumps(data)
+        # print(data)
+        # ser.write(data.encode('utf-8'))
