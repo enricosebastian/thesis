@@ -198,6 +198,7 @@ void forDrone() {
     } else if(millis() - startTime > 10000) {
       isAcknowledging = false;
       isDeployed = true;
+      digitalWrite(detectionPin, HIGH);
       startTime = millis();
     }
   }
