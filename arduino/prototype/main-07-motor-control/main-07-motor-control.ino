@@ -276,23 +276,55 @@ void forDrone() {
       // positive = turning right
       
       int magnitude = int(difference*100/initialAngle);
+
+
+      //
       if(difference < -1) {
-        if(escLeftSpeed <= 6) {
-          escRightSpeed -= abs(int(magnitude*100/initialAngle));
-        } else if(escLeftSpeed > 6) {
-          escLeftSpeed += abs(int(magnitude*100/initialAngle));
+        //It's turning left, so give the left motor more speed
+        if(escLeftSpeed >= 20) {
+          escLeftSpeed = 20;
+          escRightSpeed -= magnitude;
+        } else if(escLeftSpeed < 6) {
+          escLeftSpeed = 6;
+        } else if(escLeftSpeed < 20) {
+          escLeftSpeed += magnitude;
         }
         escLeft.write(escLeftSpeed);
         escRight.write(escRightSpeed);
       } else if(difference > 1) {
-        if(escRightSpeed <= 6) {
-          escLeftSpeed -= abs(int(magnitude*100/initialAngle));
-        } else if(escRightSpeed > 6) {
-          escRightSpeed += abs(int(magnitude*100/initialAngle));
+        //It's turning right, so give the right motor more speed
+        if(escRightSpeed >= 20) {
+          escRightSpeed = 20;
+          escLeftSpeed -= magnitude;
+        } else if(escRightSpeed < 6) {
+          escRightSpeed = 6;
+        } else if(escRightSpeed < 20) {
+          escRightSpeed += magnitude;
         }
         escLeft.write(escLeftSpeed);
         escRight.write(escRightSpeed);
       }
+    
+
+//      /////////////
+//      if(difference < -1) {
+//        if(escLeftSpeed <= 7) {
+//          escRightSpeed -= abs(int(magnitude*100/initialAngle));
+//        } else if(escLeftSpeed > 7) {
+//          escLeftSpeed += abs(int(magnitude*100/initialAngle));
+//        }
+//        escLeft.write(escLeftSpeed);
+//        escRight.write(escRightSpeed);
+//      } else if(difference > 1) {
+//        if(escRightSpeed <= 7) {
+//          escLeftSpeed -= abs(int(magnitude*100/initialAngle));
+//        } else if(escRightSpeed > 7) {
+//          escRightSpeed += abs(int(magnitude*100/initialAngle));
+//        }
+//        escLeft.write(escLeftSpeed);
+//        escRight.write(escRightSpeed);
+//      }
+//      ////////////////
     }
 
     //TASK 3.3: Watch out for any objects found by Raspi
