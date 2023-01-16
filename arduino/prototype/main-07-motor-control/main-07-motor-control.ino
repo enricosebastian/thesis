@@ -42,8 +42,8 @@ unsigned long startTime = 0;
 
 int posX = 0;
 int posY = 0;
-int escLeftSpeed = 0;
-int escRightSpeed = 0;
+int escLeftSpeed = 6;
+int escRightSpeed = 6;
 
 float initialAngle = 0;
 
@@ -232,8 +232,10 @@ void forDrone() {
     } else if(millis() - startTime > 10000) {
       isAcknowledging = false;
       isDeployed = true;
-      digitalWrite(detectionPin, HIGH);
       initialAngle = Compass.GetHeadingDegrees();
+      escLeft.write(escLeftSpeed);
+      escRight.write(escRightSpeed);
+      digitalWrite(detectionPin, HIGH);
       startTime = millis();
     }
   }
@@ -269,13 +271,27 @@ void forDrone() {
         digitalWrite(yellowLed, LOW);
         digitalWrite(greenLed, LOW);
       }
-      float magnitude = Compass.GetHeadingDegrees() - initialAngle;
+      float difference = Compass.GetHeadingDegrees() - initialAngle;
       // negative = turning left
       // positive = turning right
-      if(magnitude < -1) {
-        escLeft.write(int(magnitude*100/initialAngle));
-      } else if(magnitude > 1) {
-        escRight.write(int(magnitude*100/initialAngle));
+      
+      int magnitude = int(difference*100/initialAngle);
+      if(difference < -1) {
+        if(escLeftSpeed <= 6) {
+          escRightSpeed -= abs(int(magnitude*100/initialAngle));
+        } else if(escLeftSpeed > 6) {
+          escLeftSpeed += abs(int(magnitude*100/initialAngle));
+        }
+        escLeft.write(escLeftSpeed);
+        escRight.write(escRightSpeed);
+      } else if(difference > 1) {
+        if(escRightSpeed <= 6) {
+          escLeftSpeed -= abs(int(magnitude*100/initialAngle));
+        } else if(escRightSpeed > 6) {
+          escRightSpeed += abs(int(magnitude*100/initialAngle));
+        }
+        escLeft.write(escLeftSpeed);
+        escRight.write(escRightSpeed);
       }
     }
 
