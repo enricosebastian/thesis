@@ -5,7 +5,7 @@
 SoftwareSerial HC12(8, 9); // (Green TX, Blue RX)
 LinkedList<String> drones;
 
-const String myName = "BASE"; //Change name here
+const String myName = "DRO1"; //Change name here
 StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
 const int redLed = 13;
@@ -57,10 +57,11 @@ void setup() {
 
 void loop() {
   //for base station
-  forBaseStation();
-
-  //for drone
-  
+  if(myName == "BASE") {
+    forBaseStation();
+  } else {
+    forDrone();
+  }
 }
 
 void forBaseStation() {

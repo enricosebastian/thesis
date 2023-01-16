@@ -7,6 +7,13 @@
 #include <HMC5883L_Simple.h>
 
 HMC5883L_Simple Compass;
+/*
+ * GY-273 Compass Module  ->  Arduino
+ * VCC  -> VCC  (See Note Below)
+ * GND  -> GND
+ * SCL  -> A5/SCL, (Use Pin 21 on the Arduino Mega)
+ * SDA  -> A4/SDA, (Use Pin 20 on the Arduino Mega)
+*/
 
 SoftwareSerial HC12(8, 9); // (Green TX, Blue RX)
 LinkedList<String> drones;
@@ -20,6 +27,8 @@ const int redLed = 13;
 const int yellowLed = 12;
 const int greenLed = 11;
 const int detectionPin = 10;
+const int escLeftPin = 7;
+const int escRightPin = 6;
 const int btn = 7;
 
 bool isConnected = false;
@@ -76,10 +85,10 @@ void setup() {
     Compass.SetOrientation(COMPASS_HORIZONTAL_X_NORTH);
     
     //ESC initialization
-    escLeft.attach(10,1000,2000);
-    escRight.attach(11,1000,2000);
-    escLeft.write(0);
-    escRight.write(0);
+    escLeft.attach(escLeftPin,1000,2000);
+    escRight.attach(escRightPin,1000,2000);
+    escLeft.write(escLeftSpeed);
+    escRight.write(escRightSpeed);
   }
 
   delay(500);
