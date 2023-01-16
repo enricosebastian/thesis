@@ -1,12 +1,20 @@
+#include <Arduino.h>
 #include <ArduinoJson.h>
 #include <SoftwareSerial.h>
 #include <LinkedList.h>
+#include <Servo.h>
+#include <Wire.h>
+#include <HMC5883L_Simple.h>
+
+HMC5883L_Simple Compass;
 
 SoftwareSerial HC12(8, 9); // (Green TX, Blue RX)
 LinkedList<String> drones;
+Servo escLeft;
+Servo escRight;
+StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
 const String myName = "DRO1"; //Change name here
-StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
 const int redLed = 13;
 const int yellowLed = 12;
@@ -18,7 +26,6 @@ bool isConnected = false;
 bool isDeploying = false;
 bool isDeployed = false;
 bool isAcknowledging = false;
-
 bool hasReceivedCommand = false;
 bool hasDetectedObject = false;
 
@@ -26,6 +33,9 @@ unsigned long startTime = 0;
 
 int posX = 0;
 int posY = 0;
+int escLeftSpeed = 0;
+int escRightSpeed = 0;
+
 
 void setup() {
   Serial.begin(9600);
@@ -33,6 +43,19 @@ void setup() {
   Serial.print(myName);
   Serial.println(" is initializing");
 
+  //Compass initialization
+  Compass.SetDeclination(-2, 37, 'W');
+  Compass.SetSamplingMode(COMPASS_SINGLE);
+  Compass.SetScale(COMPASS_SCALE_130);
+  Compass.SetOrientation(COMPASS_HORIZONTAL_X_NORTH);
+
+  //ESC initialization
+  escLeft.attach(10,1000,2000);
+  escRight.attach(11,1000,2000);
+  escLeft.write(0);
+  escRight.write(0);
+
+  //GPIO initialization
   pinMode(redLed, OUTPUT);
   digitalWrite(redLed, HIGH);
   
@@ -49,6 +72,7 @@ void setup() {
 
   delay(500);
 
+  //Successful intialization indicator
   if(myName == "BASE") {
     digitalWrite(redLed, LOW);
     digitalWrite(yellowLed, LOW);
