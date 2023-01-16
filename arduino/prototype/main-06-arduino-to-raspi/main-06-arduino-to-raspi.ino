@@ -11,8 +11,8 @@ HMC5883L_Simple Compass;
  * GY-273 Compass Module  ->  Arduino
  * VCC  -> VCC  (See Note Below)
  * GND  -> GND
- * SCL  -> A5/SCL, (Use Pin 21 on the Arduino Mega)
- * SDA  -> A4/SDA, (Use Pin 20 on the Arduino Mega)
+ * SCL  -> A5, blue
+ * SDA  -> A4, green
 */
 
 SoftwareSerial HC12(8, 9); // (Green TX, Blue RX)
@@ -79,7 +79,8 @@ void setup() {
     digitalWrite(greenLed, LOW);
     
     //Compass initialization
-    Compass.SetDeclination(-2, 37, 'W');
+    Wire.begin();
+    Compass.SetDeclination(-2, 37, 'W');  
     Compass.SetSamplingMode(COMPASS_SINGLE);
     Compass.SetScale(COMPASS_SCALE_130);
     Compass.SetOrientation(COMPASS_HORIZONTAL_X_NORTH);
@@ -96,11 +97,11 @@ void setup() {
 }
 
 void loop() {
-  if(myName == "BASE") {
-    forBaseStation();
-  } else {
-    forDrone();
-  }
+  //for drone
+  forDrone();
+
+  //for base station
+  
 }
 
 void forBaseStation() {
@@ -232,6 +233,7 @@ void forDrone() {
       isAcknowledging = false;
       isDeployed = true;
       digitalWrite(detectionPin, HIGH);
+      initialAngle = Compass.GetHeadingDegrees();
       startTime = millis();
     }
   }
@@ -261,26 +263,19 @@ void forDrone() {
 
     //TASK 3.2: Ensure that you are moving
     if(!hasDetectedObject && !hasReceivedCommand) {
-      String coordMessage = "(" + String(posX) + "," + String(posY) + ")";
-      Serial.print("Direction: ");
-      Serial.println(Compass.GetHeadingDegrees());
       if(millis() - startTime >= 1000) {
         startTime = millis();
         digitalWrite(redLed, !digitalRead(redLed));
         digitalWrite(yellowLed, LOW);
         digitalWrite(greenLed, LOW);
-  
-        if(posY % 2 == 0) {
-          if(posX < 10)
-            posX++;
-          else 
-            posY++;
-        } else if(posY % 2 != 0) {
-          if(posX > 0)
-            posX--;
-          else
-           posY++;
-        }
+      }
+      float magnitude = Compass.GetHeadingDegrees() - initialAngle;
+      // negative = turning left
+      // positive = turning right
+      if(magnitude < -1) {
+        escLeft.write(int(magnitude*100/initialAngle));
+      } else if(magnitude > 1) {
+        escRight.write(int(magnitude*100/initialAngle));
       }
     }
 
