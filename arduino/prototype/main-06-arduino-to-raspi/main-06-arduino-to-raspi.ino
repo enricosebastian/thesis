@@ -36,25 +36,14 @@ int posY = 0;
 int escLeftSpeed = 0;
 int escRightSpeed = 0;
 
+float initialAngle = 0;
 
 void setup() {
   Serial.begin(9600);
   HC12.begin(9600);
   Serial.print(myName);
   Serial.println(" is initializing");
-
-  //Compass initialization
-  Compass.SetDeclination(-2, 37, 'W');
-  Compass.SetSamplingMode(COMPASS_SINGLE);
-  Compass.SetScale(COMPASS_SCALE_130);
-  Compass.SetOrientation(COMPASS_HORIZONTAL_X_NORTH);
-
-  //ESC initialization
-  escLeft.attach(10,1000,2000);
-  escRight.attach(11,1000,2000);
-  escLeft.write(0);
-  escRight.write(0);
-
+  
   //GPIO initialization
   pinMode(redLed, OUTPUT);
   digitalWrite(redLed, HIGH);
@@ -70,8 +59,6 @@ void setup() {
 
   pinMode(btn, INPUT);
 
-  delay(500);
-
   //Successful intialization indicator
   if(myName == "BASE") {
     digitalWrite(redLed, LOW);
@@ -81,8 +68,21 @@ void setup() {
     digitalWrite(redLed, HIGH);
     digitalWrite(yellowLed, LOW);
     digitalWrite(greenLed, LOW);
+    
+    //Compass initialization
+    Compass.SetDeclination(-2, 37, 'W');
+    Compass.SetSamplingMode(COMPASS_SINGLE);
+    Compass.SetScale(COMPASS_SCALE_130);
+    Compass.SetOrientation(COMPASS_HORIZONTAL_X_NORTH);
+    
+    //ESC initialization
+    escLeft.attach(10,1000,2000);
+    escRight.attach(11,1000,2000);
+    escLeft.write(0);
+    escRight.write(0);
   }
-  
+
+  delay(500);
   startTime = millis();
 }
 
@@ -253,6 +253,8 @@ void forDrone() {
     //TASK 3.2: Ensure that you are moving
     if(!hasDetectedObject && !hasReceivedCommand) {
       String coordMessage = "(" + String(posX) + "," + String(posY) + ")";
+      Serial.print("Direction: ");
+      Serial.println(Compass.GetHeadingDegrees());
       if(millis() - startTime >= 1000) {
         startTime = millis();
         digitalWrite(redLed, !digitalRead(redLed));
