@@ -35,6 +35,7 @@ bool isConnected = false;
 bool isDeploying = false;
 bool isDeployed = false;
 bool isAcknowledging = false;
+bool isGoingHome = false;
 bool hasReceivedCommand = false;
 bool hasDetectedObject = false;
 
@@ -176,6 +177,14 @@ void forBaseStation() {
       String toName = input.substring(0, endIndex);
       String details = input.substring(endIndex+1);
       startTime = millis();
+      Serial.print("Sending: {");
+      Serial.print(command);
+      Serial.print(", ");
+      Serial.print(toName);
+      Serial.print(", ");
+      Serial.print(details);
+      Serial.println("}");
+      
       while(!receivedSpecificCommand(command+"REP")) {
         if(millis() - startTime >= 5000) {
           startTime = millis();
@@ -217,7 +226,7 @@ void forDrone() {
       }
     } else {
       isAcknowledging = true;
-      Serial.println("Base station wants to start depl  qwoying.");
+      Serial.println("Base station wants to start deploying.");
       startTime = millis();
       digitalWrite(redLed, LOW);
       digitalWrite(yellowLed, LOW);
@@ -244,12 +253,12 @@ void forDrone() {
   if(isConnected && !isAcknowledging && isDeployed) {
 
     //TASK 3.1: Continue reading for wireless commands coming from base station
-    if(!hasDetectedObject && !hasReceivedCommand && receivedCommand()) {
+    if(!hasDetectedObject && !hasReceivedCommand && !isGoingHome && receivedCommand()) {
       hasReceivedCommand = true;
       startTime = millis();
     }
 
-    if(!hasDetectedObject && hasReceivedCommand) {
+    if(!hasDetectedObject && hasReceivedCommand && !isGoingHome) {
       if(millis() - startTime <= 10000) {
         sendCommand(received["command"].as<String>()+"REP", received["fromName"].as<String>(), "SUCC");
       } else if(millis() - startTime > 10000) {
@@ -260,11 +269,18 @@ void forDrone() {
         digitalWrite(redLed, HIGH);
         digitalWrite(yellowLed, HIGH);
         digitalWrite(greenLed, HIGH);
+      } else if(received["command"].as<String>() == "STOP") {
+        digitalWrite(redLed, LOW);
+        digitalWrite(yellowLed, HIGH);
+        digitalWrite(greenLed, LOW);
+        bool isDeploying = false;
+        bool isDeployed = false;
+        bool isGoingHome = true;
       }
     }
 
     //TASK 3.2: Ensure that you are moving
-    if(!hasDetectedObject && !hasReceivedCommand) {
+    if(!hasDetectedObject && !hasReceivedCommand && !isGoingHome) {
       if(millis() - startTime >= 1000) {
         startTime = millis();
         digitalWrite(redLed, !digitalRead(redLed));
@@ -273,23 +289,28 @@ void forDrone() {
       }
       
       float difference = Compass.GetHeadingDegrees() - initialAngle;
-      int magnitude = int(difference*100/initialAngle);
+      int magnitude = abs(int(difference*100/initialAngle));
       
       if(difference < -1) {
         //It's turning left, so give the left motor more speed
         if(escLeftSpeed >= 20) {
           escLeftSpeed = 20;
-          if(escRightSpeed < 7) {
+          if(escRightSpeed < 6) {
             escRightSpeed = 6;
-          } else if(escRightSpeed < 20) {
+          } else if(escRightSpeed >= 6) {
             escRightSpeed -= magnitude;
-          } else if(escRightSpeed >= 20) {
-            escRightSpeed = 20;
           }
-        } else if(escLeftSpeed < 7) {
+        } else if(escLeftSpeed < 6) {
           escLeftSpeed = 6;
         } else if(escLeftSpeed < 20) {
           escLeftSpeed += magnitude;
+        }
+        
+        if(escLeftSpeed < 6) {
+          escLeftSpeed = 6;
+        }
+        if(escRightSpeed < 6) {
+          escRightSpeed = 6;
         }
         escLeft.write(escLeftSpeed);
         escRight.write(escRightSpeed);
@@ -297,30 +318,45 @@ void forDrone() {
         //It's turning right, so give the right motor more speed
         if(escRightSpeed >= 20) {
           escRightSpeed = 20;
-          if(escLeftSpeed < 7) {
+          if(escLeftSpeed < 6) {
             escLeftSpeed = 6;
-          } else if(escLeftSpeed < 20) {
+          } else if(escLeftSpeed >= 6) {
             escLeftSpeed -= magnitude;
-          } else if(escLeftSpeed >= 20) {
-            escLeftSpeed = 20;
           }
-        } else if(escRightSpeed < 7) {
+        } else if(escRightSpeed < 6) {
           escRightSpeed = 6;
         } else if(escRightSpeed < 20) {
           escRightSpeed += magnitude;
         }
+
+        if(escLeftSpeed < 6) {
+          escLeftSpeed = 6;
+        }
+        if(escRightSpeed < 6) {
+          escRightSpeed = 6;
+        }
         escLeft.write(escLeftSpeed);
         escRight.write(escRightSpeed);
       }
+
+      Serial.print("difference: ");
+      Serial.println(difference);
+      Serial.print("magnitude: ");
+      Serial.println(magnitude);
+      Serial.print("escLeftSpeed: ");
+      Serial.println(escLeftSpeed);
+      Serial.print("escRightSpeed: ");
+      Serial.println(escRightSpeed);
+      Serial.println("");
     }
 
     //TASK 3.3: Watch out for any objects found by Raspi
-    if(!hasDetectedObject && !hasReceivedCommand && detectedObject()) {
+    if(!hasDetectedObject && !hasReceivedCommand && !isGoingHome && detectedObject()) {
       hasDetectedObject = true;
       startTime = millis();
     }
 
-    if(!hasReceivedCommand && hasDetectedObject) {
+    if(!hasReceivedCommand && hasDetectedObject && !isGoingHome) {
       if(millis() - startTime <= 10000) {
         //Do we need to acknowledge though? It's physically connected, so data is strong
         //sendCommand("DETEREP", received["fromName"].as<String>(), "SUCC");
@@ -343,6 +379,11 @@ void forDrone() {
         digitalWrite(yellowLed, LOW);
         digitalWrite(greenLed, HIGH);
       }
+    }
+    
+    if(!hasReceivedCommand && !hasDetectedObject && isGoingHome) {
+      escLeft.write(0);
+      escRight.write(0);
     }
   }
 }
