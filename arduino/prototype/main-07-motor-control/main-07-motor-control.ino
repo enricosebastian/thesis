@@ -217,7 +217,7 @@ void forDrone() {
       }
     } else {
       isAcknowledging = true;
-      Serial.println("Base station wants to start deploying.");
+      Serial.println("Base station wants to start depl  qwoying.");
       startTime = millis();
       digitalWrite(redLed, LOW);
       digitalWrite(yellowLed, LOW);
@@ -271,20 +271,22 @@ void forDrone() {
         digitalWrite(yellowLed, LOW);
         digitalWrite(greenLed, LOW);
       }
-      float difference = Compass.GetHeadingDegrees() - initialAngle;
-      // negative = turning left
-      // positive = turning right
       
+      float difference = Compass.GetHeadingDegrees() - initialAngle;
       int magnitude = int(difference*100/initialAngle);
-
-
-      //
+      
       if(difference < -1) {
         //It's turning left, so give the left motor more speed
         if(escLeftSpeed >= 20) {
           escLeftSpeed = 20;
-          escRightSpeed -= magnitude;
-        } else if(escLeftSpeed < 6) {
+          if(escRightSpeed < 7) {
+            escRightSpeed = 6;
+          } else if(escRightSpeed < 20) {
+            escRightSpeed -= magnitude;
+          } else if(escRightSpeed >= 20) {
+            escRightSpeed = 20;
+          }
+        } else if(escLeftSpeed < 7) {
           escLeftSpeed = 6;
         } else if(escLeftSpeed < 20) {
           escLeftSpeed += magnitude;
@@ -295,8 +297,14 @@ void forDrone() {
         //It's turning right, so give the right motor more speed
         if(escRightSpeed >= 20) {
           escRightSpeed = 20;
-          escLeftSpeed -= magnitude;
-        } else if(escRightSpeed < 6) {
+          if(escLeftSpeed < 7) {
+            escLeftSpeed = 6;
+          } else if(escLeftSpeed < 20) {
+            escLeftSpeed -= magnitude;
+          } else if(escLeftSpeed >= 20) {
+            escLeftSpeed = 20;
+          }
+        } else if(escRightSpeed < 7) {
           escRightSpeed = 6;
         } else if(escRightSpeed < 20) {
           escRightSpeed += magnitude;
@@ -304,27 +312,6 @@ void forDrone() {
         escLeft.write(escLeftSpeed);
         escRight.write(escRightSpeed);
       }
-    
-
-//      /////////////
-//      if(difference < -1) {
-//        if(escLeftSpeed <= 7) {
-//          escRightSpeed -= abs(int(magnitude*100/initialAngle));
-//        } else if(escLeftSpeed > 7) {
-//          escLeftSpeed += abs(int(magnitude*100/initialAngle));
-//        }
-//        escLeft.write(escLeftSpeed);
-//        escRight.write(escRightSpeed);
-//      } else if(difference > 1) {
-//        if(escRightSpeed <= 7) {
-//          escLeftSpeed -= abs(int(magnitude*100/initialAngle));
-//        } else if(escRightSpeed > 7) {
-//          escRightSpeed += abs(int(magnitude*100/initialAngle));
-//        }
-//        escLeft.write(escLeftSpeed);
-//        escRight.write(escRightSpeed);
-//      }
-//      ////////////////
     }
 
     //TASK 3.3: Watch out for any objects found by Raspi
