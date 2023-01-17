@@ -234,7 +234,7 @@ void forDrone() {
     }
   }
 
-  //TASK 3: Keep sending acknowledgements at least for 5 seconds or so...
+  //Send acknowledgements for at least 5 seconds
   if(isConnected && isAcknowledging && !isDeployed) {
     if(millis() - startTime <= 10000) {
       sendCommand("DEPLREP", received["fromName"].as<String>(), "SUCC");
@@ -249,10 +249,10 @@ void forDrone() {
     }
   }
 
-  //TASK 3: Start moving. All the while, look for commands.
+  //TASK 3: Start moving. Plus, look for commands from base station. And also RPi.
   if(isConnected && !isAcknowledging && isDeployed) {
 
-    //TASK 3.1: Continue reading for wireless commands coming from base station
+    //TASK 3.1: Looking for base station commands
     if(!hasDetectedObject && !hasReceivedCommand && !isGoingHome && receivedCommand()) {
       hasReceivedCommand = true;
       startTime = millis();
@@ -350,7 +350,7 @@ void forDrone() {
       Serial.println("");
     }
 
-    //TASK 3.3: Watch out for any objects found by Raspi
+    //TASK 3.3: Look for RPi commands (Check if you detect an object in the water)
     if(!hasDetectedObject && !hasReceivedCommand && !isGoingHome && detectedObject()) {
       hasDetectedObject = true;
       startTime = millis();
@@ -380,10 +380,13 @@ void forDrone() {
         digitalWrite(greenLed, HIGH);
       }
     }
-    
+
+    //Task 3.4: If command says to stop, then stop the prototype.
     if(!hasReceivedCommand && !hasDetectedObject && isGoingHome) {
-      escLeft.write(0);
-      escRight.write(0);
+      escLeftSpeed = 0;
+      escRightSpeed = 0;
+      escLeft.write(escLeftSpeed);
+      escRight.write(escRightSpeed);
     }
   }
 }
