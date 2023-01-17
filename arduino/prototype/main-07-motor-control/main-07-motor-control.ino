@@ -210,6 +210,8 @@ void forDrone() {
         sendCommand("CONN", "BASE", "HELL");
       }
     } else {
+      escLeft.write(0);
+      escRight.write(0);
       isConnected = true;
       Serial.println("Successfully detected by base station. Waiting for deployment.");
       digitalWrite(redLed, LOW);
@@ -243,8 +245,8 @@ void forDrone() {
       isAcknowledging = false;
       isDeployed = true;
       initialAngle = Compass.GetHeadingDegrees();
-      escLeft.write(6);
-      escRight.write(6);
+      escLeft.write(escLeftSpeed);
+      escRight.write(escRightSpeed);
       digitalWrite(detectionPin, HIGH);
       startTime = millis();
     }
@@ -267,10 +269,12 @@ void forDrone() {
       }
       
       if(received["command"].as<String>() == "ALL") {
+        Serial.println("All led light up command.");
         digitalWrite(redLed, HIGH);
         digitalWrite(yellowLed, HIGH);
         digitalWrite(greenLed, HIGH);
       } else if(received["command"].as<String>() == "STOP") {
+        Serial.println("Stopping drone.");
         digitalWrite(redLed, LOW);
         digitalWrite(yellowLed, HIGH);
         digitalWrite(greenLed, LOW);
