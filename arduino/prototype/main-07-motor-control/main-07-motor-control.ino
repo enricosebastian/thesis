@@ -187,6 +187,7 @@ void forBaseStation() {
       
       while(!receivedSpecificCommand(command+"REP")) {
         if(millis() - startTime >= 5000) {
+          Serial.println("No acknowledgement received. Resending again.");
           startTime = millis();
           sendCommand(command, toName, details);
         }
@@ -273,9 +274,7 @@ void forDrone() {
         digitalWrite(redLed, LOW);
         digitalWrite(yellowLed, HIGH);
         digitalWrite(greenLed, LOW);
-        bool isDeploying = false;
-        bool isDeployed = false;
-        bool isGoingHome = true;
+        isGoingHome = true;
       }
     }
 
@@ -347,6 +346,10 @@ void forDrone() {
       Serial.println(escLeftSpeed);
       Serial.print("escRightSpeed: ");
       Serial.println(escRightSpeed);
+      Serial.print("isGoingHome: ");
+      Serial.println(isGoingHome);
+      Serial.print("!hasDetectedObject && !hasReceivedCommand && !isGoingHome: ");
+      Serial.println(!hasDetectedObject && !hasReceivedCommand && !isGoingHome);
       Serial.println("");
     }
 
