@@ -243,8 +243,8 @@ void forDrone() {
       isAcknowledging = false;
       isDeployed = true;
       initialAngle = Compass.GetHeadingDegrees();
-      escLeft.write(escLeftSpeed);
-      escRight.write(escRightSpeed);
+      escLeft.write(6);
+      escRight.write(6);
       digitalWrite(detectionPin, HIGH);
       startTime = millis();
     }
@@ -275,6 +275,8 @@ void forDrone() {
         digitalWrite(yellowLed, HIGH);
         digitalWrite(greenLed, LOW);
         isGoingHome = true;
+        escLeft.write(0);
+        escRight.write(0);
       }
     }
 
@@ -337,22 +339,8 @@ void forDrone() {
         escLeft.write(escLeftSpeed);
         escRight.write(escRightSpeed);
       }
-
-      Serial.print("difference: ");
-      Serial.println(difference);
-      Serial.print("magnitude: ");
-      Serial.println(magnitude);
-      Serial.print("escLeftSpeed: ");
-      Serial.println(escLeftSpeed);
-      Serial.print("escRightSpeed: ");
-      Serial.println(escRightSpeed);
-      Serial.print("isGoingHome: ");
-      Serial.println(isGoingHome);
-      Serial.print("!hasDetectedObject && !hasReceivedCommand && !isGoingHome: ");
-      Serial.println(!hasDetectedObject && !hasReceivedCommand && !isGoingHome);
-      Serial.println("");
     }
-
+    
     //TASK 3.3: Look for RPi commands (Check if you detect an object in the water)
     if(!hasDetectedObject && !hasReceivedCommand && !isGoingHome && detectedObject()) {
       hasDetectedObject = true;
@@ -386,10 +374,7 @@ void forDrone() {
 
     //Task 3.4: If command says to stop, then stop the prototype.
     if(!hasReceivedCommand && !hasDetectedObject && isGoingHome) {
-      escLeftSpeed = 0;
-      escRightSpeed = 0;
-      escLeft.write(escLeftSpeed);
-      escRight.write(escRightSpeed);
+      //Do nothing lmao. Go home
     }
   }
 }
