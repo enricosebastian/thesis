@@ -282,7 +282,7 @@ void forDrone() {
         escLeft.write(0);
         escRight.write(0);
       } else if(received["command"].as<String>() == "GO") {
-        Serial.println("Drone goes back to deployment.");
+        Serial.println("Drone resuming deployment.");
         digitalWrite(redLed, LOW);
         digitalWrite(yellowLed, LOW);
         digitalWrite(greenLed, HIGH);
