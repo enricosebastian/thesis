@@ -102,6 +102,7 @@ void loop() {
   forDrone();
 
   //for base station
+
   
 }
 
@@ -256,7 +257,7 @@ void forDrone() {
   if(isConnected && !isAcknowledging && isDeployed) {
 
     //TASK 3.1: Looking for base station commands
-    if(!hasDetectedObject && !hasReceivedCommand && !isGoingHome && receivedCommand()) {
+    if(!hasDetectedObject && !hasReceivedCommand && receivedCommand()) {
       hasReceivedCommand = true;
       startTime = millis();
     }
