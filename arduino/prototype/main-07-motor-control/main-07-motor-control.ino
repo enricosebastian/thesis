@@ -287,9 +287,11 @@ void forDrone() {
         digitalWrite(redLed, LOW);
         digitalWrite(yellowLed, LOW);
         digitalWrite(greenLed, HIGH);
-        isGoingHome = false;
-        escLeft.write(7);
-        escRight.write(7);
+        
+        isGoingHome = false; // Revert status back to false
+        initialAngle = Compass.GetHeadingDegrees(); // Save new angle
+        escLeft.write(6); // Initialize all the ESCs
+        escRight.write(6);
       }
     }
 
