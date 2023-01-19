@@ -21,7 +21,7 @@ Servo escLeft;
 Servo escRight;
 StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
-const String myName = "DRO1"; //Change name here
+const String myName = "BASE"; //Change name here
 
 const int redLed = 13;
 const int yellowLed = 12;
@@ -99,9 +99,11 @@ void setup() {
 
 void loop() {
   //for drone
-  forDrone();
+
 
   //for base station
+  forBaseStation();
+
 
   
 }
@@ -262,7 +264,7 @@ void forDrone() {
       startTime = millis();
     }
 
-    if(!hasDetectedObject && hasReceivedCommand && !isGoingHome) {
+    if(!hasDetectedObject && hasReceivedCommand) {
       if(millis() - startTime <= 10000) {
         sendCommand(received["command"].as<String>()+"REP", received["fromName"].as<String>(), "SUCC");
       } else if(millis() - startTime > 10000) {
