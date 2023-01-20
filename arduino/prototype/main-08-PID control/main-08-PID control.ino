@@ -341,56 +341,6 @@ void forDrone() {
         }           
         previous_error = error;
       }
-
-      /*
-      if(difference < -1) {
-        //It's turning left, so give the left motor more speed
-        if(escLeftSpeed >= 20) {
-          escLeftSpeed = 20;
-          if(escRightSpeed < 6) {
-            escRightSpeed = 6;
-          } else if(escRightSpeed >= 6) {
-            escRightSpeed -= magnitude;
-          }
-        } else if(escLeftSpeed < 6) {
-          escLeftSpeed = 6;
-        } else if(escLeftSpeed < 20) {
-          escLeftSpeed += magnitude;
-        }
-        
-        if(escLeftSpeed < 6) {
-          escLeftSpeed = 6;
-        }
-        if(escRightSpeed < 6) {
-          escRightSpeed = 6;
-        }
-        escLeft.write(escLeftSpeed);
-        escRight.write(escRightSpeed);
-      } else if(difference > 1) {
-        //It's turning right, so give the right motor more speed
-        if(escRightSpeed >= 20) {
-          escRightSpeed = 20;
-          if(escLeftSpeed < 6) {
-            escLeftSpeed = 6;
-          } else if(escLeftSpeed >= 6) {
-            escLeftSpeed -= magnitude;
-          }
-        } else if(escRightSpeed < 6) {
-          escRightSpeed = 6;
-        } else if(escRightSpeed < 20) {
-          escRightSpeed += magnitude;
-        }
-
-        if(escLeftSpeed < 6) {
-          escLeftSpeed = 6;
-        }
-        if(escRightSpeed < 6) {
-          escRightSpeed = 6;
-        }
-        escLeft.write(escLeftSpeed);
-        escRight.write(escRightSpeed);
-      }
-      */
     }
     
     //TASK 3.3: Look for RPi commands (Check if you detect an object in the water)
