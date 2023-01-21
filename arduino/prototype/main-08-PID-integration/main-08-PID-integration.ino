@@ -50,7 +50,7 @@ float initialAngle = 0;
 float kp = 8;
 float ki = 0.2;
 float kd = 3100;
-float PID_p,PID_i,PID_d,PID_total;
+float PID_p, PID_i, PID_d, PID_total;
 
 void setup() {
   Serial.begin(9600);
