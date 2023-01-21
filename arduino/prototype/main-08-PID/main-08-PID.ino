@@ -21,7 +21,7 @@ Servo escLeft;
 Servo escRight;
 StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
-const String myName = "BASE"; //Change name here
+const String myName = "DRO1"; //Change name here
 
 const int redLed = 13;
 const int yellowLed = 12;
@@ -50,7 +50,7 @@ float initialAngle = 0;
 float kp = 8;
 float ki = 0.2;
 float kd = 3100;
-float PID_p, PID_i, PID_d, PID_total;
+float PID_p,PID_i,PID_d,PID_total;
 
 void setup() {
   Serial.begin(9600);
@@ -103,10 +103,11 @@ void setup() {
 
 void loop() {
   //for drone
+  forDrone();
 
 
   //for base station
-  forBaseStation();
+  
 
 
   
@@ -302,8 +303,6 @@ void forDrone() {
     }
 
     //TASK 3.2: Ensure that you are moving
-    int period = 50; // not sure about this
-    
     if(!hasDetectedObject && !hasReceivedCommand && !isGoingHome) {
       if(millis() - startTime >= 1000) {
         startTime = millis();
@@ -316,31 +315,49 @@ void forDrone() {
       float error = initialAngle - Compass.GetHeadingDegrees();
       int magnitude = abs(int(difference*100/initialAngle));
 
-      if (millis()>startTime+period) {
-        PID_p = kp * error;
-        float angle_difference = error - previous_error;
-        PID_d = kd*((error - previous_error)/period);
+      float previous_error;
+      float cumulative_error;
+      int period = 50;
 
-        if(-3 < error && error < 3){
-          PID_i = PID_i + (ki*error);
-        } else{
-          PID_i = 0;
-        }
-
-        PID_total = PID_p + PID_i + PID_d;
-        PID_total = map(PID_total, -50,50,100,150); //range to map the PID values to the motor range
-        Serial.print("pid_value:");
-        Serial.println(pid_value);
-
-        if(difference < -1){
-        //It's turning right, so more speed to right motor
-          escRight.write(PID_total);        
-        } else if (difference > 1){
-          escLeft.write(PID_total);
-        }           
-        previous_error = error;
-      }
+      
+      if(error < -1) {
+        //It's turning right, so give the right motor more speed
         
+      float PID_p = kp * error;
+      float PID_i = cumulative_error * ki;
+      float PID_d = kd*(error - previous_error);
+
+      double PID_total = PID_p + PID_i + PID_d;
+
+      cumulative_error += error;
+      previous_error = error;
+      escLeft.write(escLeftSpeed);
+      escRight.write(PID_total);
+
+      Serial.print("escLeftSpeed: ");
+      Serial.println(escLeftSpeed);
+      Serial.print("PID_total: ");
+      Serial.println(PID_total);
+      } else if(error > 1) {
+        //It's turning left, so give the left motor more speed
+      float PID_p = kp * error;
+      float PID_i = cumulative_error * ki;
+      float PID_d = kd*(error - previous_error);
+
+      double PID_total = PID_p + PID_i + PID_d;
+      //double PID_total = map(PID_total,)
+
+      cumulative_error += error;
+      previous_error = error;
+      
+      escLeft.write(PID_total);
+      escRight.write(escRightSpeed);
+      Serial.print("escRightSpeed: ");
+      Serial.println(escRightSpeed);
+      Serial.print("PID_total: ");
+      Serial.println(PID_total);
+      }
+      
     }
     
     //TASK 3.3: Look for RPi commands (Check if you detect an object in the water)
