@@ -322,40 +322,39 @@ void forDrone() {
       
       if(error < -1) {
         //It's turning right, so give the right motor more speed
-        
-      float PID_p = kp * error;
-      float PID_i = cumulative_error * ki;
-      float PID_d = kd*(error - previous_error);
-
-      double PID_total = PID_p + PID_i + PID_d;
-
-      cumulative_error += error;
-      previous_error = error;
-      escLeft.write(escLeftSpeed);
-      escRight.write(PID_total);
-
-      Serial.print("escLeftSpeed: ");
-      Serial.println(escLeftSpeed);
-      Serial.print("PID_total: ");
-      Serial.println(PID_total);
+        float PID_p = kp * error;
+        float PID_i = cumulative_error * ki;
+        float PID_d = kd*(error - previous_error);
+  
+        double PID_total = PID_p + PID_i + PID_d;
+  
+        cumulative_error += error;
+        previous_error = error;
+        escLeft.write(escLeftSpeed);
+        escRight.write(PID_total);
+  
+        Serial.print("escLeftSpeed: ");
+        Serial.println(escLeftSpeed);
+        Serial.print("PID_total: ");
+        Serial.println(PID_total);
       } else if(error > 1) {
         //It's turning left, so give the left motor more speed
-      float PID_p = kp * error;
-      float PID_i = cumulative_error * ki;
-      float PID_d = kd*(error - previous_error);
+        float PID_p = kp * error;
+        float PID_i = cumulative_error * ki;
+        float PID_d = kd*(error - previous_error);
 
-      double PID_total = PID_p + PID_i + PID_d;
-      //double PID_total = map(PID_total,)
+        double PID_total = PID_p + PID_i + PID_d;
+        //double PID_total = map(PID_total,)
 
-      cumulative_error += error;
-      previous_error = error;
-      
-      escLeft.write(PID_total);
-      escRight.write(escRightSpeed);
-      Serial.print("escRightSpeed: ");
-      Serial.println(escRightSpeed);
-      Serial.print("PID_total: ");
-      Serial.println(PID_total);
+        cumulative_error += error;
+        previous_error = error;
+        
+        escLeft.write(PID_total);
+        escRight.write(escRightSpeed);
+        Serial.print("escRightSpeed: ");
+        Serial.println(escRightSpeed);
+        Serial.print("PID_total: ");
+        Serial.println(PID_total);
       }
       
     }
