@@ -264,36 +264,46 @@ void forDrone() {
       startTime = millis();
     }
 
+    //TASK 3.1.2: Read what each command means
     if(!hasDetectedObject && hasReceivedCommand) {
       if(millis() - startTime <= 10000) {
+        // send acknowledgement that you received a command
         sendCommand(received["command"].as<String>()+"REP", received["fromName"].as<String>(), "SUCC");
       } else if(millis() - startTime > 10000) {
+        //turn off hasReceivedCommand and interpret the actual command
         hasReceivedCommand = false;
-      }
-      
-      if(received["command"].as<String>() == "ALL") {
-        Serial.println("All led light up command.");
-        digitalWrite(redLed, HIGH);
-        digitalWrite(yellowLed, HIGH);
-        digitalWrite(greenLed, HIGH);
-      } else if(received["command"].as<String>() == "STOP") {
-        Serial.println("Stopping drone.");
-        digitalWrite(redLed, LOW);
-        digitalWrite(yellowLed, HIGH);
-        digitalWrite(greenLed, LOW);
-        isGoingHome = true;
-        escLeft.write(0);
-        escRight.write(0);
-      } else if(received["command"].as<String>() == "GO") {
-        Serial.println("Drone resuming deployment.");
-        digitalWrite(redLed, LOW);
-        digitalWrite(yellowLed, LOW);
-        digitalWrite(greenLed, HIGH);
-        
-        isGoingHome = false; // Revert status back to false
-        initialAngle = Compass.GetHeadingDegrees(); // Save new angle
-        escLeft.write(6); // Initialize all the ESCs
-        escRight.write(6);
+        if(received["command"].as<String>() == "ALL") {
+          Serial.println("All led light up command.");
+          digitalWrite(redLed, HIGH);
+          digitalWrite(yellowLed, HIGH);
+          digitalWrite(greenLed, HIGH);
+        } else if(received["command"].as<String>() == "STOP") {
+          Serial.println("Stopping drone.");
+          digitalWrite(redLed, LOW);
+          digitalWrite(yellowLed, HIGH);
+          digitalWrite(greenLed, LOW);
+          isGoingHome = true;
+          escLeft.write(0);
+          escRight.write(0);
+        } else if(received["command"].as<String>() == "GO") {
+          Serial.println("Drone resuming deployment.");
+          digitalWrite(redLed, LOW);
+          digitalWrite(yellowLed, LOW);
+          digitalWrite(greenLed, HIGH);
+          
+          isGoingHome = false; // Revert status back to false
+          initialAngle = Compass.GetHeadingDegrees(); // Save new angle
+          escLeft.write(6); // Initialize all the ESCs
+          escRight.write(6);
+        } else if(received["command"].as<String>() == "TURN") {
+          if(received["details"].as<String>() == "LEFT") {
+            initialAngle = initialAngle-90; // add 90-degrees to the left
+            Serial.println("Turning left.");
+          } else if(received["details"].as<String>() == "RIGHT") {
+            initialAngle = initialAngle+90; // add 90-degrees to the right
+            Serial.println("Turning right.");
+          }
+        }
       }
     }
 
