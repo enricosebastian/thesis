@@ -22,7 +22,8 @@ Servo escLeft;
 Servo escRight;
 StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
-const String myName = "DRO1"; //Change name here
+//const String myName = "BASE"; //Change name here
+const String myName = "DRO1";
 
 const int redLed = 13;
 const int yellowLed = 12;
@@ -114,7 +115,9 @@ void loop() {
   forDrone();
 
 
+
   //for base station
+//  forBaseStation();
   
 
 
@@ -437,6 +440,18 @@ bool receivedCommand() {
 }
 
 void sendCommand(String command, String toName, String details) {
+
+  Serial.println("\n\nsending a command");
+  Serial.print("command: ");
+  Serial.println(command);
+  Serial.print("toName: ");
+  Serial.println(toName);
+  Serial.print("fromName: ");
+  Serial.println(myName);
+  Serial.print("details: ");
+  Serial.println(details);
+  Serial.println("\n\n");
+      
   StaticJsonDocument<200> sent;
   sent["command"] = command;
   sent["toName"] = toName;
@@ -452,11 +467,26 @@ bool receivedSpecificCommand(String command) {
 bool detectedObject() {
   if(Serial.available()){
     DeserializationError err = deserializeJson(received, Serial); //Deserialize it into different possible variables
-    
-    if (err == DeserializationError::Ok) 
+
+    Serial.println("\n\nReceived a command");
+    if (err == DeserializationError::Ok) {
+      Serial.print("command: ");
+      Serial.println(received["command"].as<String>());
+      Serial.print("toName: ");
+      Serial.println(received["toName"].as<String>());
+      Serial.print("fromName: ");
+      Serial.println(received["fromName"].as<String>());
+      Serial.print("details: ");
+      Serial.println(received["details"].as<String>());
+
+      Serial.println("\n\n");
       return (received["toName"].as<String>() == myName) && (received["command"].as<String>() == "DETE");
-    else
+    } else {
+      Serial.println("printed choppy command");
+      Serial.println("\n\n");
       return false;
+    }
+      
   }
 
   //This means you received no command at all...
