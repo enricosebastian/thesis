@@ -21,7 +21,9 @@ Servo escLeft;
 Servo escRight;
 StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
-const String myName = "BASE"; //Change name here
+// Name here
+const String myName = "BASE";
+//const String myName = "DRO1";
 
 const int redLed = 13;
 const int yellowLed = 12;
@@ -102,16 +104,8 @@ void setup() {
 }
 
 void loop() {
-  //for drone
-//  forDrone();
-
-
-  //for base station
   forBaseStation();
-  
-
-
-  
+//  forDrone();
 }
 
 void forBaseStation() {
