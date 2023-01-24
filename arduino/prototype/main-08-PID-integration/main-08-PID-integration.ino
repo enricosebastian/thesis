@@ -21,7 +21,7 @@ Servo escLeft;
 Servo escRight;
 StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
-const String myName = "DRO1"; //Change name here
+const String myName = "BASE"; //Change name here
 
 const int redLed = 13;
 const int yellowLed = 12;
@@ -49,7 +49,7 @@ int escRightSpeed = 6;
 float initialAngle = 0;
 float kp = 8;
 float ki = 0.2;
-float kd = 3100;
+float kd = 10;
 float PID_p, PID_i, PID_d, PID_total;
 
 void setup() {
@@ -103,11 +103,11 @@ void setup() {
 
 void loop() {
   //for drone
-  forDrone();
+//  forDrone();
 
 
   //for base station
-//  forBaseStation();
+  forBaseStation();
   
 
 
@@ -331,13 +331,14 @@ void forDrone() {
   
         cumulative_error += error;
         previous_error = error;
+        
         escLeft.write(escLeftSpeed);
-        escRight.write(PID_total);
+        escRight.write(map(abs(PID_total),0,1600,0,180));
   
         Serial.print("escLeftSpeed: ");
         Serial.println(escLeftSpeed);
         Serial.print("PID_total: ");
-        Serial.println(PID_total);
+        Serial.println(map(abs(PID_total),0,1600,0,180));
       } else if(error > 1) {
         //It's turning left, so give the left motor more speed
         float PID_p = kp * error;
@@ -350,12 +351,13 @@ void forDrone() {
         cumulative_error += error;
         previous_error = error;
         
-        escLeft.write(PID_total);
+        escLeft.write(map(abs(PID_total),0,1600,0,180));
         escRight.write(escRightSpeed);
+        
         Serial.print("escRightSpeed: ");
         Serial.println(escRightSpeed);
         Serial.print("PID_total: ");
-        Serial.println(PID_total);
+        Serial.println(map(abs(PID_total),0,1600,0,180));
       }
       
     }
