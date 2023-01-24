@@ -5,7 +5,6 @@
 #include <Servo.h>
 #include <Wire.h>
 #include <HMC5883L_Simple.h>
-#include <PID_v1.h>
 
 HMC5883L_Simple Compass;
 /*
@@ -22,8 +21,8 @@ Servo escLeft;
 Servo escRight;
 StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
-const String myName = "BASE"; //Change name here
-//const String myName = "DRO1";
+//const String myName = "BASE"; //Change name here
+const String myName = "DRO1";
 
 const int redLed = 13;
 const int yellowLed = 12;
@@ -49,14 +48,6 @@ int escLeftSpeed = 6;
 int escRightSpeed = 6;
 
 float initialAngle = 0;
-double Setpoint;
-double Input;
-double Output;
-//PID parameters
-double kp = 8, ki = 3200, kd = 0.8;
-
-//PID intance
-PID myPID(&Input, &Output, &Setpoint, kp, ki, kd, DIRECT);
 
 void setup() {
   Serial.begin(9600);
@@ -78,11 +69,6 @@ void setup() {
   digitalWrite(detectionPin, LOW);
 
   pinMode(btn, INPUT);
-
-  myPID.SetMode(AUTOMATIC);
-  myPID.SetTunings(kp,ki,kd);
-
-  delay(500);
 
   //Successful intialization indicator
   if(myName == "BASE") {
@@ -114,13 +100,10 @@ void setup() {
 
 void loop() {
   //for drone
-//  forDrone();
-
-
+  forDrone();
 
   //for base station
-  forBaseStation();
-  
+//  forBaseStation();
 
 
   
@@ -322,37 +305,9 @@ void forDrone() {
         digitalWrite(redLed, !digitalRead(redLed));
         digitalWrite(yellowLed, LOW);
         digitalWrite(greenLed, LOW);
+        escLeft.write(7);
+        escRight.write(7);
       }
-      
-      Setpoint = initialAngle;
-      float difference = Compass.GetHeadingDegrees() - initialAngle;
-      float error = initialAngle - Compass.GetHeadingDegrees();
-      int magnitude = abs(int(difference*100/initialAngle));
-      Input = Compass.GetHeadingDegrees();
-      myPID.Compute();
-      //Output = map(Output,0,,0,180)
-      
-      if(error < -1) {
-        //It's turning right, so give the right motor more speed
-        escLeft.write(escLeftSpeed);
-        escRight.write(Output);
-  
-        Serial.print("escLeftSpeed: ");
-        Serial.println(escLeftSpeed);
-        Serial.print("PID_total: ");
-        Serial.println(Output);
-      } else if(error > 1) {
-        //It's turning left, so give the left motor more speed
-    
-        
-        escLeft.write(Output);
-        escRight.write(escRightSpeed);
-        Serial.print("escRightSpeed: ");
-        Serial.println(escRightSpeed);
-        Serial.print("PID_total: ");
-        Serial.println(Output);
-      }
-      
     }
     
     //TASK 3.3: Look for RPi commands (Check if you detect an object in the water)
@@ -426,23 +381,11 @@ void addDrone(String droneName) {
 bool receivedCommand() {
   if(HC12.available()) {
     DeserializationError err = deserializeJson(received, HC12); //Deserialize it into different possible variables
-
-    Serial.println("\n\nReceived a command");
-    if(err == DeserializationError::Ok) {
-      Serial.print("command: ");
-      Serial.println(received["command"].as<String>());
-      Serial.print("toName: ");
-      Serial.println(received["toName"].as<String>());
-      Serial.print("fromName: ");
-      Serial.println(received["fromName"].as<String>());
-      Serial.print("details: ");
-      Serial.println(received["details"].as<String>());
+    
+    if(err == DeserializationError::Ok)
       return (received["toName"].as<String>() == myName);
-    } else {
-      Serial.println("printed choppy command");
-      Serial.println("\n\n");
+    else
       return false;
-    }  
   }
 
   //This means you received no command at all...
@@ -454,18 +397,6 @@ bool receivedCommand() {
 }
 
 void sendCommand(String command, String toName, String details) {
-
-  Serial.println("\n\nsending a command");
-  Serial.print("command: ");
-  Serial.println(command);
-  Serial.print("toName: ");
-  Serial.println(toName);
-  Serial.print("fromName: ");
-  Serial.println(myName);
-  Serial.print("details: ");
-  Serial.println(details);
-  Serial.println("\n\n");
-      
   StaticJsonDocument<200> sent;
   sent["command"] = command;
   sent["toName"] = toName;
@@ -481,26 +412,11 @@ bool receivedSpecificCommand(String command) {
 bool detectedObject() {
   if(Serial.available()){
     DeserializationError err = deserializeJson(received, Serial); //Deserialize it into different possible variables
-
-    Serial.println("\n\nReceived a command");
-    if (err == DeserializationError::Ok) {
-      Serial.print("command: ");
-      Serial.println(received["command"].as<String>());
-      Serial.print("toName: ");
-      Serial.println(received["toName"].as<String>());
-      Serial.print("fromName: ");
-      Serial.println(received["fromName"].as<String>());
-      Serial.print("details: ");
-      Serial.println(received["details"].as<String>());
-
-      Serial.println("\n\n");
+    
+    if (err == DeserializationError::Ok) 
       return (received["toName"].as<String>() == myName) && (received["command"].as<String>() == "DETE");
-    } else {
-      Serial.println("printed choppy command");
-      Serial.println("\n\n");
+    else
       return false;
-    }
-      
   }
 
   //This means you received no command at all...
