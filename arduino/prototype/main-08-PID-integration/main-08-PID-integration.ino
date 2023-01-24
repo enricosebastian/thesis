@@ -333,12 +333,12 @@ void forDrone() {
         previous_error = error;
         
         escLeft.write(escLeftSpeed);
-        escRight.write(map(abs(PID_total),0,1600,0,180));
+        escRight.write(map(abs(PID_total),0,1600,6,90));
   
         Serial.print("escLeftSpeed: ");
         Serial.println(escLeftSpeed);
         Serial.print("PID_total: ");
-        Serial.println(map(abs(PID_total),0,1600,0,180));
+        Serial.println(map(abs(PID_total),0,1600,6,90));
       } else if(error > 1) {
         //It's turning left, so give the left motor more speed
         float PID_p = kp * error;
@@ -351,13 +351,13 @@ void forDrone() {
         cumulative_error += error;
         previous_error = error;
         
-        escLeft.write(map(abs(PID_total),0,1600,0,180));
+        escLeft.write(map(abs(PID_total),0,1600,6,90));
         escRight.write(escRightSpeed);
         
         Serial.print("escRightSpeed: ");
         Serial.println(escRightSpeed);
         Serial.print("PID_total: ");
-        Serial.println(map(abs(PID_total),0,1600,0,180));
+        Serial.println(map(abs(PID_total),0,1600,6,90));
       }
       
     }
