@@ -33,6 +33,9 @@ const int escLeftPin = 6;
 const int escRightPin = 5;
 const int btn = 7;
 
+const float minSpeed = 7;
+const float maxSpeed = 90;
+
 bool isConnected = false;
 bool isDeploying = false;
 bool isDeployed = false;
@@ -45,8 +48,6 @@ unsigned long startTime = 0;
 
 int posX = 0;
 int posY = 0;
-int escLeftSpeed = 6;
-int escRightSpeed = 6;
 
 float initialAngle = 0;
 float kp = 8;
@@ -213,8 +214,6 @@ void forDrone() {
         sendCommand("CONN", "BASE", "HELL");
       }
     } else {
-      escLeft.write(0);
-      escRight.write(0);
       isConnected = true;
       Serial.println("Successfully detected by base station. Waiting for deployment.");
       digitalWrite(redLed, LOW);
@@ -240,17 +239,18 @@ void forDrone() {
     }
   }
 
-  //Send acknowledgements for at least 5 seconds
+  //TASK 2.1: Base station wants to deploy us. Send acknowledgement/handshake for at least 5 seconds
   if(isConnected && isAcknowledging && !isDeployed) {
     if(millis() - startTime <= 10000) {
       sendCommand("DEPLREP", received["fromName"].as<String>(), "SUCC");
     } else if(millis() - startTime > 10000) {
       isAcknowledging = false;
       isDeployed = true;
-      initialAngle = Compass.GetHeadingDegrees();
-      escLeft.write(escLeftSpeed);
-      escRight.write(escRightSpeed);
       digitalWrite(detectionPin, HIGH);
+      
+      initialAngle = Compass.GetHeadingDegrees();
+      escLeft.write(minSpeed);
+      escRight.write(minSpeed);
       startTime = millis();
     }
   }
@@ -258,7 +258,7 @@ void forDrone() {
   //TASK 3: Start moving. Plus, look for commands from base station. And also RPi.
   if(isConnected && !isAcknowledging && isDeployed) {
 
-    //TASK 3.1: Looking for base station commands
+    //TASK 3.1: If you received a command from base station, stop what you are doing and interpret the command.
     if(!hasDetectedObject && !hasReceivedCommand && receivedCommand()) {
       hasReceivedCommand = true;
       startTime = millis();
@@ -272,16 +272,13 @@ void forDrone() {
       } else if(millis() - startTime > 10000) {
         //turn off hasReceivedCommand and interpret the actual command
         hasReceivedCommand = false;
-        if(received["command"].as<String>() == "ALL") {
-          Serial.println("All led light up command.");
-          digitalWrite(redLed, HIGH);
-          digitalWrite(yellowLed, HIGH);
-          digitalWrite(greenLed, HIGH);
-        } else if(received["command"].as<String>() == "STOP") {
+        
+        if(received["command"].as<String>() == "STOP") {
           Serial.println("Stopping drone.");
           digitalWrite(redLed, LOW);
           digitalWrite(yellowLed, HIGH);
           digitalWrite(greenLed, LOW);
+          
           isGoingHome = true;
           escLeft.write(0);
           escRight.write(0);
@@ -293,8 +290,8 @@ void forDrone() {
           
           isGoingHome = false; // Revert status back to false
           initialAngle = Compass.GetHeadingDegrees(); // Save new angle
-          escLeft.write(6); // Initialize all the ESCs
-          escRight.write(6);
+          escLeft.write(minSpeed); //re-initialize escs
+          escRight.write(minSpeed);
         } else if(received["command"].as<String>() == "TURN") {
           if(received["details"].as<String>() == "LEFT") {
             initialAngle = initialAngle-90; // add 90-degrees to the left
@@ -316,14 +313,10 @@ void forDrone() {
         digitalWrite(greenLed, LOW);
       }
       
-      float difference = Compass.GetHeadingDegrees() - initialAngle;
       float error = initialAngle - Compass.GetHeadingDegrees();
-      int magnitude = abs(int(difference*100/initialAngle));
-
       float previous_error;
       float cumulative_error;
       int period = 50;
-
       
       if(error < -1) {
         //It's turning right, so give the right motor more speed
@@ -336,11 +329,9 @@ void forDrone() {
         cumulative_error += error;
         previous_error = error;
         
-        escLeft.write(escLeftSpeed);
+        escLeft.write(minSpeed);
         escRight.write(map(abs(PID_total),0,1600,6,90));
-  
-        Serial.print("escLeftSpeed: ");
-        Serial.println(escLeftSpeed);
+        
         Serial.print("PID_total: ");
         Serial.println(map(abs(PID_total),0,1600,6,90));
       } else if(error > 1) {
@@ -350,20 +341,16 @@ void forDrone() {
         float PID_d = kd*(error - previous_error);
 
         double PID_total = PID_p + PID_i + PID_d;
-        //double PID_total = map(PID_total,)
 
         cumulative_error += error;
         previous_error = error;
         
         escLeft.write(map(abs(PID_total),0,1600,6,90));
-        escRight.write(escRightSpeed);
+        escRight.write(minSpeed);
         
-        Serial.print("escRightSpeed: ");
-        Serial.println(escRightSpeed);
         Serial.print("PID_total: ");
         Serial.println(map(abs(PID_total),0,1600,6,90));
       }
-      
     }
     
     //TASK 3.3: Look for RPi commands (Check if you detect an object in the water)
@@ -371,7 +358,7 @@ void forDrone() {
       hasDetectedObject = true;
       startTime = millis();
     }
-
+    
     if(!hasReceivedCommand && hasDetectedObject && !isGoingHome) {
       if(millis() - startTime <= 10000) {
         //Do we need to acknowledge though? It's physically connected, so data is strong
@@ -396,7 +383,7 @@ void forDrone() {
         digitalWrite(greenLed, HIGH);
       }
     }
-
+    
     //Task 3.4: If command says to stop, then stop the prototype.
     if(!hasReceivedCommand && !hasDetectedObject && isGoingHome) {
       //Do nothing lmao. Go home
