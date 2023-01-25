@@ -22,8 +22,8 @@ Servo escRight;
 StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
 // Name here
-const String myName = "BASE";
-//const String myName = "DRO1";
+// const String myName = "BASE";
+const String myName = "DRO1";
 
 const int redLed = 13;
 const int yellowLed = 12;
@@ -105,8 +105,8 @@ void setup() {
 }
 
 void loop() {
-  forBaseStation();
-//  forDrone();
+  // forBaseStation();
+  forDrone();
 }
 
 void forBaseStation() {
@@ -334,6 +334,11 @@ void forDrone() {
         
         Serial.print("PID_total: ");
         Serial.println(map(abs(PID_total),0,1600,6,90));
+        Serial.print("left motor: ");
+        Serial.println(escLeftPin);
+        Serial.print("right motor: ");
+        Serial.println(escRightPin);
+
       } else if(error > 1) {
         //It's turning left, so give the left motor more speed
         float PID_p = kp * error;
@@ -350,6 +355,10 @@ void forDrone() {
         
         Serial.print("PID_total: ");
         Serial.println(map(abs(PID_total),0,1600,6,90));
+        Serial.print("left motor: ");
+        Serial.println(escLeftPin);
+        Serial.print("right motor: ");
+        Serial.println(escRightPin);
       }
     }
     
