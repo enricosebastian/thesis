@@ -338,20 +338,48 @@ void forDrone() {
       previous_error = error;
       float modifiedSpeed = map(abs(PID_total),0,1600,6,90);
       
-      if(error < -1) {
+      if(error > 1) {
         //It's turning right, so give the right motor more speed
         escLeft.write(minSpeed);
         escRight.write(modifiedSpeed);
+
+        Serial.println("=========");
+        Serial.print("LFTM: ");
+        Serial.println(minSpeed);
+
+        Serial.print("RITM: ");
+        Serial.println(modifiedSpeed);
+
+        Serial.print("INITA: ");
+        Serial.println(initialAngle);
+
+        Serial.print("CURRA: ");
+        Serial.println(Compass.GetHeadingDegrees());
+        Serial.println("=========");
         
         sendCommand("LFTM", "BASE", String(minSpeed));
         sendCommand("RITM", "BASE", String(modifiedSpeed));
         sendCommand("INITA", "BASE", String(initialAngle));
         sendCommand("CURRA", "BASE", String(Compass.GetHeadingDegrees()));
         
-      } else if(error > 1) {
+      } else if(error < -1) {
         //It's turning left, so give the left motor more speed
         escLeft.write(modifiedSpeed);
         escRight.write(minSpeed);
+
+        Serial.println("=========");
+        Serial.print("LFTM: ");
+        Serial.println(minSpeed);
+
+        Serial.print("RITM: ");
+        Serial.println(modifiedSpeed);
+
+        Serial.print("INITA: ");
+        Serial.println(initialAngle);
+
+        Serial.print("CURRA: ");
+        Serial.println(Compass.GetHeadingDegrees());
+        Serial.println("=========");
 
         sendCommand("LFTM", "BASE", String(modifiedSpeed));
         sendCommand("RITM", "BASE", String(minSpeed));
