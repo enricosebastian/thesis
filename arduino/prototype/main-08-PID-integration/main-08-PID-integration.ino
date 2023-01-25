@@ -15,12 +15,6 @@ HMC5883L_Simple Compass;
  * SDA  -> A4, green
 */
 
-SoftwareSerial HC12(8, 9); // (Green TX, Blue RX)
-LinkedList<String> drones;
-Servo escLeft;
-Servo escRight;
-StaticJsonDocument<200> received; //Only received strings need to be global variables...
-
 // Name here
 // const String myName = "BASE";
 const String myName = "DRO1";
@@ -32,6 +26,9 @@ const int detectionPin = 10;
 const int escLeftPin = 6;
 const int escRightPin = 5;
 const int btn = 7;
+const int txPin = A0; //green tx
+const int rxPin = A1; //blue rx
+const int waitingTime = 5000;
 
 const float minSpeed = 11;
 const float maxSpeed = 90;
@@ -55,6 +52,12 @@ float kp = 8;
 float ki = 0.2;
 float kd = 10;
 float PID_p, PID_i, PID_d, PID_total;
+
+SoftwareSerial HC12(txPin, rxPin); // (Green TX, Blue RX)
+LinkedList<String> drones;
+Servo escLeft;
+Servo escRight;
+StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
 void setup() {
   Serial.begin(9600);
@@ -86,22 +89,20 @@ void setup() {
     digitalWrite(redLed, HIGH);
     digitalWrite(yellowLed, LOW);
     digitalWrite(greenLed, LOW);
+    //Compass initialization
+    Wire.begin();
+    Compass.SetDeclination(-2, 37, 'W');  
+    Compass.SetSamplingMode(COMPASS_SINGLE);
+    Compass.SetScale(COMPASS_SCALE_130);
+    Compass.SetOrientation(COMPASS_HORIZONTAL_X_NORTH);
+    
+    //ESC initialization
+    escLeft.attach(escLeftPin,1000,2000);
+    escRight.attach(escRightPin,1000,2000);
   }
-  
-  //Compass initialization
-  Wire.begin();
-  Compass.SetDeclination(-2, 37, 'W');  
-  Compass.SetSamplingMode(COMPASS_SINGLE);
-  Compass.SetScale(COMPASS_SCALE_130);
-  Compass.SetOrientation(COMPASS_HORIZONTAL_X_NORTH);
-  
-  //ESC initialization
-  escLeft.attach(escLeftPin,1000,2000);
-  escRight.attach(escRightPin,1000,2000);
+
   escLeft.write(0);
   escRight.write(0);
-
-  delay(500);
   startTime = millis();
 }
 
@@ -219,10 +220,10 @@ void forDrone() {
   //TASK 1: Keep sending connect command until acknowledged.
   if(!isConnected && !isDeployed) {
     if(!receivedSpecificCommand("CONNREP")) {
-      if(millis() - startTime >= 5000) {
+      if(millis() - startTime >= waitingTime) {
+        sendCommand("CONN", "BASE", "HELL");
         Serial.println("Reply 'CONNREP' was not received. Resending message again.");
         startTime = millis();
-        sendCommand("CONN", "BASE", "HELL");
       }
     } else {
       isConnected = true;
@@ -236,7 +237,7 @@ void forDrone() {
   //TASK 2: Wait for base station to send deploy command to start moving.
   if(isConnected && !isAcknowledging && !isDeployed) {
     if(!receivedSpecificCommand("DEPL")) {
-      if(millis() - startTime >= 5000) {
+      if(millis() - startTime >= waitingTime) {
         Serial.println("Command 'DEPL' was not received yet. Continue waiting.");
         startTime = millis();
       }
@@ -254,14 +255,14 @@ void forDrone() {
   if(isConnected && isAcknowledging && !isDeployed) {
     if(millis() - startTime <= 10000) {
       sendCommand("DEPLREP", received["fromName"].as<String>(), "SUCC");
+      escLeft.write(minSpeed);
+      escRight.write(minSpeed);
     } else if(millis() - startTime > 10000) {
       isAcknowledging = false;
       isDeployed = true;
       digitalWrite(detectionPin, HIGH);
       
       initialAngle = Compass.GetHeadingDegrees();
-      escLeft.write(minSpeed);
-      escRight.write(minSpeed);
       startTime = millis();
     }
   }
@@ -365,8 +366,8 @@ void forDrone() {
         
       } else if(error < -maxAngleChange) {
         //It's turning left, so give the left motor more speed
-        escLeft.write(modifiedSpeed);
-        escRight.write(minSpeed);
+//        escLeft.write(modifiedSpeed);
+//        escRight.write(minSpeed);
 
         Serial.println("=========");
         Serial.print("LFTM: ");
