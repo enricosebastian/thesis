@@ -32,7 +32,7 @@ const int waitingTime = 5000;
 
 const float minSpeed = 11;
 const float maxSpeed = 90;
-const float maxAngleChange = 20;
+const float maxAngleChange = 10;
 
 bool isConnected = false;
 bool isDeploying = false;
@@ -255,13 +255,17 @@ void forDrone() {
   if(isConnected && isAcknowledging && !isDeployed) {
     if(millis() - startTime <= 10000) {
       sendCommand("DEPLREP", received["fromName"].as<String>(), "SUCC");
+      
+    } else if(millis() - startTime > 10000) {
+      Serial.println("Drone is deploying. Moving motors.");
+
       escLeft.write(minSpeed);
       escRight.write(minSpeed);
-    } else if(millis() - startTime > 10000) {
+      
       isAcknowledging = false;
       isDeployed = true;
-      digitalWrite(detectionPin, HIGH);
       
+      digitalWrite(detectionPin, HIGH);
       initialAngle = Compass.GetHeadingDegrees();
       startTime = millis();
     }
@@ -320,9 +324,9 @@ void forDrone() {
     if(!hasDetectedObject && !hasReceivedCommand && !isGoingHome) {
       if(millis() - startTime >= 1000) {
         startTime = millis();
-        digitalWrite(redLed, !digitalRead(redLed));
+        digitalWrite(redLed, LOW);
         digitalWrite(yellowLed, LOW);
-        digitalWrite(greenLed, LOW);
+        digitalWrite(greenLed, !digitalRead(greenLed));
       }
       
       float error = initialAngle - Compass.GetHeadingDegrees();
@@ -339,8 +343,10 @@ void forDrone() {
       cumulative_error += error;
       previous_error = error;
       float modifiedSpeed = map(abs(PID_total),0,1600,6,90);
+
+      Serial.println(error);
       
-      if(error > maxAngleChange) {
+      if(error > -maxAngleChange) {
         //It's turning right, so give the right motor more speed
         escLeft.write(minSpeed);
         escRight.write(modifiedSpeed);
@@ -364,10 +370,10 @@ void forDrone() {
         sendCommand("INITA", "BASE", String(initialAngle));
         sendCommand("CURRA", "BASE", String(Compass.GetHeadingDegrees()));
         
-      } else if(error < -maxAngleChange) {
+      } else if(error > maxAngleChange) {
         //It's turning left, so give the left motor more speed
-//        escLeft.write(modifiedSpeed);
-//        escRight.write(minSpeed);
+        escLeft.write(modifiedSpeed);
+        escRight.write(minSpeed);
 
         Serial.println("=========");
         Serial.print("LFTM: ");
