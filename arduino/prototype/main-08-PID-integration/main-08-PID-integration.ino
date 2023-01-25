@@ -199,7 +199,17 @@ void forBaseStation() {
       Serial.println("Command sent successfully!");
     }
 
-    if(receivedCommand()) {        
+    if(receivedCommand()) {       
+      Serial.println("=========received======");
+      Serial.print("command: ");
+      Serial.println(received["command"].as<String>());
+      Serial.print("toName: ");
+      Serial.println(received["toName"].as<String>());
+      Serial.print("fromName: ");
+      Serial.println(received["fromName"].as<String>());
+      Serial.print("details: ");
+      Serial.println(received["details"].as<String>());
+      Serial.println("===================");
     }
   }
 }
@@ -317,48 +327,36 @@ void forDrone() {
       float previous_error;
       float cumulative_error;
       int period = 50;
+
+      float PID_p = kp * error;
+      float PID_i = cumulative_error * ki;
+      float PID_d = kd*(error - previous_error);
+
+      double PID_total = PID_p + PID_i + PID_d;
+
+      cumulative_error += error;
+      previous_error = error;
+      float modifiedSpeed = map(abs(PID_total),0,1600,6,90);
       
       if(error < -1) {
         //It's turning right, so give the right motor more speed
-        float PID_p = kp * error;
-        float PID_i = cumulative_error * ki;
-        float PID_d = kd*(error - previous_error);
-  
-        double PID_total = PID_p + PID_i + PID_d;
-  
-        cumulative_error += error;
-        previous_error = error;
-        
         escLeft.write(minSpeed);
-        escRight.write(map(abs(PID_total),0,1600,6,90));
+        escRight.write(modifiedSpeed);
         
-        Serial.print("PID_total: ");
-        Serial.println(map(abs(PID_total),0,1600,6,90));
-        Serial.print("left motor: ");
-        Serial.println(escLeftPin);
-        Serial.print("right motor: ");
-        Serial.println(escRightPin);
-
+        sendCommand("LFTM", "BASE", String(minSpeed));
+        sendCommand("RITM", "BASE", String(modifiedSpeed));
+        sendCommand("INITA", "BASE", String(initialAngle));
+        sendCommand("CURRA", "BASE", String(Compass.GetHeadingDegrees()));
+        
       } else if(error > 1) {
         //It's turning left, so give the left motor more speed
-        float PID_p = kp * error;
-        float PID_i = cumulative_error * ki;
-        float PID_d = kd*(error - previous_error);
-
-        double PID_total = PID_p + PID_i + PID_d;
-
-        cumulative_error += error;
-        previous_error = error;
-        
-        escLeft.write(map(abs(PID_total),0,1600,6,90));
+        escLeft.write(modifiedSpeed);
         escRight.write(minSpeed);
-        
-        Serial.print("PID_total: ");
-        Serial.println(map(abs(PID_total),0,1600,6,90));
-        Serial.print("left motor: ");
-        Serial.println(escLeftPin);
-        Serial.print("right motor: ");
-        Serial.println(escRightPin);
+
+        sendCommand("LFTM", "BASE", String(modifiedSpeed));
+        sendCommand("RITM", "BASE", String(minSpeed));
+        sendCommand("INITA", "BASE", String(initialAngle));
+        sendCommand("CURRA", "BASE", String(Compass.GetHeadingDegrees()));
       }
     }
     
