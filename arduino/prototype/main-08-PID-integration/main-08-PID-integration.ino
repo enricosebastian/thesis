@@ -35,6 +35,7 @@ const int btn = 7;
 
 const float minSpeed = 11;
 const float maxSpeed = 90;
+const float maxAngleChange = 20;
 
 bool isConnected = false;
 bool isDeploying = false;
@@ -338,7 +339,7 @@ void forDrone() {
       previous_error = error;
       float modifiedSpeed = map(abs(PID_total),0,1600,6,90);
       
-      if(error > 2) {
+      if(error > maxAngleChange) {
         //It's turning right, so give the right motor more speed
         escLeft.write(minSpeed);
         escRight.write(modifiedSpeed);
@@ -362,7 +363,7 @@ void forDrone() {
         sendCommand("INITA", "BASE", String(initialAngle));
         sendCommand("CURRA", "BASE", String(Compass.GetHeadingDegrees()));
         
-      } else if(error < -2) {
+      } else if(error < -maxAngleChange) {
         //It's turning left, so give the left motor more speed
         escLeft.write(modifiedSpeed);
         escRight.write(minSpeed);
