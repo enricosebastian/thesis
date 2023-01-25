@@ -33,7 +33,7 @@ const int escLeftPin = 6;
 const int escRightPin = 5;
 const int btn = 7;
 
-const float minSpeed = 7;
+const float minSpeed = 11;
 const float maxSpeed = 90;
 
 bool isConnected = false;
@@ -85,20 +85,20 @@ void setup() {
     digitalWrite(redLed, HIGH);
     digitalWrite(yellowLed, LOW);
     digitalWrite(greenLed, LOW);
-    
-    //Compass initialization
-    Wire.begin();
-    Compass.SetDeclination(-2, 37, 'W');  
-    Compass.SetSamplingMode(COMPASS_SINGLE);
-    Compass.SetScale(COMPASS_SCALE_130);
-    Compass.SetOrientation(COMPASS_HORIZONTAL_X_NORTH);
-    
-    //ESC initialization
-    escLeft.attach(escLeftPin,1000,2000);
-    escRight.attach(escRightPin,1000,2000);
-    escLeft.write(0);
-    escRight.write(0);
   }
+  
+  //Compass initialization
+  Wire.begin();
+  Compass.SetDeclination(-2, 37, 'W');  
+  Compass.SetSamplingMode(COMPASS_SINGLE);
+  Compass.SetScale(COMPASS_SCALE_130);
+  Compass.SetOrientation(COMPASS_HORIZONTAL_X_NORTH);
+  
+  //ESC initialization
+  escLeft.attach(escLeftPin,1000,2000);
+  escRight.attach(escRightPin,1000,2000);
+  escLeft.write(0);
+  escRight.write(0);
 
   delay(500);
   startTime = millis();
@@ -338,7 +338,7 @@ void forDrone() {
       previous_error = error;
       float modifiedSpeed = map(abs(PID_total),0,1600,6,90);
       
-      if(error > 1) {
+      if(error > 2) {
         //It's turning right, so give the right motor more speed
         escLeft.write(minSpeed);
         escRight.write(modifiedSpeed);
@@ -362,7 +362,7 @@ void forDrone() {
         sendCommand("INITA", "BASE", String(initialAngle));
         sendCommand("CURRA", "BASE", String(Compass.GetHeadingDegrees()));
         
-      } else if(error < -1) {
+      } else if(error < -2) {
         //It's turning left, so give the left motor more speed
         escLeft.write(modifiedSpeed);
         escRight.write(minSpeed);
