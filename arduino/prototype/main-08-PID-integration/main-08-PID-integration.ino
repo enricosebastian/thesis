@@ -369,10 +369,10 @@ void forDrone() {
 
         Serial.println("=========");
         Serial.print("LFTM: ");
-        Serial.println(minSpeed);
-
-        Serial.print("RITM: ");
         Serial.println(modifiedSpeed);
+        
+        Serial.print("RITM: ");
+        Serial.println(minSpeed);
 
         Serial.print("INITA: ");
         Serial.println(initialAngle);
