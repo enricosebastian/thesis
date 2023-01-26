@@ -32,7 +32,7 @@ const int waitingTime = 5000;
 
 const float minSpeed = 11;
 const float maxSpeed = 90;
-const float maxAngleChange = 10;
+const float maxAngleChange = 5;
 
 bool isConnected = false;
 bool isDeploying = false;
@@ -109,6 +109,7 @@ void setup() {
 void loop() {
 //  forBaseStation();
   forDrone();
+  // Serial.println(Compass.GetHeadingDegrees());
 }
 
 void forBaseStation() {
@@ -248,7 +249,7 @@ void forDrone() {
       digitalWrite(redLed, LOW);
       digitalWrite(yellowLed, LOW);
       digitalWrite(greenLed, HIGH);
-      initialAngle = Compass.GetHeadingDegrees();
+      initialAngle = Compass.GetHeadingDegrees(); //243
     }
   }
 
@@ -342,12 +343,13 @@ void forDrone() {
 
       cumulative_error += error;
       previous_error = error;
-      float modifiedSpeed = map(abs(PID_total),0,1600,6,90);
+      float modifiedSpeed = map(abs(PID_total),0,1600,minSpeed,maxSpeed);
 
-//      Serial.println(error);
+     Serial.println(error);
       
-      if(error > -maxAngleChange) {
+      if(error < -maxAngleChange) {
         //It's turning right, so give the right motor more speed
+        Serial.println("right");
         escLeft.write(minSpeed);
         escRight.write(modifiedSpeed);
 
@@ -372,6 +374,7 @@ void forDrone() {
         
       } else if(error > maxAngleChange) {
         //It's turning left, so give the left motor more speed
+         Serial.println("left");
         escLeft.write(modifiedSpeed);
         escRight.write(minSpeed);
 

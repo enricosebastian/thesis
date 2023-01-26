@@ -5,7 +5,6 @@
 #include <Servo.h>
 #include <Wire.h>
 #include <HMC5883L_Simple.h>
-#include <PID_v1.h>
 
 HMC5883L_Simple Compass;
 /*
@@ -16,14 +15,9 @@ HMC5883L_Simple Compass;
  * SDA  -> A4, green
 */
 
-SoftwareSerial HC12(8, 9); // (Green TX, Blue RX)
-LinkedList<String> drones;
-Servo escLeft;
-Servo escRight;
-StaticJsonDocument<200> received; //Only received strings need to be global variables...
-
-const String myName = "BASE"; //Change name here
-//const String myName = "DRO1";
+// Name here
+//const String myName = "BASE";
+const String myName = "DRO1";
 
 const int redLed = 13;
 const int yellowLed = 12;
@@ -32,6 +26,13 @@ const int detectionPin = 10;
 const int escLeftPin = 6;
 const int escRightPin = 5;
 const int btn = 7;
+const int txPin = A0; //green tx
+const int rxPin = A1; //blue rx
+const int waitingTime = 5000;
+
+const float minSpeed = 11;
+const float maxSpeed = 90;
+const float maxAngleChange = 10;
 
 bool isConnected = false;
 bool isDeploying = false;
@@ -45,18 +46,20 @@ unsigned long startTime = 0;
 
 int posX = 0;
 int posY = 0;
-int escLeftSpeed = 6;
-int escRightSpeed = 6;
 
 float initialAngle = 0;
-double Setpoint;
-double Input;
-double Output;
-//PID parameters
-double kp = 8, ki = 3200, kd = 0.8;
+float kp = 8;
+float ki = 0.2;
+float kd = 10;
+float PID_p, PID_i, PID_d, PID_total;
 
-//PID intance
-PID myPID(&Input, &Output, &Setpoint, kp, ki, kd, DIRECT);
+
+
+SoftwareSerial HC12(txPin, rxPin); // (Green TX, Blue RX)
+LinkedList<String> drones;
+Servo escLeft;
+Servo escRight;
+StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
 void setup() {
   Serial.begin(9600);
@@ -79,11 +82,6 @@ void setup() {
 
   pinMode(btn, INPUT);
 
-  myPID.SetMode(AUTOMATIC);
-  myPID.SetTunings(kp,ki,kd);
-
-  delay(500);
-
   //Successful intialization indicator
   if(myName == "BASE") {
     digitalWrite(redLed, LOW);
@@ -93,7 +91,6 @@ void setup() {
     digitalWrite(redLed, HIGH);
     digitalWrite(yellowLed, LOW);
     digitalWrite(greenLed, LOW);
-    
     //Compass initialization
     Wire.begin();
     Compass.SetDeclination(-2, 37, 'W');  
@@ -104,26 +101,16 @@ void setup() {
     //ESC initialization
     escLeft.attach(escLeftPin,1000,2000);
     escRight.attach(escRightPin,1000,2000);
-    escLeft.write(0);
-    escRight.write(0);
   }
 
-  delay(500);
+  escLeft.write(0);
+  escRight.write(0);
   startTime = millis();
 }
 
 void loop() {
-  //for drone
-//  forDrone();
-
-
-
-  //for base station
-  forBaseStation();
-  
-
-
-  
+//  forBaseStation();
+  forDrone();
 }
 
 void forBaseStation() {
@@ -216,7 +203,17 @@ void forBaseStation() {
       Serial.println("Command sent successfully!");
     }
 
-    if(receivedCommand()) {        
+    if(receivedCommand()) {       
+      Serial.println("=========received======");
+      Serial.print("command: ");
+      Serial.println(received["command"].as<String>());
+      Serial.print("toName: ");
+      Serial.println(received["toName"].as<String>());
+      Serial.print("fromName: ");
+      Serial.println(received["fromName"].as<String>());
+      Serial.print("details: ");
+      Serial.println(received["details"].as<String>());
+      Serial.println("===================");
     }
   }
 }
@@ -225,14 +222,12 @@ void forDrone() {
   //TASK 1: Keep sending connect command until acknowledged.
   if(!isConnected && !isDeployed) {
     if(!receivedSpecificCommand("CONNREP")) {
-      if(millis() - startTime >= 5000) {
+      if(millis() - startTime >= waitingTime) {
+        sendCommand("CONN", "BASE", "HELL");
         Serial.println("Reply 'CONNREP' was not received. Resending message again.");
         startTime = millis();
-        sendCommand("CONN", "BASE", "HELL");
       }
     } else {
-      escLeft.write(0);
-      escRight.write(0);
       isConnected = true;
       Serial.println("Successfully detected by base station. Waiting for deployment.");
       digitalWrite(redLed, LOW);
@@ -244,7 +239,7 @@ void forDrone() {
   //TASK 2: Wait for base station to send deploy command to start moving.
   if(isConnected && !isAcknowledging && !isDeployed) {
     if(!receivedSpecificCommand("DEPL")) {
-      if(millis() - startTime >= 5000) {
+      if(millis() - startTime >= waitingTime) {
         Serial.println("Command 'DEPL' was not received yet. Continue waiting.");
         startTime = millis();
       }
@@ -255,63 +250,75 @@ void forDrone() {
       digitalWrite(redLed, LOW);
       digitalWrite(yellowLed, LOW);
       digitalWrite(greenLed, HIGH);
+      initialAngle = Compass.GetHeadingDegrees();
     }
   }
 
-  //Send acknowledgements for at least 5 seconds
+  //TASK 2.1: Base station wants to deploy us. Send acknowledgement/handshake for at least 5 seconds
   if(isConnected && isAcknowledging && !isDeployed) {
     if(millis() - startTime <= 10000) {
       sendCommand("DEPLREP", received["fromName"].as<String>(), "SUCC");
     } else if(millis() - startTime > 10000) {
+      Serial.println("Drone is deploying. Moving motors.");
+
+      escLeft.write(minSpeed);
+      escRight.write(minSpeed);
+      
       isAcknowledging = false;
       isDeployed = true;
-      initialAngle = Compass.GetHeadingDegrees();
-      escLeft.write(escLeftSpeed);
-      escRight.write(escRightSpeed);
+      
       digitalWrite(detectionPin, HIGH);
       startTime = millis();
     }
   }
-
+  
   //TASK 3: Start moving. Plus, look for commands from base station. And also RPi.
   if(isConnected && !isAcknowledging && isDeployed) {
 
-    //TASK 3.1: Looking for base station commands
+    //TASK 3.1: If you received a command from base station, stop what you are doing and interpret the command.
     if(!hasDetectedObject && !hasReceivedCommand && receivedCommand()) {
+      Serial.println("received a command");
       hasReceivedCommand = true;
       startTime = millis();
     }
 
+    //TASK 3.1.2: Read what each command means
     if(!hasDetectedObject && hasReceivedCommand) {
       if(millis() - startTime <= 10000) {
+        // send acknowledgement that you received a command
         sendCommand(received["command"].as<String>()+"REP", received["fromName"].as<String>(), "SUCC");
       } else if(millis() - startTime > 10000) {
+        //turn off hasReceivedCommand and interpret the actual command
         hasReceivedCommand = false;
-      }
-      
-      if(received["command"].as<String>() == "ALL") {
-        Serial.println("All led light up command.");
-        digitalWrite(redLed, HIGH);
-        digitalWrite(yellowLed, HIGH);
-        digitalWrite(greenLed, HIGH);
-      } else if(received["command"].as<String>() == "STOP") {
-        Serial.println("Stopping drone.");
-        digitalWrite(redLed, LOW);
-        digitalWrite(yellowLed, HIGH);
-        digitalWrite(greenLed, LOW);
-        isGoingHome = true;
-        escLeft.write(0);
-        escRight.write(0);
-      } else if(received["command"].as<String>() == "GO") {
-        Serial.println("Drone resuming deployment.");
-        digitalWrite(redLed, LOW);
-        digitalWrite(yellowLed, LOW);
-        digitalWrite(greenLed, HIGH);
         
-        isGoingHome = false; // Revert status back to false
-        initialAngle = Compass.GetHeadingDegrees(); // Save new angle
-        escLeft.write(6); // Initialize all the ESCs
-        escRight.write(6);
+        if(received["command"].as<String>() == "STOP") {
+          Serial.println("Stopping drone.");
+          digitalWrite(redLed, LOW);
+          digitalWrite(yellowLed, HIGH);
+          digitalWrite(greenLed, LOW);
+          
+          isGoingHome = true;
+          escLeft.write(0);
+          escRight.write(0);
+        } else if(received["command"].as<String>() == "GO") {
+          Serial.println("Drone resuming deployment.");
+          digitalWrite(redLed, LOW);
+          digitalWrite(yellowLed, LOW);
+          digitalWrite(greenLed, HIGH);
+          
+          isGoingHome = false; // Revert status back to false
+          initialAngle = Compass.GetHeadingDegrees(); // Save new angle
+          escLeft.write(minSpeed); //re-initialize escs
+          escRight.write(minSpeed);
+        } else if(received["command"].as<String>() == "TURN") {
+          if(received["details"].as<String>() == "LEFT") {
+            initialAngle = initialAngle-30; // add 90-degrees to the left
+            Serial.println("Turning left.");
+          } else if(received["details"].as<String>() == "RIGHT") {
+            initialAngle = initialAngle+30; // add 90-degrees to the right
+            Serial.println("Turning right.");
+          }
+        }
       }
     }
 
@@ -319,40 +326,68 @@ void forDrone() {
     if(!hasDetectedObject && !hasReceivedCommand && !isGoingHome) {
       if(millis() - startTime >= 1000) {
         startTime = millis();
-        digitalWrite(redLed, !digitalRead(redLed));
+        digitalWrite(redLed, LOW);
         digitalWrite(yellowLed, LOW);
-        digitalWrite(greenLed, LOW);
+        digitalWrite(greenLed, !digitalRead(greenLed));
       }
       
-      Setpoint = initialAngle;
-      float difference = Compass.GetHeadingDegrees() - initialAngle;
       float error = initialAngle - Compass.GetHeadingDegrees();
-      int magnitude = abs(int(difference*100/initialAngle));
-      Input = Compass.GetHeadingDegrees();
-      myPID.Compute();
-      //Output = map(Output,0,,0,180)
       
-      if(error < -1) {
+
+      cumulative_error += error;
+      previous_error = error;
+      float modifiedSpeed = map(abs(PID_total),0,1600,6,90);
+
+//      Serial.println(error);
+      
+      if(error > -maxAngleChange) {
         //It's turning right, so give the right motor more speed
-        escLeft.write(escLeftSpeed);
-        escRight.write(Output);
-  
-        Serial.print("escLeftSpeed: ");
-        Serial.println(escLeftSpeed);
-        Serial.print("PID_total: ");
-        Serial.println(Output);
-      } else if(error > 1) {
-        //It's turning left, so give the left motor more speed
-    
+        escLeft.write(minSpeed);
+        escRight.write(modifiedSpeed);
+
+//        Serial.println("=========");
+//        Serial.print("LFTM: ");
+//        Serial.println(minSpeed);
+//
+//        Serial.print("RITM: ");
+//        Serial.println(modifiedSpeed);
+//
+//        Serial.print("INITA: ");
+//        Serial.println(initialAngle);
+//
+//        Serial.print("CURRA: ");
+//        Serial.println(Compass.GetHeadingDegrees());
+//        Serial.println("=========");
         
-        escLeft.write(Output);
-        escRight.write(escRightSpeed);
-        Serial.print("escRightSpeed: ");
-        Serial.println(escRightSpeed);
-        Serial.print("PID_total: ");
-        Serial.println(Output);
+//        sendCommand("LFTM", "BASE", String(minSpeed));
+//        sendCommand("RITM", "BASE", String(modifiedSpeed));
+//        sendCommand("INITA", "BASE", String(initialAngle));
+//        sendCommand("CURRA", "BASE", String(Compass.GetHeadingDegrees()));
+        
+      } else if(error > maxAngleChange) {
+        //It's turning left, so give the left motor more speed
+        escLeft.write(modifiedSpeed);
+        escRight.write(minSpeed);
+
+//        Serial.println("=========");
+//        Serial.print("LFTM: ");
+//        Serial.println(modifiedSpeed);
+//        
+//        Serial.print("RITM: ");
+//        Serial.println(minSpeed);
+//
+//        Serial.print("INITA: ");
+//        Serial.println(initialAngle);
+//
+//        Serial.print("CURRA: ");
+//        Serial.println(Compass.GetHeadingDegrees());
+//        Serial.println("=========");
+
+//        sendCommand("LFTM", "BASE", String(modifiedSpeed));
+//        sendCommand("RITM", "BASE", String(minSpeed));
+//        sendCommand("INITA", "BASE", String(initialAngle));
+//        sendCommand("CURRA", "BASE", String(Compass.GetHeadingDegrees()));
       }
-      
     }
     
     //TASK 3.3: Look for RPi commands (Check if you detect an object in the water)
@@ -360,7 +395,7 @@ void forDrone() {
       hasDetectedObject = true;
       startTime = millis();
     }
-
+    
     if(!hasReceivedCommand && hasDetectedObject && !isGoingHome) {
       if(millis() - startTime <= 10000) {
         //Do we need to acknowledge though? It's physically connected, so data is strong
@@ -385,7 +420,7 @@ void forDrone() {
         digitalWrite(greenLed, HIGH);
       }
     }
-
+    
     //Task 3.4: If command says to stop, then stop the prototype.
     if(!hasReceivedCommand && !hasDetectedObject && isGoingHome) {
       //Do nothing lmao. Go home
@@ -426,23 +461,11 @@ void addDrone(String droneName) {
 bool receivedCommand() {
   if(HC12.available()) {
     DeserializationError err = deserializeJson(received, HC12); //Deserialize it into different possible variables
-
-    Serial.println("\n\nReceived a command");
-    if(err == DeserializationError::Ok) {
-      Serial.print("command: ");
-      Serial.println(received["command"].as<String>());
-      Serial.print("toName: ");
-      Serial.println(received["toName"].as<String>());
-      Serial.print("fromName: ");
-      Serial.println(received["fromName"].as<String>());
-      Serial.print("details: ");
-      Serial.println(received["details"].as<String>());
+    
+    if(err == DeserializationError::Ok)
       return (received["toName"].as<String>() == myName);
-    } else {
-      Serial.println("printed choppy command");
-      Serial.println("\n\n");
+    else
       return false;
-    }  
   }
 
   //This means you received no command at all...
@@ -454,18 +477,6 @@ bool receivedCommand() {
 }
 
 void sendCommand(String command, String toName, String details) {
-
-  Serial.println("\n\nsending a command");
-  Serial.print("command: ");
-  Serial.println(command);
-  Serial.print("toName: ");
-  Serial.println(toName);
-  Serial.print("fromName: ");
-  Serial.println(myName);
-  Serial.print("details: ");
-  Serial.println(details);
-  Serial.println("\n\n");
-      
   StaticJsonDocument<200> sent;
   sent["command"] = command;
   sent["toName"] = toName;
@@ -481,26 +492,11 @@ bool receivedSpecificCommand(String command) {
 bool detectedObject() {
   if(Serial.available()){
     DeserializationError err = deserializeJson(received, Serial); //Deserialize it into different possible variables
-
-    Serial.println("\n\nReceived a command");
-    if (err == DeserializationError::Ok) {
-      Serial.print("command: ");
-      Serial.println(received["command"].as<String>());
-      Serial.print("toName: ");
-      Serial.println(received["toName"].as<String>());
-      Serial.print("fromName: ");
-      Serial.println(received["fromName"].as<String>());
-      Serial.print("details: ");
-      Serial.println(received["details"].as<String>());
-
-      Serial.println("\n\n");
+    
+    if (err == DeserializationError::Ok) 
       return (received["toName"].as<String>() == myName) && (received["command"].as<String>() == "DETE");
-    } else {
-      Serial.println("printed choppy command");
-      Serial.println("\n\n");
+    else
       return false;
-    }
-      
   }
 
   //This means you received no command at all...
