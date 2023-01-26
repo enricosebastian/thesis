@@ -203,16 +203,16 @@ void forBaseStation() {
     }
 
     if(receivedCommand()) {       
-      Serial.println("=========received======");
-      Serial.print("command: ");
-      Serial.println(received["command"].as<String>());
-      Serial.print("toName: ");
-      Serial.println(received["toName"].as<String>());
-      Serial.print("fromName: ");
-      Serial.println(received["fromName"].as<String>());
-      Serial.print("details: ");
-      Serial.println(received["details"].as<String>());
-      Serial.println("===================");
+      // Serial.println("=========received======");
+      // Serial.print("command: ");
+      // Serial.println(received["command"].as<String>());
+      // Serial.print("toName: ");
+      // Serial.println(received["toName"].as<String>());
+      // Serial.print("fromName: ");
+      // Serial.println(received["fromName"].as<String>());
+      // Serial.print("details: ");
+      // Serial.println(received["details"].as<String>());
+      // Serial.println("===================");
     }
   }
 }
@@ -236,205 +236,205 @@ void forDrone() {
   }
 
   //TASK 2: Wait for base station to send deploy command to start moving.
-//   if(isConnected && !isAcknowledging && !isDeployed) {
-//     if(!receivedSpecificCommand("DEPL")) {
-//       if(millis() - startTime >= waitingTime) {
-//         Serial.println("Command 'DEPL' was not received yet. Continue waiting.");
-//         startTime = millis();
-//       }
-//     } else {
-//       isAcknowledging = true;
-//       Serial.println("Base station wants to start deploying.");
-//       startTime = millis();
-//       digitalWrite(redLed, LOW);
-//       digitalWrite(yellowLed, LOW);
-//       digitalWrite(greenLed, HIGH);
-//       initialAngle = Compass.GetHeadingDegrees(); //243
-//     }
-//   }
+  if(isConnected && !isAcknowledging && !isDeployed) {
+    if(!receivedSpecificCommand("DEPL")) {
+      if(millis() - startTime >= waitingTime) {
+        Serial.println("Command 'DEPL' was not received yet. Continue waiting.");
+        startTime = millis();
+      }
+    } else {
+      isAcknowledging = true;
+      Serial.println("Base station wants to start deploying.");
+      startTime = millis();
+      digitalWrite(redLed, LOW);
+      digitalWrite(yellowLed, LOW);
+      digitalWrite(greenLed, HIGH);
+      initialAngle = Compass.GetHeadingDegrees(); //243
+    }
+  }
 
-//   //TASK 2.1: Base station wants to deploy us. Send acknowledgement/handshake for at least 5 seconds
-//   if(isConnected && isAcknowledging && !isDeployed) {
-//     if(millis() - startTime <= 10000) {
-//       sendCommand("DEPLREP", received["fromName"].as<String>(), "SUCC");
-//     } else if(millis() - startTime > 10000) {
-//       Serial.println("Drone is deploying. Moving motors.");
+  //TASK 2.1: Base station wants to deploy us. Send acknowledgement/handshake for at least 5 seconds
+  if(isConnected && isAcknowledging && !isDeployed) {
+    if(millis() - startTime <= 10000) {
+      sendCommand("DEPLREP", received["fromName"].as<String>(), "SUCC");
+    } else if(millis() - startTime > 10000) {
+      Serial.println("Drone is deploying. Moving motors.");
 
-//       escLeft.write(minSpeed);
-//       escRight.write(minSpeed);
+      escLeft.write(minSpeed);
+      escRight.write(minSpeed);
       
-//       isAcknowledging = false;
-//       isDeployed = true;
+      isAcknowledging = false;
+      isDeployed = true;
       
-//       digitalWrite(detectionPin, HIGH);
-//       startTime = millis();
-//     }
-//   }
+      digitalWrite(detectionPin, HIGH);
+      startTime = millis();
+    }
+  }
   
-//   //TASK 3: Start moving. Plus, look for commands from base station. And also RPi.
-//   if(isConnected && !isAcknowledging && isDeployed) {
+  //TASK 3: Start moving. Plus, look for commands from base station. And also RPi.
+  if(isConnected && !isAcknowledging && isDeployed) {
 
-//     //TASK 3.1: If you received a command from base station, stop what you are doing and interpret the command.
-//     if(!hasDetectedObject && !hasReceivedCommand && receivedCommand()) {
-//       Serial.println("received a command");
-//       hasReceivedCommand = true;
-//       startTime = millis();
-//     }
+    //TASK 3.1: If you received a command from base station, stop what you are doing and interpret the command.
+    if(!hasDetectedObject && !hasReceivedCommand && receivedCommand()) {
+      Serial.println("received a command");
+      hasReceivedCommand = true;
+      startTime = millis();
+    }
 
-//     //TASK 3.1.2: Read what each command means
-//     if(!hasDetectedObject && hasReceivedCommand) {
-//       if(millis() - startTime <= 10000) {
-//         // send acknowledgement that you received a command
-//         sendCommand(received["command"].as<String>()+"REP", received["fromName"].as<String>(), "SUCC");
-//       } else if(millis() - startTime > 10000) {
-//         //turn off hasReceivedCommand and interpret the actual command
-//         hasReceivedCommand = false;
+    //TASK 3.1.2: Read what each command means
+    if(!hasDetectedObject && hasReceivedCommand) {
+      if(millis() - startTime <= 10000) {
+        // send acknowledgement that you received a command
+        sendCommand(received["command"].as<String>()+"REP", received["fromName"].as<String>(), "SUCC");
+      } else if(millis() - startTime > 10000) {
+        //turn off hasReceivedCommand and interpret the actual command
+        hasReceivedCommand = false;
         
-//         if(received["command"].as<String>() == "STOP") {
-//           Serial.println("Stopping drone.");
-//           digitalWrite(redLed, LOW);
-//           digitalWrite(yellowLed, HIGH);
-//           digitalWrite(greenLed, LOW);
+        if(received["command"].as<String>() == "STOP") {
+          Serial.println("Stopping drone.");
+          digitalWrite(redLed, LOW);
+          digitalWrite(yellowLed, HIGH);
+          digitalWrite(greenLed, LOW);
           
-//           isGoingHome = true;
-//           escLeft.write(0);
-//           escRight.write(0);
-//         } else if(received["command"].as<String>() == "GO") {
-//           Serial.println("Drone resuming deployment.");
-//           digitalWrite(redLed, LOW);
-//           digitalWrite(yellowLed, LOW);
-//           digitalWrite(greenLed, HIGH);
+          isGoingHome = true;
+          escLeft.write(0);
+          escRight.write(0);
+        } else if(received["command"].as<String>() == "GO") {
+          Serial.println("Drone resuming deployment.");
+          digitalWrite(redLed, LOW);
+          digitalWrite(yellowLed, LOW);
+          digitalWrite(greenLed, HIGH);
           
-//           isGoingHome = false; // Revert status back to false
-//           initialAngle = Compass.GetHeadingDegrees(); // Save new angle
-//           escLeft.write(minSpeed); //re-initialize escs
-//           escRight.write(minSpeed);
-//         } else if(received["command"].as<String>() == "TURN") {
-//           if(received["details"].as<String>() == "LEFT") {
-//             initialAngle = initialAngle-30; // add 90-degrees to the left
-//             Serial.println("Turning left.");
-//           } else if(received["details"].as<String>() == "RIGHT") {
-//             initialAngle = initialAngle+30; // add 90-degrees to the right
-//             Serial.println("Turning right.");
-//           }
-//         }
-//       }
-//     }
+          isGoingHome = false; // Revert status back to false
+          initialAngle = Compass.GetHeadingDegrees(); // Save new angle
+          escLeft.write(minSpeed); //re-initialize escs
+          escRight.write(minSpeed);
+        } else if(received["command"].as<String>() == "TURN") {
+          if(received["details"].as<String>() == "LEFT") {
+            initialAngle = initialAngle-30; // add 90-degrees to the left
+            Serial.println("Turning left.");
+          } else if(received["details"].as<String>() == "RIGHT") {
+            initialAngle = initialAngle+30; // add 90-degrees to the right
+            Serial.println("Turning right.");
+          }
+        }
+      }
+    }
 
-//     //TASK 3.2: Ensure that you are moving
-//     if(!hasDetectedObject && !hasReceivedCommand && !isGoingHome) {
-//       if(millis() - startTime >= 1000) {
-//         startTime = millis();
-//         digitalWrite(redLed, LOW);
-//         digitalWrite(yellowLed, LOW);
-//         digitalWrite(greenLed, !digitalRead(greenLed));
-//       }
+    //TASK 3.2: Ensure that you are moving
+    if(!hasDetectedObject && !hasReceivedCommand && !isGoingHome) {
+      if(millis() - startTime >= 1000) {
+        startTime = millis();
+        digitalWrite(redLed, LOW);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(greenLed, !digitalRead(greenLed));
+      }
       
-//       float error = initialAngle - Compass.GetHeadingDegrees();
-//       float previous_error;
-//       float cumulative_error;
-//       int period = 50;
+      float error = initialAngle - Compass.GetHeadingDegrees();
+      float previous_error;
+      float cumulative_error;
+      int period = 50;
 
-//       float PID_p = kp * error;
-//       float PID_i = cumulative_error * ki;
-//       float PID_d = kd*(error - previous_error);
+      float PID_p = kp * error;
+      float PID_i = cumulative_error * ki;
+      float PID_d = kd*(error - previous_error);
 
-//       double PID_total = PID_p + PID_i + PID_d;
+      double PID_total = PID_p + PID_i + PID_d;
 
-//       cumulative_error += error;
-//       previous_error = error;
-//       float modifiedSpeed = map(abs(PID_total),0,1600,minSpeed,maxSpeed);
+      cumulative_error += error;
+      previous_error = error;
+      float modifiedSpeed = map(abs(PID_total),0,1600,minSpeed,maxSpeed);
 
-//      Serial.println(error);
+     Serial.println(error);
       
-//       if(error < -maxAngleChange) {
-//         //It's turning right, so give the right motor more speed
-//         Serial.println("right");
-//         escLeft.write(minSpeed);
-//         escRight.write(modifiedSpeed);
+      if(error < -maxAngleChange) {
+        //It's turning right, so give the right motor more speed
+        Serial.println("right");
+        escLeft.write(minSpeed);
+        escRight.write(modifiedSpeed);
 
-// //        Serial.println("=========");
-// //        Serial.print("LFTM: ");
-// //        Serial.println(minSpeed);
-// //
-// //        Serial.print("RITM: ");
-// //        Serial.println(modifiedSpeed);
-// //
-// //        Serial.print("INITA: ");
-// //        Serial.println(initialAngle);
-// //
-// //        Serial.print("CURRA: ");
-// //        Serial.println(Compass.GetHeadingDegrees());
-// //        Serial.println("=========");
+//        Serial.println("=========");
+//        Serial.print("LFTM: ");
+//        Serial.println(minSpeed);
+//
+//        Serial.print("RITM: ");
+//        Serial.println(modifiedSpeed);
+//
+//        Serial.print("INITA: ");
+//        Serial.println(initialAngle);
+//
+//        Serial.print("CURRA: ");
+//        Serial.println(Compass.GetHeadingDegrees());
+//        Serial.println("=========");
         
-// //        sendCommand("LFTM", "BASE", String(minSpeed));
-// //        sendCommand("RITM", "BASE", String(modifiedSpeed));
-// //        sendCommand("INITA", "BASE", String(initialAngle));
-// //        sendCommand("CURRA", "BASE", String(Compass.GetHeadingDegrees()));
+//        sendCommand("LFTM", "BASE", String(minSpeed));
+//        sendCommand("RITM", "BASE", String(modifiedSpeed));
+//        sendCommand("INITA", "BASE", String(initialAngle));
+//        sendCommand("CURRA", "BASE", String(Compass.GetHeadingDegrees()));
         
-//       } else if(error > maxAngleChange) {
-//         //It's turning left, so give the left motor more speed
-//          Serial.println("left");
-//         escLeft.write(modifiedSpeed);
-//         escRight.write(minSpeed);
+      } else if(error > maxAngleChange) {
+        //It's turning left, so give the left motor more speed
+         Serial.println("left");
+        escLeft.write(modifiedSpeed);
+        escRight.write(minSpeed);
 
-// //        Serial.println("=========");
-// //        Serial.print("LFTM: ");
-// //        Serial.println(modifiedSpeed);
-// //        
-// //        Serial.print("RITM: ");
-// //        Serial.println(minSpeed);
-// //
-// //        Serial.print("INITA: ");
-// //        Serial.println(initialAngle);
-// //
-// //        Serial.print("CURRA: ");
-// //        Serial.println(Compass.GetHeadingDegrees());
-// //        Serial.println("=========");
+//        Serial.println("=========");
+//        Serial.print("LFTM: ");
+//        Serial.println(modifiedSpeed);
+//        
+//        Serial.print("RITM: ");
+//        Serial.println(minSpeed);
+//
+//        Serial.print("INITA: ");
+//        Serial.println(initialAngle);
+//
+//        Serial.print("CURRA: ");
+//        Serial.println(Compass.GetHeadingDegrees());
+//        Serial.println("=========");
 
-// //        sendCommand("LFTM", "BASE", String(modifiedSpeed));
-// //        sendCommand("RITM", "BASE", String(minSpeed));
-// //        sendCommand("INITA", "BASE", String(initialAngle));
-// //        sendCommand("CURRA", "BASE", String(Compass.GetHeadingDegrees()));
-//       }
-//     }
+//        sendCommand("LFTM", "BASE", String(modifiedSpeed));
+//        sendCommand("RITM", "BASE", String(minSpeed));
+//        sendCommand("INITA", "BASE", String(initialAngle));
+//        sendCommand("CURRA", "BASE", String(Compass.GetHeadingDegrees()));
+      }
+    }
     
-//     //TASK 3.3: Look for RPi commands (Check if you detect an object in the water)
-//     if(!hasDetectedObject && !hasReceivedCommand && !isGoingHome && detectedObject()) {
-//       hasDetectedObject = true;
-//       startTime = millis();
-//     }
+    //TASK 3.3: Look for RPi commands (Check if you detect an object in the water)
+    if(!hasDetectedObject && !hasReceivedCommand && !isGoingHome && detectedObject()) {
+      hasDetectedObject = true;
+      startTime = millis();
+    }
     
-//     if(!hasReceivedCommand && hasDetectedObject && !isGoingHome) {
-//       if(millis() - startTime <= 10000) {
-//         //Do we need to acknowledge though? It's physically connected, so data is strong
-//         //sendCommand("DETEREP", received["fromName"].as<String>(), "SUCC");
-//       } else if(millis() - startTime > 10000) {
-//         hasDetectedObject = false;
-//         startTime = millis();
-//       }
+    if(!hasReceivedCommand && hasDetectedObject && !isGoingHome) {
+      if(millis() - startTime <= 10000) {
+        //Do we need to acknowledge though? It's physically connected, so data is strong
+        //sendCommand("DETEREP", received["fromName"].as<String>(), "SUCC");
+      } else if(millis() - startTime > 10000) {
+        hasDetectedObject = false;
+        startTime = millis();
+      }
 
-//       //Basically deconstruct the details of the object and its location here
-//       if(received["details"].as<String>() == "RED") {
-//         digitalWrite(redLed, HIGH);
-//         digitalWrite(yellowLed, LOW);
-//         digitalWrite(greenLed, LOW);
-//       } else if(received["details"].as<String>() == "YELL") {
-//         digitalWrite(redLed, LOW);
-//         digitalWrite(yellowLed, HIGH);
-//         digitalWrite(greenLed, LOW);
-//       } else if(received["details"].as<String>() == "GREE") {
-//         digitalWrite(redLed, LOW);
-//         digitalWrite(yellowLed, LOW);
-//         digitalWrite(greenLed, HIGH);
-//       }
-//     }
+      //Basically deconstruct the details of the object and its location here
+      if(received["details"].as<String>() == "RED") {
+        digitalWrite(redLed, HIGH);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(greenLed, LOW);
+      } else if(received["details"].as<String>() == "YELL") {
+        digitalWrite(redLed, LOW);
+        digitalWrite(yellowLed, HIGH);
+        digitalWrite(greenLed, LOW);
+      } else if(received["details"].as<String>() == "GREE") {
+        digitalWrite(redLed, LOW);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(greenLed, HIGH);
+      }
+    }
     
-//     //Task 3.4: If command says to stop, then stop the prototype.
-//     if(!hasReceivedCommand && !hasDetectedObject && isGoingHome) {
-//       //Do nothing lmao. Go home
-//     }
-//   }
+    //Task 3.4: If command says to stop, then stop the prototype.
+    if(!hasReceivedCommand && !hasDetectedObject && isGoingHome) {
+      //Do nothing lmao. Go home
+    }
+  }
 }
 
 ///////Specific functions/////////
