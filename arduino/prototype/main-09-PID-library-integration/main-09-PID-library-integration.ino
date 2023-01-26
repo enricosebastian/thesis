@@ -5,6 +5,7 @@
 #include <Servo.h>
 #include <Wire.h>
 #include <HMC5883L_Simple.h>
+#include <PID_v1.h>
 
 HMC5883L_Simple Compass;
 /*
@@ -47,11 +48,15 @@ unsigned long startTime = 0;
 int posX = 0;
 int posY = 0;
 
-float initialAngle = 0;
-float kp = 8;
-float ki = 0.2;
-float kd = 10;
-float PID_p, PID_i, PID_d, PID_total;
+double Kp = 8;
+double Ki = 0.2;
+double Kd = 10;
+
+double Setpoint;
+double Input;
+double Output;
+float initialAngle;
+PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 
 SoftwareSerial HC12(txPin, rxPin); // (Green TX, Blue RX)
 LinkedList<String> drones;
@@ -331,51 +336,21 @@ void forDrone() {
       }
       
       float error = initialAngle - Compass.GetHeadingDegrees();
-      float previous_error;
-      float cumulative_error;
-      int period = 50;
-
-      float PID_p = kp * error;
-      float PID_i = cumulative_error * ki;
-      float PID_d = kd*(error - previous_error);
-
-      double PID_total = PID_p + PID_i + PID_d;
-
-      cumulative_error += error;
-      previous_error = error;
-      float modifiedSpeed = map(abs(PID_total),0,1600,minSpeed,maxSpeed);
-
+      
      Serial.println(error);
       
       if(error < -maxAngleChange) {
         //It's turning right, so give the right motor more speed
         Serial.println("right");
         escLeft.write(minSpeed);
-        escRight.write(modifiedSpeed);
+        escRight.write(Output); //for mapping
 
-//        Serial.println("=========");
-//        Serial.print("LFTM: ");
-//        Serial.println(minSpeed);
-//
-//        Serial.print("RITM: ");
-//        Serial.println(modifiedSpeed);
-//
-//        Serial.print("INITA: ");
-//        Serial.println(initialAngle);
-//
-//        Serial.print("CURRA: ");
-//        Serial.println(Compass.GetHeadingDegrees());
-//        Serial.println("=========");
-        
-//        sendCommand("LFTM", "BASE", String(minSpeed));
-//        sendCommand("RITM", "BASE", String(modifiedSpeed));
-//        sendCommand("INITA", "BASE", String(initialAngle));
-//        sendCommand("CURRA", "BASE", String(Compass.GetHeadingDegrees()));
+//       
         
       } else if(error > maxAngleChange) {
         //It's turning left, so give the left motor more speed
          Serial.println("left");
-        escLeft.write(modifiedSpeed);
+        escLeft.write(Output);  //for mapping
         escRight.write(minSpeed);
 
 //        Serial.println("=========");
