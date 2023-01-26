@@ -32,7 +32,7 @@ const int waitingTime = 5000;
 
 const float minSpeed = 11;
 const float maxSpeed = 90;
-const float maxAngleChange = 10;
+const float maxAngleChange = 5;
 
 bool isConnected = false;
 bool isDeploying = false;
@@ -52,8 +52,6 @@ float kp = 8;
 float ki = 0.2;
 float kd = 10;
 float PID_p, PID_i, PID_d, PID_total;
-
-
 
 SoftwareSerial HC12(txPin, rxPin); // (Green TX, Blue RX)
 LinkedList<String> drones;
@@ -111,6 +109,7 @@ void setup() {
 void loop() {
 //  forBaseStation();
   forDrone();
+   Serial.println(Compass.GetHeadingDegrees());
 }
 
 void forBaseStation() {
@@ -204,16 +203,16 @@ void forBaseStation() {
     }
 
     if(receivedCommand()) {       
-      Serial.println("=========received======");
-      Serial.print("command: ");
-      Serial.println(received["command"].as<String>());
-      Serial.print("toName: ");
-      Serial.println(received["toName"].as<String>());
-      Serial.print("fromName: ");
-      Serial.println(received["fromName"].as<String>());
-      Serial.print("details: ");
-      Serial.println(received["details"].as<String>());
-      Serial.println("===================");
+      // Serial.println("=========received======");
+      // Serial.print("command: ");
+      // Serial.println(received["command"].as<String>());
+      // Serial.print("toName: ");
+      // Serial.println(received["toName"].as<String>());
+      // Serial.print("fromName: ");
+      // Serial.println(received["fromName"].as<String>());
+      // Serial.print("details: ");
+      // Serial.println(received["details"].as<String>());
+      // Serial.println("===================");
     }
   }
 }
@@ -250,7 +249,7 @@ void forDrone() {
       digitalWrite(redLed, LOW);
       digitalWrite(yellowLed, LOW);
       digitalWrite(greenLed, HIGH);
-      initialAngle = Compass.GetHeadingDegrees();
+      initialAngle = Compass.GetHeadingDegrees(); //243
     }
   }
 
@@ -332,16 +331,25 @@ void forDrone() {
       }
       
       float error = initialAngle - Compass.GetHeadingDegrees();
-      
+      float previous_error;
+      float cumulative_error;
+      int period = 50;
+
+      float PID_p = kp * error;
+      float PID_i = cumulative_error * ki;
+      float PID_d = kd*(error - previous_error);
+
+      double PID_total = PID_p + PID_i + PID_d;
 
       cumulative_error += error;
       previous_error = error;
-      float modifiedSpeed = map(abs(PID_total),0,1600,6,90);
+      float modifiedSpeed = map(abs(PID_total),0,1600,minSpeed,maxSpeed);
 
-//      Serial.println(error);
+     Serial.println(error);
       
-      if(error > -maxAngleChange) {
+      if(error < -maxAngleChange) {
         //It's turning right, so give the right motor more speed
+        Serial.println("right");
         escLeft.write(minSpeed);
         escRight.write(modifiedSpeed);
 
@@ -366,6 +374,7 @@ void forDrone() {
         
       } else if(error > maxAngleChange) {
         //It's turning left, so give the left motor more speed
+         Serial.println("left");
         escLeft.write(modifiedSpeed);
         escRight.write(minSpeed);
 

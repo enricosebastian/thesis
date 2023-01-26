@@ -42,13 +42,13 @@ void loop(void)
   float current_pos = getPosition();
   if(current_pos<saved_position-5){
     Serial.print("Current position: ");Serial.println(current_pos);
-    Serial.print("move to the right \n"); // put code here to adjust to the right
+    //Serial.print("move to the right \n"); // put code here to adjust to the right
   }
   else if (current_pos>saved_position+5){
     Serial.print("Current position: ");Serial.println(current_pos);
-    Serial.print("move to the left \n"); // put code here to adjust to the left
+    //Serial.print("move to the left \n"); // put code here to adjust to the left
   }
-  delay(4000);
+  delay(1000);
 }
 
 float starter_position(){
