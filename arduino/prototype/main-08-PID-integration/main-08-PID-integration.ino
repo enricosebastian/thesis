@@ -248,6 +248,7 @@ void forDrone() {
       digitalWrite(redLed, LOW);
       digitalWrite(yellowLed, LOW);
       digitalWrite(greenLed, HIGH);
+      initialAngle = Compass.GetHeadingDegrees();
     }
   }
 
@@ -255,7 +256,6 @@ void forDrone() {
   if(isConnected && isAcknowledging && !isDeployed) {
     if(millis() - startTime <= 10000) {
       sendCommand("DEPLREP", received["fromName"].as<String>(), "SUCC");
-      
     } else if(millis() - startTime > 10000) {
       Serial.println("Drone is deploying. Moving motors.");
 
@@ -266,11 +266,10 @@ void forDrone() {
       isDeployed = true;
       
       digitalWrite(detectionPin, HIGH);
-      initialAngle = Compass.GetHeadingDegrees();
       startTime = millis();
     }
   }
-
+  
   //TASK 3: Start moving. Plus, look for commands from base station. And also RPi.
   if(isConnected && !isAcknowledging && isDeployed) {
 
@@ -310,10 +309,10 @@ void forDrone() {
           escRight.write(minSpeed);
         } else if(received["command"].as<String>() == "TURN") {
           if(received["details"].as<String>() == "LEFT") {
-            initialAngle = initialAngle-90; // add 90-degrees to the left
+            initialAngle = initialAngle-30; // add 90-degrees to the left
             Serial.println("Turning left.");
           } else if(received["details"].as<String>() == "RIGHT") {
-            initialAngle = initialAngle+90; // add 90-degrees to the right
+            initialAngle = initialAngle+30; // add 90-degrees to the right
             Serial.println("Turning right.");
           }
         }
