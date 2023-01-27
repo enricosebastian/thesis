@@ -16,8 +16,8 @@ HMC5883L_Simple Compass;
 */
 
 // Name here
-const String myName = "BASE";
-// const String myName = "DRO1";
+// const String myName = "BASE";
+const String myName = "DRO1";
 
 const int redLed = 13;
 const int yellowLed = 12;
@@ -30,7 +30,7 @@ const int txPin = A0; //green tx
 const int rxPin = A1; //blue rx
 const int waitingTime = 5000;
 
-const float minSpeed = 7;
+const float minSpeed = 11; //7
 const float maxSpeed = 20;
 const float maxAngleChange = 5;
 
@@ -107,8 +107,8 @@ void setup() {
 }
 
 void loop() {
-  forBaseStation();
-  // forDrone();
+  // forBaseStation();
+  forDrone();
   // Serial.println(Compass.GetHeadingDegrees());
 }
 
@@ -381,7 +381,7 @@ void forDrone() {
       } else if(error > maxAngleChange) {
         //It's turning left, so give the left motor more speed
           Serial.println("left");
-          escLeft.write(modifiedSpeed+5);
+          escLeft.write(modifiedSpeed+10);
           escRight.write(minSpeed);
 
 //        Serial.println("=========");
