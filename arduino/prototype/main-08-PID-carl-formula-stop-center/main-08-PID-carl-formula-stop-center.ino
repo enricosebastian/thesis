@@ -41,6 +41,7 @@ bool isAcknowledging = false;
 bool isGoingHome = false;
 bool hasReceivedCommand = false;
 bool hasDetectedObject = false;
+bool isLeft = false;
 
 unsigned long startTime = 0;
 
@@ -356,9 +357,9 @@ void forDrone() {
       if(error < -maxAngleChange) {
         //It's turning right, so give the right motor more speed
         Serial.println("right");
+        isLeft = false;
         escLeft.write(minSpeed);
         escRight.write(modifiedSpeed);
-
 //        Serial.println("=========");
 //        Serial.print("LFTM: ");
 //        Serial.println(minSpeed);
@@ -381,9 +382,9 @@ void forDrone() {
       } else if(error > maxAngleChange) {
         //It's turning left, so give the left motor more speed
           Serial.println("left");
+          isLeft = true;
           escLeft.write(modifiedSpeed+10);
           escRight.write(minSpeed);
-
 //        Serial.println("=========");
 //        Serial.print("LFTM: ");
 //        Serial.println(modifiedSpeed);
@@ -402,6 +403,14 @@ void forDrone() {
 //        sendCommand("RITM", "BASE", String(minSpeed));
 //        sendCommand("INITA", "BASE", String(initialAngle));
 //        sendCommand("CURRA", "BASE", String(Compass.GetHeadingDegrees()));
+      } else {
+        if(isLeft) {
+          escLeft.write(modifiedSpeed+10);
+          escRight.write(11);
+        } else if(!isLeft) {
+          escLeft.write(11);
+          escRight.write(modifiedSpeed);
+        }
       }
     }
     
