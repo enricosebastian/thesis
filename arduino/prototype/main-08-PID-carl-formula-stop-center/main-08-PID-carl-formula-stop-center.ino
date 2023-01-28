@@ -34,6 +34,7 @@ const float minSpeed = 7;
 const float movingSpeed = 15;
 const float maxSpeed = 20;
 const float maxAngleChange = 5;
+const float turnDegrees = 90;
 
 bool isConnected = false;
 bool isDeploying = false;
@@ -313,10 +314,10 @@ void forDrone() {
           escRight.write(minSpeed);
         } else if(received["command"].as<String>() == "TURN") {
           if(received["details"].as<String>() == "LEFT") {
-            initialAngle = initialAngle-30; // add 90-degrees to the left
+            initialAngle = initialAngle+turnDegrees; // add 90-degrees to the left
             Serial.println("Turning left.");
           } else if(received["details"].as<String>() == "RIGHT") {
-            initialAngle = initialAngle+30; // add 90-degrees to the right
+            initialAngle = initialAngle-turnDegrees; // add 90-degrees to the right
             Serial.println("Turning right.");
           }
         }
