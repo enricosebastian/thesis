@@ -30,7 +30,8 @@ const int txPin = A0; //green tx
 const int rxPin = A1; //blue rx
 const int waitingTime = 5000;
 
-const float minSpeed = 11; //7
+const float minSpeed = 7;
+const float movingSpeed = 11;
 const float maxSpeed = 20;
 const float maxAngleChange = 5;
 
@@ -403,15 +404,16 @@ void forDrone() {
 //        sendCommand("RITM", "BASE", String(minSpeed));
 //        sendCommand("INITA", "BASE", String(initialAngle));
 //        sendCommand("CURRA", "BASE", String(Compass.GetHeadingDegrees()));
-      } else {
-        if(isLeft) {
-          escLeft.write(modifiedSpeed+10);
-          escRight.write(11);
-        } else if(!isLeft) {
-          escLeft.write(11);
-          escRight.write(modifiedSpeed);
-        }
-      }
+      } 
+//      else {
+//        if(isLeft) {
+//          escLeft.write(modifiedSpeed+10);
+//          escRight.write(movingSpeed);
+//        } else if(!isLeft) {
+//          escLeft.write(movingSpeed);
+//          escRight.write(modifiedSpeed);
+//        }
+//      }
     }
     
     //TASK 3.3: Look for RPi commands (Check if you detect an object in the water)
