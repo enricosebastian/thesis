@@ -16,9 +16,9 @@ HMC5883L_Simple Compass;
 */
 
 // Name here
-//const String myName = "BASE";
+const String myName = "BASE";
 //const String myName = "DRO1";
-const String myName = "DRO2";
+//const String myName = "DRO2";
 
 const int redLed = 13;
 const int yellowLed = 12;
@@ -363,56 +363,34 @@ void forDrone() {
         isLeft = false;
         escLeft.write(minSpeed);
         escRight.write(modifiedSpeed);
-//        Serial.println("=========");
-//        Serial.print("LFTM: ");
-//        Serial.println(minSpeed);
-//
-//        Serial.print("RITM: ");
-//        Serial.println(modifiedSpeed);
-//
-//        Serial.print("INITA: ");
-//        Serial.println(initialAngle);
-//
-//        Serial.print("CURRA: ");
-//        Serial.println(Compass.GetHeadingDegrees());
-//        Serial.println("=========");
-        
-//        sendCommand("LFTM", "BASE", String(minSpeed));
-//        sendCommand("RITM", "BASE", String(modifiedSpeed));
-//        sendCommand("INITA", "BASE", String(initialAngle));
-//        sendCommand("CURRA", "BASE", String(Compass.GetHeadingDegrees()));
-        
       } else if(error > maxAngleChange) {
         //It's turning left, so give the left motor more speed
 //          Serial.println("left");
           isLeft = true;
-          escLeft.write(modifiedSpeed+10);
-          escRight.write(minSpeed);
-//        Serial.println("=========");
-//        Serial.print("LFTM: ");
-//        Serial.println(modifiedSpeed);
-//        
-//        Serial.print("RITM: ");
-//        Serial.println(minSpeed);
-//
-//        Serial.print("INITA: ");
-//        Serial.println(initialAngle);
-//
-//        Serial.print("CURRA: ");
-//        Serial.println(Compass.GetHeadingDegrees());
-//        Serial.println("=========");
-
-//        sendCommand("LFTM", "BASE", String(modifiedSpeed));
-//        sendCommand("RITM", "BASE", String(minSpeed));
-//        sendCommand("INITA", "BASE", String(initialAngle));
-//        sendCommand("CURRA", "BASE", String(Compass.GetHeadingDegrees()));
+          if(myName == "DRO2") {
+            escLeft.write(modifiedSpeed+10);
+            escRight.write(minSpeed);
+          } else {
+            escLeft.write(modifiedSpeed);
+            escRight.write(minSpeed);
+          }
       } else {
         if(isLeft) {
-          escLeft.write(modifiedSpeed+10);
-          escRight.write(movingSpeed);
+          if(myName == "DRO2") {
+            escLeft.write(modifiedSpeed+10);
+            escRight.write(movingSpeed);
+          } else {
+            escLeft.write(modifiedSpeed);
+            escRight.write(movingSpeed);
+          }
         } else if(!isLeft) {
-          escLeft.write(movingSpeed+10);
-          escRight.write(modifiedSpeed);
+          if(myName == "DRO2") {
+            escLeft.write(movingSpeed+10);
+            escRight.write(modifiedSpeed);
+          } else {
+            escLeft.write(movingSpeed);
+            escRight.write(modifiedSpeed);
+          }
         }
       }
     }
