@@ -17,7 +17,7 @@ HMC5883L_Simple Compass;
 
 // Name here
 // const String myName = "BASE";
-const String myName = "DRO1";
+const String myName = "DRO2";
 
 const int redLed = 13;
 const int yellowLed = 12;
@@ -347,8 +347,8 @@ void forDrone() {
       cumulative_error += error;
       previous_error = error;
 
-      Serial.print("PID_total: ");
-      Serial.println(PID_total);
+//      Serial.print("PID_total: ");
+//      Serial.println(PID_total);
       // Serial.print("error: ");
       // Serial.println(error);
 
@@ -358,7 +358,7 @@ void forDrone() {
       
       if(error < -maxAngleChange) {
         //It's turning right, so give the right motor more speed
-        Serial.println("right");
+//        Serial.println("right");
         isLeft = false;
         escLeft.write(minSpeed);
         escRight.write(modifiedSpeed);
@@ -383,7 +383,7 @@ void forDrone() {
         
       } else if(error > maxAngleChange) {
         //It's turning left, so give the left motor more speed
-          Serial.println("left");
+//          Serial.println("left");
           isLeft = true;
           escLeft.write(modifiedSpeed+10);
           escRight.write(minSpeed);
