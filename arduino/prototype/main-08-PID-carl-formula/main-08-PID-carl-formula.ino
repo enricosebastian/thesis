@@ -111,8 +111,8 @@ void setup() {
 }
 
 void loop() {
-  // forBaseStation();
-  forDrone();
+   forBaseStation();
+//  forDrone();
   // Serial.println(Compass.GetHeadingDegrees());
 }
 
