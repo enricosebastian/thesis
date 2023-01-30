@@ -16,9 +16,9 @@ HMC5883L_Simple Compass;
 */
 
 // Name here
-const String myName = "BASE";
-//const String myName = "DRO1";
-//const String myName = "DRO2";
+// const String myName = "BASE";
+const String myName = "DRO1";
+// const String myName = "DRO2";
 
 const int redLed = 13;
 const int yellowLed = 12;
@@ -84,6 +84,8 @@ void setup() {
 
   pinMode(btn, INPUT);
 
+  delay(500);
+
   //Successful intialization indicator
   if(myName == "BASE") {
     digitalWrite(redLed, LOW);
@@ -111,8 +113,8 @@ void setup() {
 }
 
 void loop() {
-   forBaseStation();
-//  forDrone();
+  //  forBaseStation();
+ forDrone();
   // Serial.println(Compass.GetHeadingDegrees());
 }
 
@@ -370,8 +372,8 @@ void forDrone() {
           if(myName == "DRO2") {
             escLeft.write(modifiedSpeed+10);
             escRight.write(minSpeed);
-          } else {
-            escLeft.write(modifiedSpeed);
+          } else if(myName == "DRO1") {
+            escLeft.write(modifiedSpeed+12);
             escRight.write(minSpeed);
           }
       } else {
@@ -379,16 +381,16 @@ void forDrone() {
           if(myName == "DRO2") {
             escLeft.write(modifiedSpeed+10);
             escRight.write(movingSpeed);
-          } else {
-            escLeft.write(modifiedSpeed);
-            escRight.write(movingSpeed);
+          } else if(myName == "DRO1") {
+            escLeft.write(modifiedSpeed+12);
+            escRight.write(movingSpeed+2);
           }
         } else if(!isLeft) {
           if(myName == "DRO2") {
             escLeft.write(movingSpeed+10);
             escRight.write(modifiedSpeed);
-          } else {
-            escLeft.write(movingSpeed);
+          } else if(myName == "DRO1") {
+            escLeft.write(movingSpeed+12);
             escRight.write(modifiedSpeed);
           }
         }
