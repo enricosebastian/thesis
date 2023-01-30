@@ -16,7 +16,8 @@ HMC5883L_Simple Compass;
 */
 
 // Name here
-// const String myName = "BASE";
+//const String myName = "BASE";
+//const String myName = "DRO1";
 const String myName = "DRO2";
 
 const int redLed = 13;
