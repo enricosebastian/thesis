@@ -17,7 +17,7 @@ SoftwareSerial HC12(txPin, rxPin); // (Green TX, Blue RX)
 LinkedList<String> drones;
 Servo escLeft;
 Servo escRight;
-StaticJsonDocument<200> received; //Only received strings need to be global variables...
+DynamicJsonDocument doc(1024); //Only received strings need to be global variables...
 
 void setup() {
   Serial.begin(9600);
@@ -32,28 +32,23 @@ void setup() {
 }
 
 void loop() {
-  if(myName == "BASE") {
-    forBase();
-  } else {
-    forDrone();
-  }
-}
-
-void forBase() {
   if(Serial.available()) {
     String message = Serial.readStringUntil("\n");
+    Serial.print("sending: ");
+    Serial.println(message);
+    
+    doc["message"] = message;
+    serializeJson(doc, HC12);
+  }
+
+  if(HC12.available()) {
+    DeserializationError error = deserializeJson(doc, HC12);
+    if(error) {
+      Serial.println("deserializeJson() failed");
+      return;
+    }
+    String message = doc["message"];
+    Serial.print("received: ");
     Serial.println(message);
   }
-}
-
-void forDrone() {
-  escRight.write(11);
-  escLeft.write(11);
-  delay(1000);
-  escRight.write(0);
-  escLeft.write(0);
-  delay(1000);
-//  if(Serial.available()) {
-//    Serial.println(Serial.read());
-//  }
 }
