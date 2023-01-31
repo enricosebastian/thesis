@@ -33,22 +33,14 @@ void setup() {
 
 void loop() {
   if(Serial.available()) {
-    String message = Serial.readStringUntil("\n");
-    Serial.print("sending: ");
-    Serial.println(message);
-    
-    doc["message"] = message;
-    serializeJson(doc, HC12);
+    char letter = Serial.read();
+    Serial.print("sending ");
+    Serial.println(letter);
+    HC12.write(letter);
   }
 
   if(HC12.available()) {
-    DeserializationError error = deserializeJson(doc, HC12);
-    if(error) {
-      Serial.println("deserializeJson() failed");
-      return;
-    }
-    String message = doc["message"];
     Serial.print("received: ");
-    Serial.println(message);
+    Serial.println(HC12.read());
   }
 }
