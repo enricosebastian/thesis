@@ -41,23 +41,17 @@ void loop() {
       sentMessage += '\n';
       Serial.print("sent: ");
       Serial.println(sentMessage);
-      HC12.print(sentMessage);
+      HC12.println(sentMessage);
       sentMessage = "";
     } else {
       sentMessage += letter;
     }
-    HC12.write(letter);
   }
 
   if(HC12.available()) {
-    char letter = HC12.read();
-    if(letter == '\n') {
-      receivedMessage += '\n';
-      Serial.print("received: ");
-      Serial.println(receivedMessage);
-      receivedMessage = "";
-    } else {
-      receivedMessage += letter;
-    }
+    receivedMessage = HC12.readStringUntil('\n');
+    Serial.print("received: ");
+    Serial.println(receivedMessage);
+    receivedMessage = "";
   }
 }
