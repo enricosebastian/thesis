@@ -40,8 +40,8 @@ void loop() {
     if(letter == '\n') {
       sentMessage += '\n';
       Serial.print("sent: ");
-      Serial.println(sentMessage);
-      HC12.println(sentMessage);
+      Serial.print(sentMessage);
+      HC12.print(sentMessage);
       sentMessage = "";
     } else {
       sentMessage += letter;
