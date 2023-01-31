@@ -46,7 +46,13 @@ void forBase() {
 }
 
 void forDrone() {
-  if(Serial.available()) {
-    Serial.println(Serial.read());
-  }
+  escRight.write(11);
+  escLeft.write(11);
+  delay(1000);
+  escRight.write(0);
+  escLeft.write(0);
+  delay(1000);
+//  if(Serial.available()) {
+//    Serial.println(Serial.read());
+//  }
 }
