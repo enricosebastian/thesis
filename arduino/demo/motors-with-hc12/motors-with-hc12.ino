@@ -13,6 +13,9 @@ const int rxPin = A1; //blue rx
 const String myName = "BASE";
 // const String myName = "DRON";
 
+String sentMessage = "";
+String receivedMessage = "";
+
 SoftwareSerial HC12(txPin, rxPin); // (Green TX, Blue RX)
 LinkedList<String> drones;
 Servo escLeft;
@@ -34,13 +37,26 @@ void setup() {
 void loop() {
   if(Serial.available()) {
     char letter = Serial.read();
-    Serial.print("sending ");
-    Serial.println(letter);
-    HC12.write(letter);
+    if(letter == '\n') {
+      sentMessage += '\0';
+      Serial.print("sent: ");
+      Serial.println(sentMessage);
+      sentMessage = "";
+      HC12.write(letter);
+    } else {
+      sentMessage += letter;
+    }
   }
 
   if(HC12.available()) {
-    Serial.print("received: ");
-    Serial.println(HC12.read());
+    char letter = HC12.read();
+    if(letter == '\0') {
+      receivedMessage += '\0';
+      Serial.print("received: ");
+      Serial.println(receivedMessage);
+      receivedMessage = "";
+    } else {
+      receivedMessage += letter;
+    }
   }
 }
