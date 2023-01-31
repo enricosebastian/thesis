@@ -41,6 +41,7 @@ void loop() {
       sentMessage += '\n';
       Serial.print("sent: ");
       Serial.println(sentMessage);
+      HC12.print(sentMessage);
       sentMessage = "";
     } else {
       sentMessage += letter;
