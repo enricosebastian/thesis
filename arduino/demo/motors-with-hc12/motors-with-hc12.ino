@@ -38,7 +38,7 @@ void loop() {
   if(Serial.available()) {
     char letter = Serial.read();
     if(letter == '\n') {
-      sentMessage += '\0';
+      sentMessage += '\n';
       Serial.print("sent: ");
       Serial.println(sentMessage);
       sentMessage = "";
@@ -50,8 +50,8 @@ void loop() {
 
   if(HC12.available()) {
     char letter = HC12.read();
-    if(letter == '\0') {
-      receivedMessage += '\0';
+    if(letter == '\n') {
+      receivedMessage += '\n';
       Serial.print("received: ");
       Serial.println(receivedMessage);
       receivedMessage = "";
