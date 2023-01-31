@@ -40,9 +40,13 @@ void loop() {
 }
 
 void forBase() {
-  Serial.println("for base");
+  if(Serial.available()) {
+    Serial.println(Serial.read());
+  }
 }
 
 void forDrone() {
-  Serial.println("for drone");
+  if(Serial.available()) {
+    Serial.println(Serial.read());
+  }
 }
