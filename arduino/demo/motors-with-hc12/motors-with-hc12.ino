@@ -50,6 +50,7 @@ void loop() {
 
   if(HC12.available()) {
     char letter = HC12.read();
+    Serial.println(letter);
     if(letter == '\0') {
       receivedMessage += '\0';
       Serial.print("received: ");
