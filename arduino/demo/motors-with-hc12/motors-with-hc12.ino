@@ -10,8 +10,8 @@ const int escRightPin = 5;
 const int txPin = A0; //green tx
 const int rxPin = A1; //blue rx
 
-//const String myName = "BASE";
-const String myName = "DRON";
+const String myName = "BASE";
+// const String myName = "DRON";
 
 SoftwareSerial HC12(txPin, rxPin); // (Green TX, Blue RX)
 LinkedList<String> drones;
@@ -41,7 +41,8 @@ void loop() {
 
 void forBase() {
   if(Serial.available()) {
-    Serial.println(Serial.read());
+    String message = Serial.readStringUntil("\n");
+    Serial.println(message);
   }
 }
 
