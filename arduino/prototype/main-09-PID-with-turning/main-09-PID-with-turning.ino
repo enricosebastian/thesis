@@ -317,6 +317,8 @@ void forDrone() {
           escRight.write(minSpeed);
         } else if(received["command"].as<String>() == "TURN") {
             initialAngle = initialAngle+received["details"].as<int>(); // add value of details
+            Serial.print("initial angle: ");
+            Serial.println(initialAngle);
         }
       }
     }
@@ -343,17 +345,17 @@ void forDrone() {
 
       cumulative_error += error;
       previous_error = error;
-      Serial.print("compass angle: ");
-      Serial.println(initialAngle);
-
-//      Serial.print("PID_total: ");
-//      Serial.println(PID_total);
-      Serial.print("error: ");
-      Serial.println(error);
+//      Serial.print("compass angle: ");
+//      Serial.println(initialAngle);
+//
+////      Serial.print("PID_total: ");
+////      Serial.println(PID_total);
+//      Serial.print("error: ");
+//      Serial.println(error);
 
       float modifiedSpeed = map(abs(PID_total),0.00,1700.00,minSpeed,maxSpeed);
 
-      Serial.println(modifiedSpeed);
+//      Serial.println(modifiedSpeed);
       
       if(error < -maxAngleChange) {
         //It's turning right, so give the right motor more speed

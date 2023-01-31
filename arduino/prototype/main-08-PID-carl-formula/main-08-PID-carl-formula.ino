@@ -357,7 +357,7 @@ void forDrone() {
 
       float modifiedSpeed = map(abs(PID_total),0.00,1700.00,minSpeed,maxSpeed);
 
-      Serial.println(modifiedSpeed);
+//      Serial.println(modifiedSpeed);
       
       if(error < -maxAngleChange) {
         //It's turning right, so give the right motor more speed
