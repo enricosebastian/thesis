@@ -42,10 +42,10 @@ void loop() {
       Serial.print("sent: ");
       Serial.println(sentMessage);
       sentMessage = "";
-      HC12.write(letter);
     } else {
       sentMessage += letter;
     }
+    HC12.write(letter);
   }
 
   if(HC12.available()) {
