@@ -18,8 +18,8 @@ HMC5883L_Simple Compass;
 // Name here
 // const String myName = "BASE";
 //const String myName = "DRO1";
-const String myName = "DRO2";
-//const String myName = "DRO3";
+// const String myName = "DRO2";
+const String myName = "DRO3";
 
 const int redLed = 13;
 const int yellowLed = 12;
@@ -114,7 +114,7 @@ void setup() {
 }
 
 void loop() {
-  //  forBaseStation();
+  // forBaseStation();
   forDrone();
   // Serial.println(Compass.GetHeadingDegrees());
 }
@@ -262,9 +262,9 @@ void forDrone() {
 
   //TASK 2.1: Base station wants to deploy us. Send acknowledgement/handshake for at least 5 seconds
   if(isConnected && isAcknowledging && !isDeployed) {
-    if(millis() - startTime <= 10000) {
+    if(millis() - startTime <= waitingTime) {
       sendCommand("DEPLREP", received["fromName"].as<String>(), "SUCC");
-    } else if(millis() - startTime > 10000) {
+    } else if(millis() - startTime > waitingTime) {
       Serial.println("Drone is deploying. Moving motors.");
 
       escLeft.write(minSpeed);
@@ -290,10 +290,10 @@ void forDrone() {
 
     //TASK 3.1.2: Read what each command means
     if(!hasDetectedObject && hasReceivedCommand) {
-      if(millis() - startTime <= 10000) {
+      if(millis() - startTime <= waitingTime) {
         // send acknowledgement that you received a command
         sendCommand(received["command"].as<String>()+"REP", received["fromName"].as<String>(), "SUCC");
-      } else if(millis() - startTime > 10000) {
+      } else if(millis() - startTime > waitingTime) {
         //turn off hasReceivedCommand and interpret the actual command
         hasReceivedCommand = false;
         
@@ -326,7 +326,7 @@ void forDrone() {
 
     //TASK 3.2: Ensure that you are moving
     if(!hasDetectedObject && !hasReceivedCommand && !isGoingHome) {
-      if(millis() - startTime >= 1000) {
+      if(millis() - startTime >= waitingTime) {
         startTime = millis();
         digitalWrite(redLed, LOW);
         digitalWrite(yellowLed, LOW);
@@ -375,7 +375,7 @@ void forDrone() {
             escLeft.write(modifiedSpeed+12);
             escRight.write(minSpeed);
           } else if(myName == "DRO3") {
-            escLeft.write(modifiedSpeed);
+            escLeft.write(modifiedSpeed+12);
             escRight.write(minSpeed);
           }
       } else {
@@ -387,7 +387,7 @@ void forDrone() {
             escLeft.write(modifiedSpeed+12);
             escRight.write(movingSpeed+2);
           } else if(myName == "DRO3") {
-            escLeft.write(modifiedSpeed);
+            escLeft.write(modifiedSpeed+12);
             escRight.write(movingSpeed);
           }
         } else if(!isLeft) {
@@ -398,7 +398,7 @@ void forDrone() {
             escLeft.write(movingSpeed+12);
             escRight.write(modifiedSpeed);
           } else if(myName == "DRO3") {
-            escLeft.write(movingSpeed);
+            escLeft.write(movingSpeed+12);
             escRight.write(modifiedSpeed);
           }
         }
@@ -412,10 +412,10 @@ void forDrone() {
     }
     
     if(!hasReceivedCommand && hasDetectedObject && !isGoingHome) {
-      if(millis() - startTime <= 10000) {
+      if(millis() - startTime <= waitingTime) {
         //Do we need to acknowledge though? It's physically connected, so data is strong
         //sendCommand("DETEREP", received["fromName"].as<String>(), "SUCC");
-      } else if(millis() - startTime > 10000) {
+      } else if(millis() - startTime > waitingTime) {
         hasDetectedObject = false;
         startTime = millis();
       }
@@ -487,7 +487,7 @@ bool receivedCommand() {
   received["command"] = "";
   received["toName"] = "";
   received["fromName"] = "";
-  received["details"] = "";
+  received["details" ] = "";
   return false;
 }
 
