@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <ArduinoJson.h>
 #include <SoftwareSerial.h>
 #include <LinkedList.h>
 #include <Servo.h>
@@ -15,12 +14,13 @@ HMC5883L_Simple Compass;
  * SDA  -> A4, green
 */
 
-// Name here
-// const String myName = "BASE";
+//Name here
+//const String myName = "BASE";
 //const String myName = "DRO1";
-// const String myName = "DRO2";
+//const String myName = "DRO2";
 const String myName = "DRO3";
 
+//Constants (buttons)
 const int redLed = 13;
 const int yellowLed = 12;
 const int greenLed = 11;
@@ -38,6 +38,7 @@ const float maxSpeed = 20;
 const float maxAngleChange = 5;
 const float turnDegrees = 90;
 
+//Booleans for logic
 bool isConnected = false;
 bool isDeploying = false;
 bool isDeployed = false;
@@ -47,6 +48,7 @@ bool hasReceivedCommand = false;
 bool hasDetectedObject = false;
 bool isLeft = false;
 
+//Variables
 unsigned long startTime = 0;
 
 int posX = 0;
@@ -58,11 +60,24 @@ float ki = 0.2;
 float kd = 30;
 float PID_p, PID_i, PID_d, PID_total;
 
+//sent message
+String sentMessage = "";
+String sentCommand = "";
+String sentToName = "";
+String sentFromName = "";
+String sentDetails = "";
+
+//received message
+String receivedMessage = "";
+String receivedCommand = "";
+String receivedToName = "";
+String receivedFromName = "";
+String receivedDetails = "";
+
 SoftwareSerial HC12(txPin, rxPin); // (Green TX, Blue RX)
 LinkedList<String> drones;
 Servo escLeft;
 Servo escRight;
-StaticJsonDocument<200> received; //Only received strings need to be global variables...
 
 void setup() {
   Serial.begin(9600);
@@ -475,49 +490,37 @@ void addDrone(String droneName) {
 ///////General functions/////////
 bool receivedCommand() {
   if(HC12.available()) {
-    DeserializationError err = deserializeJson(received, HC12); //Deserialize it into different possible variables
+    receivedMessage = HC12.readStringUntil('\n');
+    int endIndex = receivedMessage.indexOf(' ');
     
-    if(err == DeserializationError::Ok)
-      return (received["toName"].as<String>() == myName);
-    else
-      return false;
-  }
+    receivedCommand = message.substring(0, endIndex);
 
-  //This means you received no command at all...
-  received["command"] = "";
-  received["toName"] = "";
-  received["fromName"] = "";
-  received["details" ] = "";
+    receivedMessage = receivedMessage.substring(endIndex+1);
+    endIndex = message.indexOf(' ');
+
+    receivedToName = message.substring(0, endIndex);
+    receivedDetails = message.substring(endIndex+1);
+    return (receivedToName == myName);
+  }
+  receivedCommand = "";
+  receivedToName = "";
+  receivedDetails = "";
   return false;
 }
 
-void sendCommand(String command, String toName, String details) {
-  StaticJsonDocument<200> sent;
-  sent["command"] = command;
-  sent["toName"] = toName;
-  sent["fromName"] = myName;
-  sent["details"] = details;
-  serializeJson(sent, HC12);
+void sendCommand(String sentMessage) {
+  HC12.print(sentMessage);
 }
 
 bool receivedSpecificCommand(String command) {
-  return receivedCommand() && received["command"].as<String>() == command;
+  return receivedCommand() && (receivedCommand == command);
 }
 
+// fix in next update
 bool detectedObject() {
   if(Serial.available()){
-    DeserializationError err = deserializeJson(received, Serial); //Deserialize it into different possible variables
-    
-    if (err == DeserializationError::Ok) 
-      return (received["toName"].as<String>() == myName) && (received["command"].as<String>() == "DETE");
-    else
-      return false;
+    String detectedCommand = Serial.readStringUntil("\n");
+    return true;
   }
-
-  //This means you received no command at all...
-  received["command"] = "";
-  received["toName"] = "";
-  received["fromName"] = "";
-  received["details"] = "";
   return false;
 }
