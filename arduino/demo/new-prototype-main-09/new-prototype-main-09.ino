@@ -60,13 +60,6 @@ float ki = 0.2;
 float kd = 30;
 float PID_p, PID_i, PID_d, PID_total;
 
-//sent message
-String sentMessage = "";
-String sentCommand = "";
-String sentToName = "";
-String sentFromName = "";
-String sentDetails = "";
-
 //received message
 String receivedMessage = "";
 String receivedCommand = "";
@@ -138,17 +131,18 @@ void forBaseStation() {
   //TASK 1: If you are not yet deploying, capture all the drones that want to connect with you.
   if(!isDeploying && !isDeployed && !isAcknowledging) {
     if(receivedSpecificCommand("CONN")) {
-      Serial.println("Drone wanted to connect. Sending handshake.");
-      addDrone(received["fromName"].as<String>());
+      Serial.print(receivedFromName);
+      Serial.println(" wanted to connect. Sending handshake.");
+      addDrone(receivedFromName);
       isAcknowledging = true;
       startTime = millis();
     }
   }
 
   //TASK 1.5: If you received a new drone name, don't forget to acknowledge its presence with a handshake.
-  if(!isDeploying && !isDeployed && isAcknowledging && (millis() - startTime <= 5000)) {
-    sendCommand("CONNREP", received["fromName"].as<String>(), "SUCC");
-  } else if(!isDeploying && !isDeployed && isAcknowledging && (millis() - startTime > 5000)) {
+  if(!isDeploying && !isDeployed && isAcknowledging && (millis() - startTime <= waitingTime)) {
+    sendCommand("CONNREP", receivedFromName, "SUCC");
+  } else if(!isDeploying && !isDeployed && isAcknowledging && (millis() - startTime > waitingTime)) {
     isAcknowledging = false;
   }
 
@@ -171,8 +165,8 @@ void forBaseStation() {
       startTime = millis();
       sendCommand("DEPL", drones.get(i), "HELL");
       
-      while(!receivedSpecificCommand("DEPLREP") && !(received["fromName"].as<String>() == drones.get(i))) {
-        if(millis() - startTime >= 5000) {
+      while(!receivedSpecificCommand("DEPLREP") && ! receivedFromName == drones.get(i))) {
+        if(millis() - startTime >= waitingTime) {
           startTime = millis();
           Serial.print("Deployment command was not acknowledged by '");
           Serial.print(drones.get(i));
@@ -215,10 +209,15 @@ void forBaseStation() {
       Serial.println("}");
       
       while(!receivedSpecificCommand(command+"REP")) {
-        if(millis() - startTime >= 5000) {
+        if(millis() - startTime >= waitingTime) {
           Serial.println("No acknowledgement received. Resending again.");
           startTime = millis();
           sendCommand(command, toName, details);
+        }
+        
+        if(Serial.available()) {
+          char letter = Serial.read();
+          if(letter = c) break;          
         }
       }
       Serial.println("Command sent successfully!");
@@ -278,7 +277,7 @@ void forDrone() {
   //TASK 2.1: Base station wants to deploy us. Send acknowledgement/handshake for at least 5 seconds
   if(isConnected && isAcknowledging && !isDeployed) {
     if(millis() - startTime <= waitingTime) {
-      sendCommand("DEPLREP", received["fromName"].as<String>(), "SUCC");
+      sendCommand("DEPLREP", receivedFromName, "SUCC");
     } else if(millis() - startTime > waitingTime) {
       Serial.println("Drone is deploying. Moving motors.");
 
@@ -307,12 +306,12 @@ void forDrone() {
     if(!hasDetectedObject && hasReceivedCommand) {
       if(millis() - startTime <= waitingTime) {
         // send acknowledgement that you received a command
-        sendCommand(received["command"].as<String>()+"REP", received["fromName"].as<String>(), "SUCC");
+        sendCommand(receivedCommand+"REP", receivedFromName, "SUCC");
       } else if(millis() - startTime > waitingTime) {
         //turn off hasReceivedCommand and interpret the actual command
         hasReceivedCommand = false;
         
-        if(received["command"].as<String>() == "STOP") {
+        if(receivedComand == "STOP") {
           Serial.println("Stopping drone.");
           digitalWrite(redLed, LOW);
           digitalWrite(yellowLed, HIGH);
@@ -321,7 +320,7 @@ void forDrone() {
           isGoingHome = true;
           escLeft.write(0);
           escRight.write(0);
-        } else if(received["command"].as<String>() == "GO") {
+        } else if(receivedCommand == "GO") {
           Serial.println("Drone resuming deployment.");
           digitalWrite(redLed, LOW);
           digitalWrite(yellowLed, LOW);
@@ -331,8 +330,8 @@ void forDrone() {
           initialAngle = Compass.GetHeadingDegrees(); // Save new angle
           escLeft.write(minSpeed); //re-initialize escs
           escRight.write(minSpeed);
-        } else if(received["command"].as<String>() == "TURN") {
-            initialAngle = initialAngle+received["details"].as<int>(); // add value of details
+        } else if(receivedCommand == "TURN") {
+            initialAngle = initialAngle+receivedDetails.toInt(); // add value of details
             Serial.print("initial angle: ");
             Serial.println(initialAngle);
         }
@@ -361,38 +360,29 @@ void forDrone() {
 
       cumulative_error += error;
       previous_error = error;
-//      Serial.print("compass angle: ");
-//      Serial.println(initialAngle);
-//
-////      Serial.print("PID_total: ");
-////      Serial.println(PID_total);
-//      Serial.print("error: ");
-//      Serial.println(error);
 
       float modifiedSpeed = map(abs(PID_total),0.00,1700.00,minSpeed,maxSpeed);
-
-//      Serial.println(modifiedSpeed);
       
       if(error < -maxAngleChange) {
         //It's turning right, so give the right motor more speed
-//        Serial.println("right");
+        // Serial.println("right");
         isLeft = false;
         escLeft.write(minSpeed);
         escRight.write(modifiedSpeed);
       } else if(error > maxAngleChange) {
         //It's turning left, so give the left motor more speed
-//          Serial.println("left");
-          isLeft = true;
-          if(myName == "DRO2") {
-            escLeft.write(modifiedSpeed+10);
-            escRight.write(minSpeed);
-          } else if(myName == "DRO1") {
-            escLeft.write(modifiedSpeed+12);
-            escRight.write(minSpeed);
-          } else if(myName == "DRO3") {
-            escLeft.write(modifiedSpeed+12);
-            escRight.write(minSpeed);
-          }
+        // Serial.println("left");
+        isLeft = true;
+        if(myName == "DRO2") {
+          escLeft.write(modifiedSpeed+10);
+          escRight.write(minSpeed);
+        } else if(myName == "DRO1") {
+          escLeft.write(modifiedSpeed+12);
+          escRight.write(minSpeed);
+        } else if(myName == "DRO3") {
+          escLeft.write(modifiedSpeed+12);
+          escRight.write(minSpeed);
+        }
       } else {
         if(isLeft) {
           if(myName == "DRO2") {
@@ -436,15 +426,15 @@ void forDrone() {
       }
 
       //Basically deconstruct the details of the object and its location here
-      if(received["details"].as<String>() == "RED") {
+      if(receivedDetails == "RED") {
         digitalWrite(redLed, HIGH);
         digitalWrite(yellowLed, LOW);
         digitalWrite(greenLed, LOW);
-      } else if(received["details"].as<String>() == "YELL") {
+      } else if(receivedDetails == "YELL") {
         digitalWrite(redLed, LOW);
         digitalWrite(yellowLed, HIGH);
         digitalWrite(greenLed, LOW);
-      } else if(received["details"].as<String>() == "GREE") {
+      } else if(receivedDetails == "GREE") {
         digitalWrite(redLed, LOW);
         digitalWrite(yellowLed, LOW);
         digitalWrite(greenLed, HIGH);
@@ -462,8 +452,11 @@ void forDrone() {
 void addDrone(String droneName) {
   //Check first if drone already exists in list
   for(int i = 0; i < drones.size(); i++) {
-    if(drones.get(i) == droneName)
+    if(drones.get(i) == droneName) {
+      Serial.print(droneName)
+      Serial.println(" already connected!");
       return;
+    }
   }
   drones.add(droneName); //Successfully added this drone.
 
@@ -490,6 +483,7 @@ void addDrone(String droneName) {
 ///////General functions/////////
 bool receivedCommand() {
   if(HC12.available()) {
+    //COMMAND TONAME FROMNAME DETAILS
     receivedMessage = HC12.readStringUntil('\n');
     int endIndex = receivedMessage.indexOf(' ');
     
@@ -497,19 +491,50 @@ bool receivedCommand() {
 
     receivedMessage = receivedMessage.substring(endIndex+1);
     endIndex = message.indexOf(' ');
-
     receivedToName = message.substring(0, endIndex);
+
+    receivedMessage = receivedMessage.substring(endIndex+1);
+    endIndex = message.indexOf(' ');
+    receivedFromName = message.substring(0, endIndex);
+    
     receivedDetails = message.substring(endIndex+1);
+    
+    //for debugging purposes only
+    // Serial.println("=====received a command======");
+    // Serial.print("receivedComand: ");
+    // Serial.println(receivedCommand);
+    // Serial.print("receivedToName: ");
+    // Serial.println(receivedToName);
+    // Serial.print("receivedFromName: ");
+    // Serial.println(receivedFromName);
+    // Serial.print("receivedDetails: ");
+    // Serial.println(receivedDetails);
+    // Serial.println("========================");
+
     return (receivedToName == myName);
   }
   receivedCommand = "";
   receivedToName = "";
+  receivedFromName = "";
   receivedDetails = "";
   return false;
 }
 
-void sendCommand(String sentMessage) {
-  HC12.print(sentMessage);
+void sendCommand(String sentCommand, sentToName, sentDetails) {
+  //COMMAND TONAME FROMNAME DETAILS
+  //for debugging purposes only
+  // Serial.println("=====sending a command======");
+  // Serial.print("sentCommand: ");
+  // Serial.println(sentCommand);
+  // Serial.print("sentToName: ");
+  // Serial.println(sentToName);
+  // Serial.print("sentFromName: ");
+  // Serial.println(myName);
+  // Serial.print("sentDetails: ");
+  // Serial.println(sentDetails);
+  // Serial.println("========================");
+  String sentMessage = sentCommand + " " + sentToName + " " + myName + " " + sentDetails;
+  HC12.print(command);
 }
 
 bool receivedSpecificCommand(String command) {
