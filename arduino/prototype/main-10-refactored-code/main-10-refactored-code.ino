@@ -267,9 +267,6 @@ void forDrone() {
         startTime = millis();
       }
     } else {
-      digitalWrite(redLed, LOW);
-      digitalWrite(yellowLed, HIGH);
-      digitalWrite(greenLed, LOW);
       Serial.println("Successfully detected by base station. Now we wait for deployment.");
       isConnected = true;
     }
@@ -288,6 +285,9 @@ void forDrone() {
       startTime = millis();
       initialAngle = Compass.GetHeadingDegrees(); //243
     }
+    digitalWrite(redLed, LOW);
+    digitalWrite(yellowLed, HIGH);
+    digitalWrite(greenLed, LOW);
   }
 
   //TASK 2.1: Base station wants to deploy us. Send acknowledgement/handshake for at least 5 seconds
