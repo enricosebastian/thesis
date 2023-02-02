@@ -15,10 +15,10 @@ HMC5883L_Simple Compass;
 */
 
 //Name here
-//const String myName = "BASE";
+const String myName = "BASE";
 //const String myName = "DRO1";
 //const String myName = "DRO2";
-const String myName = "DRO3";
+//const String myName = "DRO3";
 
 //Constants (buttons)
 const int redLed = 13;
@@ -61,11 +61,11 @@ float kd = 30;
 float PID_p, PID_i, PID_d, PID_total;
 
 //received message
-String receivedMessage = "";
-String receivedCommand = "";
-String receivedToName = "";
-String receivedFromName = "";
-String receivedDetails = "";
+String rxMessage = "";
+String rxCommand = "";
+String rxToName = "";
+String rxFromName = "";
+String rxDetails = "";
 
 SoftwareSerial HC12(txPin, rxPin); // (Green TX, Blue RX)
 LinkedList<String> drones;
@@ -122,8 +122,8 @@ void setup() {
 }
 
 void loop() {
-  // forBaseStation();
-  forDrone();
+  forBaseStation();
+//  forDrone();
   // Serial.println(Compass.GetHeadingDegrees());
 }
 
@@ -131,9 +131,9 @@ void forBaseStation() {
   //TASK 1: If you are not yet deploying, capture all the drones that want to connect with you.
   if(!isDeploying && !isDeployed && !isAcknowledging) {
     if(receivedSpecificCommand("CONN")) {
-      Serial.print(receivedFromName);
+      Serial.print(rxFromName);
       Serial.println(" wanted to connect. Sending handshake.");
-      addDrone(receivedFromName);
+      addDrone(rxFromName);
       isAcknowledging = true;
       startTime = millis();
     }
@@ -141,7 +141,7 @@ void forBaseStation() {
 
   //TASK 1.5: If you received a new drone name, don't forget to acknowledge its presence with a handshake.
   if(!isDeploying && !isDeployed && isAcknowledging && (millis() - startTime <= waitingTime)) {
-    sendCommand("CONNREP", receivedFromName, "SUCC");
+    sendCommand("CONNREP", rxFromName, "SUCC");
   } else if(!isDeploying && !isDeployed && isAcknowledging && (millis() - startTime > waitingTime)) {
     isAcknowledging = false;
   }
@@ -165,7 +165,7 @@ void forBaseStation() {
       startTime = millis();
       sendCommand("DEPL", drones.get(i), "HELL");
       
-      while(!receivedSpecificCommand("DEPLREP") && ! receivedFromName == drones.get(i))) {
+      while(!receivedSpecificCommand("DEPLREP") && rxFromName != drones.get(i)) {
         if(millis() - startTime >= waitingTime) {
           startTime = millis();
           Serial.print("Deployment command was not acknowledged by '");
@@ -217,7 +217,7 @@ void forBaseStation() {
         
         if(Serial.available()) {
           char letter = Serial.read();
-          if(letter = c) break;          
+          if(letter = 'c') break;          
         }
       }
       Serial.println("Command sent successfully!");
@@ -277,7 +277,7 @@ void forDrone() {
   //TASK 2.1: Base station wants to deploy us. Send acknowledgement/handshake for at least 5 seconds
   if(isConnected && isAcknowledging && !isDeployed) {
     if(millis() - startTime <= waitingTime) {
-      sendCommand("DEPLREP", receivedFromName, "SUCC");
+      sendCommand("DEPLREP", rxFromName, "SUCC");
     } else if(millis() - startTime > waitingTime) {
       Serial.println("Drone is deploying. Moving motors.");
 
@@ -306,12 +306,12 @@ void forDrone() {
     if(!hasDetectedObject && hasReceivedCommand) {
       if(millis() - startTime <= waitingTime) {
         // send acknowledgement that you received a command
-        sendCommand(receivedCommand+"REP", receivedFromName, "SUCC");
+        sendCommand(rxCommand+"REP", rxFromName, "SUCC");
       } else if(millis() - startTime > waitingTime) {
         //turn off hasReceivedCommand and interpret the actual command
         hasReceivedCommand = false;
         
-        if(receivedComand == "STOP") {
+        if(rxCommand == "STOP") {
           Serial.println("Stopping drone.");
           digitalWrite(redLed, LOW);
           digitalWrite(yellowLed, HIGH);
@@ -320,7 +320,7 @@ void forDrone() {
           isGoingHome = true;
           escLeft.write(0);
           escRight.write(0);
-        } else if(receivedCommand == "GO") {
+        } else if(rxCommand == "GO") {
           Serial.println("Drone resuming deployment.");
           digitalWrite(redLed, LOW);
           digitalWrite(yellowLed, LOW);
@@ -330,8 +330,8 @@ void forDrone() {
           initialAngle = Compass.GetHeadingDegrees(); // Save new angle
           escLeft.write(minSpeed); //re-initialize escs
           escRight.write(minSpeed);
-        } else if(receivedCommand == "TURN") {
-            initialAngle = initialAngle+receivedDetails.toInt(); // add value of details
+        } else if(rxCommand == "TURN") {
+            initialAngle = initialAngle+rxDetails.toInt(); // add value of details
             Serial.print("initial angle: ");
             Serial.println(initialAngle);
         }
@@ -426,15 +426,15 @@ void forDrone() {
       }
 
       //Basically deconstruct the details of the object and its location here
-      if(receivedDetails == "RED") {
+      if(rxDetails == "RED") {
         digitalWrite(redLed, HIGH);
         digitalWrite(yellowLed, LOW);
         digitalWrite(greenLed, LOW);
-      } else if(receivedDetails == "YELL") {
+      } else if(rxDetails == "YELL") {
         digitalWrite(redLed, LOW);
         digitalWrite(yellowLed, HIGH);
         digitalWrite(greenLed, LOW);
-      } else if(receivedDetails == "GREE") {
+      } else if(rxDetails == "GREE") {
         digitalWrite(redLed, LOW);
         digitalWrite(yellowLed, LOW);
         digitalWrite(greenLed, HIGH);
@@ -453,7 +453,7 @@ void addDrone(String droneName) {
   //Check first if drone already exists in list
   for(int i = 0; i < drones.size(); i++) {
     if(drones.get(i) == droneName) {
-      Serial.print(droneName)
+      Serial.print(droneName);
       Serial.println(" already connected!");
       return;
     }
@@ -484,20 +484,19 @@ void addDrone(String droneName) {
 bool receivedCommand() {
   if(HC12.available()) {
     //COMMAND TONAME FROMNAME DETAILS
-    receivedMessage = HC12.readStringUntil('\n');
-    int endIndex = receivedMessage.indexOf(' ');
+    rxMessage = HC12.readStringUntil('\n');
     
-    receivedCommand = message.substring(0, endIndex);
-
-    receivedMessage = receivedMessage.substring(endIndex+1);
-    endIndex = message.indexOf(' ');
-    receivedToName = message.substring(0, endIndex);
-
-    receivedMessage = receivedMessage.substring(endIndex+1);
-    endIndex = message.indexOf(' ');
-    receivedFromName = message.substring(0, endIndex);
+    int endIndex = rxMessage.indexOf(' ');
+    rxCommand = rxMessage.substring(0, endIndex);
+    rxMessage = rxMessage.substring(endIndex+1);
     
-    receivedDetails = message.substring(endIndex+1);
+    endIndex = rxMessage.indexOf(' ');
+    rxToName = rxMessage.substring(0, endIndex);
+    rxMessage = rxMessage.substring(endIndex+1);
+    
+    endIndex = rxMessage.indexOf(' ');
+    rxFromName = rxMessage.substring(0, endIndex);
+    rxDetails = rxMessage.substring(endIndex+1);
     
     //for debugging purposes only
     // Serial.println("=====received a command======");
@@ -511,16 +510,16 @@ bool receivedCommand() {
     // Serial.println(receivedDetails);
     // Serial.println("========================");
 
-    return (receivedToName == myName);
+    return (rxToName == myName);
   }
-  receivedCommand = "";
-  receivedToName = "";
-  receivedFromName = "";
-  receivedDetails = "";
+  rxCommand = "";
+  rxToName = "";
+  rxFromName = "";
+  rxDetails = "";
   return false;
 }
 
-void sendCommand(String sentCommand, sentToName, sentDetails) {
+void sendCommand(String sentCommand, String sentToName, String sentDetails) {
   //COMMAND TONAME FROMNAME DETAILS
   //for debugging purposes only
   // Serial.println("=====sending a command======");
@@ -534,11 +533,11 @@ void sendCommand(String sentCommand, sentToName, sentDetails) {
   // Serial.println(sentDetails);
   // Serial.println("========================");
   String sentMessage = sentCommand + " " + sentToName + " " + myName + " " + sentDetails;
-  HC12.print(command);
+  HC12.print(sentMessage);
 }
 
 bool receivedSpecificCommand(String command) {
-  return receivedCommand() && (receivedCommand == command);
+  return receivedCommand() && (rxCommand == command);
 }
 
 // fix in next update
