@@ -521,15 +521,20 @@ bool receiveCommand() {
       receivedDetails = receivedMessage.substring(endIndex+1);
 
       receivedMessage = ""; // Erase old message
-      return (receivedCommand != "") && (receivedToName != "") && (receivedFromName != "") && (receivedDetails != "");
+      if((receivedCommand != "") && (receivedToName != "") && (receivedFromName != "") && (receivedDetails != "")) {
+        return (receivedCommand != "") && (receivedToName != "") && (receivedFromName != "") && (receivedDetails != "");
+      } else {
+        Serial.println("Received choppy message");
+        receivedCommand = "";
+        receivedToName = "";
+        receivedFromName = "";
+        receivedDetails = "";
+        return false;
+      }
     } else {
       receivedMessage += letter;
     }
   }
-  receivedCommand = "";
-  receivedToName = "";
-  receivedFromName = "";
-  receivedDetails = "";
   return false;
 }
 
