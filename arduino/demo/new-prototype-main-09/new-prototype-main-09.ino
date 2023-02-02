@@ -522,11 +522,19 @@ bool receivedCommand() {
 
 void sendCommand(String sentCommand, String sentToName, String sentDetails) {
   //COMMAND TONAME FROMNAME DETAILS
+//  for debugging purposes only
+   Serial.println("=====sending a command======");
+   Serial.print("sentCommand: ");
+   Serial.println(sentCommand);
+   Serial.print("sentToName: ");
+   Serial.println(sentToName);
+   Serial.print("sentFromName: ");
+   Serial.println(myName);
+   Serial.print("sentDetails: ");
+   Serial.println(sentDetails);
+   Serial.println("========================");
    String sentMessage = sentCommand + " " + sentToName + " " + myName + " " + sentDetails + "\n";
    
-   //for debugging purposes
-   Serial.print("Sending: ");
-   Serial.println(sentMessage);
    HC12.print(sentMessage);
 }
 
