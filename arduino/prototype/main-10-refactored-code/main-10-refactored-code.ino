@@ -518,18 +518,7 @@ bool receiveCommand() {
       endIndex = receivedMessage.indexOf(' ');
       receivedFromName = receivedMessage.substring(0, endIndex);
       receivedDetails = receivedMessage.substring(endIndex+1);
-
-      // Serial.print("receivedCommand: ");
-      // Serial.println(receivedCommand);
-
-      // Serial.print("receivedToName: ");
-      // Serial.println(receivedToName);
-
-      // Serial.print("receivedFromName: ");
-      // Serial.println(receivedFromName);
-
-      // Serial.print("receivedDetails: ");
-      // Serial.println(receivedDetails);
+      
       return (receivedCommand != "") && (receivedToName != "") && (receivedFromName != "") && (receivedDetails != "");
     } else {
       receivedMessage += letter;
