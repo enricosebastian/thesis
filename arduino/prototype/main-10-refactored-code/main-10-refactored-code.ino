@@ -153,6 +153,25 @@ void forBaseStation() {
     }
   } else if(!isDeploying && !isDeployed && isAcknowledging && (millis() - startTime > waitingTime)) {
     isAcknowledging = false;
+
+    //Drone size indicator
+    if(drones.size() == 1) {
+      digitalWrite(redLed, HIGH);
+      digitalWrite(yellowLed, LOW);
+      digitalWrite(greenLed, LOW);
+    } else if(drones.size() == 2) {
+      digitalWrite(redLed, HIGH);
+      digitalWrite(yellowLed, HIGH);
+      digitalWrite(greenLed, LOW);
+    } else if(drones.size() == 3) {
+      digitalWrite(redLed, HIGH);
+      digitalWrite(yellowLed, HIGH);
+      digitalWrite(greenLed, HIGH);
+    } else {
+      digitalWrite(redLed, LOW);
+      digitalWrite(yellowLed, LOW);
+      digitalWrite(greenLed, LOW);
+    }
   }
 
   //TASK 2: If you pressed the button, start deployment.
@@ -264,9 +283,6 @@ void forDrone() {
         startTime = millis();
       }
     } else {
-      digitalWrite(redLed, LOW);
-      digitalWrite(yellowLed, LOW);
-      digitalWrite(greenLed, HIGH);
       Serial.println("Base station wants to start deploying.");
       isAcknowledging = true;
       startTime = millis();
@@ -311,8 +327,8 @@ void forDrone() {
         
         if(receivedCommand == "STOP") {
           Serial.println("Stopping drone.");
-          digitalWrite(redLed, LOW);
-          digitalWrite(yellowLed, HIGH);
+          digitalWrite(redLed, HIGH);
+          digitalWrite(yellowLed, LOW);
           digitalWrite(greenLed, LOW);
           
           isGoingHome = true;
@@ -338,7 +354,7 @@ void forDrone() {
 
     //TASK 3.2: Ensure that you are moving
     if(!hasDetectedObject && !hasReceivedCommand && !isGoingHome) {
-      if(millis() - startTime >= waitingTime) {
+      if(millis() - startTime >= 1000) {
         startTime = millis();
         digitalWrite(redLed, LOW);
         digitalWrite(yellowLed, LOW);
@@ -449,25 +465,6 @@ void addDrone(String droneName) {
     }
   }
   drones.add(droneName); //Successfully added this drone.
-
-  //Drone size indicator
-  if(drones.size() == 1) {
-    digitalWrite(redLed, HIGH);
-    digitalWrite(yellowLed, LOW);
-    digitalWrite(greenLed, LOW);
-  } else if(drones.size() == 2) {
-    digitalWrite(redLed, HIGH);
-    digitalWrite(yellowLed, HIGH);
-    digitalWrite(greenLed, LOW);
-  } else if(drones.size() == 3) {
-    digitalWrite(redLed, HIGH);
-    digitalWrite(yellowLed, HIGH);
-    digitalWrite(greenLed, HIGH);
-  } else {
-    digitalWrite(redLed, LOW);
-    digitalWrite(yellowLed, LOW);
-    digitalWrite(greenLed, LOW);
-  }
 }
 
 // int endIndex = receivedMessage.indexOf(' ');
