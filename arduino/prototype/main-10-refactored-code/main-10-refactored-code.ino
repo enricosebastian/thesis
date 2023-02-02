@@ -487,6 +487,8 @@ bool receiveCommand() {
   if(HC12.available()) {
     //COMMAND TONAME FROMNAME DETAILS
     receivedMessage = HC12.readStringUntil('\n');
+    Serial.print("Received: ");
+    Serial.println(receivedMessage);
     
     int endIndex = receivedMessage.indexOf(' ');
     receivedCommand = receivedMessage.substring(0, endIndex);
@@ -523,6 +525,8 @@ bool receiveCommand() {
 
 void sendCommand(String sentCommand, String sentToName, String sentDetails) {
   //COMMAND TONAME FROMNAME DETAILS
+  String sentMessage = sentCommand + " " + sentToName + " " + myName + " " + sentDetails + "\n";
+
   //for debugging purposes only
   Serial.println("=====Sending a command======");
   Serial.print("sentCommand: ");
@@ -533,8 +537,9 @@ void sendCommand(String sentCommand, String sentToName, String sentDetails) {
   Serial.println(myName);
   Serial.print("sentDetails: ");
   Serial.println(sentDetails);
+  Serial.print("Sending: ");
+  Serial.println(sentMessage);
   Serial.println("========================");
-  String sentMessage = sentCommand + " " + sentToName + " " + myName + " " + sentDetails + "\n";
   HC12.print(sentMessage);
 }
 
