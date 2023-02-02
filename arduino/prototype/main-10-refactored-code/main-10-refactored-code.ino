@@ -250,16 +250,16 @@ void forDrone() {
   if(!isConnected && !isDeployed) {
     if(!receivedSpecificCommand("CONNREP")) {
       if(millis() - startTime >= waitingTime) {
-        sendCommand("CONN", "BASE", "HELL");
         Serial.println("Reply 'CONNREP' was not received. Resending message again.");
+        sendCommand("CONN", "BASE", "HELL");
         startTime = millis();
       }
     } else {
-      isConnected = true;
-      Serial.println("Successfully detected by base station. Waiting for deployment.");
       digitalWrite(redLed, LOW);
       digitalWrite(yellowLed, HIGH);
       digitalWrite(greenLed, LOW);
+      Serial.println("Successfully detected by base station. Now we wait for deployment.");
+      isConnected = true;
     }
   }
 
@@ -271,12 +271,12 @@ void forDrone() {
         startTime = millis();
       }
     } else {
-      isAcknowledging = true;
-      Serial.println("Base station wants to start deploying.");
-      startTime = millis();
       digitalWrite(redLed, LOW);
       digitalWrite(yellowLed, LOW);
       digitalWrite(greenLed, HIGH);
+      Serial.println("Base station wants to start deploying.");
+      isAcknowledging = true;
+      startTime = millis();
       initialAngle = Compass.GetHeadingDegrees(); //243
     }
   }
@@ -286,15 +286,12 @@ void forDrone() {
     if(millis() - startTime <= waitingTime) {
       sendCommand("DEPLREP", receivedFromName, "SUCC");
     } else if(millis() - startTime > waitingTime) {
-      Serial.println("Drone is deploying. Moving motors.");
-
       escLeft.write(minSpeed);
       escRight.write(minSpeed);
-      
+      digitalWrite(detectionPin, HIGH);
+      Serial.println("Drone is deploying. Moving motors.");
       isAcknowledging = false;
       isDeployed = true;
-      
-      digitalWrite(detectionPin, HIGH);
       startTime = millis();
     }
   }
@@ -304,7 +301,6 @@ void forDrone() {
 
     //TASK 3.1: If you received a command from base station, stop what you are doing and interpret the command.
     if(!hasDetectedObject && !hasReceivedCommand && receiveCommand()) {
-      Serial.println("received a command");
       hasReceivedCommand = true;
       startTime = millis();
     }
@@ -312,10 +308,10 @@ void forDrone() {
     //TASK 3.1.2: Read what each command means
     if(!hasDetectedObject && hasReceivedCommand) {
       if(millis() - startTime <= waitingTime) {
-        // send acknowledgement that you received a command
+        // Send acknowledgement that you received a command
         sendCommand(receivedCommand+"REP", receivedFromName, "SUCC");
       } else if(millis() - startTime > waitingTime) {
-        //turn off hasReceivedCommand and interpret the actual command
+        // Turn off hasReceivedCommand, and then interpret the actual command
         hasReceivedCommand = false;
         
         if(receivedCommand == "STOP") {
@@ -339,7 +335,7 @@ void forDrone() {
           escRight.write(minSpeed);
         } else if(receivedCommand == "TURN") {
             initialAngle = initialAngle+receivedDetails.toInt(); // add value of details
-            Serial.print("initial angle: ");
+            Serial.print("Saved angle changed. New angle is: ");
             Serial.println(initialAngle);
         }
       }
@@ -353,98 +349,26 @@ void forDrone() {
         digitalWrite(yellowLed, LOW);
         digitalWrite(greenLed, !digitalRead(greenLed));
       }
-      
-      float error = initialAngle - Compass.GetHeadingDegrees();
-      float previous_error;
-      float cumulative_error;
-      int period = 50;
-
-      float PID_p = kp * error;
-      float PID_i = cumulative_error * ki;
-      float PID_d = kd*(error - previous_error);
-
-      double PID_total = PID_p + PID_i + PID_d;
-
-      cumulative_error += error;
-      previous_error = error;
-
-      float modifiedSpeed = map(abs(PID_total),0.00,1700.00,minSpeed,maxSpeed);
-      
-      if(error < -maxAngleChange) {
-        //It's turning right, so give the right motor more speed
-        // Serial.println("right");
-        isLeft = false;
-        escLeft.write(minSpeed);
-        escRight.write(modifiedSpeed);
-      } else if(error > maxAngleChange) {
-        //It's turning left, so give the left motor more speed
-        // Serial.println("left");
-        isLeft = true;
-        if(myName == "DRO2") {
-          escLeft.write(modifiedSpeed+10);
-          escRight.write(minSpeed);
-        } else if(myName == "DRO1") {
-          escLeft.write(modifiedSpeed+12);
-          escRight.write(minSpeed);
-        } else if(myName == "DRO3") {
-          escLeft.write(modifiedSpeed+12);
-          escRight.write(minSpeed);
-        }
-      } else {
-        if(isLeft) {
-          if(myName == "DRO2") {
-            escLeft.write(modifiedSpeed+10);
-            escRight.write(movingSpeed);
-          } else if(myName == "DRO1") {
-            escLeft.write(modifiedSpeed+12);
-            escRight.write(movingSpeed+2);
-          } else if(myName == "DRO3") {
-            escLeft.write(modifiedSpeed+12);
-            escRight.write(movingSpeed);
-          }
-        } else if(!isLeft) {
-          if(myName == "DRO2") {
-            escLeft.write(movingSpeed+10);
-            escRight.write(modifiedSpeed);
-          } else if(myName == "DRO1") {
-            escLeft.write(movingSpeed+12);
-            escRight.write(modifiedSpeed);
-          } else if(myName == "DRO3") {
-            escLeft.write(movingSpeed+12);
-            escRight.write(modifiedSpeed);
-          }
-        }
-      }
+      moveDrone(); 
     }
     
     //TASK 3.3: Look for RPi commands (Check if you detect an object in the water)
-    if(!hasDetectedObject && !hasReceivedCommand && !isGoingHome && detectedObject()) {
+    if(!hasDetectedObject && !hasReceivedCommand && !isGoingHome && detectObject()) {
       hasDetectedObject = true;
       startTime = millis();
     }
     
     if(!hasReceivedCommand && hasDetectedObject && !isGoingHome) {
-      if(millis() - startTime <= waitingTime) {
-        //Do we need to acknowledge though? It's physically connected, so data is strong
-        //sendCommand("DETEREP", received["fromName"].as<String>(), "SUCC");
-      } else if(millis() - startTime > waitingTime) {
-        hasDetectedObject = false;
-        startTime = millis();
-      }
-
       //Basically deconstruct the details of the object and its location here
-      if(receivedDetails == "RED") {
-        digitalWrite(redLed, HIGH);
-        digitalWrite(yellowLed, LOW);
-        digitalWrite(greenLed, LOW);
-      } else if(receivedDetails == "YELL") {
-        digitalWrite(redLed, LOW);
-        digitalWrite(yellowLed, HIGH);
-        digitalWrite(greenLed, LOW);
-      } else if(receivedDetails == "GREE") {
-        digitalWrite(redLed, LOW);
-        digitalWrite(yellowLed, LOW);
-        digitalWrite(greenLed, HIGH);
+      if(receivedDetails == "LEFT") {
+        initialAngle = initialAngle-20;
+        moveDrone();
+      } else if(receivedDetails == "CENTER") {
+        initialAngle = initialAngle;
+        moveDrone();
+      } else if(receivedDetails == "RIGHT") {
+        initialAngle = initialAngle+20;
+        moveDrone();
       }
     }
     
@@ -456,6 +380,70 @@ void forDrone() {
 }
 
 ///////Specific functions/////////
+void moveDrone() {
+  float error = initialAngle - Compass.GetHeadingDegrees();
+  float previous_error;
+  float cumulative_error;
+  int period = 50;
+
+  float PID_p = kp * error;
+  float PID_i = cumulative_error * ki;
+  float PID_d = kd*(error - previous_error);
+
+  double PID_total = PID_p + PID_i + PID_d;
+
+  cumulative_error += error;
+  previous_error = error;
+
+  float modifiedSpeed = map(abs(PID_total),0.00,1700.00,minSpeed,maxSpeed);
+  
+  if(error < -maxAngleChange) {
+    //It's turning right, so give the right motor more speed
+    // Serial.println("right");
+    isLeft = false;
+    escLeft.write(minSpeed);
+    escRight.write(modifiedSpeed);
+  } else if(error > maxAngleChange) {
+    //It's turning left, so give the left motor more speed
+    // Serial.println("left");
+    isLeft = true;
+    if(myName == "DRO1") {
+      escLeft.write(modifiedSpeed+12);
+      escRight.write(minSpeed);
+    } else if(myName == "DRO2") {
+      escLeft.write(modifiedSpeed+10);
+      escRight.write(minSpeed);
+    } else if(myName == "DRO3") {
+      escLeft.write(modifiedSpeed+12);
+      escRight.write(minSpeed);
+    }
+  } else {
+    if(isLeft) {
+      if(myName == "DRO1") {
+        escLeft.write(modifiedSpeed+12);
+        escRight.write(movingSpeed+2);
+      } else if(myName == "DRO2") {
+        escLeft.write(modifiedSpeed+10);
+        escRight.write(movingSpeed);
+      } else if(myName == "DRO3") {
+        escLeft.write(modifiedSpeed+12);
+        escRight.write(movingSpeed);
+      }
+    } else if(!isLeft) {
+      if(myName == "DRO1") {
+        escLeft.write(movingSpeed+12);
+        escRight.write(modifiedSpeed);
+      } else if(myName == "DRO2") {
+        escLeft.write(movingSpeed+10);
+        escRight.write(modifiedSpeed);
+      } else if(myName == "DRO3") {
+        escLeft.write(movingSpeed+12);
+        escRight.write(modifiedSpeed);
+      }
+    }
+  }
+}
+
 void addDrone(String droneName) {
   //Check first if drone already exists in list
   for(int i = 0; i < drones.size(); i++) {
@@ -506,7 +494,7 @@ bool receiveCommand() {
     receivedDetails = receivedMessage.substring(endIndex+1);
     
     //for debugging purposes only
-    Serial.println("=====received a command======");
+    Serial.println("=====Received a command======");
     Serial.print("receivedCommand: ");
     Serial.println(receivedCommand);
     Serial.print("receivedToName: ");
@@ -549,9 +537,22 @@ bool receivedSpecificCommand(String command) {
 }
 
 // fix in next update
-bool detectedObject() {
+bool detectObject() {
   if(Serial.available()){
-    String detectedCommand = Serial.readStringUntil("\n");
+    receivedMessage = Serial.readStringUntil("\n");
+    
+    int endIndex = receivedMessage.indexOf(' ');
+    receivedCommand = receivedMessage.substring(0, endIndex);
+    receivedMessage = receivedMessage.substring(endIndex+1);
+    
+    endIndex = receivedMessage.indexOf(' ');
+    receivedToName = receivedMessage.substring(0, endIndex);
+    receivedMessage = receivedMessage.substring(endIndex+1);
+    
+    endIndex = receivedMessage.indexOf(' ');
+    receivedFromName = receivedMessage.substring(0, endIndex);
+    receivedDetails = receivedMessage.substring(endIndex+1);
+    Serial.println("Detected an object!");
     return true;
   }
   return false;
