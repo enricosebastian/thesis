@@ -132,9 +132,6 @@ void loop() {
   } else {
     forDrone();
   }
-  // sendCommand("COMM", "DRO1", "DETA");
-  // delay(1000);
-  // Serial.println(Compass.GetHeadingDegrees());
 }
 
 void forBaseStation() {
@@ -151,7 +148,9 @@ void forBaseStation() {
 
   //TASK 1.5: If you received a new drone name, don't forget to acknowledge its presence with a handshake.
   if(!isDeploying && !isDeployed && isAcknowledging && (millis() - startTime <= waitingTime)) {
-    sendCommand("CONNREP", receivedFromName, "SUCC");
+    if(millis() - startTime >= 800) {
+      sendCommand("CONNREP", receivedFromName, "SUCC");
+    }
   } else if(!isDeploying && !isDeployed && isAcknowledging && (millis() - startTime > waitingTime)) {
     isAcknowledging = false;
   }
@@ -293,7 +292,9 @@ void forDrone() {
   //TASK 2.1: Base station wants to deploy us. Send acknowledgement/handshake for at least 5 seconds
   if(isConnected && isAcknowledging && !isDeployed) {
     if(millis() - startTime <= waitingTime) {
-      sendCommand("DEPLREP", receivedFromName, "SUCC");
+      if(millis() - startTime >= 800) {
+        sendCommand("CONNREP", receivedFromName, "SUCC");
+      }
     } else if(millis() - startTime > waitingTime) {
       escLeft.write(minSpeed);
       escRight.write(minSpeed);
