@@ -74,6 +74,11 @@ void interpretReceivedMessage(String message) {
   int endIndex = message.indexOf(' ');
   receivedCommand = message.substring(0, endIndex);
   message = message.substring(endIndex+1);
+  
+  endIndex = message.indexOf(' ');
+  receivedFromName = message.substring(0, endIndex);
+  message = message.substring(endIndex+1);
+
   endIndex = message.indexOf(' ');
   receivedToName = message.substring(0, endIndex);
   receivedDetails = message.substring(endIndex+1);
