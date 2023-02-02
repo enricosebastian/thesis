@@ -293,6 +293,7 @@ void forDrone() {
   if(isConnected && isAcknowledging && !isDeployed) {
     if(millis() - startTime <= waitingTime) {
       if(millis() - startTime >= 800) {
+        Serial.println(receivedFromName);
         sendCommand("CONNREP", receivedFromName, "SUCC");
       }
     } else if(millis() - startTime > waitingTime) {
@@ -500,6 +501,7 @@ void addDrone(String droneName) {
 
 ///////General functions/////////
 bool receiveCommand() {
+  receivedMessage = "";
   while(HC12.available()) {
     char letter = HC12.read();
     if(letter == '\n') {
@@ -518,7 +520,7 @@ bool receiveCommand() {
       endIndex = receivedMessage.indexOf(' ');
       receivedFromName = receivedMessage.substring(0, endIndex);
       receivedDetails = receivedMessage.substring(endIndex+1);
-      
+
       return (receivedCommand != "") && (receivedToName != "") && (receivedFromName != "") && (receivedDetails != "");
     } else {
       receivedMessage += letter;
