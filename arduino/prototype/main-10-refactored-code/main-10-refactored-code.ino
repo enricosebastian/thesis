@@ -132,6 +132,8 @@ void loop() {
   } else {
     forDrone();
   }
+  // sendCommand("COMM", "DRO1", "DETA");
+  // delay(1000);
   // Serial.println(Compass.GetHeadingDegrees());
 }
 
@@ -524,25 +526,23 @@ bool receiveCommand() {
 }
 
 void sendCommand(String command, String toName, String details) {
-  String sentMessage = "";
-  String sentCommand = command;
-  String sentToName = toName;
-  String sentDetails = details;
   //COMMAND TONAME FROMNAME DETAILS
   if(command != "" && toName != "" && details != "") {
-    Serial.print("Sending: ");
-    Serial.println(sentCommand);
-    Serial.print("Sending: ");
-    Serial.println(sentToName);
-    Serial.print("Sending: ");
+    Serial.println("==========Sending a command==========");
+    Serial.print("command: ");
+    Serial.println(command);
+    Serial.print("toName: ");
+    Serial.println(toName);
+    Serial.print("fromName: ");
     Serial.println(myName);
-    Serial.print("Sending: ");
-    Serial.println(sentDetails);
+    Serial.print("details: ");
+    Serial.println(details);
 
-    sentMessage = sentDetails;
+    String sentMessage = command + " " + toName + " " + myName + " " + details;
     Serial.print("Sending: ");
-    Serial.print(sentMessage);
+    Serial.println(sentMessage);
     HC12.println(sentMessage);
+    Serial.println("================================");
   } else {
     Serial.println("Wrong format of command. Try again.");
   }
