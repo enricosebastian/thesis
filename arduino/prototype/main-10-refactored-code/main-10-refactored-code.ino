@@ -177,14 +177,15 @@ void forBaseStation() {
           sendCommand("DEPL", drones.get(i), "HELL");
         }
       }
-      Serial.print("Successfully deployed ");
+      Serial.print("Successfully deployed: ");
       Serial.println(drones.get(i));
-      Serial.println("\n");
     }
-    Serial.println("All drones have been deployed. Start sending random commands.");
+
     digitalWrite(redLed, LOW);
     digitalWrite(yellowLed, LOW);
     digitalWrite(greenLed, HIGH);
+
+    Serial.println("All drones have been deployed. You can start sending commands now.");
     isDeployed = true;
     startTime = millis();
     digitalWrite(detectionPin, HIGH);
@@ -220,7 +221,10 @@ void forBaseStation() {
         
         if(Serial.available()) {
           char letter = Serial.read();
-          if(letter = 'c') break;          
+          if(letter = 'c') {
+            Serial.println("Command canceled. Try again.");
+            break;
+          };          
         }
       }
       Serial.println("Command sent successfully!");
@@ -457,7 +461,7 @@ void addDrone(String droneName) {
   for(int i = 0; i < drones.size(); i++) {
     if(drones.get(i) == droneName) {
       Serial.print(droneName);
-      Serial.println(" already connected!");
+      Serial.println(" is already connected!");
       return;
     }
   }
