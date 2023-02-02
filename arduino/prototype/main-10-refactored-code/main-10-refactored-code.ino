@@ -76,7 +76,7 @@ void setup() {
   Serial.begin(9600);
   HC12.begin(9600);
   Serial.print(myName);
-  Serial.println(" is initializing");
+  Serial.println(" is initializing...");
   
   //GPIO initialization
   pinMode(redLed, OUTPUT);
@@ -121,12 +121,17 @@ void setup() {
     escRight.write(0);
   }
 
+  Serial.print(myName);
+  Serial.println(" has initialized.");
   startTime = millis();
 }
 
 void loop() {
-  forBaseStation();
-  // forDrone();
+  if(myName == "BASE") {
+    forBaseStation();
+  } else {
+    forDrone();
+  }
   // Serial.println(Compass.GetHeadingDegrees());
 }
 
@@ -195,6 +200,8 @@ void forBaseStation() {
   if(isDeploying && isDeployed) {
     if(Serial.available()) {
       String input = Serial.readStringUntil('\n');
+      input.toUpperCase(); // In case mistypes happen
+
       int endIndex = input.indexOf(' '); 
 
       String command = input.substring(0, endIndex);
@@ -507,7 +514,6 @@ bool receiveCommand() {
 
     return (receivedToName == myName);
   }
-  Serial.println("=====received no command======");
   receivedCommand = "";
   receivedToName = "";
   receivedFromName = "";
@@ -518,7 +524,7 @@ bool receiveCommand() {
 void sendCommand(String sentCommand, String sentToName, String sentDetails) {
   //COMMAND TONAME FROMNAME DETAILS
   //for debugging purposes only
-  Serial.println("=====sending a command======");
+  Serial.println("=====Sending a command======");
   Serial.print("sentCommand: ");
   Serial.println(sentCommand);
   Serial.print("sentToName: ");
