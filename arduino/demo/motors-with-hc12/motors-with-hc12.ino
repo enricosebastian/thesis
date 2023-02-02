@@ -85,6 +85,8 @@ void interpretReceivedMessage(String message) {
   Serial.print("Received: {");
   Serial.print(receivedCommand);
   Serial.print(", ");
+  Serial.print(receivedFromName);
+  Serial.print(", ");
   Serial.print(receivedToName);
   Serial.print(", ");
   Serial.print(receivedDetails);
