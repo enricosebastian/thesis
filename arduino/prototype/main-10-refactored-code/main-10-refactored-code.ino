@@ -15,8 +15,8 @@ HMC5883L_Simple Compass;
 */
 
 //Name here
-const String myName = "BASE";
-// const String myName = "DRO1";
+// const String myName = "BASE";
+const String myName = "DRO1";
 // const String myName = "DRO2";
 // const String myName = "DRO3";
 
@@ -523,24 +523,12 @@ bool receiveCommand() {
   return false;
 }
 
-void sendCommand(String sentCommand, String sentToName, String sentDetails) {
+void sendCommand(String command, String toName, String details) {
   //COMMAND TONAME FROMNAME DETAILS
-  String sentMessage = sentCommand + " " + sentToName + " " + myName + " " + sentDetails + "\n";
-
-  //for debugging purposes only
-  Serial.println("=====Sending a command======");
-  Serial.print("sentCommand: ");
-  Serial.println(sentCommand);
-  Serial.print("sentToName: ");
-  Serial.println(sentToName);
-  Serial.print("sentFromName: ");
-  Serial.println(myName);
-  Serial.print("sentDetails: ");
-  Serial.println(sentDetails);
+  String sentMessage = command + " " + toName + " " + myName + " " + details;
   Serial.print("Sending: ");
   Serial.println(sentMessage);
-  Serial.println("========================");
-  HC12.print(sentMessage);
+  HC12.println(sentMessage);
 }
 
 bool receivedSpecificCommand(String command) {
