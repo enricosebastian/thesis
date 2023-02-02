@@ -57,16 +57,9 @@ void setup() {
 }
 
 void loop() {
-  if(digitalRead(btn) == HIGH) {
-    pinMode(redLed, HIGH);
-    pinMode(yellowLed, LOW);
-    pinMode(greenLed, LOW);
-    delay(1000);
-    sentMessage = "COMM DRO1 YEET";
+  if(Serial.available()) {
+    sentMessage = Serial.readStringUntil('\n');
     HC12.print(sentMessage);
-    pinMode(redLed, LOW);
-    pinMode(yellowLed, LOW);
-    pinMode(greenLed, HIGH);
   }
 
   if(HC12.available()) {
