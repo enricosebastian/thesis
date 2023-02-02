@@ -15,8 +15,8 @@ HMC5883L_Simple Compass;
 */
 
 //Name here
-const String myName = "BASE";
-// const String myName = "DRO1";
+// const String myName = "BASE";
+const String myName = "DRO1";
 // const String myName = "DRO2";
 // const String myName = "DRO3";
 
@@ -487,8 +487,6 @@ bool receiveCommand() {
   if(HC12.available()) {
     //COMMAND TONAME FROMNAME DETAILS
     receivedMessage = HC12.readStringUntil('\n');
-    Serial.print("Received: ");
-    Serial.println(receivedMessage);
     
     int endIndex = receivedMessage.indexOf(' ');
     receivedCommand = receivedMessage.substring(0, endIndex);
@@ -503,16 +501,18 @@ bool receiveCommand() {
     receivedDetails = receivedMessage.substring(endIndex+1);
     
     //for debugging purposes only
-    // Serial.println("=====Received a command======");
-    // Serial.print("receivedCommand: ");
-    // Serial.println(receivedCommand);
-    // Serial.print("receivedToName: ");
-    // Serial.println(receivedToName);
-    // Serial.print("receivedFromName: ");
-    // Serial.println(receivedFromName);
-    // Serial.print("receivedDetails: ");
-    // Serial.println(receivedDetails);
-    // Serial.println("========================");
+    Serial.println("=====Received a command======");
+    Serial.print("Received: ");
+    Serial.println(receivedMessage);
+    Serial.print("receivedCommand: ");
+    Serial.println(receivedCommand);
+    Serial.print("receivedToName: ");
+    Serial.println(receivedToName);
+    Serial.print("receivedFromName: ");
+    Serial.println(receivedFromName);
+    Serial.print("receivedDetails: ");
+    Serial.println(receivedDetails);
+    Serial.println("========================");
 
     return (receivedToName == myName) && (receivedCommand != "") && (receivedFromName != "") && (receivedDetails != "");
   }
@@ -524,11 +524,24 @@ bool receiveCommand() {
 }
 
 void sendCommand(String command, String toName, String details) {
+  String sentMessage = "";
+  String sentCommand = command;
+  String sentToName = toName;
+  String sentDetails = details;
   //COMMAND TONAME FROMNAME DETAILS
   if(command != "" && toName != "" && details != "") {
-    String sentMessage = command + " " + toName + " " + myName + " " + details;
     Serial.print("Sending: ");
-    Serial.println(sentMessage);
+    Serial.println(sentCommand);
+    Serial.print("Sending: ");
+    Serial.println(sentToName);
+    Serial.print("Sending: ");
+    Serial.println(myName);
+    Serial.print("Sending: ");
+    Serial.println(sentDetails);
+
+    sentMessage = sentDetails;
+    Serial.print("Sending: ");
+    Serial.print(sentMessage);
     HC12.println(sentMessage);
   } else {
     Serial.println("Wrong format of command. Try again.");
