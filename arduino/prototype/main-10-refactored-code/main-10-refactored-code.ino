@@ -501,7 +501,6 @@ void addDrone(String droneName) {
 
 ///////General functions/////////
 bool receiveCommand() {
-  receivedMessage = "";
   while(HC12.available()) {
     char letter = HC12.read();
     if(letter == '\n') {
@@ -521,6 +520,7 @@ bool receiveCommand() {
       receivedFromName = receivedMessage.substring(0, endIndex);
       receivedDetails = receivedMessage.substring(endIndex+1);
 
+      receivedMessage = ""; // Erase old message
       return (receivedCommand != "") && (receivedToName != "") && (receivedFromName != "") && (receivedDetails != "");
     } else {
       receivedMessage += letter;
