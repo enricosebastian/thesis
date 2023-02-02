@@ -166,7 +166,13 @@ void forBaseStation() {
 
   //TASK 3: Deployment starts by messaging all the drones to start moving.
   if(isDeploying && !isDeployed) {
-    for(int i = 0; i < drones.size(); i++) {
+    for(int i = 0; i < drones.size(); i++) {    
+      //Reset values first 
+      receivedFromName = "";
+      receivedCommand = "";
+      receivedToName = "";
+      receivedDetails = "";
+
       Serial.print("Trying to deploy ");
       Serial.println(drones.get(i));
       Serial.println("\n");
@@ -177,9 +183,9 @@ void forBaseStation() {
       while(!receivedSpecificCommand("DEPLREP") && receivedFromName != drones.get(i)) {
         if(millis() - startTime >= waitingTime) {
           startTime = millis();
-          Serial.print("Deployment command was not acknowledged by '");
+          Serial.print("Did not receive 'DEPLREP' from '");
           Serial.print(drones.get(i));
-          Serial.println("'. Trying again.");
+          Serial.println("' yet. Sending 'DEPL' again.");
           sendCommand("DEPL", drones.get(i), "HELL");
         }
       }
@@ -293,8 +299,7 @@ void forDrone() {
   if(isConnected && isAcknowledging && !isDeployed) {
     if(millis() - startTime <= waitingTime) {
       if(millis() - startTime >= 800) {
-        Serial.println(receivedFromName);
-        sendCommand("CONNREP", receivedFromName, "SUCC");
+        sendCommand("DEPLREP", receivedFromName, "SUCC");
       }
     } else if(millis() - startTime > waitingTime) {
       escLeft.write(minSpeed);
@@ -521,16 +526,7 @@ bool receiveCommand() {
       receivedDetails = receivedMessage.substring(endIndex+1);
 
       receivedMessage = ""; // Erase old message
-      if((receivedCommand != "") && (receivedToName != "") && (receivedFromName != "") && (receivedDetails != "")) {
-        return (receivedCommand != "") && (receivedToName != "") && (receivedFromName != "") && (receivedDetails != "");
-      } else {
-        Serial.println("Received choppy message");
-        receivedCommand = "";
-        receivedToName = "";
-        receivedFromName = "";
-        receivedDetails = "";
-        return false;
-      }
+      return (receivedCommand != "") && (receivedToName == myName) && (receivedFromName != "") && (receivedDetails != "");
     } else {
       receivedMessage += letter;
     }
