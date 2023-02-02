@@ -15,8 +15,8 @@ HMC5883L_Simple Compass;
 */
 
 //Name here
-// const String myName = "BASE";
-const String myName = "DRO1";
+const String myName = "BASE";
+// const String myName = "DRO1";
 // const String myName = "DRO2";
 // const String myName = "DRO3";
 
@@ -503,18 +503,18 @@ bool receiveCommand() {
     receivedDetails = receivedMessage.substring(endIndex+1);
     
     //for debugging purposes only
-    Serial.println("=====Received a command======");
-    Serial.print("receivedCommand: ");
-    Serial.println(receivedCommand);
-    Serial.print("receivedToName: ");
-    Serial.println(receivedToName);
-    Serial.print("receivedFromName: ");
-    Serial.println(receivedFromName);
-    Serial.print("receivedDetails: ");
-    Serial.println(receivedDetails);
-    Serial.println("========================");
+    // Serial.println("=====Received a command======");
+    // Serial.print("receivedCommand: ");
+    // Serial.println(receivedCommand);
+    // Serial.print("receivedToName: ");
+    // Serial.println(receivedToName);
+    // Serial.print("receivedFromName: ");
+    // Serial.println(receivedFromName);
+    // Serial.print("receivedDetails: ");
+    // Serial.println(receivedDetails);
+    // Serial.println("========================");
 
-    return (receivedToName == myName);
+    return (receivedToName == myName) && (receivedCommand != "") && (receivedFromName != "") && (receivedDetails != "");
   }
   receivedCommand = "";
   receivedToName = "";
