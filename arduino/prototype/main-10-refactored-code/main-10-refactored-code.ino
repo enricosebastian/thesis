@@ -207,7 +207,7 @@ void forBaseStation() {
   if(isDeploying && isDeployed) {
     if(Serial.available()) {
       String input = Serial.readStringUntil('\n');
-      input.toUpperCase(); // In case mistypes happen
+      Serial.println(input);
 
       int endIndex = input.indexOf(' '); 
 
@@ -217,44 +217,23 @@ void forBaseStation() {
       endIndex = input.indexOf(' ');
       String toName = input.substring(0, endIndex);
       String details = input.substring(endIndex+1);
+
+      sendCommand(command, toName, details);
       startTime = millis();
-      Serial.print("Sending: {");
-      Serial.print(command);
-      Serial.print(", ");
-      Serial.print(toName);
-      Serial.print(", ");
-      Serial.print(details);
-      Serial.println("}");
-      
       while(!receivedSpecificCommand(command+"REP")) {
-        if(millis() - startTime >= waitingTime) {
-          Serial.println("No acknowledgement received. Resending again.");
-          startTime = millis();
+        if(millis() - startTime > 800) {
+          Serial.print(command);
+          Serial.println("REP was not yet received. Resending commmand.");
           sendCommand(command, toName, details);
         }
-        
         if(Serial.available()) {
           char letter = Serial.read();
-          if(letter = 'c') {
-            Serial.println("Command canceled. Try again.");
-            break;
-          };          
+          if(letter == 'c') break;
         }
       }
-      Serial.println("Command sent successfully!");
     }
     
     if(receiveCommand()) {       
-      // Serial.println("=========received======");
-      // Serial.print("command: ");
-      // Serial.println(received["command"].as<String>());
-      // Serial.print("toName: ");
-      // Serial.println(received["toName"].as<String>());
-      // Serial.print("fromName: ");
-      // Serial.println(received["fromName"].as<String>());
-      // Serial.print("details: ");
-      // Serial.println(received["details"].as<String>());
-      // Serial.println("===================");
     }
   }
 }
