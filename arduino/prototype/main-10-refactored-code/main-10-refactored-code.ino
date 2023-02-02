@@ -467,19 +467,6 @@ void addDrone(String droneName) {
   drones.add(droneName); //Successfully added this drone.
 }
 
-// int endIndex = receivedMessage.indexOf(' ');
-// receivedCommand = receivedMessage.substring(0, endIndex);
-// receivedMessage = receivedMessage.substring(endIndex+1);
-
-// endIndex = receivedMessage.indexOf(' ');
-// receivedToName = receivedMessage.substring(0, endIndex);
-// receivedMessage = receivedMessage.substring(endIndex+1);
-
-// endIndex = receivedMessage.indexOf(' ');
-// receivedFromName = receivedMessage.substring(0, endIndex);
-// receivedDetails = receivedMessage.substring(endIndex+1);
-// Serial.println("Detected an object!");
-
 ///////General functions/////////
 bool receiveCommand() {
   while(HC12.available()) {
