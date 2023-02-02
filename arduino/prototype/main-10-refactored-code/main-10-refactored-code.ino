@@ -15,8 +15,8 @@ HMC5883L_Simple Compass;
 */
 
 //Name here
-// const String myName = "BASE";
-const String myName = "DRO1";
+const String myName = "BASE";
+// const String myName = "DRO1";
 // const String myName = "DRO2";
 // const String myName = "DRO3";
 
@@ -128,9 +128,11 @@ void setup() {
 
 void loop() {
   if(myName == "BASE") {
-    forBaseStation();
+    // forBaseStation();
+    // sendCommand("COMM", "DRO1", "DETA");
   } else {
-    forDrone();
+    // forDrone();
+    // sendCommand("COMM", "DRO1", "DETA");
   }
   // sendCommand("COMM", "DRO1", "DETA");
   // delay(1000);
@@ -487,36 +489,39 @@ void addDrone(String droneName) {
 ///////General functions/////////
 bool receiveCommand() {
   if(HC12.available()) {
+    char letter = HC12.read();
+    Serial.println(letter);
+    return true;
     //COMMAND TONAME FROMNAME DETAILS
-    receivedMessage = HC12.readStringUntil('\n');
+    // receivedMessage = HC12.readStringUntil('\n');
     
-    int endIndex = receivedMessage.indexOf(' ');
-    receivedCommand = receivedMessage.substring(0, endIndex);
-    receivedMessage = receivedMessage.substring(endIndex+1);
+    // int endIndex = receivedMessage.indexOf(' ');
+    // receivedCommand = receivedMessage.substring(0, endIndex);
+    // receivedMessage = receivedMessage.substring(endIndex+1);
     
-    endIndex = receivedMessage.indexOf(' ');
-    receivedToName = receivedMessage.substring(0, endIndex);
-    receivedMessage = receivedMessage.substring(endIndex+1);
+    // endIndex = receivedMessage.indexOf(' ');
+    // receivedToName = receivedMessage.substring(0, endIndex);
+    // receivedMessage = receivedMessage.substring(endIndex+1);
     
-    endIndex = receivedMessage.indexOf(' ');
-    receivedFromName = receivedMessage.substring(0, endIndex);
-    receivedDetails = receivedMessage.substring(endIndex+1);
+    // endIndex = receivedMessage.indexOf(' ');
+    // receivedFromName = receivedMessage.substring(0, endIndex);
+    // receivedDetails = receivedMessage.substring(endIndex+1);
     
-    //for debugging purposes only
-    Serial.println("=====Received a command======");
-    Serial.print("Received: ");
-    Serial.println(receivedMessage);
-    Serial.print("receivedCommand: ");
-    Serial.println(receivedCommand);
-    Serial.print("receivedToName: ");
-    Serial.println(receivedToName);
-    Serial.print("receivedFromName: ");
-    Serial.println(receivedFromName);
-    Serial.print("receivedDetails: ");
-    Serial.println(receivedDetails);
-    Serial.println("========================");
+    // //for debugging purposes only
+    // Serial.println("=====Received a command======");
+    // Serial.print("Received: ");
+    // Serial.println(receivedMessage);
+    // Serial.print("receivedCommand: ");
+    // Serial.println(receivedCommand);
+    // Serial.print("receivedToName: ");
+    // Serial.println(receivedToName);
+    // Serial.print("receivedFromName: ");
+    // Serial.println(receivedFromName);
+    // Serial.print("receivedDetails: ");
+    // Serial.println(receivedDetails);
+    // Serial.println("========================");
 
-    return (receivedToName == myName) && (receivedCommand != "") && (receivedFromName != "") && (receivedDetails != "");
+    // return (receivedToName == myName) && (receivedCommand != "") && (receivedFromName != "") && (receivedDetails != "");
   }
   receivedCommand = "";
   receivedToName = "";
