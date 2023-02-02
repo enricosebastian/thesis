@@ -499,19 +499,20 @@ bool receivedCommand() {
     rxDetails = rxMessage.substring(endIndex+1);
     
     //for debugging purposes only
-    // Serial.println("=====received a command======");
-    // Serial.print("receivedComand: ");
-    // Serial.println(receivedCommand);
-    // Serial.print("receivedToName: ");
-    // Serial.println(receivedToName);
-    // Serial.print("receivedFromName: ");
-    // Serial.println(receivedFromName);
-    // Serial.print("receivedDetails: ");
-    // Serial.println(receivedDetails);
-    // Serial.println("========================");
+     Serial.println("=====received a command======");
+     Serial.print("rxCommand: ");
+     Serial.println(rxCommand);
+     Serial.print("rxToName: ");
+     Serial.println(rxToName);
+     Serial.print("rxFromName: ");
+     Serial.println(rxFromName);
+     Serial.print("rxDetails: ");
+     Serial.println(rxDetails);
+     Serial.println("========================");
 
     return (rxToName == myName);
   }
+  Serial.println("=====received no command======");
   rxCommand = "";
   rxToName = "";
   rxFromName = "";
@@ -521,17 +522,17 @@ bool receivedCommand() {
 
 void sendCommand(String sentCommand, String sentToName, String sentDetails) {
   //COMMAND TONAME FROMNAME DETAILS
-  //for debugging purposes only
-  // Serial.println("=====sending a command======");
-  // Serial.print("sentCommand: ");
-  // Serial.println(sentCommand);
-  // Serial.print("sentToName: ");
-  // Serial.println(sentToName);
-  // Serial.print("sentFromName: ");
-  // Serial.println(myName);
-  // Serial.print("sentDetails: ");
-  // Serial.println(sentDetails);
-  // Serial.println("========================");
+//  for debugging purposes only
+   Serial.println("=====sending a command======");
+   Serial.print("sentCommand: ");
+   Serial.println(sentCommand);
+   Serial.print("sentToName: ");
+   Serial.println(sentToName);
+   Serial.print("sentFromName: ");
+   Serial.println(myName);
+   Serial.print("sentDetails: ");
+   Serial.println(sentDetails);
+   Serial.println("========================");
   String sentMessage = sentCommand + " " + sentToName + " " + myName + " " + sentDetails;
   HC12.print(sentMessage);
 }
