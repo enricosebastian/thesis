@@ -128,11 +128,9 @@ void setup() {
 
 void loop() {
   if(myName == "BASE") {
-    // forBaseStation();
-    // sendCommand("COMM", "DRO1", "DETA");
+    forBaseStation();
   } else {
-    // forDrone();
-    // sendCommand("COMM", "DRO1", "DETA");
+    forDrone();
   }
   // sendCommand("COMM", "DRO1", "DETA");
   // delay(1000);
@@ -486,42 +484,55 @@ void addDrone(String droneName) {
   }
 }
 
+// int endIndex = receivedMessage.indexOf(' ');
+// receivedCommand = receivedMessage.substring(0, endIndex);
+// receivedMessage = receivedMessage.substring(endIndex+1);
+
+// endIndex = receivedMessage.indexOf(' ');
+// receivedToName = receivedMessage.substring(0, endIndex);
+// receivedMessage = receivedMessage.substring(endIndex+1);
+
+// endIndex = receivedMessage.indexOf(' ');
+// receivedFromName = receivedMessage.substring(0, endIndex);
+// receivedDetails = receivedMessage.substring(endIndex+1);
+// Serial.println("Detected an object!");
+
 ///////General functions/////////
 bool receiveCommand() {
-  if(HC12.available()) {
+  while(HC12.available()) {
     char letter = HC12.read();
-    Serial.println(letter);
-    return true;
-    //COMMAND TONAME FROMNAME DETAILS
-    // receivedMessage = HC12.readStringUntil('\n');
-    
-    // int endIndex = receivedMessage.indexOf(' ');
-    // receivedCommand = receivedMessage.substring(0, endIndex);
-    // receivedMessage = receivedMessage.substring(endIndex+1);
-    
-    // endIndex = receivedMessage.indexOf(' ');
-    // receivedToName = receivedMessage.substring(0, endIndex);
-    // receivedMessage = receivedMessage.substring(endIndex+1);
-    
-    // endIndex = receivedMessage.indexOf(' ');
-    // receivedFromName = receivedMessage.substring(0, endIndex);
-    // receivedDetails = receivedMessage.substring(endIndex+1);
-    
-    // //for debugging purposes only
-    // Serial.println("=====Received a command======");
-    // Serial.print("Received: ");
-    // Serial.println(receivedMessage);
-    // Serial.print("receivedCommand: ");
-    // Serial.println(receivedCommand);
-    // Serial.print("receivedToName: ");
-    // Serial.println(receivedToName);
-    // Serial.print("receivedFromName: ");
-    // Serial.println(receivedFromName);
-    // Serial.print("receivedDetails: ");
-    // Serial.println(receivedDetails);
-    // Serial.println("========================");
+    if(letter == '\n') {
+      receivedMessage += '\n';
+      Serial.print("Received: ");
+      Serial.print(receivedMessage);
 
-    // return (receivedToName == myName) && (receivedCommand != "") && (receivedFromName != "") && (receivedDetails != "");
+      int endIndex = receivedMessage.indexOf(' ');
+      receivedCommand = receivedMessage.substring(0, endIndex);
+      receivedMessage = receivedMessage.substring(endIndex+1);
+
+      endIndex = receivedMessage.indexOf(' ');
+      receivedToName = receivedMessage.substring(0, endIndex);
+      receivedMessage = receivedMessage.substring(endIndex+1);
+
+      endIndex = receivedMessage.indexOf(' ');
+      receivedFromName = receivedMessage.substring(0, endIndex);
+      receivedDetails = receivedMessage.substring(endIndex+1);
+
+      // Serial.print("receivedCommand: ");
+      // Serial.println(receivedCommand);
+
+      // Serial.print("receivedToName: ");
+      // Serial.println(receivedToName);
+
+      // Serial.print("receivedFromName: ");
+      // Serial.println(receivedFromName);
+
+      // Serial.print("receivedDetails: ");
+      // Serial.println(receivedDetails);
+      return (receivedCommand != "") && (receivedToName != "") && (receivedFromName != "") && (receivedDetails != "");
+    } else {
+      receivedMessage += letter;
+    }
   }
   receivedCommand = "";
   receivedToName = "";
@@ -533,21 +544,10 @@ bool receiveCommand() {
 void sendCommand(String command, String toName, String details) {
   //COMMAND TONAME FROMNAME DETAILS
   if(command != "" && toName != "" && details != "") {
-    Serial.println("==========Sending a command==========");
-    Serial.print("command: ");
-    Serial.println(command);
-    Serial.print("toName: ");
-    Serial.println(toName);
-    Serial.print("fromName: ");
-    Serial.println(myName);
-    Serial.print("details: ");
-    Serial.println(details);
-
     String sentMessage = command + " " + toName + " " + myName + " " + details;
     Serial.print("Sending: ");
     Serial.println(sentMessage);
     HC12.println(sentMessage);
-    Serial.println("================================");
   } else {
     Serial.println("Wrong format of command. Try again.");
   }
