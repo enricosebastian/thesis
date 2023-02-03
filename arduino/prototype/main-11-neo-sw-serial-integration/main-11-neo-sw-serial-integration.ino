@@ -247,7 +247,10 @@ void forBaseStation() {
           startTime = millis();
         }
 
-        if(Serial.available() && Serial.readStringUntil('\n') != "smnth") break;
+        if(Serial.available() && Serial.readStringUntil('\n') != "smnth") {
+          Serial.println("Canceling sending of command. Try sending a new command.");
+          break;
+        }
       }
     }
     
