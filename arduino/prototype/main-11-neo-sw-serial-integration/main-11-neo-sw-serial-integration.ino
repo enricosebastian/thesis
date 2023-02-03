@@ -48,9 +48,11 @@ bool hasReceivedCommand = false;
 bool hasDetectedObject = false;
 bool isLeft = false;
 
-//Variables
+//millis time variables for storage
 unsigned long startTime = 0;
+unsigned long startTime2 = 0;
 
+//Variables
 int posX = 0;
 int posY = 0;
 
@@ -143,14 +145,15 @@ void forBaseStation() {
       addDrone(receivedFromName);
       isAcknowledging = true;
       startTime = millis();
+      startTime2 = millis();
     }
   }
 
   //TASK 1.5: If you received a new drone name, don't forget to acknowledge its presence with a handshake.
   if(!isDeploying && !isDeployed && isAcknowledging && (millis() - startTime <= waitingTime)) {
-    if(millis() - startTime >= 800) {
+    if(millis() - startTime2 >= 800) {
       sendCommand("CONNREP", receivedFromName, "SUCC");
-      startTime = millis();
+      startTime2 = millis();
     }
   } else if(!isDeploying && !isDeployed && isAcknowledging && (millis() - startTime > waitingTime)) {
     isAcknowledging = false;
@@ -286,6 +289,7 @@ void forDrone() {
       Serial.println("Base station wants to start deploying.");
       isAcknowledging = true;
       startTime = millis();
+      startTime2 = millis();
       initialAngle = Compass.GetHeadingDegrees(); //243
     }
     digitalWrite(redLed, LOW);
@@ -296,8 +300,9 @@ void forDrone() {
   //TASK 2.1: Base station wants to deploy us. Send acknowledgement/handshake for at least 5 seconds
   if(isConnected && isAcknowledging && !isDeployed) {
     if(millis() - startTime <= waitingTime) {
-      if(millis() - startTime >= 800) {
+      if(millis() - startTime2 >= 800) {
         sendCommand("DEPLREP", receivedFromName, "SUCC");
+        startTime2 = millis();
       }
     } else if(millis() - startTime > waitingTime) {
       escLeft.write(minSpeed);
@@ -322,8 +327,10 @@ void forDrone() {
     //TASK 3.1.2: Read what each command means
     if(!hasDetectedObject && hasReceivedCommand) {
       if(millis() - startTime <= waitingTime) {
-        // Send acknowledgement that you received a command
-        sendCommand(receivedCommand+"REP", receivedFromName, "SUCC");
+        if(millis() - startTime2 > 800) {
+          sendCommand(receivedCommand+"REP", receivedFromName, "SUCC"); // Send acknowledgement that you received a command
+          startTime2 = millis();
+        }
       } else if(millis() - startTime > waitingTime) {
         // Turn off hasReceivedCommand, and then interpret the actual command
         hasReceivedCommand = false;
