@@ -244,11 +244,10 @@ void forBaseStation() {
           Serial.print(command);
           Serial.println("REP was not yet received. Resending commmand.");
           sendCommand(command, toName, details);
+          startTime = millis();
         }
-        if(Serial.available()) {
-          char letter = Serial.read();
-          if(letter == 'c') break;
-        }
+
+        if(Serial.available() && Serial.readStringUntil('\n') != "smnth") break;
       }
     }
     
