@@ -15,6 +15,6 @@ Commmand structure is simply `COMMAND RECEIVER SENDER DETAILS`, wherein:
 ## Existing commands
 | Command | Who can receive it | Who can send it | Details                                   | Example command in serial port | Purpose                                                                 |
 |---------|--------------------|-----------------|-------------------------------------------|--------------------------------|-------------------------------------------------------------------------|
-| GO      | DRO1, DRO2, DRO3   | BASE            | N/A                                       | GO DRO3 YEET                   | To resume drone moving if stopped initially                             |
-| STOP    | DRO1, DRO2, DRO3   | BASE            | N/A                                       | STOP DRO5 YEET                 | To halting drone deployment process                                     |
-| TURN    | DRO1, DRO2, DRO3   | BASE            | int value (negative or positive integers) | TURN DRO2 -50                  | To cause the drone to turn to a certain direction based on detail value |
+| GO      | DRO1, DRO2, DRO3   | BASE            | N/A                                       | `GO DRO3 YEET`                 | To resume drone moving if stopped initially                             |
+| STOP    | DRO1, DRO2, DRO3   | BASE            | N/A                                       | `STOP DRO5 YEET`               | To halting drone deployment process                                     |
+| TURN    | DRO1, DRO2, DRO3   | BASE            | int value (negative or positive integers) | `TURN DRO2 -50`                | To cause the drone to turn to a certain direction based on detail value |
