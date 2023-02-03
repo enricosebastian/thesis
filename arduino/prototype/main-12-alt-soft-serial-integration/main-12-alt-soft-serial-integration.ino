@@ -1,9 +1,9 @@
 #include <Arduino.h>
-#include <NeoSWSerial.h>
 #include <LinkedList.h>
 #include <Servo.h>
 #include <Wire.h>
 #include <HMC5883L_Simple.h>
+#include <AltSoftSerial.h>
 
 HMC5883L_Simple Compass;
 /*
@@ -69,7 +69,7 @@ String receivedToName = "";
 String receivedFromName = "";
 String receivedDetails = "";
 
-NeoSWSerial HC12(txPin, receivedPin); // (Green TX, Blue RX)
+AltSoftSerial HC12; //txPin green 9, rxPin blue 8
 LinkedList<String> drones;
 Servo escLeft;
 Servo escRight;
