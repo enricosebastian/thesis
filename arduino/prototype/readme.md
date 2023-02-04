@@ -13,8 +13,10 @@ Commmand structure is simply `COMMAND RECEIVER SENDER DETAILS`, wherein:
 - `DETAILS` - is extra strings/chars that may be used for additional processes. This can contain int/float values and such that require parsing
 
 ## Existing commands
-| Command | Who can receive it | Who can send it | Details                                   | Example command in serial port | Purpose                                                                 |
-|---------|--------------------|-----------------|-------------------------------------------|--------------------------------|-------------------------------------------------------------------------|
-| GO      | DRO1, DRO2, DRO3   | BASE            | N/A                                       | `GO DRO3 YEET`                 | To resume drone moving if stopped initially                             |
-| STOP    | DRO1, DRO2, DRO3   | BASE            | N/A                                       | `STOP DRO5 YEET`               | To halting drone deployment process                                     |
-| TURN    | DRO1, DRO2, DRO3   | BASE            | int value (negative or positive integers) | `TURN DRO2 -50`                | To cause the drone to turn to a certain direction based on detail value |
+| Command       | Who can receive it | Who can send it            | Details                                                           | Example command in serial port | Purpose                                                                            |
+|---------------|--------------------|----------------------------|-------------------------------------------------------------------|--------------------------------|------------------------------------------------------------------------------------|
+| GO            | DRO1, DRO2, DRO3   | BASE                       | N/A                                                               | `GO DRO3 YEET`                 | To resume drone moving if stopped initially                                        |
+| STOP          | DRO1, DRO2, DRO3   | BASE                       | N/A                                                               | `STOP DRO5 YEET`               | To halting drone deployment process                                                |
+| TURN          | DRO1, DRO2, DRO3   | BASE                       | int value (negative or positive integers)                         | `TURN DRO2 -50`                | To cause the drone to turn to a certain direction based on detail value            |
+| CONN          | BASE               | DRO1, DRO2, DRO3           | initial connection setup between one drone and the base station   | `CONN BASE SUCC`               | Allows base station to find out that a drone exists and wants to connect           |
+| CONNREP       | DRO1, DRO2, DRO3   | BASE                       | initial connection setup between one drone and the base station   | `CONNREP DRO1 SUCC`            | Connection acknowledgement of base station for `CONN` command received by drone    |
