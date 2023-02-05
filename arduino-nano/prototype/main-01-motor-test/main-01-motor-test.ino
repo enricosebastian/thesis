@@ -76,13 +76,13 @@ void setup() {
 }
 
 void loop() {
-  if(receiveCommand()) {
+  if(!hasReceivedCommand && receiveCommand()) {
     hasReceivedCommand = true; // makes sure that nothing runs when you receive a command
   }
 
   // Stop what you're doing and interpret the command
   if(hasReceivedCommand) {
-    if(receivedCommand == "GO") {
+    if(receivedCommand == "GO" || receiveCommand == "DEPL") {
       //save new initial angle
       initialAngle = Compass.GetHeadingDegrees();
       isDeployed = true;

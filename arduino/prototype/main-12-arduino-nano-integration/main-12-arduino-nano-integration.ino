@@ -1,22 +1,10 @@
 #include <Arduino.h>
 #include <NeoSWSerial.h>
 #include <LinkedList.h>
-#include <Servo.h>
-#include <Wire.h>
-#include <HMC5883L_Simple.h>
-
-HMC5883L_Simple Compass;
-/*
- * GY-273 Compass Module  ->  Arduino
- * VCC  -> VCC
- * GND  -> GND
- * SCL  -> A5, blue
- * SDA  -> A4, green
-*/
 
 //Name here
-const String myName = "BASE";
-// const String myName = "DRO1";
+// const String myName = "BASE";
+const String myName = "DRO1";
 // const String myName = "DRO2";
 // const String myName = "DRO3";
 
@@ -25,8 +13,6 @@ const int redLed = 13;
 const int yellowLed = 12;
 const int greenLed = 11;
 const int detectionPin = 10;
-const int escLeftPin = 6;
-const int escRightPin = 5;
 const int btn = 7;
 const int txHc12 = A0; //green tx
 const int rxHc12 = A1; //blue received
@@ -34,21 +20,14 @@ const int txNano = A2; //green tx
 const int rxNano = A3; //blue received
 const int waitingTime = 5000;
 
-const float minSpeed = 7;
-const float movingSpeed = 15;
-const float maxSpeed = 20;
-const float maxAngleChange = 5;
-const float turnDegrees = 90;
-
 //Booleans for logic
 bool isConnected = false;
 bool isDeploying = false;
 bool isDeployed = false;
 bool isAcknowledging = false;
-bool isGoingHome = false;
+bool hasStopped = false;
 bool hasReceivedCommand = false;
 bool hasDetectedObject = false;
-bool isLeft = false;
 
 //millis time variables for storage
 unsigned long startTime = 0;
@@ -57,12 +36,6 @@ unsigned long startTime2 = 0;
 //Variables
 int posX = 0;
 int posY = 0;
-
-float initialAngle = 0;
-float kp = 8;
-float ki = 0.2;
-float kd = 30;
-float PID_p, PID_i, PID_d, PID_total;
 
 //received message
 String receivedMessage = "";
@@ -74,8 +47,6 @@ String receivedDetails = "";
 NeoSWSerial HC12(txHc12, rxHc12); // (Green TX, Blue RX)
 NeoSWSerial Nano(txNano, rxNano); // (Green TX, Blue RX)
 LinkedList<String> drones;
-Servo escLeft;
-Servo escRight;
 
 void setup() {
   Serial.begin(9600);
@@ -330,60 +301,51 @@ void forDrone() {
           digitalWrite(yellowLed, LOW);
           digitalWrite(greenLed, LOW);
           
-          isGoingHome = true;
-          moveDrone("STOP", myName, "0");
+          hasStopped = true;
+          moveDrone("STOP", myName, "SUCC");
         } else if(receivedCommand == "GO") {
           Serial.println("Drone resuming deployment.");
           digitalWrite(redLed, LOW);
           digitalWrite(yellowLed, LOW);
           digitalWrite(greenLed, HIGH);
           
-          isGoingHome = false; // Revert status back to false
-          initialAngle = Compass.GetHeadingDegrees(); // Save new angle
-          moveDrone("GO", myName, String(initialAngle));
-          escLeft.write(minSpeed); //re-initialize escs
-          escRight.write(minSpeed);
+          hasStopped = false; // Revert status back to false
+          moveDrone("GO", myName, "SUCC");
         } else if(receivedCommand == "TURN") {
-            initialAngle = initialAngle+receivedDetails.toFloat(); // add value of details
-            Serial.print("Saved angle changed. New angle is: ");
-            Serial.println(initialAngle);
+          moveDrone("TURN", myName, receivedDetails);
         }
       }
     }
 
     //TASK 3.2: Ensure that you are moving
-    if(!hasDetectedObject && !hasReceivedCommand && !isGoingHome) {
+    if(!hasDetectedObject && !hasReceivedCommand && !hasStopped) {
       if(millis() - startTime >= 1000) {
         startTime = millis();
         digitalWrite(redLed, LOW);
         digitalWrite(yellowLed, LOW);
         digitalWrite(greenLed, !digitalRead(greenLed));
       }
-      moveDrone("MOVE", myName, String(initialAngle));
     }
     
     //TASK 3.3: Look for RPi commands (Check if you detect an object in the water)
-    if(!hasDetectedObject && !hasReceivedCommand && !isGoingHome && detectObject()) {
+    if(!hasDetectedObject && !hasReceivedCommand && !hasStopped && detectObject()) {
       hasDetectedObject = true;
       startTime = millis();
     }
     
-    if(!hasReceivedCommand && hasDetectedObject && !isGoingHome) {
+    if(!hasReceivedCommand && hasDetectedObject && !hasStopped) {
       //Basically deconstruct the details of the object and its location here
       if(receivedDetails == "LEFT") {
-        initialAngle = initialAngle-20;
-        moveDrone("DETE", myName, String(initialAngle));
+        moveDrone("DETE", myName, receivedDetails);
       } else if(receivedDetails == "CENTER") {
-        initialAngle = initialAngle;
-        moveDrone("DETE", myName, String(initialAngle));
+        moveDrone("DETE", myName, receivedDetails);
       } else if(receivedDetails == "RIGHT") {
-        initialAngle = initialAngle+20;
-        moveDrone("DETE", myName, String(initialAngle));
+        moveDrone("DETE", myName, receivedDetails);
       }
     }
     
     //Task 3.4: If command says to stop, then stop the prototype.
-    if(!hasReceivedCommand && !hasDetectedObject && isGoingHome) {
+    if(!hasReceivedCommand && !hasDetectedObject && hasStopped) {
       //Do nothing lmao. Go home
     }
   }
