@@ -10,12 +10,12 @@ const int waitingTime = 5000;
 String message = "";
 
 NeoSWSerial HC12(txHc12, rxHc12); // (Green TX, Blue RX)
-// NeoSWSerial Nano(txNano, rxNano); // (Green TX, Blue RX)
+NeoSWSerial Nano(txNano, rxNano); // (Green TX, Blue RX)
 
 void setup() {
   Serial.begin(9600);
   HC12.begin(9600);
-  // Nano.begin(9600);
+  Nano.begin(9600);
   Serial.println("Initializing...");
 }
 
