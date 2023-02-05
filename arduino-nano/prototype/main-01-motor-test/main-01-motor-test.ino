@@ -72,7 +72,7 @@ void setup() {
   escRight.write(0);
 
   Serial.print(myName);
-  Serial.println(" has initialized.");
+  Serial.println(" Nano has initialized.");
 }
 
 void loop() {
