@@ -20,19 +20,23 @@ void setup() {
 }
 
 void loop() {
-  if(HC12.available()) {
-    char letter = HC12.read();
-    Serial.println(letter);
-  }
 
-  if(Serial.available()) {
+  while(HC12.available()) {
+    HC12.listen();
+    Serial.println("hc12 listen...");
+  }
+  HC12.end();
+
+  while(Serial.available()) {
     char letter = Serial.read();
     if(letter == '\n') {
       message += '\n';
 
       Serial.print("Sending: ");
       Serial.println(message);
+      HC12.listen();
       HC12.println(message);
+      HC12.end();
       message = "";
     } else {
       message += letter;
