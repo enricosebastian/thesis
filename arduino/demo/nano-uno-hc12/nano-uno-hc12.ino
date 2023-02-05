@@ -21,7 +21,8 @@ void setup() {
 
 void loop() {
   if(HC12.available()) {
-    Serial.println("Someone sent something....");
+    char letter = HC12.read();
+    Serial.println(letter);
   }
 
   if(Serial.available()) {
