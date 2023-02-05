@@ -53,7 +53,7 @@ void loop() {
       float currentAngle = receivedDetails.toFloat();      
       moveDrone(currentAngle);
     } else if(receivedCommand == "DETE") {
-      //do other logic
+      //do other logic for detection
     }
   }
 }

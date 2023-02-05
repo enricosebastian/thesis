@@ -374,7 +374,7 @@ void forDrone() {
         digitalWrite(yellowLed, LOW);
         digitalWrite(greenLed, !digitalRead(greenLed));
       }
-      moveDrone(); 
+      moveDrone("MOVE", myName, String(initialAngle));
     }
     
     //TASK 3.3: Look for RPi commands (Check if you detect an object in the water)
@@ -387,13 +387,13 @@ void forDrone() {
       //Basically deconstruct the details of the object and its location here
       if(receivedDetails == "LEFT") {
         initialAngle = initialAngle-20;
-        moveDrone();
+        moveDrone("DETE", myName, String(initialAngle));
       } else if(receivedDetails == "CENTER") {
         initialAngle = initialAngle;
-        moveDrone();
+        moveDrone("DETE", myName, String(initialAngle));
       } else if(receivedDetails == "RIGHT") {
         initialAngle = initialAngle+20;
-        moveDrone();
+        moveDrone("DETE", myName, String(initialAngle));
       }
     }
     
@@ -405,67 +405,15 @@ void forDrone() {
 }
 
 ///////Specific functions/////////
-void moveDrone() {
-  float error = initialAngle - Compass.GetHeadingDegrees();
-  float previous_error;
-  float cumulative_error;
-  int period = 50;
-
-  float PID_p = kp * error;
-  float PID_i = cumulative_error * ki;
-  float PID_d = kd*(error - previous_error);
-
-  double PID_total = PID_p + PID_i + PID_d;
-
-  cumulative_error += error;
-  previous_error = error;
-
-  float modifiedSpeed = map(abs(PID_total),0.00,1700.00,minSpeed,maxSpeed);
-  
-  if(error < -maxAngleChange) {
-    //It's turning right, so give the right motor more speed
-    // Serial.println("right");
-    isLeft = false;
-    escLeft.write(minSpeed);
-    escRight.write(modifiedSpeed);
-  } else if(error > maxAngleChange) {
-    //It's turning left, so give the left motor more speed
-    // Serial.println("left");
-    isLeft = true;
-    if(myName == "DRO1") {
-      escLeft.write(modifiedSpeed+12);
-      escRight.write(minSpeed);
-    } else if(myName == "DRO2") {
-      escLeft.write(modifiedSpeed+10);
-      escRight.write(minSpeed);
-    } else if(myName == "DRO3") {
-      escLeft.write(modifiedSpeed+12);
-      escRight.write(minSpeed);
-    }
+void moveDrone(String command, String toName, String details) {
+  //COMMAND TONAME FROMNAME DETAILS
+  if(command != "" && toName != "" && details != "") {
+    String sentMessage = command + " " + toName + " " + myName + " " + details;
+    Serial.print("Sending: ");
+    Serial.println(sentMessage);
+    Nano.println(sentMessage);
   } else {
-    if(isLeft) {
-      if(myName == "DRO1") {
-        escLeft.write(modifiedSpeed+12);
-        escRight.write(movingSpeed+2);
-      } else if(myName == "DRO2") {
-        escLeft.write(modifiedSpeed+10);
-        escRight.write(movingSpeed);
-      } else if(myName == "DRO3") {
-        escLeft.write(modifiedSpeed+12);
-        escRight.write(movingSpeed);
-      }
-    } else if(!isLeft) {
-      if(myName == "DRO1") {
-        escLeft.write(movingSpeed+12);
-        escRight.write(modifiedSpeed);
-      } else if(myName == "DRO2") {
-        escLeft.write(movingSpeed+10);
-        escRight.write(modifiedSpeed);
-      } else if(myName == "DRO3") {
-        escLeft.write(movingSpeed+12);
-        escRight.write(modifiedSpeed);
-      }
-    }
+    Serial.println("Wrong format of command. Try again.");
   }
 }
 
@@ -521,7 +469,6 @@ void sendCommand(String command, String toName, String details) {
   } else {
     Serial.println("Wrong format of command. Try again.");
   }
-  
 }
 
 bool receivedSpecificCommand(String command) {
