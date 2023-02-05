@@ -19,6 +19,7 @@ const float maxAngleChange = 5;
 
 //Booleans for logic
 bool isLeft = false;
+bool hasDetectedObject = false;
 
 //Variables
 int posX = 0;
