@@ -411,8 +411,6 @@ void sendCommand(String command, String toName, String details) {
   //COMMAND TONAME FROMNAME DETAILS
   if(command != "" && toName != "" && details != "") {
     String sentMessage = command + " " + toName + " " + myName + " " + details;
-    Serial.print("Sending: ");
-    Serial.println(sentMessage);
     HC12.println(sentMessage);
   } else {
     Serial.println("Wrong format of command. Try again.");
