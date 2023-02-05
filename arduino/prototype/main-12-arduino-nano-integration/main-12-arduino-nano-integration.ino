@@ -28,8 +28,10 @@ const int detectionPin = 10;
 const int escLeftPin = 6;
 const int escRightPin = 5;
 const int btn = 7;
-const int txPin = A0; //green tx
-const int rxPin = A1; //blue received
+const int txHc12 = A0; //green tx
+const int rxHc12 = A1; //blue received
+const int txNano = A2; //green tx
+const int rxNano = A3; //blue received
 const int waitingTime = 5000;
 
 const float minSpeed = 7;
@@ -69,7 +71,8 @@ String receivedToName = "";
 String receivedFromName = "";
 String receivedDetails = "";
 
-NeoSWSerial HC12(txPin, rxPin); // (Green TX, Blue RX)
+NeoSWSerial HC12(txHc12, rxHc12); // (Green TX, Blue RX)
+NeoSWSerial Nano(txNano, rxNano); // (Green TX, Blue RX)
 LinkedList<String> drones;
 Servo escLeft;
 Servo escRight;
@@ -77,6 +80,7 @@ Servo escRight;
 void setup() {
   Serial.begin(9600);
   HC12.begin(9600);
+  Nano.begin(9600);
   Serial.print(myName);
   Serial.println(" is initializing...");
   
