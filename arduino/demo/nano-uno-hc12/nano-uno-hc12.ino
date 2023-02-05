@@ -21,8 +21,8 @@ void setup() {
 
 void loop() {
 
+  HC12.listen();
   while(HC12.available()) {
-    HC12.listen();
     Serial.println("hc12 listen...");
   }
   HC12.end();
