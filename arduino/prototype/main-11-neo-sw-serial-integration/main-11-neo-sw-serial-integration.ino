@@ -29,7 +29,7 @@ const int escLeftPin = 6;
 const int escRightPin = 5;
 const int btn = 7;
 const int txPin = A0; //green tx
-const int receivedPin = A1; //blue received
+const int rxPin = A1; //blue received
 const int waitingTime = 5000;
 
 const float minSpeed = 7;
@@ -69,7 +69,7 @@ String receivedToName = "";
 String receivedFromName = "";
 String receivedDetails = "";
 
-NeoSWSerial HC12(txPin, receivedPin); // (Green TX, Blue RX)
+NeoSWSerial HC12(txPin, rxPin); // (Green TX, Blue RX)
 LinkedList<String> drones;
 Servo escLeft;
 Servo escRight;
