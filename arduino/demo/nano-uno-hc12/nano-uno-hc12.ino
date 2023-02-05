@@ -15,7 +15,7 @@ NeoSWSerial Nano(txNano, rxNano); // (Green TX, Blue RX)
 void setup() {
   Serial.begin(9600);
   HC12.begin(9600);
-  // Nano.begin(9600);
+  Nano.begin(9600);
   Serial.println("Initializing...");
 }
 
