@@ -15,8 +15,8 @@ HMC5883L_Simple Compass;
 */
 
 //Name here
-// const String myName = "BASE";
-const String myName = "DRO1";
+const String myName = "BASE";
+// const String myName = "DRO1";
 // const String myName = "DRO2";
 // const String myName = "DRO3";
 
@@ -481,8 +481,6 @@ void addDrone(String droneName) {
 bool receiveCommand() {
   while(HC12.available()) {
     char letter = HC12.read();
-    Serial.println(letter);
-
     if(letter == '\n') {
       receivedMessage += '\n';
       Serial.print("Received: ");
