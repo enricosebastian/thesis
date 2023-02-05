@@ -1,14 +1,24 @@
-#include <NeoSWSerial.h>
 #include <Servo.h>
+#include <Wire.h>
+#include <HMC5883L_Simple.h>
+
+HMC5883L_Simple Compass;
+/*
+ * GY-273 Compass Module  ->  Arduino
+ * VCC  -> VCC
+ * GND  -> GND
+ * SCL  -> A5, blue
+ * SDA  -> A4, green
+*/
 
 //Name here
-const String myName = "BASE";
+const String myName = "DRO1";
+// const String myName = "DRO2";
+// const String myName = "DRO3";
 
 //Constants (buttons)
 const int escLeftPin = 6;
 const int escRightPin = 5;
-const int txNano = A2; //green tx
-const int rxNano = A3; //blue received
 const int waitingTime = 5000;
 
 //movement constants
@@ -18,8 +28,12 @@ const float maxSpeed = 20;
 const float maxAngleChange = 5;
 
 //Booleans for logic
+bool isDeployed = false;
+bool hasReceivedCommand = false;
+bool hasStopped = false;
 bool isLeft = false;
 bool hasDetectedObject = false;
+
 
 //Variables
 int posX = 0;
@@ -38,30 +52,71 @@ String receivedToName = "";
 String receivedFromName = "";
 String receivedDetails = "";
 
-NeoSWSerial Nano(txNano, rxNano); // (Green TX, Blue RX)
 Servo escLeft;
 Servo escRight;
 
 void setup() {
   Serial.begin(9600);
-  Nano.begin(9600);
+
+  //Compass initialization
+  Wire.begin();
+  Compass.SetDeclination(-2, 37, 'W');  
+  Compass.SetSamplingMode(COMPASS_SINGLE);
+  Compass.SetScale(COMPASS_SCALE_130);
+  Compass.SetOrientation(COMPASS_HORIZONTAL_X_NORTH);
+
+  //ESC initialization
+  escLeft.attach(escLeftPin,1000,2000);
+  escRight.attach(escRightPin,1000,2000);
+  escLeft.write(0);
+  escRight.write(0);
+
+  Serial.print(myName);
+  Serial.println(" has initialized.");
 }
 
 void loop() {
   if(receiveCommand()) {
-    if(receivedCommand == "MOVE") {
-      //do standard moving
-      float currentAngle = receivedDetails.toFloat();      
-      moveDrone(currentAngle);
+    hasReceivedCommand = true; // makes sure that nothing runs when you receive a command
+  }
+
+  // Stop what you're doing and interpret the command
+  if(hasReceivedCommand) {
+    if(receivedCommand == "GO") {
+      //save new initial angle
+      initialAngle = Compass.GetHeadingDegrees();
+      isDeployed = true;
+      hasStopped = false;
+    } else if(receivedCommand == "STOP") {
+      //send esc speed to zero
+      escRight.write(0);
+      escLeft.write(0);
+      hasStopped = true;
+    } else if(receivedCommand == "TURN") {
+      //save new angle + toFloat();
+      initialAngle = initialAngle + receivedDetails.toFloat();
     } else if(receivedCommand == "DETE") {
-      //do other logic for detection
+      //detect object
+      hasDetectedObject = true;
     }
+    hasReceivedCommand = false; //reset
+  }
+
+
+  //If you have not received any commands, and are not stopping nor detected any objects, then keep moving
+  if(!hasReceivedCommand && isDeployed && !hasStopped && !hasDetectedObject) {
+    //continue moving
+    moveDrone();
+  } else if (!hasReceivedCommand && isDeployed && hasStopped && !hasDetectedObject) {
+    //do nothing lmao
+  } else if (!hasReceivedCommand && isDeployed && !hasStopped && hasDetectedObject) {
+    //detected object lmao
   }
 }
 
 ///////Specific functions/////////
-void moveDrone(float currentAngle) {
-  float error = initialAngle - currentAngle;
+void moveDrone() {
+  float error = initialAngle - Compass.GetHeadingDegrees();
   float previous_error;
   float cumulative_error;
   int period = 50;
@@ -126,12 +181,10 @@ void moveDrone(float currentAngle) {
 
 ///////General functions/////////
 bool receiveCommand() {
-  while(Nano.available()) {
-    char letter = Nano.read();
+  while(Serial.available()) {
+    char letter = Serial.read();
     if(letter == '\n') {
       receivedMessage += '\n';
-      Serial.print("Received: ");
-      Serial.print(receivedMessage);
 
       int endIndex = receivedMessage.indexOf(' ');
       receivedCommand = receivedMessage.substring(0, endIndex);

@@ -112,19 +112,6 @@ void setup() {
     digitalWrite(redLed, HIGH);
     digitalWrite(yellowLed, LOW);
     digitalWrite(greenLed, LOW);
-
-    //Compass initialization
-    Wire.begin();
-    Compass.SetDeclination(-2, 37, 'W');  
-    Compass.SetSamplingMode(COMPASS_SINGLE);
-    Compass.SetScale(COMPASS_SCALE_130);
-    Compass.SetOrientation(COMPASS_HORIZONTAL_X_NORTH);
-    
-    //ESC initialization
-    escLeft.attach(escLeftPin,1000,2000);
-    escRight.attach(escRightPin,1000,2000);
-    escLeft.write(0);
-    escRight.write(0);
   }
 
   Serial.print(myName);
@@ -294,7 +281,7 @@ void forDrone() {
       isAcknowledging = true;
       startTime = millis();
       startTime2 = millis();
-      initialAngle = Compass.GetHeadingDegrees(); //243
+      moveDrone("DEPL", myName, "SUCC");
     }
     digitalWrite(redLed, LOW);
     digitalWrite(yellowLed, HIGH);
@@ -309,8 +296,6 @@ void forDrone() {
         startTime2 = millis();
       }
     } else if(millis() - startTime > waitingTime) {
-      escLeft.write(minSpeed);
-      escRight.write(minSpeed);
       digitalWrite(detectionPin, HIGH);
       Serial.println("Drone is deploying. Moving motors.");
       isAcknowledging = false;
@@ -346,8 +331,7 @@ void forDrone() {
           digitalWrite(greenLed, LOW);
           
           isGoingHome = true;
-          escLeft.write(0);
-          escRight.write(0);
+          moveDrone("STOP", myName, "0");
         } else if(receivedCommand == "GO") {
           Serial.println("Drone resuming deployment.");
           digitalWrite(redLed, LOW);
@@ -356,10 +340,11 @@ void forDrone() {
           
           isGoingHome = false; // Revert status back to false
           initialAngle = Compass.GetHeadingDegrees(); // Save new angle
+          moveDrone("GO", myName, String(initialAngle));
           escLeft.write(minSpeed); //re-initialize escs
           escRight.write(minSpeed);
         } else if(receivedCommand == "TURN") {
-            initialAngle = initialAngle+receivedDetails.toInt(); // add value of details
+            initialAngle = initialAngle+receivedDetails.toFloat(); // add value of details
             Serial.print("Saved angle changed. New angle is: ");
             Serial.println(initialAngle);
         }
