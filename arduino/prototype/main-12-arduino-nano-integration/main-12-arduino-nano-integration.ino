@@ -42,6 +42,13 @@ String receivedToName = "";
 String receivedFromName = "";
 String receivedDetails = "";
 
+//sent message
+String sentMessage = "";
+String sentCommand = "";
+String sentToName = "";
+String sentFromName = "";
+String sentDetails = "";
+
 NeoSWSerial HC12(txHc12, rxHc12); // (Green TX, Blue RX)
 NeoSWSerial Nano(txNano, rxNano); // (Green TX, Blue RX)
 LinkedList<String> drones;
@@ -180,21 +187,13 @@ void forBaseStation() {
 
   //STATE 2: Base station has deployed everyone. Read and send commands
   if(isDeployed) {
-    String sentMessage = "";
-    String sentCommand = "";
-    String sentToName = "";
-    String sentFromName = "";
-    String sentDetails = "";
-
     //TASK 1: If you typed something, send it to base station
     while(Serial.available()) {
       char letter = Serial.read();
-      Serial.println(sentMessage);
       if(letter == '\n') {
         sentMessage += '\n';
-
-        Serial.print("Sending: ");
-        Serial.print(sentMessage);
+        Serial.print("final: ");
+        Serial.println(sentMessage);
 
         int endIndex = sentMessage.indexOf(' ');
         sentCommand = sentMessage.substring(0, endIndex);
@@ -203,23 +202,24 @@ void forBaseStation() {
         endIndex = sentMessage.indexOf(' ');
         sentToName = sentMessage.substring(0, endIndex);
         sentDetails = sentMessage.substring(endIndex+1);
+        sentMessage = "";
 
         startTime = millis();
         sendCommand(sentCommand, sentToName, sentDetails);
-        
+
         while(!receivedSpecificCommand(sentCommand+"REP")) {
           if(millis() - startTime > 800) {
             Serial.print(sentCommand);
-            Serial.println("REP was not yet received. Resending commmand.");
+            Serial.println("REP was not received yet. Resending command.");
             sendCommand(sentCommand, sentToName, sentDetails);
-            startTime = millis();
+            startTime = millis();            
           }
 
-          if(Serial.available() && Serial.readStringUntil('\n') != "smnth") {
+          if(Serial.available() && Serial.readStringUntil('\n') != "wakaflaka") {
             Serial.println("Canceling sending of command. Try again.");
             break;
           }
-        }
+        }        
       } else {
         sentMessage += letter;
       }
@@ -337,9 +337,7 @@ void sendToNano(String command, String toName, String details) {
     String sentMessage = command + " " + toName + " " + myName + " " + details;
     Serial.print("Sending: ");
     Serial.println(sentMessage);
-    for(int i = 0; i<5; i++) {
-      Nano.println(sentMessage);
-    }
+    Nano.println(sentMessage);
   } else {
     Serial.println("Wrong format of command. Try again.");
   }
