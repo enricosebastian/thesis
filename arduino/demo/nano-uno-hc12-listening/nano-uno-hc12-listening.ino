@@ -26,7 +26,13 @@ void setup() {
 void loop() {
   if(!isListeningToNano && HC12.available()) {
     char letter = HC12.read();
-    Serial.println(letter);
+    if(letter == "\n") {
+      message += "\n";
+      Serial.println(message);
+      message = "";
+    } else {
+      message += letter;
+    }
   }
 
   if(Serial.available()) {
