@@ -291,6 +291,7 @@ void forDrone() {
         digitalWrite(redLed, LOW);
         digitalWrite(yellowLed, LOW);
         digitalWrite(greenLed, !digitalRead(greenLed));
+        startTime = millis();
       }
     }
 
