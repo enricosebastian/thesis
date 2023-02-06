@@ -243,17 +243,15 @@ void forDrone() {
       }
     }
     isConnected = true;
-
+    Serial.println("Successfully detected by base station. Waiting for deployment.");
     digitalWrite(redLed, LOW);
     digitalWrite(yellowLed, HIGH);
     digitalWrite(greenLed, LOW);
-
-    Serial.println("Successfully detected by base station. Waiting for deployment.");
   }
 
   //STATE 2: Connected, but waiting for deployment
   if(isConnected && !isDeployed) {
-    //TASK 1: Continue to wait for deployment command
+    //TASK 1: Continue to wait for deployment command    
     while(!receivedSpecificCommand("DEPL")) {
       if(millis() - startTime > waitingTime) {
         Serial.println("Command 'DEPL' was not received yet. Continue waiting.");
@@ -338,7 +336,9 @@ void sendToNano(String command, String toName, String details) {
     String sentMessage = command + " " + toName + " " + myName + " " + details;
     Serial.print("Sending: ");
     Serial.println(sentMessage);
-    Nano.println(sentMessage);
+    for(int i = 0; i<5; i++) {
+      Nano.println(sentMessage);
+    }
   } else {
     Serial.println("Wrong format of command. Try again.");
   }
