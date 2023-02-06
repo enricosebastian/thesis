@@ -3,8 +3,8 @@
 #include <LinkedList.h>
 
 //Name here
-// const String myName = "BASE";
-const String myName = "DRO1";
+const String myName = "BASE";
+// const String myName = "DRO1";
 // const String myName = "DRO2";
 // const String myName = "DRO3";
 
@@ -180,19 +180,19 @@ void forBaseStation() {
 
   //STATE 2: Base station has deployed everyone. Read and send commands
   if(isDeployed) {
-
-    //TASK 1: If you typed something, send it to base station
     String sentMessage = "";
     String sentCommand = "";
     String sentToName = "";
     String sentFromName = "";
     String sentDetails = "";
 
+    //TASK 1: If you typed something, send it to base station
     while(Serial.available()) {
       char letter = Serial.read();
-      Serial.println(letter);
+      Serial.println(sentMessage);
       if(letter == '\n') {
         sentMessage += '\n';
+
         Serial.print("Sending: ");
         Serial.print(sentMessage);
 
@@ -203,10 +203,10 @@ void forBaseStation() {
         endIndex = sentMessage.indexOf(' ');
         sentToName = sentMessage.substring(0, endIndex);
         sentDetails = sentMessage.substring(endIndex+1);
-        sentMessage = ""; // Erase old message
 
         startTime = millis();
         sendCommand(sentCommand, sentToName, sentDetails);
+        
         while(!receivedSpecificCommand(sentCommand+"REP")) {
           if(millis() - startTime > 800) {
             Serial.print(sentCommand);
