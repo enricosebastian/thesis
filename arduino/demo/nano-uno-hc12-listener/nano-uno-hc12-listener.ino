@@ -20,6 +20,6 @@ void setup() {
 }
 
 void loop() {
-  HC12.println("Hello");
+  HC12.print("Hello\n");
   delay(500);
 }
