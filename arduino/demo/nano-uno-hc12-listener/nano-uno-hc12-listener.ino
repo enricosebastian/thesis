@@ -20,11 +20,6 @@ void setup() {
 }
 
 void loop() {
-
-  HC12.listen();
-  if(HC12.available()) {
-    char letter = HC12.read();
-    Serial.println(letter);
-  }
-  
+  HC12.println("Hello");
+  delay(1000);
 }
