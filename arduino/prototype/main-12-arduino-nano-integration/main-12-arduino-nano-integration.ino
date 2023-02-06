@@ -190,6 +190,7 @@ void forBaseStation() {
 
     while(Serial.available()) {
       char letter = Serial.read();
+      Serial.println(letter);
       if(letter == '\n') {
         sentMessage += '\n';
         Serial.print("Sending: ");
@@ -251,7 +252,7 @@ void forDrone() {
 
   //STATE 2: Connected, but waiting for deployment
   if(isConnected && !isDeployed) {
-    //TASK 1: Continue to wait for deployment command    
+    //TASK 1: Continue to wait for deployment command
     while(!receivedSpecificCommand("DEPL")) {
       if(millis() - startTime > waitingTime) {
         Serial.println("Command 'DEPL' was not received yet. Continue waiting.");
