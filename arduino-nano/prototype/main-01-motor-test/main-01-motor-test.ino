@@ -31,7 +31,9 @@ const float maxSpeed = 20;
 const float maxAngleChange = 5;
 
 //Booleans for logic
-
+bool hasStopped = true;
+bool hasDetectedObject = false;
+bool isLeft = false;
 
 //Variables
 int posX = 0;
@@ -79,8 +81,103 @@ void setup() {
 }
 
 void loop() {
+
+
+  // Task 1: Continue to check if you have commands
   if(receiveCommand()) {
-    //do nothing
+    if(receivedCommand == "GO") {
+      hasStopped = false;
+    } else if(receivedCommand == "STOP") {
+      hasStopped = true;
+      escLeft.write(0);
+      escRight.write(0);
+    } else if(receivedCommand == "TURN") {
+      initialAngle = initialAngle + receivedDetails.toFloat();
+    }
+  }
+
+  // State 1: Move drone normally
+  if(!hasStopped && !hasDetectedObject) {
+    move();
+  }
+
+  // State 2: You have detected something
+
+  // State 3: You've stopped
+  if(hasStopped && !hasDetectedObject) {
+    //do nothing lmao
+  }
+
+  // State 4: You're going home
+
+}
+
+///////Specific functions/////////
+void move() {
+  float error = initialAngle - Compass.GetHeadingDegrees();
+  float previous_error;
+  float cumulative_error;
+  int period = 50;
+
+  float PID_p = kp * error;
+  float PID_i = cumulative_error * ki;
+  float PID_d = kd*(error - previous_error);
+
+  double PID_total = PID_p + PID_i + PID_d;
+
+  cumulative_error += error;
+  previous_error = error;
+
+  float modifiedSpeed = map(abs(PID_total),0.00,1700.00,minSpeed,maxSpeed);
+  Serial.print("Speed: ");
+  Serial.println(modifiedSpeed);
+  Serial.print("Error: ");
+  Serial.println(error);
+
+  if(error < -maxAngleChange) {
+    //It's turning right, so give the right motor more speed
+    // Serial.println("right");
+    isLeft = false;
+    escLeft.write(minSpeed);
+    escRight.write(modifiedSpeed);
+  } else if(error > maxAngleChange) {
+    //It's turning left, so give the left motor more speed
+    // Serial.println("left");
+    isLeft = true;
+    if(myName == "DRO1") {
+      escLeft.write(modifiedSpeed+12);
+      escRight.write(minSpeed);
+    } else if(myName == "DRO2") {
+      escLeft.write(modifiedSpeed+10);
+      escRight.write(minSpeed);
+    } else if(myName == "DRO3") {
+      escLeft.write(modifiedSpeed+12);
+      escRight.write(minSpeed);
+    }
+  } else {
+    if(isLeft) {
+      if(myName == "DRO1") {
+        escLeft.write(modifiedSpeed+12);
+        escRight.write(movingSpeed+2);
+      } else if(myName == "DRO2") {
+        escLeft.write(modifiedSpeed+10);
+        escRight.write(movingSpeed);
+      } else if(myName == "DRO3") {
+        escLeft.write(modifiedSpeed+12);
+        escRight.write(movingSpeed);
+      }
+    } else if(!isLeft) {
+      if(myName == "DRO1") {
+        escLeft.write(movingSpeed+12);
+        escRight.write(modifiedSpeed);
+      } else if(myName == "DRO2") {
+        escLeft.write(movingSpeed+10);
+        escRight.write(modifiedSpeed);
+      } else if(myName == "DRO3") {
+        escLeft.write(movingSpeed+12);
+        escRight.write(modifiedSpeed);
+      }
+    }
   }
 }
 
