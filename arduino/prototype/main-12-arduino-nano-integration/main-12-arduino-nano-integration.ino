@@ -244,10 +244,11 @@ void forDrone() {
     }
     isConnected = true;
 
-    Serial.println("Successfully detected by base station. Waiting for deployment.");
     digitalWrite(redLed, LOW);
     digitalWrite(yellowLed, HIGH);
     digitalWrite(greenLed, LOW);
+
+    Serial.println("Successfully detected by base station. Waiting for deployment.");
   }
 
   //STATE 2: Connected, but waiting for deployment
