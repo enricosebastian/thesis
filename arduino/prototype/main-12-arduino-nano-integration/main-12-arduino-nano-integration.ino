@@ -23,8 +23,8 @@ const int waitingTime = 5000;
 //Booleans for logic
 bool isConnected = false;
 bool isDeployed = false;
+
 bool hasStopped = false;
-bool hasReceivedCommand = false;
 bool hasDetectedObject = false;
 
 //millis time variables for storage
@@ -231,133 +231,106 @@ void forBaseStation() {
 }
 
 void forDrone() {
-  //TASK 1: Keep sending connect command until acknowledged.
+  //STATE 1: Not connected to base station
   if(!isConnected && !isDeployed) {
-    if(!receivedSpecificCommand("CONNREP")) {
-      if(millis() - startTime >= waitingTime) {
+
+    //TASK 1: Continue to wait for connection acknowledgement
+    while(!receivedSpecificCommand("CONNREP")) {
+      if(millis() - startTime > 800) {
         Serial.println("Reply 'CONNREP' was not received. Resending message again.");
         sendCommand("CONN", "BASE", "HELL");
-        startTime = millis();
+        startTime = millis();        
       }
-    } else {
-      Serial.println("Successfully detected by base station. Now we wait for deployment.");
-      isConnected = true;
     }
-  }
+    isConnected = true;
 
-  //TASK 2: Wait for base station to send deploy command to start moving.
-  if(isConnected && !isAcknowledging && !isDeployed) {
-    if(!receivedSpecificCommand("DEPL")) {
-      if(millis() - startTime >= waitingTime) {
-        Serial.println("Command 'DEPL' was not received yet. Continue waiting.");
-        startTime = millis();
-      }
-    } else {
-      Serial.println("Base station wants to start deploying.");
-      isAcknowledging = true;
-      startTime = millis();
-      startTime2 = millis();
-      moveDrone("DEPL", myName, "SUCC");
-    }
+    Serial.println("Successfully detected by base station. Waiting for deployment.");
     digitalWrite(redLed, LOW);
     digitalWrite(yellowLed, HIGH);
     digitalWrite(greenLed, LOW);
   }
 
-  //TASK 2.1: Base station wants to deploy us. Send acknowledgement/handshake for at least 5 seconds
-  if(isConnected && isAcknowledging && !isDeployed) {
-    if(millis() - startTime <= waitingTime) {
-      if(millis() - startTime2 >= 800) {
+  //STATE 2: Connected, but waiting for deployment
+  if(isConnected && !isDeployed) {
+    //TASK 1: Continue to wait for deployment command
+    while(!receivedSpecificCommand("DEPL")) {
+      if(millis() - startTime > waitingTime) {
+        Serial.println("Command 'DEPL' was not received yet. Continue waiting.");
+        startTime = millis();        
+      }
+    }
+
+    Serial.println("Base station wants to start deploying. Sending acknowledgement.");
+    startTime = millis();
+    startTime2 = millis();
+
+    while(millis() - startTime < waitingTime) {
+      if(millis() - startTime2 > 800) {
         sendCommand("DEPLREP", receivedFromName, "SUCC");
         startTime2 = millis();
       }
-    } else if(millis() - startTime > waitingTime) {
-      digitalWrite(detectionPin, HIGH);
-      Serial.println("Drone is deploying. Moving motors.");
-      isAcknowledging = false;
-      isDeployed = true;
-      startTime = millis();
     }
+    
+    isDeployed = true;
+    startTime = millis();
+
+    Serial.println("Drone is deploying.");
+    digitalWrite(redLed, LOW);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(greenLed, HIGH);
+
+    sendToNano("GO", myName, "SUCC"); // start moving the drone
   }
-  
-  //TASK 3: Start moving. Plus, look for commands from base station. And also RPi.
-  if(isConnected && !isAcknowledging && isDeployed) {
 
-    //TASK 3.1: If you received a command from base station, stop what you are doing and interpret the command.
-    if(!hasDetectedObject && !hasReceivedCommand && receiveCommand()) {
-      hasReceivedCommand = true;
-      startTime = millis();
-    }
+  //STATE 3: Drone is deployed. Move, receive commands, send commands, and detect objects
+  if(isConnected && isDeployed) {
 
-    //TASK 3.1.2: Read what each command means
-    if(!hasDetectedObject && hasReceivedCommand) {
-      if(millis() - startTime <= waitingTime) {
-        if(millis() - startTime2 > 800) {
-          sendCommand(receivedCommand+"REP", receivedFromName, "SUCC"); // Send acknowledgement that you received a command
-          startTime2 = millis();
-        }
-      } else if(millis() - startTime > waitingTime) {
-        // Turn off hasReceivedCommand, and then interpret the actual command
-        hasReceivedCommand = false;
-        
-        if(receivedCommand == "STOP") {
-          Serial.println("Stopping drone.");
-          digitalWrite(redLed, HIGH);
-          digitalWrite(yellowLed, LOW);
-          digitalWrite(greenLed, LOW);
-          
-          hasStopped = true;
-          moveDrone("STOP", myName, "SUCC");
-        } else if(receivedCommand == "GO") {
-          Serial.println("Drone resuming deployment.");
-          digitalWrite(redLed, LOW);
-          digitalWrite(yellowLed, LOW);
-          digitalWrite(greenLed, HIGH);
-          
-          hasStopped = false; // Revert status back to false
-          moveDrone("GO", myName, "SUCC");
-        } else if(receivedCommand == "TURN") {
-          moveDrone("TURN", myName, receivedDetails);
-        }
-      }
-    }
-
-    //TASK 3.2: Ensure that you are moving
-    if(!hasDetectedObject && !hasReceivedCommand && !hasStopped) {
-      if(millis() - startTime >= 1000) {
-        startTime = millis();
+    // Task 1: Keep blinking
+    if(!hasStopped && !receiveCommand() && !hasDetectedObject) {
+      if(millis() - startTime > 800) {
         digitalWrite(redLed, LOW);
         digitalWrite(yellowLed, LOW);
         digitalWrite(greenLed, !digitalRead(greenLed));
       }
     }
-    
-    //TASK 3.3: Look for RPi commands (Check if you detect an object in the water)
-    if(!hasDetectedObject && !hasReceivedCommand && !hasStopped && detectObject()) {
-      hasDetectedObject = true;
+
+    // Task 2: Interpret commands
+    if(receiveCommand() && !hasDetectedObject) {
+
+      //Send acknowledgement that we received the command first
       startTime = millis();
-    }
-    
-    if(!hasReceivedCommand && hasDetectedObject && !hasStopped) {
-      //Basically deconstruct the details of the object and its location here
-      if(receivedDetails == "LEFT") {
-        moveDrone("DETE", myName, receivedDetails);
-      } else if(receivedDetails == "CENTER") {
-        moveDrone("DETE", myName, receivedDetails);
-      } else if(receivedDetails == "RIGHT") {
-        moveDrone("DETE", myName, receivedDetails);
+      startTime2 = millis();
+      while(millis() - startTime < waitingTime) {
+        if(millis() - startTime2 > 800) {
+          sendCommand(receivedCommand+"REP", receivedFromName, "SUCC");
+          startTime2 = millis();
+        }
       }
-    }
-    
-    //Task 3.4: If command says to stop, then stop the prototype.
-    if(!hasReceivedCommand && !hasDetectedObject && hasStopped) {
-      //Do nothing lmao. Go home
-    }
+
+      //Interpret the command
+      if(receivedCommand == "STOP") {
+        hasStopped = true;
+        sendToNano("STOP", myName, "SUCC");
+        digitalWrite(redLed, HIGH);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(greenLed, LOW);
+      } else if(receivedCommand == "GO") {
+        hasStopped = false;
+        sendToNano("GO", myName, "SUCC");
+        digitalWrite(redLed, LOW);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(greenLed, HIGH);
+      } else if(receivedCommand == "TURN") {
+        sendToNano("TURN", myName, receivedDetails);
+      }
+    }    
   }
 }
 
 ///////Specific functions/////////
-void moveDrone(String command, String toName, String details) {
+void sendToNano(String command, String toName, String details) {
+  HC12.end();
+  Nano.listen();
   //COMMAND TONAME FROMNAME DETAILS
   if(command != "" && toName != "" && details != "") {
     String sentMessage = command + " " + toName + " " + myName + " " + details;
@@ -367,6 +340,8 @@ void moveDrone(String command, String toName, String details) {
   } else {
     Serial.println("Wrong format of command. Try again.");
   }
+  Nano.end();
+  HC12.listen();
 }
 
 void addDrone(String droneName) {
