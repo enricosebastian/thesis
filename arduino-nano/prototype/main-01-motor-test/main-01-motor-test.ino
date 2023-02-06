@@ -20,6 +20,8 @@ const String myName = "DRO1";
 //Constants (buttons)
 const int escLeftPin = 6;
 const int escRightPin = 5;
+const int txNano = 9; //green tx
+const int rxNano = 8; //blue received
 const int waitingTime = 5000;
 
 //movement constants
@@ -29,11 +31,6 @@ const float maxSpeed = 20;
 const float maxAngleChange = 5;
 
 //Booleans for logic
-bool isDeployed = false;
-bool hasReceivedCommand = false;
-bool hasStopped = false;
-bool isLeft = false;
-bool hasDetectedObject = false;
 
 
 //Variables
@@ -56,8 +53,13 @@ String receivedDetails = "";
 Servo escLeft;
 Servo escRight;
 
+NeoSWSerial Nano(txNano, rxNano); // (Green TX, Blue RX)
+
 void setup() {
   Serial.begin(9600);
+  Nano.begin(9600);
+
+  Nano.listen();
 
   //Compass initialization
   Wire.begin();
@@ -73,119 +75,23 @@ void setup() {
   escRight.write(0);
 
   Serial.print(myName);
-  Serial.println(" Nano has initialized.");
+  Serial.println(" - Nano has initialized.");
 }
 
 void loop() {
-  if(!hasReceivedCommand && receiveCommand()) {
-    hasReceivedCommand = true; // makes sure that nothing runs when you receive a command
-  }
-
-  // Stop what you're doing and interpret the command
-  if(hasReceivedCommand) {
-    if(receivedCommand == "GO" || receiveCommand == "DEPL") {
-      //save new initial angle
-      initialAngle = Compass.GetHeadingDegrees();
-      isDeployed = true;
-      hasStopped = false;
-    } else if(receivedCommand == "STOP") {
-      //send esc speed to zero
-      escRight.write(0);
-      escLeft.write(0);
-      hasStopped = true;
-    } else if(receivedCommand == "TURN") {
-      //save new angle + toFloat();
-      initialAngle = initialAngle + receivedDetails.toFloat();
-    } else if(receivedCommand == "DETE") {
-      //detect object
-      hasDetectedObject = true;
-    }
-    hasReceivedCommand = false; //reset
-  }
-
-
-  //If you have not received any commands, and are not stopping nor detected any objects, then keep moving
-  if(!hasReceivedCommand && isDeployed && !hasStopped && !hasDetectedObject) {
-    //continue moving
-    moveDrone();
-  } else if (!hasReceivedCommand && isDeployed && hasStopped && !hasDetectedObject) {
-    //do nothing lmao
-  } else if (!hasReceivedCommand && isDeployed && !hasStopped && hasDetectedObject) {
-    //detected object lmao
-  }
-}
-
-///////Specific functions/////////
-void moveDrone() {
-  float error = initialAngle - Compass.GetHeadingDegrees();
-  float previous_error;
-  float cumulative_error;
-  int period = 50;
-
-  float PID_p = kp * error;
-  float PID_i = cumulative_error * ki;
-  float PID_d = kd*(error - previous_error);
-
-  double PID_total = PID_p + PID_i + PID_d;
-
-  cumulative_error += error;
-  previous_error = error;
-
-  float modifiedSpeed = map(abs(PID_total),0.00,1700.00,minSpeed,maxSpeed);
-  
-  if(error < -maxAngleChange) {
-    //It's turning right, so give the right motor more speed
-    // Serial.println("right");
-    isLeft = false;
-    escLeft.write(minSpeed);
-    escRight.write(modifiedSpeed);
-  } else if(error > maxAngleChange) {
-    //It's turning left, so give the left motor more speed
-    // Serial.println("left");
-    isLeft = true;
-    if(myName == "DRO1") {
-      escLeft.write(modifiedSpeed+12);
-      escRight.write(minSpeed);
-    } else if(myName == "DRO2") {
-      escLeft.write(modifiedSpeed+10);
-      escRight.write(minSpeed);
-    } else if(myName == "DRO3") {
-      escLeft.write(modifiedSpeed+12);
-      escRight.write(minSpeed);
-    }
-  } else {
-    if(isLeft) {
-      if(myName == "DRO1") {
-        escLeft.write(modifiedSpeed+12);
-        escRight.write(movingSpeed+2);
-      } else if(myName == "DRO2") {
-        escLeft.write(modifiedSpeed+10);
-        escRight.write(movingSpeed);
-      } else if(myName == "DRO3") {
-        escLeft.write(modifiedSpeed+12);
-        escRight.write(movingSpeed);
-      }
-    } else if(!isLeft) {
-      if(myName == "DRO1") {
-        escLeft.write(movingSpeed+12);
-        escRight.write(modifiedSpeed);
-      } else if(myName == "DRO2") {
-        escLeft.write(movingSpeed+10);
-        escRight.write(modifiedSpeed);
-      } else if(myName == "DRO3") {
-        escLeft.write(movingSpeed+12);
-        escRight.write(modifiedSpeed);
-      }
-    }
+  if(receiveCommand()) {
+    //do nothing
   }
 }
 
 ///////General functions/////////
 bool receiveCommand() {
-  while(Serial.available()) {
-    char letter = Serial.read();
+  while(Nano.available()) {
+    char letter = Nano.read();
     if(letter == '\n') {
       receivedMessage += '\n';
+      Serial.print("Received: ");
+      Serial.print(receivedMessage);
 
       int endIndex = receivedMessage.indexOf(' ');
       receivedCommand = receivedMessage.substring(0, endIndex);
@@ -206,4 +112,18 @@ bool receiveCommand() {
     }
   }
   return false;
+}
+
+void sendCommand(String command, String toName, String details) {
+  //COMMAND TONAME FROMNAME DETAILS
+  if(command != "" && toName != "" && details != "") {
+    String sentMessage = command + " " + toName + " " + myName + " " + details;
+    Nano.println(sentMessage);
+  } else {
+    Serial.println("Wrong format of command. Try again.");
+  }
+}
+
+bool receivedSpecificCommand(String command) {
+  return receiveCommand() && (receivedCommand == command);
 }
