@@ -3,8 +3,8 @@
 //Constants (buttons)
 const int txHc12 = A0; //green tx
 const int rxHc12 = A1; //blue received
-const int txNano = 9; //green tx
-const int rxNano = 8; //blue received
+const int txNano = A2; //green tx
+const int rxNano = A3; //blue received
 const int waitingTime = 5000;
 
 bool isListeningToHc12 = true;
