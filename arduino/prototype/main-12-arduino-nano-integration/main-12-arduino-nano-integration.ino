@@ -100,26 +100,7 @@ void forBaseStation() {
   //STATE 1: If you are not yet deploying, capture all the drones that want to connect with you.
   if(!isDeployed) {
 
-    //TASK 1 Count all drones
-    if(drones.size() == 1) {
-      digitalWrite(redLed, HIGH);
-      digitalWrite(yellowLed, LOW);
-      digitalWrite(greenLed, LOW);
-    } else if(drones.size() == 2) {
-      digitalWrite(redLed, HIGH);
-      digitalWrite(yellowLed, HIGH);
-      digitalWrite(greenLed, LOW);
-    } else if(drones.size() == 3) {
-      digitalWrite(redLed, HIGH);
-      digitalWrite(yellowLed, HIGH);
-      digitalWrite(greenLed, HIGH);
-    } else {
-      digitalWrite(redLed, LOW);
-      digitalWrite(yellowLed, LOW);
-      digitalWrite(greenLed, LOW);
-    }
-
-    //TASK 2 Waiting for a drone to connect. Add it to list
+    //TASK 1 Waiting for a drone to connect. Add it to list
     if(receivedSpecificCommand("CONN")) {
       Serial.print(receivedFromName);
       Serial.println(" wanted to connect. Sending handshake.");
@@ -132,9 +113,28 @@ void forBaseStation() {
         }
       }
       addDrone(receivedFromName);
+
+      //Count drones
+      if(drones.size() == 1) {
+        digitalWrite(redLed, HIGH);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(greenLed, LOW);
+      } else if(drones.size() == 2) {
+        digitalWrite(redLed, HIGH);
+        digitalWrite(yellowLed, HIGH);
+        digitalWrite(greenLed, LOW);
+      } else if(drones.size() == 3) {
+        digitalWrite(redLed, HIGH);
+        digitalWrite(yellowLed, HIGH);
+        digitalWrite(greenLed, HIGH);
+      } else {
+        digitalWrite(redLed, LOW);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(greenLed, LOW);
+      }
     }
 
-    //TASK 3 If you pressed the button, deploy all drones
+    //TASK 2 If you pressed the button, deploy all drones
     if(digitalRead(btn) == HIGH) {
       Serial.println("Button pressed. Starting deployment.");
       digitalWrite(redLed, LOW);
@@ -208,7 +208,7 @@ void forBaseStation() {
         sendCommand(sentCommand, sentToName, sentDetails);
         while(!receivedSpecificCommand(sentCommand+"REP")) {
           if(millis() - startTime > 800) {
-            Serial.print(command);
+            Serial.print(sentCommand);
             Serial.println("REP was not yet received. Resending commmand.");
             sendCommand(sentCommand, sentToName, sentDetails);
             startTime = millis();
