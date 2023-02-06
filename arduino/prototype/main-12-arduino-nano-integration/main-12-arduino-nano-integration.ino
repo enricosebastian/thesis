@@ -137,6 +137,9 @@ void forBaseStation() {
     //TASK 3 If you pressed the button, deploy all drones
     if(digitalRead(btn) == HIGH) {
       Serial.println("Button pressed. Starting deployment.");
+      digitalWrite(redLed, LOW);
+      digitalWrite(yellowLed, HIGH);
+      digitalWrite(greenLed, LOW);
 
       for(int i = 0; i < drones.size(); i++) {
         //Reset values first 
@@ -167,10 +170,10 @@ void forBaseStation() {
       isDeployed = true;
 
       Serial.println("All drones have been deployed. You can start sending commands now.");
-      digitalWrite(redLed, LOW);
-      digitalWrite(yellowLed, HIGH);
-      digitalWrite(greenLed, LOW);
 
+      digitalWrite(redLed, LOW);
+      digitalWrite(yellowLed, LOW);
+      digitalWrite(greenLed, HIGH);
       digitalWrite(detectionPin, HIGH);
     }
   }
