@@ -86,13 +86,20 @@ void loop() {
   // Task 1: Continue to check if you have commands
   if(receiveCommand()) {
     if(receivedCommand == "GO") {
+      Serial.print(myName);
+      Serial.println(" is now moving.");
+      initialAngle = Compass.GetHeadingDegrees();
       hasStopped = false;
     } else if(receivedCommand == "STOP") {
+      Serial.print(myName);
+      Serial.println(" has stopped.");
       hasStopped = true;
       escLeft.write(0);
       escRight.write(0);
     } else if(receivedCommand == "TURN") {
       initialAngle = initialAngle + receivedDetails.toFloat();
+      Serial.print("New angle: ");
+      Serial.println(initialAngle);
     }
   }
 
