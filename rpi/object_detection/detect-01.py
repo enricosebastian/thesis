@@ -29,6 +29,7 @@ pic_width = 640
 center_height = pic_height/2
 center_width = pic_width/2
 center_allowance = 100
+prevSentCommand = ""
 
 ser = serial.Serial("/dev/ttyS0", 9600)
 
@@ -119,6 +120,7 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
       origin_y = detection_result.detections[0].bounding_box.origin_y
       
       sentCommand = "DETE"
+      prevSentCommand = sentCommand
       sentToName = ""
       sentFromName = ""
       sentDetails = ""
@@ -134,6 +136,16 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
         
       sentMessage = sentCommand + " " + sentToName + " " + sentFromName + " " + sentDetails
       ser.write(sentMessage)
+    elif(prevSentCommand is not ""):
+      sentCommand = "DETE"
+      prevSentCommand = ""
+      sentToName = ""
+      sentFromName = ""
+      sentDetails = "DONE"
+      
+      sentMessage = sentCommand + " " + sentToName + " " + sentFromName + " " + sentDetails
+      ser.write(sentMessage)
+    
 
   cap.release()
   cv2.destroyAllWindows()
