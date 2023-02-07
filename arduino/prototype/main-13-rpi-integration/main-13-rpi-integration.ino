@@ -331,7 +331,28 @@ void forDrone() {
     // Task 3: If serial available, that most likely means you detected something...
     while(Serial.available()) {
       char letter = Serial.read();
-      Serial.println(letter);
+      if(letter == '\n') {
+        receivedMessage += '\n';
+        Serial.print("Received: ");
+        Serial.print(receivedMessage);
+  
+        int endIndex = receivedMessage.indexOf(' ');
+        receivedCommand = receivedMessage.substring(0, endIndex);
+        receivedMessage = receivedMessage.substring(endIndex+1);
+  
+        endIndex = receivedMessage.indexOf(' ');
+        receivedToName = receivedMessage.substring(0, endIndex);
+        receivedMessage = receivedMessage.substring(endIndex+1);
+  
+        endIndex = receivedMessage.indexOf(' ');
+        receivedFromName = receivedMessage.substring(0, endIndex);
+        receivedDetails = receivedMessage.substring(endIndex+1);
+  
+        receivedMessage = ""; // Erase old message
+        return (receivedCommand != "") && (receivedToName == myName) && (receivedFromName != "") && (receivedDetails != "");
+      } else {
+        receivedMessage += letter;
+      }
     }
   }
 }
