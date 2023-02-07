@@ -15,8 +15,8 @@ HMC5883L_Simple Compass;
 */
 
 //Name here
-const String myName = "BASE";
-//const String myName = "DRO1";
+//const String myName = "BASE";
+const String myName = "DRO1";
 //const String myName = "DRO2";
 //const String myName = "DRO3";
 
@@ -122,8 +122,8 @@ void setup() {
 }
 
 void loop() {
-  forBaseStation();
-//  forDrone();
+  //forBaseStation();
+  forDrone();
   // Serial.println(Compass.GetHeadingDegrees());
 }
 

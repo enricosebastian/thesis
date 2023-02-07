@@ -45,6 +45,9 @@ float ki = 0.2;
 float kd = 30;
 float PID_p, PID_i, PID_d, PID_total;
 
+//millis time variables for storage
+unsigned long startTime = 0;
+
 //received message
 String receivedMessage = "";
 String receivedCommand = "";
@@ -90,6 +93,7 @@ void loop() {
       Serial.println(" is now moving.");
       initialAngle = Compass.GetHeadingDegrees();
       hasStopped = false;
+      startTime = mills();
     } else if(receivedCommand == "STOP") {
       Serial.print(myName);
       Serial.println(" has stopped.");
@@ -106,6 +110,10 @@ void loop() {
   // State 1: Move drone normally
   if(!hasStopped && !hasDetectedObject) {
     move();
+    if(millis() - startTime > 20000) {
+      initialAngle = initialAngle + 45.00;
+      startTime = millis();
+    }
   }
 
   // State 2: You have detected something
