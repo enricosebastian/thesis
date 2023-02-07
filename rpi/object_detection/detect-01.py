@@ -30,6 +30,11 @@ center_height = pic_height/2
 center_width = pic_width/2
 center_allowance = 100
 
+# Const
+# my_name = "DRO1"
+my_name = "DRO2"
+# my_name = "DRO3"
+
 ser = serial.Serial("/dev/ttyS0", 9600)
 
 
@@ -119,21 +124,22 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
       origin_y = detection_result.detections[0].bounding_box.origin_y
       
       sentCommand = "DETE"
-      sentToName = ""
-      sentFromName = ""
+      sentToName = my_name
+      sentFromName = my_name
       sentDetails = ""
       if(origin_x >= center_width - center_allowance and origin_x <= center_width + center_allowance):
         # You're at the center
-        sentDetails = "CENTER"
+        sentDetails = "CENTER\n"
       elif(origin_x < center_width - center_allowance):
         # Object detected is at the left
-        sentDetails = "LEFT"
+        sentDetails = "LEFT\n"
       elif(origin_x > center_width - center_allowance):
         # Object is at the right
-        sentDetails = "RIGHT"
+        sentDetails = "RIGHT\n"
         
       sentMessage = sentCommand + " " + sentToName + " " + sentFromName + " " + sentDetails
-      ser.write(sentMessage)
+      # print(sentMessage)
+      ser.write(sentMessage.encode('utf-8'))
 
   cap.release()
   cv2.destroyAllWindows()
