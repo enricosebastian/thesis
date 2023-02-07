@@ -93,7 +93,7 @@ void loop() {
       Serial.println(" is now moving.");
       initialAngle = Compass.GetHeadingDegrees();
       hasStopped = false;
-      startTime = mills();
+      startTime = millis();
     } else if(receivedCommand == "STOP") {
       Serial.print(myName);
       Serial.println(" has stopped.");
@@ -110,9 +110,14 @@ void loop() {
   // State 1: Move drone normally
   if(!hasStopped && !hasDetectedObject) {
     move();
-    if(millis() - startTime > 20000) {
-      initialAngle = initialAngle + 45.00;
+    if(millis() - startTime > 20000 && posX%2 == 0) {
+      initialAngle = initialAngle + 150.00;
       startTime = millis();
+      posX++;
+    } else if(millis() - startTime > 20000 && posX%2 != 0) {
+      initialAngle = initialAngle - 150.00;
+      startTime = millis();
+      posX++;
     }
   }
 

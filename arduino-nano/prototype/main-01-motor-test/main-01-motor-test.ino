@@ -13,8 +13,8 @@ HMC5883L_Simple Compass;
 */
 
 //Name here
-// const String myName = "DRO1";
-const String myName = "DRO2";
+const String myName = "DRO1";
+// const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants (buttons)
@@ -152,7 +152,7 @@ void move() {
     // Serial.println("left");
     isLeft = true;
     if(myName == "DRO1") {
-      escLeft.write(modifiedSpeed+12);
+      escLeft.write(modifiedSpeed+10);
       escRight.write(minSpeed);
     } else if(myName == "DRO2") {
       escLeft.write(modifiedSpeed+10);
@@ -164,8 +164,8 @@ void move() {
   } else {
     if(isLeft) {
       if(myName == "DRO1") {
-        escLeft.write(modifiedSpeed+12);
-        escRight.write(movingSpeed+2);
+        escLeft.write(modifiedSpeed+10);
+        escRight.write(movingSpeed+4);
       } else if(myName == "DRO2") {
         escLeft.write(modifiedSpeed+10);
         escRight.write(movingSpeed);
@@ -175,7 +175,7 @@ void move() {
       }
     } else if(!isLeft) {
       if(myName == "DRO1") {
-        escLeft.write(movingSpeed+12);
+        escLeft.write(movingSpeed+10);
         escRight.write(modifiedSpeed);
       } else if(myName == "DRO2") {
         escLeft.write(movingSpeed+10);
