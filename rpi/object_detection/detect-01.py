@@ -24,17 +24,22 @@ import utils
 
 import serial
 
+# Constants
+# MYNAME = "DRO1"
+MYNAME = "DRO2"
+# MYNAME = "DRO3"
+
 pic_height = 480
 pic_width = 640
 center_height = pic_height/2
 center_width = pic_width/2
 center_allowance = 100
-prevSentCommand = ""
 
-# Const
-# my_name = "DRO1"
-my_name = "DRO2"
-# my_name = "DRO3"
+prevSentCommand = ""
+sentCommand = ""
+sentToName = MYNAME
+sentFromName = MYNAME
+sentDetails = ""
 
 ser = serial.Serial("/dev/ttyS0", 9600)
 
@@ -118,6 +123,8 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
       break
     cv2.imshow('object_detector', image)
     
+    global prevSentCommand
+    global sentCommand
     if(len(detection_result.detections) > 0):
       width = detection_result.detections[0].bounding_box.width
       height = detection_result.detections[0].bounding_box.height
@@ -126,27 +133,24 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
       
       sentCommand = "DETE"
       prevSentCommand = sentCommand
-      sentToName = my_name
-      sentFromName = my_name
       sentDetails = ""
       if(origin_x >= center_width - center_allowance and origin_x <= center_width + center_allowance):
         # You're at the center
-        sentDetails = "CENTER\n"
+        sentDetails = "CENTER"
       elif(origin_x < center_width - center_allowance):
         # Object detected is at the left
-        sentDetails = "LEFT\n"
+        sentDetails = "LEFT"
       elif(origin_x > center_width - center_allowance):
         # Object is at the right
-        sentDetails = "RIGHT\n"
-    elif(prevSentCommand is "DETE" and prevSentCommand is not ""):
+        sentDetails = "RIGHT"
+        
+      sentMessage = sentCommand + " " + sentToName + " " + sentFromName + " " + sentDetails + "\n"
+      ser.write(sentMessage.encode('utf-8'))
+    elif(prevSentCommand == "DETE"):
       sentCommand = "DETE"
       prevSentCommand = ""
-      sentToName = my_name
-      sentFromName = my_name
       sentDetails = "DONE"
-        
-    if(sentCommand is not ""):
-      sentMessage = sentCommand + " " + sentToName + " " + sentFromName + " " + sentDetails
+      sentMessage = sentCommand + " " + sentToName + " " + sentFromName + " " + sentDetails + "\n"
       ser.write(sentMessage.encode('utf-8'))
       
 
