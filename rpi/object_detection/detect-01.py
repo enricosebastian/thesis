@@ -22,6 +22,16 @@ from tflite_support.task import processor
 from tflite_support.task import vision
 import utils
 
+import serial
+
+pic_height = 480
+pic_width = 640
+center_height = pic_height/2
+center_width = pic_width/2
+center_allowance = 100
+
+ser = serial.Serial("/dev/ttyS0", 9600)
+
 
 def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
         enable_edgetpu: bool) -> None:
@@ -57,7 +67,7 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
   base_options = core.BaseOptions(
       file_name=model, use_coral=enable_edgetpu, num_threads=num_threads)
   detection_options = processor.DetectionOptions(
-      max_results=3, score_threshold=0.3)
+      max_results=1, score_threshold=0.3)
   options = vision.ObjectDetectorOptions(
       base_options=base_options, detection_options=detection_options)
   detector = vision.ObjectDetector.create_from_options(options)
@@ -101,6 +111,29 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
     if cv2.waitKey(1) == 27:
       break
     cv2.imshow('object_detector', image)
+    
+    if(len(detection_result.detections) > 0):
+      width = detection_result.detections[0].bounding_box.width
+      height = detection_result.detections[0].bounding_box.height
+      origin_x = detection_result.detections[0].bounding_box.origin_x
+      origin_y = detection_result.detections[0].bounding_box.origin_y
+      
+      sentCommand = "DETE"
+      sentToName = ""
+      sentFromName = ""
+      sentDetails = ""
+      if(origin_x >= center_width - center_allowance and origin_x <= center_width + center_allowance):
+        # You're at the center
+        sentDetails = "CENTER"
+      elif(origin_x < center_width - center_allowance):
+        # Object detected is at the left
+        sentDetails = "LEFT"
+      elif(origin_x > center_width - center_allowance):
+        # Object is at the right
+        sentDetails = "RIGHT"
+        
+      sentMessage = sentCommand + " " + sentToName + " " + sentFromName + " " + sentDetails
+      ser.write(sentMessage)
 
   cap.release()
   cv2.destroyAllWindows()
