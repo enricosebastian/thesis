@@ -280,6 +280,7 @@ void forDrone() {
     digitalWrite(greenLed, HIGH);
 
     sendToNano("GO", myName, "SUCC"); // start moving the drone
+    digitalWrite(detectionPin, HIGH);
   }
 
   //STATE 3: Drone is deployed. Move, receive commands, send commands, and detect objects
@@ -315,12 +316,14 @@ void forDrone() {
         digitalWrite(redLed, HIGH);
         digitalWrite(yellowLed, LOW);
         digitalWrite(greenLed, LOW);
+        digitalWrite(detectionPin, LOW);
       } else if(receivedCommand == "GO") {
         hasStopped = false;
         sendToNano(receivedCommand, myName, receivedDetails);
         digitalWrite(redLed, LOW);
         digitalWrite(yellowLed, LOW);
         digitalWrite(greenLed, HIGH);
+        digitalWrite(detectionPin, HIGH);
       } else if(receivedCommand == "TURN") {
         sendToNano(receivedCommand, myName, receivedDetails);
       }
@@ -346,9 +349,8 @@ void forDrone() {
   
         receivedMessage = ""; // Erase old message
         if(receivedCommand == "DETE") {
-          sendToNano(receivedCommand);
+          sendToNano(receivedCommand, myName, receivedDetails);
         }
-        return (receivedCommand != "") && (receivedToName == myName) && (receivedFromName != "") && (receivedDetails != "");
       } else {
         receivedMessage += letter;
       }
