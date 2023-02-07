@@ -3,9 +3,9 @@
 #include <LinkedList.h>
 
 //Name here
-const String myName = "BASE";
+// const String myName = "BASE";
 // const String myName = "DRO1";
-// const String myName = "DRO2";
+const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants (buttons)
@@ -326,7 +326,13 @@ void forDrone() {
       } else if(receivedCommand == "DETE") {
         sendToNano(receivedCommand, myName, receivedDetails);
       }
-    }    
+    }
+
+    // Task 3: If serial available, that most likely means you detected something...
+    while(Serial.available()) {
+      char letter = Serial.read();
+      Serial.println(letter);
+    }
   }
 }
 
