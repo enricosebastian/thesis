@@ -23,6 +23,7 @@ void loop() {
     if(letter == '\n') {
       message += '\n';
       Serial.println(message);
+      message = "";
     } else {
       message += letter;
     }
