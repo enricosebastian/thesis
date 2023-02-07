@@ -92,7 +92,7 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
   detector = vision.ObjectDetector.create_from_options(options)
 
   # Continuously capture images from the camera and run inference
-  while cap.isOpened():
+  while cap.isOpened() and GPIO.input(detectionPin) == True:
     success, image = cap.read()
     if not success:
       sys.exit(
@@ -207,5 +207,6 @@ def main():
 
 
 if __name__ == '__main__':
-  if GPIO.input(detectionPin) == True:
-    main()
+  while True:
+    if GPIO.input(detectionPin) == True:
+      main()
