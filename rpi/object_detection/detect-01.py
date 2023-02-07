@@ -22,18 +22,22 @@ from tflite_support.task import processor
 from tflite_support.task import vision
 import utils
 
+import RPi.GPIO as GPIO
 import serial
 
-# Constants
+#### Constants
 # MYNAME = "DRO1"
 MYNAME = "DRO2"
 # MYNAME = "DRO3"
+
+detectionPin = 7
 
 pic_height = 480
 pic_width = 640
 center_height = pic_height/2
 center_width = pic_width/2
 center_allowance = 100
+##################
 
 prevSentCommand = ""
 sentCommand = ""
@@ -42,6 +46,10 @@ sentFromName = MYNAME
 sentDetails = ""
 
 ser = serial.Serial("/dev/ttyS0", 9600)
+
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(detectionPin, GPIO.IN)
+
 
 
 def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
@@ -199,4 +207,5 @@ def main():
 
 
 if __name__ == '__main__':
-  main()
+  if GPIO.input(detectionPin) == True:
+    main()
