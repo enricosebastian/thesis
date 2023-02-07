@@ -117,6 +117,8 @@ void loop() {
       } else if(receivedDetails == "CENTER") {
         // else, keep straight
         initialAngle = initialStraightAngle;
+      } else if(receivedDetails == "DONE") {
+        hasDetectedObject = false;
       }
     }
   }
