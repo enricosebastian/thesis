@@ -125,6 +125,7 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
       origin_y = detection_result.detections[0].bounding_box.origin_y
       
       sentCommand = "DETE"
+      prevSentCommand = sentCommand
       sentToName = my_name
       sentFromName = my_name
       sentDetails = ""
@@ -137,10 +138,17 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
       elif(origin_x > center_width - center_allowance):
         # Object is at the right
         sentDetails = "RIGHT\n"
+    elif(prevSentCommand is "DETE" and prevSentCommand is not ""):
+      sentCommand = "DETE"
+      prevSentCommand = ""
+      sentToName = my_name
+      sentFromName = my_name
+      sentDetails = "DONE"
         
+    if(sentCommand is not ""):
       sentMessage = sentCommand + " " + sentToName + " " + sentFromName + " " + sentDetails
-      # print(sentMessage)
       ser.write(sentMessage.encode('utf-8'))
+      
 
   cap.release()
   cv2.destroyAllWindows()
