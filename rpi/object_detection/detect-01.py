@@ -131,8 +131,6 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
       elif(origin_x > center_width - center_allowance):
         # Object is at the right
         sentDetails = "RIGHT"
-    elif(len(detection_result.detections) <= 0 and sentCommand == "DETE"):
-      sentDetails = "DONE"
         
       sentMessage = sentCommand + " " + sentToName + " " + sentFromName + " " + sentDetails
       ser.write(sentMessage)
