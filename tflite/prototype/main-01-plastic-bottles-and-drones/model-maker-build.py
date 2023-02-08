@@ -14,9 +14,14 @@ tf.get_logger().setLevel('ERROR')
 from absl import logging
 logging.set_verbosity(logging.ERROR)
 
+folder_name = "main-01-plastic-bottles-and-drones"
+
 objects = ['thumbs_up', 'thumbs_down', 'ok']
 train_folder = 'images/train'
 validate_folder = 'images/validate'
+
+# Before running, make sure the terminal is in the right folder:
+# cd Desktop/thesis/tflite/prototype/[folder-name]
 
 
 # This is where the training begins...
@@ -33,7 +38,7 @@ val_data = object_detector.DataLoader.from_pascal_voc(
     )
 
 print(tf.config.list_physical_devices('GPU'))
-spec = model_spec.get('../../models/efficientdet_lite0')
+spec = model_spec.get('efficientdet_lite0')
 
 model = object_detector.create(train_data, model_spec=spec, batch_size=4, train_whole_model=True, epochs=20, validation_data=val_data)
 
@@ -41,6 +46,7 @@ print(model.evaluate(val_data))
 
 model.export(export_dir='./models/', tflite_filename='hands.tflite')
 
+
 print(model.evaluate_tflite('./models/hands.tflite', val_data))
 
-print("\n\n Model making done")
+print("\n\n Model making done.")
