@@ -22,6 +22,7 @@ from tflite_support.task import processor
 from tflite_support.task import vision
 import utils
 
+import os
 import RPi.GPIO as GPIO
 import serial
 
@@ -31,6 +32,7 @@ MYNAME = "DRO2"
 # MYNAME = "DRO3"
 
 detectionPin = 7
+offPin = 11
 
 pic_height = 480
 pic_width = 640
@@ -49,6 +51,7 @@ ser = serial.Serial("/dev/ttyS0", 9600)
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(detectionPin, GPIO.IN)
+PIO.setup(offPin, GPIO.IN)
 
 
 
@@ -210,3 +213,5 @@ if __name__ == '__main__':
   while True:
     if GPIO.input(detectionPin) == True:
       main()
+    if GPIO.input(offPin) == True:
+      os.system("sudo shutdown -r now")
