@@ -51,7 +51,7 @@ ser = serial.Serial("/dev/ttyS0", 9600)
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(detectionPin, GPIO.IN)
-PIO.setup(offPin, GPIO.IN)
+GPIO.setup(offPin, GPIO.IN)
 
 
 
