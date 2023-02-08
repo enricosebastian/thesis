@@ -214,4 +214,4 @@ if __name__ == '__main__':
     if GPIO.input(detectionPin) == True:
       main()
     if GPIO.input(offPin) == True:
-      os.system("sudo shutdown -r now")
+      os.system("sudo shutdown -h now")
