@@ -13,8 +13,8 @@ HMC5883L_Simple Compass;
 */
 
 //Name here
-// const String myName = "DRO1";
-const String myName = "DRO2";
+const String myName = "DRO1";
+// const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants (buttons)
@@ -23,7 +23,7 @@ const int escRightPin = 5;
 const int txNano = 9; //green tx
 const int rxNano = 8; //blue received
 const int waitingTime = 5000;
-const int turnDelay = 20000; //in milliseconds
+const int turnDelay = 30000; //in milliseconds
 
 //movement constants
 const float minSpeed = 7;
@@ -42,7 +42,7 @@ int posY = 0;
 
 float initialAngle = 0;
 float initialStraightAngle = 0;
-float kp = 8;
+float kp = 8; //5
 float ki = 0.2;
 float kd = 30;
 float PID_p, PID_i, PID_d, PID_total;
@@ -127,12 +127,12 @@ void loop() {
   if(!hasStopped && !hasDetectedObject) {
     move();
     if(millis() - startTime > turnDelay && posX%2 == 0) {
-      initialAngle = initialAngle + 150.00;
+      initialAngle = initialAngle + 180.00;
       initialStraightAngle = initialAngle;
       startTime = millis();
       posX++;
     } else if(millis() - startTime > turnDelay && posX%2 != 0) {
-      initialAngle = initialAngle - 150.00;
+      initialAngle = initialAngle - 180.00;
       initialStraightAngle = initialAngle;
       startTime = millis();
       posX++;
@@ -181,14 +181,14 @@ void move() {
     // Serial.println("right");
     isLeft = false;
     escLeft.write(minSpeed);
-    escRight.write(modifiedSpeed);
+    escRight.write(modifiedSpeed+10);
   } else if(error > maxAngleChange) {
     //It's turning left, so give the left motor more speed
     // Serial.println("left");
     isLeft = true;
     if(myName == "DRO1") {
-      escLeft.write(modifiedSpeed+12);
-      escRight.write(minSpeed);
+      escLeft.write(modifiedSpeed+10);
+      escRight.write(minSpeed+5);
     } else if(myName == "DRO2") {
       escLeft.write(modifiedSpeed+10);
       escRight.write(minSpeed);
@@ -199,8 +199,8 @@ void move() {
   } else {
     if(isLeft) {
       if(myName == "DRO1") {
-        escLeft.write(modifiedSpeed+12);
-        escRight.write(movingSpeed+2);
+        escLeft.write(modifiedSpeed+10);
+        escRight.write(movingSpeed+5);
       } else if(myName == "DRO2") {
         escLeft.write(modifiedSpeed+10);
         escRight.write(movingSpeed);
@@ -210,7 +210,7 @@ void move() {
       }
     } else if(!isLeft) {
       if(myName == "DRO1") {
-        escLeft.write(movingSpeed+12);
+        escLeft.write(movingSpeed+10);
         escRight.write(modifiedSpeed);
       } else if(myName == "DRO2") {
         escLeft.write(movingSpeed+10);

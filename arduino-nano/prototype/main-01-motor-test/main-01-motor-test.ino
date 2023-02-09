@@ -24,7 +24,7 @@ const int txNano = 9; //green tx
 const int rxNano = 8; //blue received
 const int waitingTime = 5000;
 
-//movement constants
+//movement constantsST
 const float minSpeed = 7;
 const float movingSpeed = 15;
 const float maxSpeed = 20;
@@ -153,7 +153,7 @@ void move() {
     isLeft = true;
     if(myName == "DRO1") {
       escLeft.write(modifiedSpeed+10);
-      escRight.write(minSpeed);
+      escRight.write(minSpeed+5);
     } else if(myName == "DRO2") {
       escLeft.write(modifiedSpeed+10);
       escRight.write(minSpeed);
@@ -165,7 +165,7 @@ void move() {
     if(isLeft) {
       if(myName == "DRO1") {
         escLeft.write(modifiedSpeed+10);
-        escRight.write(movingSpeed+4);
+        escRight.write(movingSpeed+5);
       } else if(myName == "DRO2") {
         escLeft.write(modifiedSpeed+10);
         escRight.write(movingSpeed);
@@ -175,7 +175,7 @@ void move() {
       }
     } else if(!isLeft) {
       if(myName == "DRO1") {
-        escLeft.write(movingSpeed+10);
+        escLeft.write(movingSpeed+8);
         escRight.write(modifiedSpeed);
       } else if(myName == "DRO2") {
         escLeft.write(movingSpeed+10);
