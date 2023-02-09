@@ -14,7 +14,7 @@ tf.get_logger().setLevel('ERROR')
 from absl import logging
 logging.set_verbosity(logging.ERROR)
 
-objects = ['plastic_bottle']
+objects = ['plastic_bottle', 'drone']
 train_folder = 'images/train'
 validate_folder = 'images/validate'
 
@@ -42,9 +42,9 @@ model = object_detector.create(train_data, model_spec=spec, batch_size=4, train_
 
 print(model.evaluate(val_data))
 
-model.export(export_dir='./models/', tflite_filename='plastic_bottle.tflite')
+model.export(export_dir='./models/', tflite_filename='bottle-and-drone.tflite')
 
 
-print(model.evaluate_tflite('./models/plastic_bottle.tflite', val_data))
+print(model.evaluate_tflite('./models/bottle-and-drone.tflite', val_data))
 
 print("\n\n Model making done.")

@@ -1,0 +1,1 @@
+cd Desktop/thesis/tflite/prototype/[folder-name]
