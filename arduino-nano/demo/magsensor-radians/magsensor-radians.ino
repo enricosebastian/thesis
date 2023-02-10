@@ -55,5 +55,13 @@ void loop(void)
   /* Get a new sensor event */ 
   sensors_event_t event; 
   mag.getEvent(&event);
-  Serial.println(atan2(event.magnetic.y, event.magnetic.x));
+  
+  float heading = atan2(event.magnetic.y, event.magnetic.x);
+  if(heading < 0)
+    heading += 2*PI;
+    
+  // Check for wrap due to addition of declination.
+  if(heading > 2*PI)
+    heading -= 2*PI;
+  Serial.print(heading);
 }
