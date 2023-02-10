@@ -55,9 +55,5 @@ void loop(void)
   /* Get a new sensor event */ 
   sensors_event_t event; 
   mag.getEvent(&event);
-  Serial.print(event.magnetic.x);
-  Serial.print("    ");
-  Serial.print(event.magnetic.y);
-  Serial.print("    ");
-  Serial.println(event.magnetic.z);
+  Serial.println(atan2(event.magnetic.y, event.magnetic.x));
 }
