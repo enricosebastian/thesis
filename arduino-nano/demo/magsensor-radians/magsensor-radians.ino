@@ -34,7 +34,12 @@
 #include <Adafruit_HMC5883_U.h>
 
 /* Assign a unique ID to this sensor at the same time */
-Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
+Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(1);
+
+const float allowanceAngle = 0.02;
+
+float pastAngle = 0;
+float currentAngle = 0;
 
 void setup(void) 
 {
@@ -56,13 +61,26 @@ void loop(void)
   sensors_event_t event; 
   mag.getEvent(&event);
   
-  float heading = atan2(event.magnetic.y, event.magnetic.x);
-  if(heading < 0)
-    heading += 2*PI;
-    
-  // Check for wrap due to addition of declination.
-  if(heading > 2*PI)
-    heading -= 2*PI;
-    
-  Serial.println(heading);
+  float currentAngle = atan2(event.magnetic.y, event.magnetic.x);
+  // Serial.print(currentAngle);
+  // Serial.print("\t");
+  // Serial.println(pastAngle);
+
+  if(currentAngle - pastAngle < -allowanceAngle || currentAngle - pastAngle > allowanceAngle) {
+    if(currentAngle - pastAngle < 0) {
+      Serial.println("went \t\t\tright");
+    } 
+    else if(currentAngle - pastAngle > 0) {
+      Serial.println("went \t\tleft");
+    }
+    pastAngle = currentAngle;
+  } else {
+    Serial.println("went center");
+  }
+
+  if(Serial.available()) {
+    char letter = Serial.read()
+  }
+
+
 }
