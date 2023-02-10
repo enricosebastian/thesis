@@ -80,14 +80,14 @@ void loop(void)
   // Check for wrap due to addition of declination.
   if(heading > 2*PI)
     heading -= 2*PI;
-   
+  
   // Convert radians to degrees for readability.
   float headingDegrees = heading * 180/M_PI; 
   if(headingDegrees > maxDeg) maxDeg = headingDegrees;
   if(headingDegrees < minDeg) minDeg = headingDegrees;
 
   // min deg = 125.17, max deg = 257.03
-  headingDegrees = map(headingDegrees, minDeg, maxDeg, 0, 360);
+  // headingDegrees = map(headingDegrees, minDeg, maxDeg, 0, 360);
   
   
   if(Serial.available()) {
@@ -100,12 +100,12 @@ void loop(void)
 
   if(isCalculatingDirection) {
     // Serial.print("Heading (degrees): "); Serial.println(headingDegrees);
-    if(savedDeg - headingDegrees < 0) {
-      Serial.println("Left leaning");
-    } else if (savedDeg - headingDegrees > 0) {
-      Serial.println("Right leaning");
+    if(savedDeg - headingDegrees <- 3) {
+      Serial.println("Turn on left motor");
+    } else if (savedDeg - headingDegrees > 3) {
+      Serial.println("Turn on right motor");
     } else {
-      Serial.println("Center");
+      Serial.println("Straight");
     }
   } else {
     Serial.print("Heading (degrees): "); Serial.println(headingDegrees);
