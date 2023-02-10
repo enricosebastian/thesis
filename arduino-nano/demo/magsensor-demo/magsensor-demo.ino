@@ -89,7 +89,7 @@ void loop(void)
   // min deg = 125.17, max deg = 257.03
   headingDegrees = map(headingDegrees, minDeg, maxDeg, 0, 360);
   
-  Serial.print("Heading (degrees): "); Serial.println(headingDegrees);
+  
   if(Serial.available()) {
     char letter = Serial.read();
     if(letter == 'g') {
@@ -99,7 +99,16 @@ void loop(void)
   }
 
   if(isCalculatingDirection) {
-    Serial.print("SavedDeg (degrees): "); Serial.println(savedDeg);
+    // Serial.print("Heading (degrees): "); Serial.println(headingDegrees);
+    if(savedDeg - headingDegrees < 0) {
+      Serial.println("Left leaning");
+    } else if (savedDeg - headingDegrees > 0) {
+      Serial.println("Right leaning");
+    } else {
+      Serial.println("Center");
+    }
+  } else {
+    Serial.print("Heading (degrees): "); Serial.println(headingDegrees);
   }
   // Serial.print("minDeg (degrees): "); Serial.println(minDeg);
   // Serial.print("maxDeg (degrees): "); Serial.println(maxDeg);
