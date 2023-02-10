@@ -90,12 +90,16 @@ void loop(void)
   headingDegrees = map(headingDegrees, minDeg, maxDeg, 0, 360);
   
   Serial.print("Heading (degrees): "); Serial.println(headingDegrees);
-  Serial.print("SavedDeg (degrees): "); Serial.println(savedDeg);
   if(Serial.available()) {
     char letter = Serial.read();
     if(letter == 'g') {
       savedDeg = headingDegrees;
+      isCalculatingDirection = !isCalculatingDirection;
     }
+  }
+
+  if(isCalculatingDirection) {
+    Serial.print("SavedDeg (degrees): "); Serial.println(savedDeg);
   }
   // Serial.print("minDeg (degrees): "); Serial.println(minDeg);
   // Serial.print("maxDeg (degrees): "); Serial.println(maxDeg);
