@@ -170,11 +170,18 @@ void move() {
   cumulative_error += error;
   previous_error = error;
 
-  float modifiedSpeed = map(abs(PID_total),0.00,1700.00,minSpeed,maxSpeed);
+  float modifiedSpeed = map(abs(PID_total),0.00,8000.00,minSpeed,maxSpeed);
+  Serial.print("Initial angle: ");
+  Serial.println(initialAngle);
+  Serial.print("Current angle: ");
+  Serial.println(Compass.GetHeadingDegrees());
+  Serial.print("PID_total: ");
+  Serial.println(PID_total);
   Serial.print("Speed: ");
   Serial.println(modifiedSpeed);
   Serial.print("Error: ");
   Serial.println(error);
+  Serial.println('\n');
 
   if(error < -maxAngleChange) {
     //It's turning right, so give the right motor more speed
