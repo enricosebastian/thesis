@@ -63,5 +63,6 @@ void loop(void)
   // Check for wrap due to addition of declination.
   if(heading > 2*PI)
     heading -= 2*PI;
-  Serial.print(heading);
+    
+  Serial.println(heading);
 }
