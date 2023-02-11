@@ -42,7 +42,7 @@ model = object_detector.create(train_data, model_spec=spec, batch_size=4, train_
 
 print(model.evaluate(val_data))
 
-model.export(export_dir='./models/', tflite_filename='bottle-and-drone.tflite')
+model.export(export_dir='./models/', tflite_filename='bottle-and-drone-02.tflite')
 
 
 print(model.evaluate_tflite('./models/bottle-and-drone.tflite', val_data))
