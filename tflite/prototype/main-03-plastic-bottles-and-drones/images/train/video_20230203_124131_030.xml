@@ -1,7 +1,7 @@
 <annotation>
-	<folder>plastic_bottle</folder>
+	<folder>train</folder>
 	<filename>video_20230203_124131_030.jpg</filename>
-	<path>/home/enricosebastian/Downloads/drive-download-20230208T155946Z-001/labled_carl/plastic_bottle/video_20230203_124131_030.jpg</path>
+	<path>/home/enricosebastian/Desktop/thesis/tflite/prototype/main-03-plastic-bottles-and-drones/images/train/video_20230203_124131_030.jpg</path>
 	<source>
 		<database>Unknown</database>
 	</source>
@@ -19,8 +19,8 @@
 		<bndbox>
 			<xmin>440</xmin>
 			<ymin>405</ymin>
-			<xmax>711</xmax>
-			<ymax>489</ymax>
+			<xmax>714</xmax>
+			<ymax>509</ymax>
 		</bndbox>
 	</object>
 	<object>
