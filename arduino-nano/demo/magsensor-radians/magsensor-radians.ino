@@ -1,49 +1,25 @@
-/***************************************************************************
-  This is a library example for the HMC5883 magnentometer/compass
-
-  Designed specifically to work with the Adafruit HMC5883 Breakout
-  http://www.adafruit.com/products/1746
- 
-  *** You will also need to install the Adafruit_Sensor library! ***
-
-  These displays use I2C to communicate, 2 pins are required to interface.
-
-  Adafruit invests time and resources providing this open source code,
-  please support Adafruit andopen-source hardware by purchasing products
-  from Adafruit!
-
-  Written by Kevin Townsend for Adafruit Industries with some heading example from
-  Love Electronics (loveelectronics.co.uk)
- 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the version 3 GNU General Public License as
- published by the Free Software Foundation.
- 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
- ***************************************************************************/
-
+#include <NeoSWSerial.h>
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_HMC5883_U.h>
 
 /* Assign a unique ID to this sensor at the same time */
 Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(1);
+NeoSWSerial ser(2,3);
 
-const float allowanceAngle = 0.02;
+const float allowanceAngle = 0.03;
 
 float pastAngle = 0;
 float currentAngle = 0;
+float savedAngle = 0;
+
+bool isDeployed = false;
+bool isFixed = false;
 
 void setup(void) 
 {
   Serial.begin(9600);
+  ser.begin(9600);
   Serial.println("HMC5883 Magnetometer Test"); Serial.println("");
   
   /* Initialise the sensor */
@@ -57,30 +33,54 @@ void setup(void)
 
 void loop(void) 
 {
-  /* Get a new sensor event */ 
+
   sensors_event_t event; 
   mag.getEvent(&event);
+  currentAngle = atan2(event.magnetic.y, event.magnetic.x);
   
-  float currentAngle = atan2(event.magnetic.y, event.magnetic.x);
-  // Serial.print(currentAngle);
-  // Serial.print("\t");
-  // Serial.println(pastAngle);
-
-  if(currentAngle - pastAngle < -allowanceAngle || currentAngle - pastAngle > allowanceAngle) {
-    if(currentAngle - pastAngle < 0) {
-      Serial.println("went \t\t\tright");
-    } 
-    else if(currentAngle - pastAngle > 0) {
-      Serial.println("went \t\tleft");
-    }
-    pastAngle = currentAngle;
-  } else {
-    Serial.println("went center");
-  }
-
   if(Serial.available()) {
-    char letter = Serial.read()
+    char letter = Serial.read();
+    if(letter == 'g') {
+      savedAngle = currentAngle;
+      isDeployed = !isDeployed;
+    } else if(letter == 'a') {
+      savedAngle = savedAngle + 3;
+    } else if(letter == 's') {
+      savedAngle = savedAngle - 3;
+    }
   }
 
 
+
+
+  if(isDeployed) {
+    Serial.print(savedAngle-currentAngle);
+    if(abs(savedAngle-currentAngle) > allowanceAngle) {
+      if(savedAngle - currentAngle < 0) {
+        ser.println("\t\tfacing left");
+      } else if(savedAngle - currentAngle > 0) {
+        ser.println("\t\t\tfacing right");
+      }
+    } else {
+      ser.println("\tstraight");
+    }
+
+
+
+    // if(savedAngle - currentAngle > allowanceAngle) {
+    //   //it's left leaning
+    // } else if(savedAngle - currentAngle < -allowanceAngle) {
+    //   //it's right leaning
+    // } else {
+    //   //center
+    // }
+  }
+}
+
+void move() {
+  if(savedAngle <= currentAngle-0.05 || savedAngle >= currentAngle+0.05) {
+    Serial.println("not straight");
+  } else {
+    Serial.println("straight");
+  }
 }
