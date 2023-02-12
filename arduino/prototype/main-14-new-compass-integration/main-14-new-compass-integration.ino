@@ -285,7 +285,17 @@ void forDrone() {
   //STATE 3: Drone is deployed. Move, receive commands, send commands, and detect objects
   if(isConnected && isDeployed) {
 
-    // Task 1: Keep blinking
+    // Task 1: Keep blinking yellow == ready to deploy
+    if(hasStopped && !receiveCommand() && !hasDetectedObject) {
+      if(millis() - startTime > 800) {
+        digitalWrite(redLed, LOW);
+        digitalWrite(yellowLed, !digitalRead(yellowLed));
+        digitalWrite(greenLed, LOW);
+        startTime = millis();
+      }
+    }
+
+    // Task 2: Keep blinking green == is deployed
     if(!hasStopped && !receiveCommand() && !hasDetectedObject) {
       if(millis() - startTime > 800) {
         digitalWrite(redLed, LOW);
@@ -295,7 +305,9 @@ void forDrone() {
       }
     }
 
-    // Task 2: Interpret commands
+    
+
+    // Task 3: Interpret commands
     if(receiveCommand() && !hasDetectedObject) {
 
       //Send acknowledgement that we received the command first
@@ -328,7 +340,7 @@ void forDrone() {
       }
     }
 
-    // Task 3: If serial available, that most likely means you detected something...
+    // Task 4: If serial available, that most likely means you detected something...
     while(Serial.available()) {
       char letter = Serial.read();
       if(letter == '\n') {
@@ -352,16 +364,6 @@ void forDrone() {
         }
       } else {
         receivedMessage += letter;
-      }
-    }
-
-    // Task 4: State at hasStopped = true
-    if(hasStopped && !receiveCommand() && !hasDetectedObject) {
-      if(millis() - startTime > 800) {
-        digitalWrite(redLed, LOW);
-        digitalWrite(yellowLed, !digitalRead(yellowLed));
-        digitalWrite(greenLed, LOW);
-        startTime = millis();
       }
     }
   }
