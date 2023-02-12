@@ -100,24 +100,33 @@ void loop() {
 }
 
 int getDirection(float headingX, float headingY) {
-  Serial.print(headingX);
-  Serial.print(", ");
-  Serial.println(headingY);
-
-  Serial.print("mins:\t\t");
-  Serial.print(minX);
-  Serial.print(", ");
-  Serial.println(minY);
-
-  Serial.print("halves:\t\t");
-  Serial.print(halfX);
-  Serial.print(", ");
-  Serial.println(halfY);
-  
   float allowance = 10;
-  if(abs(headingX-minX) < allowance && abs(headingY-halfY) < allowance) {
+  if(headingX <= halfX && abs(headingY-halfY) < allowance) {
     Serial.println("North");
     return 1;
+  } else if(headingX <= halfX && headingY >= halfY) {
+    Serial.println("North west");
+    return 2;
+  } else if(abs(headingX-halfX) < allowance && headingY >= halfY) {
+    Serial.println("West");
+    return 3;
+  } else if(headingX >= halfX && headingY >= halfY) {
+    Serial.println("South west");
+    return 4;
+  } else if(headingX >= halfX && abs(headingY-halfY) < allowance) {
+    Serial.println("South");
+    return 5;
+  } else if(headingX >= halfX && headingY <= halfY) {
+    Serial.println("South east");
+    return 6;
+  } else if(abs(headingX-halfX) < allowance && headingY <= halfY) {
+    Serial.println("East");
+    return 7;
+  } else if(headingX <= halfX && headingY <= halfY) {
+    Serial.println("North east");
+    return 8;
+  } else {
+    return 0;
   }
 
 
