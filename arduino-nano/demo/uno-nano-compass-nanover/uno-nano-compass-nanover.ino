@@ -9,7 +9,24 @@ const int rxHc12 = 3; //blue received
 
 String message = "";
 
+float heading = 0.01;
 float pastHeading = 0.00;
+
+float maxX = 0;
+float maxY = 0;
+float minX = 1000;
+float minY = 1000;
+
+float headingX = 0;
+float headingY = 0;
+
+float halfX = 0;
+float halfY = 0;
+
+bool turnedRightFirst = false;
+bool turned = false;
+
+bool isDeployed = false;
 
 NeoSWSerial HC12(txHc12, rxHc12); // (Green TX, Blue RX)
 Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
@@ -26,6 +43,11 @@ void setup() {
     Serial.println("Ooops, no HMC5883 detected ... Check your wiring!");
     while(1);
   }
+
+  sensors_event_t event; 
+  mag.getEvent(&event);
+  heading = atan2(event.magnetic.y, event.magnetic.x);
+  pastHeading = heading+0.01;
 }
 
 void loop() {
@@ -43,34 +65,55 @@ void loop() {
 
   sensors_event_t event; 
   mag.getEvent(&event);
-  float heading = atan2(event.magnetic.y, event.magnetic.x);
+  heading = atan2(event.magnetic.y, event.magnetic.x);
 
-  if(heading != pastHeading) {
-    if(heading - pastHeading < -0.01){
-      Serial.println("turned \tright");
-    } else if(heading - pastHeading > 0.01) {
-      Serial.println("turned \tleft");
-    } else {
-      Serial.println("center");
+  if(maxY < event.magnetic.y) maxY = event.magnetic.y;
+  if(minY > event.magnetic.y) minY = event.magnetic.y;
+
+  if(maxX < event.magnetic.x) maxX = event.magnetic.x;
+  if(minX > event.magnetic.x) minX = event.magnetic.x;
+
+  headingX = map(event.magnetic.x, minX, maxX, 0, 180);
+  headingY = map(event.magnetic.y, minY, maxY, 0, 180);
+
+  if(Serial.available()) {
+    char letter = Serial.read();
+    if(letter == 'y') {
+      halfY = headingY;
+      Serial.print("halfY: ");
+      Serial.println(halfY);
+    } else if(letter == 'x') {
+      halfX = headingX;
+      Serial.print("halfX: ");
+      Serial.println(halfX);
+    } else if(letter == 'g') {
+      isDeployed = !isDeployed;
     }
-    pastHeading = heading;
-  } else {
-    Serial.println("center");
   }
-  
+
+  if(!isDeployed) {
+    Serial.print(headingX);
+    Serial.print(", ");
+    Serial.println(headingY);
+  }
+
+  if(isDeployed) {
+    if(headingX >= minX && headingX <= halfX) {
+      Serial.println("North east or west");
+    } else if(headingX <= maxX && headingX >= halfX) {
+      Serial.println("South east or west");
+    }
+  }
 }
 
 
-
-
-float toDegrees(float heading) {
-  float declinationAngle = 0.0349066; //https://www.magnetic-declination.com/
-  heading += declinationAngle;
-  if(heading < 0)
-    heading += 2*PI;
-
-  if(heading > 2*PI)
-    heading -= 2*PI;
-
-  return heading * 180/M_PI;
-}
+  // if((heading != pastHeading) && !turned) {
+  //   if(heading - pastHeading < -0.05){
+  //     turned = true;
+  //     turnedRightFirst = true;
+  //   } else if(heading - pastHeading > 0.05) {
+  //     turned = true;
+  //     turnedRightFirst = false;
+  //   }
+  //   pastHeading = heading;
+  // }
