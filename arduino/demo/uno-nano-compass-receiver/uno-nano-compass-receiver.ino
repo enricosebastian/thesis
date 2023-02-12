@@ -21,7 +21,7 @@ void loop() {
     char letter = HC12.read();
     if(letter == '\n') {
       message += '\n';
-      Serial.println(message);
+      Serial.print(message);
       message = "";
     } else {
       message += letter;
