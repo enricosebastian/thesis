@@ -3,8 +3,8 @@
 #include <LinkedList.h>
 
 //Name here
-// const String myName = "BASE";
-const String myName = "DRO1";
+const String myName = "BASE";
+// const String myName = "DRO1";
 // const String myName = "DRO2";
 // const String myName = "DRO3";
 
@@ -273,15 +273,12 @@ void forDrone() {
     }
     
     isDeployed = true;
+    hasStopped = true;
     startTime = millis();
 
     Serial.println("Drone is deploying.");
-    digitalWrite(redLed, LOW);
-    digitalWrite(yellowLed, LOW);
-    digitalWrite(greenLed, HIGH);
 
     sendToNano("BUFF", myName, "SUCC"); // buffer to clear serial ports
-    sendToNano("GO", myName, "SUCC"); // start moving the drone
     digitalWrite(detectionPin, HIGH);
   }
 
@@ -355,6 +352,16 @@ void forDrone() {
         }
       } else {
         receivedMessage += letter;
+      }
+    }
+
+    // Task 4: State at hasStopped = true
+    if(hasStopped && !receiveCommand() && !hasDetectedObject) {
+      if(millis() - startTime > 800) {
+        digitalWrite(redLed, LOW);
+        digitalWrite(yellowLed, !digitalRead(yellowLed));
+        digitalWrite(greenLed, LOW);
+        startTime = millis();
       }
     }
   }
