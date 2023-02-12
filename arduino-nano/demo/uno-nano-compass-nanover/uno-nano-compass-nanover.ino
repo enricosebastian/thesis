@@ -46,17 +46,12 @@ void loop() {
   float heading = atan2(event.magnetic.y, event.magnetic.x);
 
   if(heading != pastHeading) {
-    if(heading-pastHeading < 0) {
-      Serial.println("turned left");
-      HC12.println("turned left");       
-    } else if(heading-pastHeading > 0) {
-      Serial.println("turned right");
-      HC12.println("turned right"); 
-    }
+    Serial.println(heading-pastHeading);
+    HC12.println(heading-pastHeading); 
     pastHeading = heading;
   } else {
-    Serial.println("staying center");
-    HC12.println("staying center"); 
+    Serial.println(0);
+    HC12.println(0); 
   }
   
 }
