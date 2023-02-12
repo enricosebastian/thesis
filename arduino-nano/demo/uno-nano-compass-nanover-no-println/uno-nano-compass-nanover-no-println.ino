@@ -93,37 +93,48 @@ void loop() {
 
   if(isDeployed) {
     int direction = getDirection(headingX, headingY);
-    Serial.println((direction == savedDirection) && (abs(headingX-savedX) < allowance) && (abs(headingY-savedY) < allowance));
+    float allowance = 10;
+    bool isStraight = (direction == savedDirection) && (abs(headingX-savedX) < allowance) && (abs(headingY-savedY) < allowance);
+    if(!isStraight) {
+      if(direction < savedDirection) {
+        Serial.println("right++");
+      } else if(direction > savedDirection) {
+        Serial.println("left++");
+      }
+
+    } else {
+      Serial.println("is straight");
+    }
   }
 }
 
 int getDirection(float headingX, float headingY) {
   float allowance = 10;
   if(headingX <= halfX && abs(headingY-halfY) < allowance) {
-    Serial.println("North");
-    return 1;
-  } else if(headingX <= halfX && headingY >= halfY) {
-    Serial.println("North west");
-    return 2;
-  } else if(abs(headingX-halfX) < allowance && headingY >= halfY) {
-    Serial.println("West");
-    return 3;
-  } else if(headingX >= halfX && headingY >= halfY) {
-    Serial.println("South west");
-    return 4;
-  } else if(headingX >= halfX && abs(headingY-halfY) < allowance) {
-    Serial.println("South");
-    return 5;
-  } else if(headingX >= halfX && headingY <= halfY) {
-    Serial.println("South east");
-    return 6;
-  } else if(abs(headingX-halfX) < allowance && headingY <= halfY) {
-    Serial.println("East");
-    return 7;
-  } else if(headingX <= halfX && headingY <= halfY) {
-    Serial.println("North east");
-    return 8;
-  } else {
+    // Serial.println("North");
     return 0;
+  } else if(headingX <= halfX && headingY >= halfY) {
+    // Serial.println("North west");
+    return 1;
+  } else if(abs(headingX-halfX) < allowance && headingY >= halfY) {
+    // Serial.println("West");
+    return 2;
+  } else if(headingX >= halfX && headingY >= halfY) {
+    // Serial.println("South west");
+    return 3;
+  } else if(headingX >= halfX && abs(headingY-halfY) < allowance) {
+    // Serial.println("South");
+    return 4;
+  } else if(headingX >= halfX && headingY <= halfY) {
+    // Serial.println("South east");
+    return -3;
+  } else if(abs(headingX-halfX) < allowance && headingY <= halfY) {
+    // Serial.println("East");
+    return -2;
+  } else if(headingX <= halfX && headingY <= halfY) {
+    // Serial.println("North east");
+    return -1;
   }
+
+  return 0;
 }
