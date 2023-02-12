@@ -1,4 +1,7 @@
 #include <NeoSWSerial.h>
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_HMC5883_U.h>
 
 //Constants (buttons)
 const int txHc12 = 2; //green tx
@@ -33,7 +36,7 @@ void loop() {
     if(letter == '\n') {
       message += '\n';
       Serial.print("Sending: ");
-      Serial.println(message);
+      Serial.print(message);
       HC12.print(message);
       message = "";
     } else {
