@@ -93,15 +93,19 @@ void loop() {
 
   if(isDeployed) {
     int direction = getDirection(headingX, headingY);
-    float allowance = 10;
+    float allowance = 5;
     bool isStraight = (direction == savedDirection) && (abs(headingX-savedX) < allowance) && (abs(headingY-savedY) < allowance);
+    
+    Serial.print("\t\t\t");
+    Serial.println(direction);
     if(!isStraight) {
       if(direction < savedDirection) {
         Serial.println("right++");
       } else if(direction > savedDirection) {
         Serial.println("left++");
+      } else {
+        Serial.println("is straight");
       }
-
     } else {
       Serial.println("is straight");
     }
