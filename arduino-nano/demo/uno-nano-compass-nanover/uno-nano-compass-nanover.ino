@@ -46,15 +46,22 @@ void loop() {
   float heading = atan2(event.magnetic.y, event.magnetic.x);
 
   if(heading != pastHeading) {
-    Serial.println(heading-pastHeading);
-    HC12.println(heading-pastHeading); 
+    if(heading - pastHeading < -0.01){
+      Serial.println("turned \tright");
+    } else if(heading - pastHeading > 0.01) {
+      Serial.println("turned \tleft");
+    } else {
+      Serial.println("center");
+    }
     pastHeading = heading;
   } else {
-    Serial.println(0);
-    HC12.println(0); 
+    Serial.println("center");
   }
   
 }
+
+
+
 
 float toDegrees(float heading) {
   float declinationAngle = 0.0349066; //https://www.magnetic-declination.com/
