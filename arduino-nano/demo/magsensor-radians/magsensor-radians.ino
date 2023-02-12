@@ -3,9 +3,8 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_HMC5883_U.h>
 
-/* Assign a unique ID to this sensor at the same time */
-Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(1);
-NeoSWSerial ser(2,3);
+const int rxPin = 2;
+const int txPin = 3;
 
 const float allowanceAngle = 0.03;
 
@@ -15,6 +14,11 @@ float savedAngle = 0;
 
 bool isDeployed = false;
 bool isFixed = false;
+bool isReceiver = false;
+
+/* Assign a unique ID to this sensor at the same time */
+Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(1);
+NeoSWSerial ser(rxPin,txPin); //rxPin blue, txPin green
 
 void setup(void) 
 {
@@ -33,54 +37,7 @@ void setup(void)
 
 void loop(void) 
 {
-
-  sensors_event_t event; 
-  mag.getEvent(&event);
-  currentAngle = atan2(event.magnetic.y, event.magnetic.x);
-  
-  if(Serial.available()) {
-    char letter = Serial.read();
-    if(letter == 'g') {
-      savedAngle = currentAngle;
-      isDeployed = !isDeployed;
-    } else if(letter == 'a') {
-      savedAngle = savedAngle + 3;
-    } else if(letter == 's') {
-      savedAngle = savedAngle - 3;
-    }
-  }
-
-
-
-
-  if(isDeployed) {
-    Serial.print(savedAngle-currentAngle);
-    if(abs(savedAngle-currentAngle) > allowanceAngle) {
-      if(savedAngle - currentAngle < 0) {
-        ser.println("\t\tfacing left");
-      } else if(savedAngle - currentAngle > 0) {
-        ser.println("\t\t\tfacing right");
-      }
-    } else {
-      ser.println("\tstraight");
-    }
-
-
-
-    // if(savedAngle - currentAngle > allowanceAngle) {
-    //   //it's left leaning
-    // } else if(savedAngle - currentAngle < -allowanceAngle) {
-    //   //it's right leaning
-    // } else {
-    //   //center
-    // }
-  }
-}
-
-void move() {
-  if(savedAngle <= currentAngle-0.05 || savedAngle >= currentAngle+0.05) {
-    Serial.println("not straight");
-  } else {
-    Serial.println("straight");
+  if(ser.available()) {
+    Serial.println("message");
   }
 }
