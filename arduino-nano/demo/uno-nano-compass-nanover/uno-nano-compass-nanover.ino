@@ -15,13 +15,10 @@ float pastHeading = 0.00;
 float maxX = 0;
 float maxY = 0;
 float minX = 1000;
-float minY = 1000;
+float minY = 1000; 
 
-float headingX = 0;
-float headingY = 0;
-
-float halfX = 0;
-float halfY = 0;
+float halfX = 0.0;
+float halfY = 0.0;
 
 bool turnedRightFirst = false;
 bool turned = false;
@@ -73,8 +70,8 @@ void loop() {
   if(maxX < event.magnetic.x) maxX = event.magnetic.x;
   if(minX > event.magnetic.x) minX = event.magnetic.x;
 
-  headingX = map(event.magnetic.x, minX, maxX, 0, 180);
-  headingY = map(event.magnetic.y, minY, maxY, 0, 180);
+  float headingX = map(event.magnetic.x, minX, maxX, 0, 180);
+  float headingY = map(event.magnetic.y, minY, maxY, 0, 180);
 
   if(Serial.available()) {
     char letter = Serial.read();
@@ -98,11 +95,16 @@ void loop() {
   }
 
   if(isDeployed) {
-    if(headingX >= minX && headingX <= halfX) {
-      Serial.println("North east or west");
-    } else if(headingX <= maxX && headingX >= halfX) {
-      Serial.println("South east or west");
-    }
+    Serial.println(getDirection(headingX, headingY));
+  }
+}
+
+String getDirection(float headingX, float headingY) {
+  float allowance = 5;
+  if(headingX >= minX && headingX <= halfX) {
+    return "North east or west";
+  } else if(headingX <= maxX && headingX >= halfX) {
+    return "South east or west";
   }
 }
 
