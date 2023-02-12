@@ -16,9 +16,6 @@ const int txNano = 9; //green tx
 const int rxNano = 8; //blue received
 const int waitingTime = 5000;
 const int turnDelay = 30000; //in milliseconds
-const int redLed = 2;
-const int yellowLed = 3;
-const int greenLed = 4;
 
 //movement constants
 const float minSpeed = 7;
@@ -112,21 +109,6 @@ void setup() {
     Serial.println("Ooops, no HMC5883 detected ... Check your wiring!");
     while(1);
   }
-
-  //LED initialization
-  pinMode(redLed, OUTPUT);
-  pinMode(yellowLed, OUTPUT);
-  pinMode(greenLed, OUTPUT);
-
-  digitalWrite(redLed, HIGH);
-  digitalWrite(yellowLed, HIGH);
-  digitalWrite(greenLed, HIGH);
-
-  delay(1000);
-
-  digitalWrite(redLed, HIGH);
-  digitalWrite(yellowLed, LOW);
-  digitalWrite(greenLed, LOW);
 }
 
 void loop() {
@@ -176,10 +158,6 @@ void loop() {
     } else if(receivedCommand == "ne") {
       headingX_NE = headingX;
       headingY_NE = headingY;
-    } else if(receivedCommand == "CONN") {
-      digitalWrite(redLed, LOW);
-      digitalWrite(yellowLed, HIGH);
-      digitalWrite(greenLed, LOW);
     } else if(receivedCommand == "GO") {
       Serial.print(myName);
       Serial.println(" is now moving.");
