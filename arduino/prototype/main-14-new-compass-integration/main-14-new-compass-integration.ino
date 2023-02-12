@@ -3,8 +3,8 @@
 #include <LinkedList.h>
 
 //Name here
-const String myName = "BASE";
-// const String myName = "DRO1";
+// const String myName = "BASE";
+const String myName = "DRO1";
 // const String myName = "DRO2";
 // const String myName = "DRO3";
 
@@ -335,7 +335,7 @@ void forDrone() {
         digitalWrite(yellowLed, LOW);
         digitalWrite(greenLed, HIGH);
         digitalWrite(detectionPin, HIGH);
-      } else if(receivedCommand == "TURN") {
+      } else {
         sendToNano(receivedCommand, myName, receivedDetails);
       }
     }
