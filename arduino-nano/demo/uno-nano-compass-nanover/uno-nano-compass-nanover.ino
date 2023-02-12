@@ -9,6 +9,8 @@ const int rxHc12 = 3; //blue received
 
 String message = "";
 
+float pastHeading = 0.00;
+
 NeoSWSerial HC12(txHc12, rxHc12); // (Green TX, Blue RX)
 Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
 
@@ -42,6 +44,31 @@ void loop() {
   sensors_event_t event; 
   mag.getEvent(&event);
   float heading = atan2(event.magnetic.y, event.magnetic.x);
-  Serial.println(heading);
-  HC12.println(heading); 
+
+  if(heading != pastHeading) {
+    if(heading-pastHeading < 0) {
+      Serial.println("turned left");
+      HC12.println("turned left");       
+    } else if(heading-pastHeading > 0) {
+      Serial.println("turned right");
+      HC12.println("turned right"); 
+    }
+    pastHeading = heading;
+  } else {
+    Serial.println("staying center");
+    HC12.println("staying center"); 
+  }
+  
+}
+
+float toDegrees(float heading) {
+  float declinationAngle = 0.0349066; //https://www.magnetic-declination.com/
+  heading += declinationAngle;
+  if(heading < 0)
+    heading += 2*PI;
+
+  if(heading > 2*PI)
+    heading -= 2*PI;
+
+  return heading * 180/M_PI;
 }
