@@ -18,7 +18,7 @@ const int waitingTime = 5000;
 const int turnDelay = 30000; //in milliseconds
 
 //movement constants
-const float minSpeed = 15;
+const float minSpeed = 7;
 const float movingSpeed = 15;
 const float maxSpeed = 20;
 const float maxAngleChange = 5;
@@ -44,9 +44,6 @@ float maxX = 0;
 float maxY = 0;
 float minX = 1000;
 float minY = 1000; 
-
-float halfX = 0.0;
-float halfY = 0.0;
 
 float savedX = 0;
 float savedY = 0;
@@ -124,62 +121,15 @@ void loop() {
   float headingX = map(event.magnetic.x, minX, maxX, 0, 180);
   float headingY = map(event.magnetic.y, minY, maxY, 0, 180);
 
+  Serial.print(headingX);
+  Serial.print(", ");
+  Serial.println(headingY);
+
   // Task 1: Continue to check if you have commands
   if(receiveCommand()) {
-    if(receivedCommand == "X") {
-      halfX = headingX;
-      Serial.print("halfX: ");
-      Serial.println(halfX);
-    } else if(receivedCommand == "Y") {
-      halfY = headingY;
-      Serial.print("halfY: ");
-      Serial.println(halfY);
-    } else if(receivedCommand == "N") {
-      headingX_N = headingX;
-      headingY_N = headingY;
-      Serial.print("headingX_N: ");
-      Serial.println(headingX_N);
-    } else if(receivedCommand == "NW") {
-      headingX_NW = headingX;
-      headingY_NW = headingY;
-      Serial.print("headingX_NW: ");
-      Serial.println(headingX_NW);
-    } else if(receivedCommand == "W") {
-      headingX_W = headingX;
-      headingY_W = headingY;
-      Serial.print("headingX_W: ");
-      Serial.println(headingX_W);
-    } else if(receivedCommand == "SW") {
-      headingX_SW = headingX;
-      headingY_SW = headingY;
-      Serial.print("headingX_SW: ");
-      Serial.println(headingX_SW);
-    } else if(receivedCommand == "S") {
-      headingX_S = headingX;
-      headingY_S = headingY;
-      Serial.print("headingX_S: ");
-      Serial.println(headingX_S);
-    } else if(receivedCommand == "SE") {
-      headingX_SE = headingX;
-      headingY_SE = headingY;
-      Serial.print("headingX_SE: ");
-      Serial.println(headingX_SE);
-    } else if(receivedCommand == "E") {
-      headingX_E = headingX;
-      headingY_E = headingY;
-      Serial.print("headingX_E: ");
-      Serial.println(headingX_E);
-    } else if(receivedCommand == "NE") {
-      headingX_NE = headingX;
-      headingY_NE = headingY;
-      Serial.print("headingX_NE: ");
-      Serial.println(headingX_NE);
-    } else if(receivedCommand == "GO") {
+    if(receivedCommand == "GO") {
       Serial.print(myName);
       Serial.println(" is now moving.");
-      savedX = headingX;
-      savedY = headingY;
-      savedDirection = getDirection(savedX, savedY);
       hasStopped = false;
       startTime = millis();
     } else if(receivedCommand == "STOP") {
@@ -189,41 +139,17 @@ void loop() {
       escLeft.write(0);
       escRight.write(0);
     } else if(receivedCommand == "TURN") {
-      turnTo(strDirection(receivedDetails.toInt()));
+      //turn
     } else if(receivedCommand == "DETE") {
       hasDetectedObject = true;
-      if(receivedDetails == "CENTER") {
-        turnTo(strDirection(savedDirection));
-      } else if(receivedDetails == "DONE") {
+      if(receivedDetails == "DONE") {
         hasDetectedObject = false;
-      } else {
-        turnTo(receivedDetails);
       }
     }
   }
 
   // State 1: Move drone normally
   if(!hasStopped && !hasDetectedObject) {
-    if(millis() - startTime > turnDelay) {
-      if(savedDirection == 0) {
-        turnTo("S");
-      } else if(savedDirection == 1) {
-        turnTo("SE");
-      } else if(savedDirection == 2) {
-        turnTo("E");
-      } else if(savedDirection == 3) {
-        turnTo("NE");
-      } else if(savedDirection == 4) {
-        turnTo("N");
-      } else if(savedDirection == -3) {
-        turnTo("NW");
-      } else if(savedDirection == -2) {
-        turnTo("W");
-      } else if(savedDirection == -1) {
-        turnTo("SW");
-      }
-    }
-
     move(headingX, headingY);
   }
 
@@ -236,9 +162,6 @@ void loop() {
   // State 3: You've stopped
   if(hasStopped && !hasDetectedObject) {
     //do nothing lmao
-    // Serial.print(headingX);
-    // Serial.print(", ");
-    // Serial.println(headingY);
   }
 
   // State 4: You're going home
