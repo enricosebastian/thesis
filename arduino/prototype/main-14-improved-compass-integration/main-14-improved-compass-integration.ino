@@ -10,31 +10,28 @@ const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants (buttons)
+const int detectionPin = 10;
+const int btn = 7;
+const int rxHc12 = A0; //blue received
+const int txHc12 = A1; //green tx
+const int rxNano = A2; //blue received
+const int txNano = A3; //green tx
+const int waitingTime = 5000;
+
+// Only for base station
 const int redLed = 13;
 const int yellowLed = 12;
 const int greenLed = 11;
-const int detectionPin = 10;
-const int btn = 7;
-const int txHc12 = A0; //green tx
-const int rxHc12 = A1; //blue received
-const int txNano = A2; //green tx
-const int rxNano = A3; //blue received
-const int waitingTime = 5000;
 
 //Booleans for logic
 bool isConnected = false;
 bool isDeployed = false;
-
 bool hasStopped = false;
 bool hasDetectedObject = false;
 
 //millis time variables for storage
 unsigned long startTime = 0;
 unsigned long startTime2 = 0;
-
-//Variables
-int posX = 0;
-int posY = 0;
 
 //received message
 String receivedMessage = "";
@@ -50,8 +47,8 @@ String sentToName = "";
 String sentFromName = "";
 String sentDetails = "";
 
-NeoSWSerial HC12(txHc12, rxHc12); // (Green TX, Blue RX)
-NeoSWSerial Nano(txNano, rxNano); // (Green TX, Blue RX)
+NeoSWSerial HC12(rxHc12, txHc12); // (Blue TX, Green RX)
+NeoSWSerial Nano(rxNano, txNano); // (Blue TX, Green RX)
 LinkedList<String> drones;
 
 void setup() {
@@ -62,29 +59,27 @@ void setup() {
   Serial.println(" is initializing...");
   
   //GPIO initialization
-  pinMode(redLed, OUTPUT);
-  pinMode(yellowLed, OUTPUT);
-  pinMode(greenLed, OUTPUT);
   pinMode(detectionPin, OUTPUT);
   pinMode(btn, INPUT);
-
-  //Turn on all lights first to signify that connections are safely grounded
-  digitalWrite(redLed, HIGH);
-  digitalWrite(yellowLed, HIGH);
-  digitalWrite(greenLed, HIGH);
 
   //Set output pins
   digitalWrite(detectionPin, LOW);
 
   //Successful intialization indicator
   if(myName == "BASE") {
+    pinMode(redLed, OUTPUT);
+    pinMode(yellowLed, OUTPUT);
+    pinMode(greenLed, OUTPUT);
+
+    //Turn on all lights first to signify that connections are safely grounded
+    digitalWrite(redLed, HIGH);
+    digitalWrite(yellowLed, HIGH);
+    digitalWrite(greenLed, HIGH);
+
+    delay(1000);
+
     //For base station, no LED should turn on
     digitalWrite(redLed, LOW);
-    digitalWrite(yellowLed, LOW);
-    digitalWrite(greenLed, LOW);
-  } else {
-    //For drone, it should be on a red LED
-    digitalWrite(redLed, HIGH);
     digitalWrite(yellowLed, LOW);
     digitalWrite(greenLed, LOW);
   }
@@ -387,8 +382,11 @@ void sendToNano(String command, String toName, String details) {
   //COMMAND TONAME FROMNAME DETAILS
   if(command != "" && toName != "" && details != "") {
     String sentMessage = command + " " + toName + " " + myName + " " + details;
+    String bufferMessage = "BUFF " + toName + " " + myName + " " + "BUFF";
     Serial.print("Sending: ");
     Serial.println(sentMessage);
+    
+    Nano.println(bufferMessage); //Ned to send a buffer message first before sending actual message to clear port
     Nano.println(sentMessage);
   } else {
     Serial.println("Wrong format of command. Try again.");

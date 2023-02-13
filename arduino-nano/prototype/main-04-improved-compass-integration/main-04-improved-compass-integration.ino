@@ -9,19 +9,25 @@
 const String myName = "DRO2";
 // const String myName = "DRO3";
 
-//Constants (buttons)
-const int escLeftPin = 6;
-const int escRightPin = 5;
-const int txNano = 9; //green tx
-const int rxNano = 8; //blue received
+//Constants
+const int greenLed = 7;
+const int yellowLed = 8;
+const int blueLed = 9;
+const int redLed = 10;
+const int escLeftPin = 5;
+const int escRightPin = 6;
+
+const int rxNano = 12; //blue [these need to be reversed (diff numeral order) cause tx1 --> rx2, and rx1 --> tx2]
+const int txNano = 11; //green
+
 const int waitingTime = 5000;
 const int turnDelay = 30000; //in milliseconds
 
 //movement constants
-const float minSpeed = 7;
+const float stopSpeed = 0;
+const float minSpeed = 10;
 const float movingSpeed = 15;
 const float maxSpeed = 20;
-const float maxAngleChange = 5;
 
 //Booleans for logic
 bool hasStopped = true;
@@ -33,6 +39,7 @@ int posX = 0;
 int posY = 0;
 int savedDirection = 0;
 
+//PID values
 float initialAngle = 0;
 float initialStraightAngle = 0;
 float kp = 8; //5
@@ -97,7 +104,7 @@ void setup() {
   escRight.write(0);
 
   Serial.print(myName);
-  Serial.println(" - Nano v4.0 has initialized.");
+  Serial.println(" - Nano has initialized.");
 
   //HMC5883 initialization
   if(!mag.begin())
