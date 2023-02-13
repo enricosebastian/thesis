@@ -29,6 +29,8 @@ const float minSpeed = 10;
 const float movingSpeed = 15;
 const float maxSpeed = 20;
 
+const float headingAllowance = 30;
+
 //Booleans for logic
 bool isConnected = false;
 bool isDeployed = false;
@@ -43,8 +45,6 @@ int posY = 0;
 int savedDirection = 0;
 
 //PID values
-float initialAngle = 0;
-float initialStraightAngle = 0;
 float kp = 8; //5
 float ki = 0.2;
 float kd = 30;
@@ -77,8 +77,6 @@ float headingNE_Y = 6969.6969;
 float headingNW_Y = 6969.6969;
 float headingSE_Y = 6969.6969;
 float headingSW_Y = 6969.6969;
-
-float headingAllowance = 30;
 
 //millis time variables for storage
 unsigned long startTime = 0;
@@ -488,6 +486,11 @@ void displayDirection(float currentHeadingX, float currentHeadingY) {
     Serial.print(", ");
     Serial.print(headingN_Y);
     Serial.println(", N");
+
+    digitalWrite(greenLed, HIGH);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(blueLed, LOW);
+    digitalWrite(redLed, LOW);
   }
   else if(
     currentHeadingX > headingNW_X-headingAllowance && 
@@ -500,6 +503,11 @@ void displayDirection(float currentHeadingX, float currentHeadingY) {
     Serial.print(", ");
     Serial.print(headingNW_Y);
     Serial.println("NW");
+
+    digitalWrite(greenLed, HIGH);
+    digitalWrite(yellowLed, HIGH);
+    digitalWrite(blueLed, LOW);
+    digitalWrite(redLed, LOW);
   }
   else if(
     currentHeadingX > headingW_X-headingAllowance && 
@@ -512,6 +520,11 @@ void displayDirection(float currentHeadingX, float currentHeadingY) {
     Serial.print(", ");
     Serial.print(headingW_Y);
     Serial.println("W");
+
+    digitalWrite(greenLed, LOW);
+    digitalWrite(yellowLed, HIGH);
+    digitalWrite(blueLed, LOW);
+    digitalWrite(redLed, LOW);
   }
   else if(
     currentHeadingX > headingSW_X-headingAllowance && 
@@ -524,6 +537,11 @@ void displayDirection(float currentHeadingX, float currentHeadingY) {
     Serial.print(", ");
     Serial.print(headingSW_Y);
     Serial.println("SW");
+
+    digitalWrite(greenLed, LOW);
+    digitalWrite(yellowLed, HIGH);
+    digitalWrite(blueLed, HIGH);
+    digitalWrite(redLed, LOW);
   }
   else if(
     currentHeadingX > headingS_X-headingAllowance && 
@@ -536,6 +554,11 @@ void displayDirection(float currentHeadingX, float currentHeadingY) {
     Serial.print(", ");
     Serial.print(headingS_Y);
     Serial.println("S");
+
+    digitalWrite(greenLed, LOW);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(blueLed, HIGH);
+    digitalWrite(redLed, LOW);
   }
   else if(
     currentHeadingX > headingSE_X-headingAllowance && 
@@ -548,6 +571,11 @@ void displayDirection(float currentHeadingX, float currentHeadingY) {
     Serial.print(", ");
     Serial.print(headingSE_Y);
     Serial.println("SE");
+
+    digitalWrite(greenLed, LOW);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(blueLed, HIGH);
+    digitalWrite(redLed, HIGH);
   }
   else if(
     currentHeadingX > headingE_X-headingAllowance && 
@@ -560,6 +588,11 @@ void displayDirection(float currentHeadingX, float currentHeadingY) {
     Serial.print(", ");
     Serial.print(headingE_Y);
     Serial.println("E");
+
+    digitalWrite(greenLed, LOW);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(blueLed, LOW);
+    digitalWrite(redLed, HIGH);
   }
   else if(
     currentHeadingX > headingNE_X-headingAllowance && 
@@ -572,6 +605,11 @@ void displayDirection(float currentHeadingX, float currentHeadingY) {
     Serial.print(", ");
     Serial.print(headingNE_Y);
     Serial.println("NE");
+
+    digitalWrite(greenLed, HIGH);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(blueLed, LOW);
+    digitalWrite(redLed, HIGH);
   }
 }
 
