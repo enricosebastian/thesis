@@ -100,7 +100,7 @@ void setup() {
   escRight.write(0);
 
   Serial.print(myName);
-  Serial.println(" - Nano has initialized.");
+  Serial.println(" - Nano v4.0 has initialized.");
 
   //HMC5883 initialization
   if(!mag.begin())
@@ -137,27 +137,43 @@ void loop() {
     } else if(receivedCommand == "N") {
       headingX_N = headingX;
       headingY_N = headingY;
+      Serial.print("headingX_N: ");
+      Serial.println(headingX_N);
     } else if(receivedCommand == "NW") {
       headingX_NW = headingX;
       headingY_NW = headingY;
+      Serial.print("headingX_NW: ");
+      Serial.println(headingX_NW);
     } else if(receivedCommand == "W") {
       headingX_W = headingX;
       headingY_W = headingY;
+      Serial.print("headingX_W: ");
+      Serial.println(headingX_W);
     } else if(receivedCommand == "SW") {
       headingX_SW = headingX;
       headingY_SW = headingY;
+      Serial.print("headingX_SW: ");
+      Serial.println(headingX_SW);
     } else if(receivedCommand == "S") {
       headingX_S = headingX;
       headingY_S = headingY;
+      Serial.print("headingX_S: ");
+      Serial.println(headingX_S);
     } else if(receivedCommand == "SE") {
       headingX_SE = headingX;
       headingY_SE = headingY;
+      Serial.print("headingX_SE: ");
+      Serial.println(headingX_SE);
     } else if(receivedCommand == "E") {
       headingX_E = headingX;
       headingY_E = headingY;
+      Serial.print("headingX_E: ");
+      Serial.println(headingX_E);
     } else if(receivedCommand == "NE") {
       headingX_NE = headingX;
       headingY_NE = headingY;
+      Serial.print("headingX_NE: ");
+      Serial.println(headingX_NE);
     } else if(receivedCommand == "GO") {
       Serial.print(myName);
       Serial.println(" is now moving.");
@@ -220,9 +236,9 @@ void loop() {
   // State 3: You've stopped
   if(hasStopped && !hasDetectedObject) {
     //do nothing lmao
-    Serial.print(headingX);
-    Serial.print(", ");
-    Serial.println(headingY);
+    // Serial.print(headingX);
+    // Serial.print(", ");
+    // Serial.println(headingY);
   }
 
   // State 4: You're going home
@@ -424,7 +440,7 @@ bool receiveCommand() {
       receivedDetails = receivedMessage.substring(endIndex+1);
 
       receivedMessage = ""; // Erase old message
-      return (receivedCommand != "") && (receivedToName == myName) && (receivedFromName != "") && (receivedDetails != "");
+      return (receivedCommand != "") && (receivedToName == myName || receivedToName == "ALL") && (receivedFromName != "") && (receivedDetails != "");
     } else {
       receivedMessage += letter;
     }
