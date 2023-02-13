@@ -473,54 +473,106 @@ void calibrateCompass(float currentHeadingX, float currentHeadingY) {
 }
 
 void displayDirection(float currentHeadingX, float currentHeadingY) {
+  Serial.print(currentHeadingX);
+  Serial.print(", ");
+  Serial.println(currentHeadingY);
+  
   if(
     currentHeadingX > headingN_X-headingAllowance && 
     currentHeadingX < headingN_X+headingAllowance &&
     currentHeadingY > headingN_Y-headingAllowance && 
     currentHeadingY < headingN_Y+headingAllowance
-  ) Serial.println("N");
+  ) {
+    Serial.print("\t\t");
+    Serial.print(headingN_X);
+    Serial.print(", ");
+    Serial.print(headingN_Y);
+    Serial.println(", N");
+  }
   else if(
     currentHeadingX > headingNW_X-headingAllowance && 
     currentHeadingX < headingNW_X+headingAllowance &&
     currentHeadingY > headingNW_Y-headingAllowance && 
     currentHeadingY < headingNW_Y+headingAllowance
-  ) Serial.println("NW");
+  ) {
+    Serial.print("\t\t");
+    Serial.print(headingNW_X);
+    Serial.print(", ");
+    Serial.print(headingNW_Y);
+    Serial.println("NW");
+  }
   else if(
     currentHeadingX > headingW_X-headingAllowance && 
     currentHeadingX < headingW_X+headingAllowance &&
     currentHeadingY > headingW_Y-headingAllowance && 
     currentHeadingY < headingW_Y+headingAllowance
-  ) Serial.println("W");
+  ) {
+    Serial.print("\t\t");
+    Serial.print(headingW_X);
+    Serial.print(", ");
+    Serial.print(headingW_Y);
+    Serial.println("W");
+  }
   else if(
     currentHeadingX > headingSW_X-headingAllowance && 
     currentHeadingX < headingSW_X+headingAllowance &&
     currentHeadingY > headingSW_Y-headingAllowance && 
     currentHeadingY < headingSW_Y+headingAllowance
-  ) Serial.println("SW");
+  ) {
+    Serial.print("\t\t");
+    Serial.print(headingSW_X);
+    Serial.print(", ");
+    Serial.print(headingSW_Y);
+    Serial.println("SW");
+  }
   else if(
     currentHeadingX > headingS_X-headingAllowance && 
     currentHeadingX < headingS_X+headingAllowance &&
     currentHeadingY > headingS_Y-headingAllowance && 
     currentHeadingY < headingS_Y+headingAllowance
-  ) Serial.println("S");
+  ) {
+    Serial.print("\t\t");
+    Serial.print(headingS_X);
+    Serial.print(", ");
+    Serial.print(headingS_Y);
+    Serial.println("S");
+  }
   else if(
     currentHeadingX > headingSE_X-headingAllowance && 
     currentHeadingX < headingSE_X+headingAllowance &&
     currentHeadingY > headingSE_Y-headingAllowance && 
     currentHeadingY < headingSE_Y+headingAllowance
-  ) Serial.println("SE");
+  ) {
+    Serial.print("\t\t");
+    Serial.print(headingSE_X);
+    Serial.print(", ");
+    Serial.print(headingSE_Y);
+    Serial.println("SE");
+  }
   else if(
     currentHeadingX > headingE_X-headingAllowance && 
     currentHeadingX < headingE_X+headingAllowance &&
     currentHeadingY > headingE_Y-headingAllowance && 
     currentHeadingY < headingE_Y+headingAllowance
-  ) Serial.println("E");
+  ) {
+    Serial.print("\t\t");
+    Serial.print(headingE_X);
+    Serial.print(", ");
+    Serial.print(headingE_Y);
+    Serial.println("E");
+  }
   else if(
     currentHeadingX > headingNE_X-headingAllowance && 
     currentHeadingX < headingNE_X+headingAllowance &&
     currentHeadingY > headingNE_Y-headingAllowance && 
     currentHeadingY < headingNE_Y+headingAllowance
-  ) Serial.println("NE");
+  ) {
+    Serial.print("\t\t");
+    Serial.print(headingNE_X);
+    Serial.print(", ");
+    Serial.print(headingNE_Y);
+    Serial.println("NE");
+  }
 }
 
 void move(float currentHeadingX, float currentHeadingY) {
