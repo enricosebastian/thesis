@@ -247,16 +247,12 @@ void move(float headingX, float headingY) {
   previous_error = error;
 
   float modifiedSpeed = map(abs(PID_total),0.00,8000.00,minSpeed,maxSpeed);
-  Serial.print("Saved x and y: ");
-  Serial.println(atan2(savedY, savedX));
-  Serial.print("Current x and y: ");
-  Serial.println(atan2(headingY, headingX));
+  Serial.print("Error: ");
+  Serial.println(error);
   Serial.print("PID_total: ");
   Serial.println(PID_total);
   Serial.print("Speed: ");
   Serial.println(modifiedSpeed);
-  Serial.print("Error: ");
-  Serial.println(error);
   Serial.println('\n');
 }
 
