@@ -124,42 +124,38 @@ void loop() {
   float headingX = map(event.magnetic.x, minX, maxX, 0, 180);
   float headingY = map(event.magnetic.y, minY, maxY, 0, 180);
 
-  Serial.print(headingX);
-  Serial.print(", ");
-  Serial.println(headingY);
-
   // Task 1: Continue to check if you have commands
   if(receiveCommand()) {
-    if(receivedCommand == "x") {
+    if(receivedCommand == "X") {
       halfX = headingX;
       Serial.print("halfX: ");
       Serial.println(halfX);
-    } else if(receivedCommand == "y") {
+    } else if(receivedCommand == "Y") {
       halfY = headingY;
       Serial.print("halfY: ");
       Serial.println(halfY);
-    } else if(receivedCommand == "n") {
+    } else if(receivedCommand == "N") {
       headingX_N = headingX;
       headingY_N = headingY;
-    } else if(receivedCommand == "nw") {
+    } else if(receivedCommand == "NW") {
       headingX_NW = headingX;
       headingY_NW = headingY;
-    } else if(receivedCommand == "w") {
+    } else if(receivedCommand == "W") {
       headingX_W = headingX;
       headingY_W = headingY;
-    } else if(receivedCommand == "sw") {
+    } else if(receivedCommand == "SW") {
       headingX_SW = headingX;
       headingY_SW = headingY;
-    } else if(receivedCommand == "s") {
+    } else if(receivedCommand == "S") {
       headingX_S = headingX;
       headingY_S = headingY;
-    } else if(receivedCommand == "se") {
+    } else if(receivedCommand == "SE") {
       headingX_SE = headingX;
       headingY_SE = headingY;
-    } else if(receivedCommand == "e") {
+    } else if(receivedCommand == "E") {
       headingX_E = headingX;
       headingY_E = headingY;
-    } else if(receivedCommand == "ne") {
+    } else if(receivedCommand == "NE") {
       headingX_NE = headingX;
       headingY_NE = headingY;
     } else if(receivedCommand == "GO") {
@@ -224,6 +220,9 @@ void loop() {
   // State 3: You've stopped
   if(hasStopped && !hasDetectedObject) {
     //do nothing lmao
+    Serial.print(headingX);
+    Serial.print(", ");
+    Serial.println(headingY);
   }
 
   // State 4: You're going home
@@ -247,13 +246,26 @@ void move(float headingX, float headingY) {
   previous_error = error;
 
   float modifiedSpeed = map(abs(PID_total),0.00,8000.00,minSpeed,maxSpeed);
-  Serial.print("Error: ");
-  Serial.println(error);
-  Serial.print("PID_total: ");
-  Serial.println(PID_total);
-  Serial.print("Speed: ");
-  Serial.println(modifiedSpeed);
-  Serial.println('\n');
+  // Serial.print("PID_total: ");
+  // Serial.println(abs(PID_total));
+
+  int direction = getDirection(headingX, headingY);
+  float allowance = 5;
+  bool isStraight = (direction == savedDirection) && (abs(headingX-savedX) < allowance) && (abs(headingY-savedY) < allowance);
+    
+  Serial.print("\t\t\t");
+  Serial.println(strDirection(direction));
+  if(!isStraight) {
+    if(direction < savedDirection) {
+      Serial.println("right++");
+    } else if(direction > savedDirection) {
+      Serial.println("left++");
+    } else {
+      Serial.println("is straight");
+    }
+  } else {
+    Serial.println("is straight");
+  }
 }
 
 int getDirection(float headingX, float headingY) {
