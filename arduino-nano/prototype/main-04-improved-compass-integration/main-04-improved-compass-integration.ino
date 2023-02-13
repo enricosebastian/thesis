@@ -208,14 +208,6 @@ void loop() {
   // State 2: When connected, not deployed, and needs calibration
   if(isConnected && isCalibrated && !isDeployed) {
     //demo directions
-    if(startTime - millis() > 800) {
-      digitalWrite(greenLed, LOW);
-      digitalWrite(yellowLed, !digitalRead(yellowLed));
-      digitalWrite(blueLed, LOW);
-      digitalWrite(redLed, LOW);
-
-      startTime = millis();
-    }
     displayDirection(currentHeadingX, currentHeadingY);
   }
 
