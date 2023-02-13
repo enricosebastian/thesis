@@ -121,6 +121,10 @@ void loop() {
   float headingX = map(event.magnetic.x, minX, maxX, 0, 180);
   float headingY = map(event.magnetic.y, minY, maxY, 0, 180);
 
+  Serial.print(headingX);
+  Serial.print(", ");
+  Serial.println(headingY);
+
   // Task 1: Continue to check if you have commands
   if(receiveCommand()) {
     if(receivedCommand == "GO") {
