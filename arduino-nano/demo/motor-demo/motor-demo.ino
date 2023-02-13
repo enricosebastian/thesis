@@ -18,7 +18,7 @@ const int waitingTime = 5000;
 const int turnDelay = 30000; //in milliseconds
 
 //movement constants
-const float minSpeed = 15;
+const float minSpeed = 7;
 const float movingSpeed = 15;
 const float maxSpeed = 20;
 const float maxAngleChange = 5;
@@ -128,105 +128,12 @@ void loop() {
   Serial.print(", ");
   Serial.println(headingY);
 
-  // Task 1: Continue to check if you have commands
-  if(receiveCommand()) {
-    if(receivedCommand == "x") {
-      halfX = headingX;
-      Serial.print("halfX: ");
-      Serial.println(halfX);
-    } else if(receivedCommand == "y") {
-      halfY = headingY;
-      Serial.print("halfY: ");
-      Serial.println(halfY);
-    } else if(receivedCommand == "n") {
-      headingX_N = headingX;
-      headingY_N = headingY;
-    } else if(receivedCommand == "nw") {
-      headingX_NW = headingX;
-      headingY_NW = headingY;
-    } else if(receivedCommand == "w") {
-      headingX_W = headingX;
-      headingY_W = headingY;
-    } else if(receivedCommand == "sw") {
-      headingX_SW = headingX;
-      headingY_SW = headingY;
-    } else if(receivedCommand == "s") {
-      headingX_S = headingX;
-      headingY_S = headingY;
-    } else if(receivedCommand == "se") {
-      headingX_SE = headingX;
-      headingY_SE = headingY;
-    } else if(receivedCommand == "e") {
-      headingX_E = headingX;
-      headingY_E = headingY;
-    } else if(receivedCommand == "ne") {
-      headingX_NE = headingX;
-      headingY_NE = headingY;
-    } else if(receivedCommand == "GO") {
-      Serial.print(myName);
-      Serial.println(" is now moving.");
-      savedX = headingX;
-      savedY = headingY;
-      savedDirection = getDirection(savedX, savedY);
-      hasStopped = false;
-      startTime = millis();
-    } else if(receivedCommand == "STOP") {
-      Serial.print(myName);
-      Serial.println(" has stopped.");
-      hasStopped = true;
-      escLeft.write(0);
-      escRight.write(0);
-    } else if(receivedCommand == "TURN") {
-      turnTo(strDirection(receivedDetails.toInt()));
-    } else if(receivedCommand == "DETE") {
-      hasDetectedObject = true;
-      if(receivedDetails == "CENTER") {
-        turnTo(strDirection(savedDirection));
-      } else if(receivedDetails == "DONE") {
-        hasDetectedObject = false;
-      } else {
-        turnTo(receivedDetails);
-      }
-    }
-  }
-
-  // State 1: Move drone normally
-  if(!hasStopped && !hasDetectedObject) {
-    if(millis() - startTime > turnDelay) {
-      if(savedDirection == 0) {
-        turnTo("S");
-      } else if(savedDirection == 1) {
-        turnTo("SE");
-      } else if(savedDirection == 2) {
-        turnTo("E");
-      } else if(savedDirection == 3) {
-        turnTo("NE");
-      } else if(savedDirection == 4) {
-        turnTo("N");
-      } else if(savedDirection == -3) {
-        turnTo("NW");
-      } else if(savedDirection == -2) {
-        turnTo("W");
-      } else if(savedDirection == -1) {
-        turnTo("SW");
-      }
-    }
-
-    move(headingX, headingY);
-  }
-
-  // State 2: You have detected something
-  if(!hasStopped && hasDetectedObject) {
-    move(headingX, headingY);
-    //don't do any movement algorithms
-  }
-
-  // State 3: You've stopped
-  if(hasStopped && !hasDetectedObject) {
-    //do nothing lmao
-  }
-
-  // State 4: You're going home
+  escLeft.write(15);
+  escRight.write(15);
+  delay(1000);
+  escLeft.write(0);
+  escRight.write(0);
+  delay(1000);
 
 }
 
