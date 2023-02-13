@@ -241,9 +241,6 @@ void forDrone() {
     }
     isConnected = true;
     Serial.println("Successfully detected by base station. Waiting for deployment.");
-    digitalWrite(redLed, LOW);
-    digitalWrite(yellowLed, HIGH);
-    digitalWrite(greenLed, LOW);
     sendToNano("CONN", myName, "SUCC");
   }
 
@@ -275,38 +272,10 @@ void forDrone() {
     Serial.println("Drone is deploying.");
 
     sendToNano("DEPL", myName, "SUCC");
-    digitalWrite(detectionPin, HIGH);
   }
 
   //STATE 3: Drone is deployed. Move, receive commands, send commands, and detect objects
   if(isConnected && isDeployed) {
-
-    // State 1: Keep blinking yellow == ready to deploy
-    if(hasStopped && !hasDetectedObject) {
-      if(millis() - startTime > 800) {
-        digitalWrite(redLed, LOW);
-        digitalWrite(yellowLed, !digitalRead(yellowLed));
-        digitalWrite(greenLed, LOW);
-        startTime = millis();
-      }
-    }
-
-    // State 2: Keep blinking green == is moving
-    if(!hasStopped && !hasDetectedObject) {
-      if(millis() - startTime > 800) {
-        digitalWrite(redLed, LOW);
-        digitalWrite(yellowLed, LOW);
-        digitalWrite(greenLed, !digitalRead(greenLed));
-        startTime = millis();
-      }
-    }
-
-    // State 3: Permanent yellow == detected something
-    if(!hasStopped && hasDetectedObject) {
-      digitalWrite(redLed, LOW);
-      digitalWrite(yellowLed, HIGH);
-      digitalWrite(greenLed, LOW);
-    }
 
     // Task 1: Interpret commands
     if(receiveCommand()) {
@@ -325,23 +294,17 @@ void forDrone() {
       if(receivedCommand == "STOP") {
         hasStopped = true;
         sendToNano(receivedCommand, myName, receivedDetails);
-        digitalWrite(redLed, HIGH);
-        digitalWrite(yellowLed, LOW);
-        digitalWrite(greenLed, LOW);
-        digitalWrite(detectionPin, LOW);
+        digitalWrite(detectionPin, LOW); // Turn off camera
       } else if(receivedCommand == "GO") {
         hasStopped = false;
         sendToNano(receivedCommand, myName, receivedDetails);
-        digitalWrite(redLed, LOW);
-        digitalWrite(yellowLed, LOW);
-        digitalWrite(greenLed, HIGH);
-        digitalWrite(detectionPin, HIGH);
+        digitalWrite(detectionPin, HIGH); // Turn on camera
       } else {
         sendToNano(receivedCommand, myName, receivedDetails);
       }
     }
 
-    // Task 2: If serial available, that most likely means you detected something...
+    // Task 2: If serial is available, you detected an object...
     while(Serial.available()) {
       char letter = Serial.read();
       if(letter == '\n') {
