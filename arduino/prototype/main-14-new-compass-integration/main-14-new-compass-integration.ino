@@ -431,7 +431,7 @@ bool receiveCommand() {
       receivedDetails = receivedMessage.substring(endIndex+1);
 
       receivedMessage = ""; // Erase old message
-      return (receivedCommand != "") && (receivedToName == myName) && (receivedFromName != "") && (receivedDetails != "");
+      return (receivedCommand != "") && (receivedToName == myName || receivedToName == "ALL") && (receivedFromName != "") && (receivedDetails != "");
     } else {
       receivedMessage += letter;
     }
