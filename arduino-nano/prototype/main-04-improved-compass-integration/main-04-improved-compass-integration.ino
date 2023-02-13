@@ -264,6 +264,7 @@ void loop() {
 
 ///////Specific functions/////////
 void calibrateCompass(float currentHeadingX, float currentHeadingY) {
+  Serial.println("Calibrating...");
   if(headingN_X == 6969.6969 || headingN_Y == 6969.6969) {
     digitalWrite(greenLed, HIGH);
     digitalWrite(yellowLed, LOW);
