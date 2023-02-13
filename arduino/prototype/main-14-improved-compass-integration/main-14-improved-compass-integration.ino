@@ -274,7 +274,7 @@ void forDrone() {
 
     Serial.println("Drone is deploying.");
 
-    sendToNano("BUFF", myName, "SUCC"); // buffer to clear serial ports
+    sendToNano("DEPL", myName, "SUCC");
     digitalWrite(detectionPin, HIGH);
   }
 

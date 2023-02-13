@@ -30,6 +30,9 @@ const float movingSpeed = 15;
 const float maxSpeed = 20;
 
 //Booleans for logic
+bool isConnected = false;
+bool isDeployed = false;
+bool isCalibrated = false;
 bool hasStopped = true;
 bool hasDetectedObject = false;
 bool isLeft = false;
@@ -47,33 +50,35 @@ float ki = 0.2;
 float kd = 30;
 float PID_p, PID_i, PID_d, PID_total;
 
-float maxX = 0;
-float maxY = 0;
-float minX = 1000;
-float minY = 1000; 
+float minHeadingX = 1000;
+float minHeadingY = 1000;
+float maxHeadingX = 0;
+float maxHeadingY = 0; 
 
-float savedX = 0;
-float savedY = 0;
+float savedHeadingX = 6969.6969;
+float savedHeadingY = 6969.6969;
 
-float headingX_N = 0;
-float headingX_E = 0;
-float headingX_W = 0;
-float headingX_S = 0;
+float headingN_X = 6969.6969;
+float headingE_X = 6969.6969;
+float headingW_X = 6969.6969;
+float headingS_X = 6969.6969;
 
-float headingX_NE = 0;
-float headingX_NW = 0;
-float headingX_SE = 0;
-float headingX_SW = 0;
+float headingNE_X = 6969.6969;
+float headingNW_X = 6969.6969;
+float headingSE_X = 6969.6969;
+float headingSW_X = 6969.6969;
 
-float headingY_N = 0;
-float headingY_E = 0;
-float headingY_W = 0;
-float headingY_S = 0;
+float headingN_Y = 6969.6969;
+float headingE_Y = 6969.6969;
+float headingW_Y = 6969.6969;
+float headingS_Y = 6969.6969;
 
-float headingY_NE = 0;
-float headingY_NW = 0;
-float headingY_SE = 0;
-float headingY_SW = 0;
+float headingNE_Y = 6969.6969;
+float headingNW_Y = 6969.6969;
+float headingSE_Y = 6969.6969;
+float headingSW_Y = 6969.6969;
+
+float headingAllowance = 10;
 
 //millis time variables for storage
 unsigned long startTime = 0;
@@ -103,9 +108,6 @@ void setup() {
   escLeft.write(0);
   escRight.write(0);
 
-  Serial.print(myName);
-  Serial.println(" - Nano has initialized.");
-
   //HMC5883 initialization
   if(!mag.begin())
   {
@@ -113,40 +115,78 @@ void setup() {
     Serial.println("Ooops, no HMC5883 detected ... Check your wiring!");
     while(1);
   }
+
+  //LED initialization
+  pinMode(greenLed, OUTPUT);
+  pinMode(yellowLed, OUTPUT);
+  pinMode(blueLed, OUTPUT);
+  pinMode(redLed, OUTPUT);
+
+  digitalWrite(greenLed, HIGH);
+  digitalWrite(yellowLed, HIGH);
+  digitalWrite(blueLed, HIGH);
+  digitalWrite(redLed, HIGH);
+
+  delay(1000);
+
+  digitalWrite(greenLed, LOW);
+  digitalWrite(yellowLed, LOW);
+  digitalWrite(blueLed, LOW);
+  digitalWrite(redLed, HIGH);
+
+  Serial.print(myName);
+  Serial.println(" - Nano has initialized.");
 }
 
 void loop() {
+
   sensors_event_t event; 
   mag.getEvent(&event);
 
-  if(maxY < event.magnetic.y) maxY = event.magnetic.y;
-  if(minY > event.magnetic.y) minY = event.magnetic.y;
+  //Get min and max of X headings
+  if(maxHeadingX < event.magnetic.x) maxHeadingX = event.magnetic.x;
+  if(minHeadingX > event.magnetic.x) minHeadingX = event.magnetic.x;
 
-  if(maxX < event.magnetic.x) maxX = event.magnetic.x;
-  if(minX > event.magnetic.x) minX = event.magnetic.x;
+  //Get min and max of Y headings
+  if(maxHeadingY < event.magnetic.y) maxHeadingY = event.magnetic.y;
+  if(minHeadingY > event.magnetic.y) minHeadingY = event.magnetic.y;
 
-  float headingX = map(event.magnetic.x, minX, maxX, 0, 180);
-  float headingY = map(event.magnetic.y, minY, maxY, 0, 180);
 
-  Serial.print(headingX);
-  Serial.print(", ");
-  Serial.println(headingY);
-
-  // Task 1: Continue to check if you have commands
+  //Get current heading right now
+  float currentHeadingX = map(event.magnetic.x, minHeadingX, maxHeadingX, 0, 180);
+  float currentHeadingY = map(event.magnetic.y, minHeadingY, maxHeadingY, 0, 180);
+  
+  // Main task: Continue to check for commands
   if(receiveCommand()) {
-    if(receivedCommand == "GO") {
+    if(receivedCommand == "CONN") {
+      digitalWrite(greenLed, LOW);
+      digitalWrite(yellowLed, HIGH);
+      digitalWrite(blueLed, LOW);
+      digitalWrite(redLed, LOW);
+
+      isConnected = true;
+    } else if(receivedCommand == "DEPL") {
+      isDeployed = true;
+      hasStopped = true;
+      startTime = millis();
+
       Serial.print(myName);
-      Serial.println(" is now moving.");
+      Serial.println(" is deployed.");
+    } else if(receivedCommand == "GO") {
       hasStopped = false;
       startTime = millis();
+
+      Serial.print(myName);
+      Serial.println(" is now moving.");
     } else if(receivedCommand == "STOP") {
+      hasStopped = true;
+      startTime = millis();
+
       Serial.print(myName);
       Serial.println(" has stopped.");
-      hasStopped = true;
-      escLeft.write(0);
-      escRight.write(0);
-    } else if(receivedCommand == "TURN") {
-      //turn
+      
+      escLeft.write(stopSpeed);
+      escRight.write(stopSpeed);
     } else if(receivedCommand == "DETE") {
       hasDetectedObject = true;
       if(receivedDetails == "DONE") {
@@ -155,29 +195,232 @@ void loop() {
     }
   }
 
-  // State 1: Move drone normally
-  if(!hasStopped && !hasDetectedObject) {
-    move(headingX, headingY);
+  // State 1: Just connected to base station. Show current headings
+  if(!isConnected && !isDeployed) {
+    Serial.print(currentHeadingX);
+    Serial.print(", ");
+    Serial.println(currentHeadingY);
   }
 
-  // State 2: You have detected something
-  if(!hasStopped && hasDetectedObject) {
-    move(headingX, headingY);
-    //don't do any movement algorithms
+  // State 2: When connected, not deployed, and needs calibration
+  if(isConnected && !isCalibrated && !isDeployed) {
+    calibrateCompass(currentHeadingX, currentHeadingY);
   }
 
-  // State 3: You've stopped
-  if(hasStopped && !hasDetectedObject) {
-    //do nothing lmao
+  // State 2: When connected, not deployed, and needs calibration
+  if(isConnected && isCalibrated && !isDeployed) {
+    //demo directions
+    if(startTime - millis() > 800) {
+      digitalWrite(greenLed, LOW);
+      digitalWrite(yellowLed, !digitalRead(yellowLed));
+      digitalWrite(blueLed, LOW);
+      digitalWrite(redLed, LOW);
+
+      startTime = millis();
+    }
+    displayDirection(currentHeadingX, currentHeadingY);
   }
 
-  // State 4: You're going home
+  // State 3: Do all possible functions since you've been deployed
+  if(isConnected && isCalibrated && isDeployed) {
+
+    // State 1: Continuously moving
+    if(!hasStopped && !hasDetectedObject) {
+      if(startTime - millis() > 800) {
+        digitalWrite(greenLed, !digitalRead(greenLed));
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(blueLed, LOW);
+        digitalWrite(redLed, LOW);
+
+        startTime = millis();
+      }
+    }
+
+    // State 2: Detected something, so move there
+    if(!hasStopped && hasDetectedObject) {
+      digitalWrite(greenLed, LOW);
+      digitalWrite(yellowLed, LOW);
+      digitalWrite(blueLed, HIGH);
+      digitalWrite(redLed, LOW);
+    }
+
+    // State 3: Stop moving
+    if(hasStopped) {
+
+      if(startTime - millis() > 800) {
+        digitalWrite(greenLed, LOW);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(blueLed, LOW);
+        digitalWrite(redLed, !digitalRead(yellowLed));
+
+        startTime = millis();
+      }
+
+    }  
+
+  }
 
 }
 
 ///////Specific functions/////////
-void move(float headingX, float headingY) {
-  float error = atan2(savedY, savedX) - atan2(headingY, headingX);
+void calibrateCompass(float currentHeadingX, float currentHeadingY) {
+  if(headingN_X == 6969.6969 || headingN_Y == 6969.6969) {
+    digitalWrite(greenLed, HIGH);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(blueLed, LOW);
+    digitalWrite(redLed, LOW);
+
+    delay(1000);
+    
+    headingN_X = currentHeadingX;
+    headingN_Y = currentHeadingY;
+  } else if(headingNW_X == 6969.6969 || headingNW_Y == 6969.6969) {
+    digitalWrite(greenLed, HIGH);
+    digitalWrite(yellowLed, HIGH);
+    digitalWrite(blueLed, LOW);
+    digitalWrite(redLed, LOW);
+
+    delay(1000);
+
+    headingNW_X = currentHeadingX;
+    headingNW_Y = currentHeadingY;
+  } else if(headingW_X == 6969.6969 || headingW_Y == 6969.6969) {
+    digitalWrite(greenLed, LOW);
+    digitalWrite(yellowLed, HIGH);
+    digitalWrite(blueLed, LOW);
+    digitalWrite(redLed, LOW);
+
+    delay(1000);
+
+    headingW_X = currentHeadingX;
+    headingW_Y = currentHeadingY;
+  } else if(headingSW_X == 6969.6969 || headingSW_Y == 6969.6969) {
+    digitalWrite(greenLed, LOW);
+    digitalWrite(yellowLed, HIGH);
+    digitalWrite(blueLed, HIGH);
+    digitalWrite(redLed, LOW);
+
+    delay(1000);
+
+    headingSW_X = currentHeadingX;
+    headingSW_Y = currentHeadingY;
+  } else if(headingS_X == 6969.6969 || headingS_Y == 6969.6969) {
+    digitalWrite(greenLed, LOW);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(blueLed, HIGH);
+    digitalWrite(redLed, LOW);
+
+    delay(1000);
+
+    headingS_X = currentHeadingX;
+    headingS_Y = currentHeadingY;
+  } else if(headingSE_X == 6969.6969 || headingSE_Y == 6969.6969) {
+    digitalWrite(greenLed, LOW);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(blueLed, HIGH);
+    digitalWrite(redLed, HIGH);
+
+    delay(1000);
+
+    headingSE_X = currentHeadingX;
+    headingSE_Y = currentHeadingY;
+  } else if(headingE_X == 6969.6969 || headingE_Y == 6969.6969) {
+    digitalWrite(greenLed, LOW);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(blueLed, LOW);
+    digitalWrite(redLed, HIGH);
+
+    delay(1000);
+
+    headingE_X = currentHeadingX;
+    headingE_Y = currentHeadingY;
+  } else if(headingNE_X == 6969.6969 || headingNE_Y == 6969.6969) {
+    digitalWrite(greenLed, HIGH);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(blueLed, LOW);
+    digitalWrite(redLed, HIGH);
+
+    delay(1000);
+
+    headingNE_X = currentHeadingX;
+    headingNE_Y = currentHeadingY;
+  }
+
+  isCalibrated = !(
+    headingN_X == 6969.6969 &&
+    headingE_X == 6969.6969 &&
+    headingW_X == 6969.6969 &&
+    headingS_X == 6969.6969 &&
+    headingNE_X == 6969.6969 &&
+    headingNW_X == 6969.6969 &&
+    headingSE_X == 6969.6969 &&
+    headingSW_X == 6969.6969 &&
+    headingN_Y == 6969.6969 &&
+    headingE_Y == 6969.6969 &&
+    headingW_Y == 6969.6969 &&
+    headingS_Y == 6969.6969 &&
+    headingNE_Y == 6969.6969 &&
+    headingNW_Y == 6969.6969 &&
+    headingSE_Y == 6969.6969 &&
+    headingSW_Y == 6969.6969
+  );
+
+  if(isCalibrated) startTime = millis();
+}
+
+void displayDirection(float currentHeadingX, float currentHeadingY) {
+  if(
+    currentHeadingX > headingN_X-headingAllowance && 
+    currentHeadingX < headingN_X+headingAllowance &&
+    currentHeadingY > headingN_Y-headingAllowance && 
+    currentHeadingY < headingN_Y+headingAllowance
+  ) Serial.println("N");
+  else if(
+    currentHeadingX > headingNW_X-headingAllowance && 
+    currentHeadingX < headingNW_X+headingAllowance &&
+    currentHeadingY > headingNW_Y-headingAllowance && 
+    currentHeadingY < headingNW_Y+headingAllowance
+  ) Serial.println("NW");
+  else if(
+    currentHeadingX > headingW_X-headingAllowance && 
+    currentHeadingX < headingW_X+headingAllowance &&
+    currentHeadingY > headingW_Y-headingAllowance && 
+    currentHeadingY < headingW_Y+headingAllowance
+  ) Serial.println("W");
+  else if(
+    currentHeadingX > headingSW_X-headingAllowance && 
+    currentHeadingX < headingSW_X+headingAllowance &&
+    currentHeadingY > headingSW_Y-headingAllowance && 
+    currentHeadingY < headingSW_Y+headingAllowance
+  ) Serial.println("SW");
+  else if(
+    currentHeadingX > headingS_X-headingAllowance && 
+    currentHeadingX < headingS_X+headingAllowance &&
+    currentHeadingY > headingS_Y-headingAllowance && 
+    currentHeadingY < headingS_Y+headingAllowance
+  ) Serial.println("S");
+  else if(
+    currentHeadingX > headingSE_X-headingAllowance && 
+    currentHeadingX < headingSE_X+headingAllowance &&
+    currentHeadingY > headingSE_Y-headingAllowance && 
+    currentHeadingY < headingSE_Y+headingAllowance
+  ) Serial.println("SE");
+  else if(
+    currentHeadingX > headingE_X-headingAllowance && 
+    currentHeadingX < headingE_X+headingAllowance &&
+    currentHeadingY > headingE_Y-headingAllowance && 
+    currentHeadingY < headingE_Y+headingAllowance
+  ) Serial.println("E");
+  else if(
+    currentHeadingX > headingNE_X-headingAllowance && 
+    currentHeadingX < headingNE_X+headingAllowance &&
+    currentHeadingY > headingNE_Y-headingAllowance && 
+    currentHeadingY < headingNE_Y+headingAllowance
+  ) Serial.println("NE");
+}
+
+void move(float currentHeadingX, float currentHeadingY) {
+  float error = atan2(savedHeadingY, savedHeadingX) - atan2(currentHeadingY, currentHeadingX);
   float previous_error;
   float cumulative_error;
   int period = 50;
