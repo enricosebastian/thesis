@@ -1,3 +1,4 @@
+// Ubuntu command line for serial port: sudo chmod a+rw /dev/ttyACM0
 #include <Arduino.h>
 #include <NeoSWSerial.h>
 #include <LinkedList.h>
@@ -340,12 +341,6 @@ void forDrone() {
         digitalWrite(yellowLed, LOW);
         digitalWrite(greenLed, HIGH);
         digitalWrite(detectionPin, HIGH);
-      } else if(receivedCommand == "DETE") {
-        hasDetectedObject = true;
-        if(receivedDetails == "DONE") {
-          hasDetectedObject = false;
-        }
-        sendToNano(receivedCommand, myName, receivedDetails);
       } else {
         sendToNano(receivedCommand, myName, receivedDetails);
       }
@@ -371,7 +366,11 @@ void forDrone() {
   
         receivedMessage = ""; // Erase old message
         if(receivedCommand == "DETE") {
+          hasDetectedObject = true;
           sendToNano(receivedCommand, myName, receivedDetails);
+          if(receivedDetails == "DONE") {
+            hasDetectedObject = false;
+          }
         }
       } else {
         receivedMessage += letter;
