@@ -78,7 +78,7 @@ float headingNW_Y = 6969.6969;
 float headingSE_Y = 6969.6969;
 float headingSW_Y = 6969.6969;
 
-float headingAllowance = 50;
+float headingAllowance = 30;
 
 //millis time variables for storage
 unsigned long startTime = 0;
