@@ -305,10 +305,8 @@ void forDrone() {
       }
     }
 
-    
-
     // Task 3: Interpret commands
-    if(receiveCommand() && !hasDetectedObject) {
+    if(receiveCommand()) {
 
       //Send acknowledgement that we received the command first
       startTime = millis();
@@ -335,6 +333,15 @@ void forDrone() {
         digitalWrite(yellowLed, LOW);
         digitalWrite(greenLed, HIGH);
         digitalWrite(detectionPin, HIGH);
+      } else if(receivedCommand == "DETE") {
+        hasDetectedObject = true;
+        if(receivedDetails == "DONE") {
+          hasDetectedObject = false;
+        }
+        digitalWrite(redLed, LOW);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(greenLed, HIGH);
+        sendToNano(receivedCommand, myName, receivedDetails);
       } else {
         sendToNano(receivedCommand, myName, receivedDetails);
       }
