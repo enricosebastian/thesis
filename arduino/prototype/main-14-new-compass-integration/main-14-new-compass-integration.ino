@@ -285,7 +285,7 @@ void forDrone() {
   //STATE 3: Drone is deployed. Move, receive commands, send commands, and detect objects
   if(isConnected && isDeployed) {
 
-    // Task 1: Keep blinking yellow == ready to deploy
+    // State 1: Keep blinking yellow == ready to deploy
     if(hasStopped && !receiveCommand() && !hasDetectedObject) {
       if(millis() - startTime > 800) {
         digitalWrite(redLed, LOW);
@@ -295,7 +295,7 @@ void forDrone() {
       }
     }
 
-    // Task 2: Keep blinking green == is deployed
+    // State 2: Keep blinking green == is moving
     if(!hasStopped && !receiveCommand() && !hasDetectedObject) {
       if(millis() - startTime > 800) {
         digitalWrite(redLed, LOW);
@@ -305,7 +305,14 @@ void forDrone() {
       }
     }
 
-    // Task 3: Interpret commands
+    // State 3: Permanent yellow == detected something
+    if(!hasStopped && hasDetectedObject) {
+      digitalWrite(redLed, LOW);
+      digitalWrite(yellowLed, HIGH);
+      digitalWrite(greenLed, LOW);
+    }
+
+    // Task 1: Interpret commands
     if(receiveCommand()) {
 
       //Send acknowledgement that we received the command first
@@ -338,16 +345,13 @@ void forDrone() {
         if(receivedDetails == "DONE") {
           hasDetectedObject = false;
         }
-        digitalWrite(redLed, LOW);
-        digitalWrite(yellowLed, LOW);
-        digitalWrite(greenLed, HIGH);
         sendToNano(receivedCommand, myName, receivedDetails);
       } else {
         sendToNano(receivedCommand, myName, receivedDetails);
       }
     }
 
-    // Task 4: If serial available, that most likely means you detected something...
+    // Task 2: If serial available, that most likely means you detected something...
     while(Serial.available()) {
       char letter = Serial.read();
       if(letter == '\n') {
