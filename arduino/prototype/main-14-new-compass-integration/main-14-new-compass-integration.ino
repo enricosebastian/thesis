@@ -5,8 +5,8 @@
 
 //Name here
 // const String myName = "BASE";
-const String myName = "DRO1";
-// const String myName = "DRO2";
+// const String myName = "DRO1";
+const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants (buttons)
@@ -287,7 +287,7 @@ void forDrone() {
   if(isConnected && isDeployed) {
 
     // State 1: Keep blinking yellow == ready to deploy
-    if(hasStopped && !receiveCommand() && !hasDetectedObject) {
+    if(hasStopped && !hasDetectedObject) {
       if(millis() - startTime > 800) {
         digitalWrite(redLed, LOW);
         digitalWrite(yellowLed, !digitalRead(yellowLed));
@@ -297,7 +297,7 @@ void forDrone() {
     }
 
     // State 2: Keep blinking green == is moving
-    if(!hasStopped && !receiveCommand() && !hasDetectedObject) {
+    if(!hasStopped && !hasDetectedObject) {
       if(millis() - startTime > 800) {
         digitalWrite(redLed, LOW);
         digitalWrite(yellowLed, LOW);
@@ -366,11 +366,12 @@ void forDrone() {
   
         receivedMessage = ""; // Erase old message
         if(receivedCommand == "DETE") {
-          hasDetectedObject = true;
-          sendToNano(receivedCommand, myName, receivedDetails);
           if(receivedDetails == "DONE") {
             hasDetectedObject = false;
+          } else {
+            hasDetectedObject = true;
           }
+          sendToNano(receivedCommand, myName, receivedDetails);
         }
       } else {
         receivedMessage += letter;
