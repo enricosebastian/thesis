@@ -272,7 +272,7 @@ void calibrateCompass(float currentHeadingX, float currentHeadingY) {
     digitalWrite(blueLed, LOW);
     digitalWrite(redLed, LOW);
 
-    delay(1000);
+    delay(5000);
 
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, LOW);
@@ -295,7 +295,7 @@ void calibrateCompass(float currentHeadingX, float currentHeadingY) {
     digitalWrite(blueLed, LOW);
     digitalWrite(redLed, LOW);
 
-    delay(1000);
+    delay(5000);
 
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, LOW);
@@ -318,7 +318,7 @@ void calibrateCompass(float currentHeadingX, float currentHeadingY) {
     digitalWrite(blueLed, LOW);
     digitalWrite(redLed, LOW);
 
-    delay(1000);
+    delay(5000);
 
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, LOW);
@@ -341,7 +341,7 @@ void calibrateCompass(float currentHeadingX, float currentHeadingY) {
     digitalWrite(blueLed, HIGH);
     digitalWrite(redLed, LOW);
 
-    delay(1000);
+    delay(5000);
 
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, LOW);
@@ -364,7 +364,7 @@ void calibrateCompass(float currentHeadingX, float currentHeadingY) {
     digitalWrite(blueLed, HIGH);
     digitalWrite(redLed, LOW);
 
-    delay(1000);
+    delay(5000);
 
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, LOW);
@@ -387,7 +387,7 @@ void calibrateCompass(float currentHeadingX, float currentHeadingY) {
     digitalWrite(blueLed, HIGH);
     digitalWrite(redLed, HIGH);
 
-    delay(1000);
+    delay(5000);
 
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, LOW);
@@ -410,7 +410,7 @@ void calibrateCompass(float currentHeadingX, float currentHeadingY) {
     digitalWrite(blueLed, LOW);
     digitalWrite(redLed, HIGH);
 
-    delay(1000);
+    delay(5000);
 
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, LOW);
@@ -433,7 +433,7 @@ void calibrateCompass(float currentHeadingX, float currentHeadingY) {
     digitalWrite(blueLed, LOW);
     digitalWrite(redLed, HIGH);
 
-    delay(1000);
+    delay(5000);
 
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, LOW);
