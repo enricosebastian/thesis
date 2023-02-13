@@ -265,14 +265,14 @@ void loop() {
 ///////Specific functions/////////
 void calibrateCompass(float currentHeadingX, float currentHeadingY) {
   if(headingN_X == 6969.6969 || headingN_Y == 6969.6969) {
-    Serial.println("Calibrating N...");
+    Serial.println("Calibrating N: ");
 
     digitalWrite(greenLed, HIGH);
     digitalWrite(yellowLed, LOW);
     digitalWrite(blueLed, LOW);
     digitalWrite(redLed, LOW);
 
-    delay(5000);
+    delay(1000);
 
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, LOW);
@@ -281,17 +281,21 @@ void calibrateCompass(float currentHeadingX, float currentHeadingY) {
 
     headingN_X = currentHeadingX;
     headingN_Y = currentHeadingY;
+
+    Serial.print(currentHeadingX);
+    Serial.print(", ");
+    Serial.println(currentHeadingY);
     
-    delay(5000);
+    delay(1000);
   } else if(headingNW_X == 6969.6969 || headingNW_Y == 6969.6969) {
-    Serial.println("Calibrating NW...");
+    Serial.println("Calibrating NW: ");
 
     digitalWrite(greenLed, HIGH);
     digitalWrite(yellowLed, HIGH);
     digitalWrite(blueLed, LOW);
     digitalWrite(redLed, LOW);
 
-    delay(5000);
+    delay(1000);
 
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, LOW);
@@ -300,17 +304,21 @@ void calibrateCompass(float currentHeadingX, float currentHeadingY) {
 
     headingNW_X = currentHeadingX;
     headingNW_Y = currentHeadingY;
+
+    Serial.print(currentHeadingX);
+    Serial.print(", ");
+    Serial.println(currentHeadingY);
     
-    delay(5000);
+    delay(1000);
   } else if(headingW_X == 6969.6969 || headingW_Y == 6969.6969) {
-    Serial.println("Calibrating W...");
+    Serial.println("Calibrating W: ");
 
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, HIGH);
     digitalWrite(blueLed, LOW);
     digitalWrite(redLed, LOW);
 
-    delay(5000);
+    delay(1000);
 
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, LOW);
@@ -319,17 +327,21 @@ void calibrateCompass(float currentHeadingX, float currentHeadingY) {
 
     headingW_X = currentHeadingX;
     headingW_Y = currentHeadingY;
+
+    Serial.print(currentHeadingX);
+    Serial.print(", ");
+    Serial.println(currentHeadingY);
     
-    delay(5000);
+    delay(1000);
   } else if(headingSW_X == 6969.6969 || headingSW_Y == 6969.6969) {
-    Serial.println("Calibrating SW...");
+    Serial.println("Calibrating SW: ");
     
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, HIGH);
     digitalWrite(blueLed, HIGH);
     digitalWrite(redLed, LOW);
 
-    delay(5000);
+    delay(1000);
 
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, LOW);
@@ -338,17 +350,21 @@ void calibrateCompass(float currentHeadingX, float currentHeadingY) {
 
     headingSW_X = currentHeadingX;
     headingSW_Y = currentHeadingY;
+
+    Serial.print(currentHeadingX);
+    Serial.print(", ");
+    Serial.println(currentHeadingY);
     
-    delay(5000);
+    delay(1000);
   } else if(headingS_X == 6969.6969 || headingS_Y == 6969.6969) {
-    Serial.println("Calibrating S...");
+    Serial.println("Calibrating S: ");
 
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, LOW);
     digitalWrite(blueLed, HIGH);
     digitalWrite(redLed, LOW);
 
-    delay(5000);
+    delay(1000);
 
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, LOW);
@@ -357,17 +373,21 @@ void calibrateCompass(float currentHeadingX, float currentHeadingY) {
 
     headingS_X = currentHeadingX;
     headingS_Y = currentHeadingY;
+
+    Serial.print(currentHeadingX);
+    Serial.print(", ");
+    Serial.println(currentHeadingY);
     
-    delay(5000);
+    delay(1000);
   } else if(headingSE_X == 6969.6969 || headingSE_Y == 6969.6969) {
-    Serial.println("Calibrating SE...");
+    Serial.println("Calibrating SE: ");
 
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, LOW);
     digitalWrite(blueLed, HIGH);
     digitalWrite(redLed, HIGH);
 
-    delay(5000);
+    delay(1000);
 
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, LOW);
@@ -376,17 +396,21 @@ void calibrateCompass(float currentHeadingX, float currentHeadingY) {
 
     headingSE_X = currentHeadingX;
     headingSE_Y = currentHeadingY;
+
+    Serial.print(currentHeadingX);
+    Serial.print(", ");
+    Serial.println(currentHeadingY);
     
-    delay(5000);
+    delay(1000);
   } else if(headingE_X == 6969.6969 || headingE_Y == 6969.6969) {
-    Serial.println("Calibrating E...");
+    Serial.println("Calibrating E: ");
     
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, LOW);
     digitalWrite(blueLed, LOW);
     digitalWrite(redLed, HIGH);
 
-    delay(5000);
+    delay(1000);
 
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, LOW);
@@ -395,17 +419,21 @@ void calibrateCompass(float currentHeadingX, float currentHeadingY) {
 
     headingE_X = currentHeadingX;
     headingE_Y = currentHeadingY;
+
+    Serial.print(currentHeadingX);
+    Serial.print(", ");
+    Serial.println(currentHeadingY);
     
-    delay(5000);
+    delay(1000);
   } else if(headingNE_X == 6969.6969 || headingNE_Y == 6969.6969) {
-    Serial.println("Calibrating NE...");
+    Serial.println("Calibrating NE: ");
 
     digitalWrite(greenLed, HIGH);
     digitalWrite(yellowLed, LOW);
     digitalWrite(blueLed, LOW);
     digitalWrite(redLed, HIGH);
 
-    delay(5000);
+    delay(1000);
 
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, LOW);
@@ -414,8 +442,12 @@ void calibrateCompass(float currentHeadingX, float currentHeadingY) {
 
     headingNE_X = currentHeadingX;
     headingNE_Y = currentHeadingY;
+
+    Serial.print(currentHeadingX);
+    Serial.print(", ");
+    Serial.println(currentHeadingY);
     
-    delay(5000);
+    delay(1000);
   }
 
   isCalibrated = !(
