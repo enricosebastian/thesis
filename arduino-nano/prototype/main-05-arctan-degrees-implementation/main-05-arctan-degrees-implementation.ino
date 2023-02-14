@@ -167,7 +167,7 @@ void loop() {
 
   // State 1: Just connected to base station. Show current angle
   if(isConnected && !isDeployed) {
-    Serial.print("Current angle: ")
+    Serial.print("Current angle: ");
     Serial.println(currentAngle);
   }
 
