@@ -113,15 +113,18 @@ void loop() {
   sensors_event_t event; 
   mag.getEvent(&event);
 
-  float currentAngle = atan2(event.magnetic.y, event.magnetic.x);
+  float heading = atan2(event.magnetic.y, event.magnetic.x);
 
   // Correct for when signs are reversed.
-  if(currentAngle < 0)
-    currentAngle += 2*PI;
+  if(heading < 0)
+    heading += 2*PI;
     
   // Check for wrap due to addition of declination.
-  if(currentAngle > 2*PI)
-    currentAngle -= 2*PI;
+  if(heading > 2*PI)
+    heading -= 2*PI;
+   
+  // Convert radians to degrees for readability.
+  float currentAngle = heading * 180/M_PI; 
   
   // Main task: Continue to check for commands
   if(receiveCommand()) {
