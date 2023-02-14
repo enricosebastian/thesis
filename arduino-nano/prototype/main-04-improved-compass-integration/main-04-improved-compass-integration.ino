@@ -696,6 +696,7 @@ void move(float currentHeadingX, float currentHeadingY) {
   String currentDirection = getDirection(currentHeadingX, currentHeadingY);
   bool isStraight = false;
   bool isLeft = false;
+  bool wasLeft = false;
 
   int modifiedSpeed = (int) PID_total;
 
@@ -822,8 +823,13 @@ void move(float currentHeadingX, float currentHeadingY) {
     digitalWrite(yellowLed, HIGH);
     digitalWrite(blueLed, HIGH);
     digitalWrite(redLed, LOW);
-    escLeft.write(15);
-    escRight.write(15);
+    if(wasLeft) {
+      escLeft.write(modifiedSpeed+15);
+      escRight.write(15);
+    } else {
+      escLeft.write(15);
+      escRight.write(modifiedSpeed);
+    }
   } else if(!isStraight && !isLeft) {
     digitalWrite(greenLed, HIGH);
     digitalWrite(yellowLed, LOW);
@@ -831,6 +837,7 @@ void move(float currentHeadingX, float currentHeadingY) {
     digitalWrite(redLed, LOW);
     escLeft.write(15);
     escRight.write(modifiedSpeed);
+    wasLeft = false;
   } else if(!isStraight && isLeft) {
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, LOW);
@@ -838,6 +845,7 @@ void move(float currentHeadingX, float currentHeadingY) {
     digitalWrite(redLed, HIGH);
     escLeft.write(modifiedSpeed+15);
     escRight.write(15);
+    wasLeft = true;
   }
 }
 
