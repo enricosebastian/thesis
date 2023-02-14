@@ -485,23 +485,6 @@ void displayDirection(float currentHeadingX, float currentHeadingY) {
     digitalWrite(redLed, LOW);
   }
   else if(
-    currentHeadingX > headingNW_X-headingAllowance && 
-    currentHeadingX < headingNW_X+headingAllowance &&
-    currentHeadingY > headingNW_Y-headingAllowance && 
-    currentHeadingY < headingNW_Y+headingAllowance
-  ) {
-    Serial.print("\t\t");
-    Serial.print(headingNW_X);
-    Serial.print(", ");
-    Serial.print(headingNW_Y);
-    Serial.println("NW");
-
-    digitalWrite(greenLed, HIGH);
-    digitalWrite(yellowLed, HIGH);
-    digitalWrite(blueLed, LOW);
-    digitalWrite(redLed, LOW);
-  }
-  else if(
     currentHeadingX > headingW_X-headingAllowance && 
     currentHeadingX < headingW_X+headingAllowance &&
     currentHeadingY > headingW_Y-headingAllowance && 
@@ -514,6 +497,57 @@ void displayDirection(float currentHeadingX, float currentHeadingY) {
     Serial.println("W");
 
     digitalWrite(greenLed, LOW);
+    digitalWrite(yellowLed, HIGH);
+    digitalWrite(blueLed, LOW);
+    digitalWrite(redLed, LOW);
+  }
+  else if(
+    currentHeadingX > headingS_X-headingAllowance && 
+    currentHeadingX < headingS_X+headingAllowance &&
+    currentHeadingY > headingS_Y-headingAllowance && 
+    currentHeadingY < headingS_Y+headingAllowance
+  ) {
+    Serial.print("\t\t");
+    Serial.print(headingS_X);
+    Serial.print(", ");
+    Serial.print(headingS_Y);
+    Serial.println("S");
+
+    digitalWrite(greenLed, LOW);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(blueLed, HIGH);
+    digitalWrite(redLed, LOW);
+  }
+  else if(
+    currentHeadingX > headingE_X-headingAllowance && 
+    currentHeadingX < headingE_X+headingAllowance &&
+    currentHeadingY > headingE_Y-headingAllowance && 
+    currentHeadingY < headingE_Y+headingAllowance
+  ) {
+    Serial.print("\t\t");
+    Serial.print(headingE_X);
+    Serial.print(", ");
+    Serial.print(headingE_Y);
+    Serial.println("E");
+
+    digitalWrite(greenLed, LOW);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(blueLed, LOW);
+    digitalWrite(redLed, HIGH);
+  }
+  else if(
+    currentHeadingX > headingNW_X-headingAllowance && 
+    currentHeadingX < headingNW_X+headingAllowance &&
+    currentHeadingY > headingNW_Y-headingAllowance && 
+    currentHeadingY < headingNW_Y+headingAllowance
+  ) {
+    Serial.print("\t\t");
+    Serial.print(headingNW_X);
+    Serial.print(", ");
+    Serial.print(headingNW_Y);
+    Serial.println("NW");
+
+    digitalWrite(greenLed, HIGH);
     digitalWrite(yellowLed, HIGH);
     digitalWrite(blueLed, LOW);
     digitalWrite(redLed, LOW);
@@ -536,23 +570,6 @@ void displayDirection(float currentHeadingX, float currentHeadingY) {
     digitalWrite(redLed, LOW);
   }
   else if(
-    currentHeadingX > headingS_X-headingAllowance && 
-    currentHeadingX < headingS_X+headingAllowance &&
-    currentHeadingY > headingS_Y-headingAllowance && 
-    currentHeadingY < headingS_Y+headingAllowance
-  ) {
-    Serial.print("\t\t");
-    Serial.print(headingS_X);
-    Serial.print(", ");
-    Serial.print(headingS_Y);
-    Serial.println("S");
-
-    digitalWrite(greenLed, LOW);
-    digitalWrite(yellowLed, LOW);
-    digitalWrite(blueLed, HIGH);
-    digitalWrite(redLed, LOW);
-  }
-  else if(
     currentHeadingX > headingSE_X-headingAllowance && 
     currentHeadingX < headingSE_X+headingAllowance &&
     currentHeadingY > headingSE_Y-headingAllowance && 
@@ -567,23 +584,6 @@ void displayDirection(float currentHeadingX, float currentHeadingY) {
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, LOW);
     digitalWrite(blueLed, HIGH);
-    digitalWrite(redLed, HIGH);
-  }
-  else if(
-    currentHeadingX > headingE_X-headingAllowance && 
-    currentHeadingX < headingE_X+headingAllowance &&
-    currentHeadingY > headingE_Y-headingAllowance && 
-    currentHeadingY < headingE_Y+headingAllowance
-  ) {
-    Serial.print("\t\t");
-    Serial.print(headingE_X);
-    Serial.print(", ");
-    Serial.print(headingE_Y);
-    Serial.println("E");
-
-    digitalWrite(greenLed, LOW);
-    digitalWrite(yellowLed, LOW);
-    digitalWrite(blueLed, LOW);
     digitalWrite(redLed, HIGH);
   }
   else if(
