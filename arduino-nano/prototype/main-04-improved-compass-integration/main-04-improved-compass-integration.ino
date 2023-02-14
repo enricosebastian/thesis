@@ -468,10 +468,10 @@ void displayDirection(float currentHeadingX, float currentHeadingY) {
   Serial.println(currentHeadingY);
   
   if(
-    currentHeadingX > headingN_X-headingAllowance && 
-    currentHeadingX < headingN_X+headingAllowance &&
-    currentHeadingY > headingN_Y-headingAllowance && 
-    currentHeadingY < headingN_Y+headingAllowance
+    currentHeadingX >= headingN_X-headingAllowance && 
+    currentHeadingX <= headingN_X+headingAllowance &&
+    currentHeadingY >= headingN_Y-headingAllowance && 
+    currentHeadingY <= headingN_Y+headingAllowance
   ) {
     Serial.print("\t\t");
     Serial.print(headingN_X);
@@ -485,10 +485,10 @@ void displayDirection(float currentHeadingX, float currentHeadingY) {
     digitalWrite(redLed, LOW);
   }
   else if(
-    currentHeadingX > headingW_X-headingAllowance && 
-    currentHeadingX < headingW_X+headingAllowance &&
-    currentHeadingY > headingW_Y-headingAllowance && 
-    currentHeadingY < headingW_Y+headingAllowance
+    currentHeadingX >= headingW_X-headingAllowance && 
+    currentHeadingX <= headingW_X+headingAllowance &&
+    currentHeadingY >= headingW_Y-headingAllowance && 
+    currentHeadingY <= headingW_Y+headingAllowance
   ) {
     Serial.print("\t\t");
     Serial.print(headingW_X);
@@ -502,10 +502,10 @@ void displayDirection(float currentHeadingX, float currentHeadingY) {
     digitalWrite(redLed, LOW);
   }
   else if(
-    currentHeadingX > headingS_X-headingAllowance && 
-    currentHeadingX < headingS_X+headingAllowance &&
-    currentHeadingY > headingS_Y-headingAllowance && 
-    currentHeadingY < headingS_Y+headingAllowance
+    currentHeadingX >= headingS_X-headingAllowance && 
+    currentHeadingX <= headingS_X+headingAllowance &&
+    currentHeadingY >= headingS_Y-headingAllowance && 
+    currentHeadingY <= headingS_Y+headingAllowance
   ) {
     Serial.print("\t\t");
     Serial.print(headingS_X);
@@ -519,10 +519,10 @@ void displayDirection(float currentHeadingX, float currentHeadingY) {
     digitalWrite(redLed, LOW);
   }
   else if(
-    currentHeadingX > headingE_X-headingAllowance && 
-    currentHeadingX < headingE_X+headingAllowance &&
-    currentHeadingY > headingE_Y-headingAllowance && 
-    currentHeadingY < headingE_Y+headingAllowance
+    currentHeadingX >= headingE_X-headingAllowance && 
+    currentHeadingX <= headingE_X+headingAllowance &&
+    currentHeadingY >= headingE_Y-headingAllowance && 
+    currentHeadingY <= headingE_Y+headingAllowance
   ) {
     Serial.print("\t\t");
     Serial.print(headingE_X);
