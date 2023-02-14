@@ -25,12 +25,10 @@ const int turnDelay = 30000; //in milliseconds
 
 //movement constants
 const float stopSpeed = 0;
-const float minSpeed = 10;
 const float movingSpeed = 15;
-const float maxSpeed = 20;
+const float maxSpeed = 25;
 
-const float headingAllowance = 60;
-const float headingAllowanceInBetween = 0.25;
+const float angleAllowance = 5.0;
 
 //Booleans for logic
 bool isConnected = false;
@@ -45,18 +43,12 @@ int posY = 0;
 int savedDir = 0;
 
 //PID values
-float kp = 8; //5
+float kp = 8;
 float ki = 0.2;
 float kd = 30;
 float PID_p, PID_i, PID_d, PID_total;
 
-float minHeadingX = 1000;
-float minHeadingY = 1000;
-float maxHeadingX = 0;
-float maxHeadingY = 0; 
-
-float savedHeadingX = 0;
-float savedHeadingY = 0;
+float savedAngle = 0.0;
 
 //millis time variables for storage
 unsigned long startTime = 0;
@@ -124,7 +116,7 @@ void loop() {
   
   // Main task: Continue to check for commands
   if(receiveCommand()) {
-    if(receivedCommand == "CONN") {
+    if(receivedCommand == "CONN" && !isConnected) {
       digitalWrite(greenLed, LOW);
       digitalWrite(yellowLed, HIGH);
       digitalWrite(blueLed, LOW);
@@ -132,8 +124,6 @@ void loop() {
 
       isConnected = true;
     } else if(receivedCommand == "DEPL") {
-      isConnected = true;
-      isCalibrated = true;
       isDeployed = true;
       hasStopped = true;
       startTime = millis();
