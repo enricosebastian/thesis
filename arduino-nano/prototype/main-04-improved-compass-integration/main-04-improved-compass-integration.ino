@@ -29,7 +29,7 @@ const float minSpeed = 10;
 const float movingSpeed = 15;
 const float maxSpeed = 20;
 
-const float headingAllowance = 20;
+const float headingAllowance = 60;
 const float headingAllowanceInBetween = 0.25;
 
 //Booleans for logic
@@ -38,12 +38,11 @@ bool isDeployed = false;
 bool isCalibrated = false;
 bool hasStopped = true;
 bool hasDetectedObject = false;
-bool isLeft = false;
 
 //Variables
 int posX = 0;
 int posY = 0;
-int savedDirection = 0;
+int savedDir = 0;
 
 //PID values
 float kp = 8; //5
@@ -94,6 +93,8 @@ Servo escRight;
 
 NeoSWSerial Nano(txNano, rxNano); // (Green TX, Blue RX)
 Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
+
+String testName = "hi";
 
 void setup() {
   Serial.begin(9600);
@@ -165,6 +166,8 @@ void loop() {
 
       isConnected = true;
     } else if(receivedCommand == "DEPL") {
+      isConnected = true;
+      isCalibrated = true;
       isDeployed = true;
       hasStopped = true;
       startTime = millis();
@@ -177,6 +180,18 @@ void loop() {
 
       Serial.print(myName);
       Serial.println(" is now moving.");
+
+      savedHeadingX = currentHeadingX;
+      savedHeadingY = currentHeadingY;
+      Serial.print("Saved: ");
+      Serial.print(savedHeadingX);
+      Serial.print(", ");
+      Serial.println(savedHeadingY);
+
+      testName = getDirection(savedHeadingX, savedHeadingY);
+      
+      Serial.print(testName);
+      Serial.println("is the saved angle");
     } else if(receivedCommand == "STOP") {
       hasStopped = true;
       startTime = millis();
@@ -217,14 +232,16 @@ void loop() {
 
     // State 1: Continuously moving
     if(!hasStopped && !hasDetectedObject) {
-      if(startTime - millis() > 800) {
-        digitalWrite(greenLed, !digitalRead(greenLed));
-        digitalWrite(yellowLed, LOW);
-        digitalWrite(blueLed, LOW);
-        digitalWrite(redLed, LOW);
+      // if(startTime - millis() > 1000) {
+      //   digitalWrite(greenLed, !digitalRead(greenLed));
+      //   digitalWrite(yellowLed, LOW);
+      //   digitalWrite(blueLed, LOW);
+      //   digitalWrite(redLed, LOW);
 
-        startTime = millis();
-      }
+      //   startTime = millis();
+      // }
+
+      move(currentHeadingX, currentHeadingY);      
     }
 
     // State 2: Detected something, so move there
@@ -238,15 +255,14 @@ void loop() {
     // State 3: Stop moving
     if(hasStopped) {
 
-      if(startTime - millis() > 800) {
+      if(startTime - millis() > 1000) {
         digitalWrite(greenLed, LOW);
         digitalWrite(yellowLed, LOW);
         digitalWrite(blueLed, LOW);
-        digitalWrite(redLed, !digitalRead(yellowLed));
+        digitalWrite(redLed, !digitalRead(redLed));
 
         startTime = millis();
       }
-
     }  
 
   }
@@ -463,6 +479,60 @@ void calibrateCompass(float currentHeadingX, float currentHeadingY) {
   if(isCalibrated) startTime = millis();
 }
 
+String getDirection(float currentHeadingX, float currentHeadingY) {  
+  if(
+    currentHeadingX >= headingN_X-headingAllowance && 
+    currentHeadingX <= headingN_X+headingAllowance &&
+    currentHeadingY >= headingN_Y-headingAllowance && 
+    currentHeadingY <= headingN_Y+headingAllowance
+  ) return "N";
+  else if(
+    currentHeadingX > headingNW_X-(headingAllowance*headingAllowanceInBetween) && 
+    currentHeadingX < headingNW_X+(headingAllowance*headingAllowanceInBetween) &&
+    currentHeadingY > headingNW_Y-(headingAllowance*headingAllowanceInBetween) && 
+    currentHeadingY < headingNW_Y+(headingAllowance*headingAllowanceInBetween)
+  ) return "NW";
+  else if(
+    currentHeadingX >= headingW_X-headingAllowance && 
+    currentHeadingX <= headingW_X+headingAllowance &&
+    currentHeadingY >= headingW_Y-headingAllowance && 
+    currentHeadingY <= headingW_Y+headingAllowance
+  ) return "W";
+  else if(
+    currentHeadingX > headingSW_X-(headingAllowance*headingAllowanceInBetween) && 
+    currentHeadingX < headingSW_X+(headingAllowance*headingAllowanceInBetween) &&
+    currentHeadingY > headingSW_Y-(headingAllowance*headingAllowanceInBetween) && 
+    currentHeadingY < headingSW_Y+(headingAllowance*headingAllowanceInBetween)
+  ) return "SW";
+  else if(
+    currentHeadingX >= headingS_X-headingAllowance && 
+    currentHeadingX <= headingS_X+headingAllowance &&
+    currentHeadingY >= headingS_Y-headingAllowance && 
+    currentHeadingY <= headingS_Y+headingAllowance
+  ) return "S";
+  else if(
+    currentHeadingX > headingSE_X-(headingAllowance*headingAllowanceInBetween) && 
+    currentHeadingX < headingSE_X+(headingAllowance*headingAllowanceInBetween) &&
+    currentHeadingY > headingSE_Y-(headingAllowance*headingAllowanceInBetween) && 
+    currentHeadingY < headingSE_Y+(headingAllowance*headingAllowanceInBetween)
+  ) return "SE";
+  else if(
+    currentHeadingX >= headingE_X-headingAllowance && 
+    currentHeadingX <= headingE_X+headingAllowance &&
+    currentHeadingY >= headingE_Y-headingAllowance && 
+    currentHeadingY <= headingE_Y+headingAllowance
+  ) return "E";
+  else if(
+    currentHeadingX > headingNE_X-(headingAllowance*headingAllowanceInBetween) && 
+    currentHeadingX < headingNE_X+(headingAllowance*headingAllowanceInBetween) &&
+    currentHeadingY > headingNE_Y-(headingAllowance*headingAllowanceInBetween) && 
+    currentHeadingY < headingNE_Y+(headingAllowance*headingAllowanceInBetween)
+  ) return "NE";
+
+  Serial.println("Direction is not identified");
+  return "X";
+}
+
 void displayDirection(float currentHeadingX, float currentHeadingY) {
   Serial.print(currentHeadingX);
   Serial.print(", ");
@@ -607,7 +677,9 @@ void displayDirection(float currentHeadingX, float currentHeadingY) {
 }
 
 void move(float currentHeadingX, float currentHeadingY) {
-  float error = atan2(savedHeadingY, savedHeadingX) - atan2(currentHeadingY, currentHeadingX);
+  float currentAngle = atan2(currentHeadingY, currentHeadingX);
+  float savedAngle = atan2(savedHeadingY, savedHeadingX);
+  float error = abs(currentAngle - savedAngle);
   float previous_error;
   float cumulative_error;
   int period = 50;
@@ -621,7 +693,152 @@ void move(float currentHeadingX, float currentHeadingY) {
   cumulative_error += error;
   previous_error = error;
 
-  float modifiedSpeed = map(abs(PID_total),0.00,8000.00,minSpeed,maxSpeed);
+  String currentDirection = getDirection(currentHeadingX, currentHeadingY);
+  bool isStraight = false;
+  bool isLeft = false;
+
+  int modifiedSpeed = (int) PID_total;
+
+  if(modifiedSpeed >= 20) {
+    modifiedSpeed = 20;
+  }
+
+  if(testName == "N") {
+    if(currentDirection == "NW" || currentDirection == "N" || currentDirection == "NE" ) {
+      Serial.println("Straight");
+      isStraight = true;
+      isLeft = false;
+    } else if(currentDirection == "W" || currentDirection == "SW" || currentDirection == "S") {
+      Serial.println("Left++");
+      isStraight = false;
+      isLeft = true;
+    } else if(currentDirection == "E" || currentDirection == "SE" || currentDirection == "S") {
+      Serial.println("Right++");
+      isStraight = false;
+      isLeft = false;
+    }
+  } else if (testName == "NW") {
+    if(currentDirection == "W" || currentDirection == "NW" || currentDirection == "N" ) {
+      Serial.println("Straight");
+      isStraight = true;
+      isLeft = false;
+    } else if(currentDirection == "SW" || currentDirection == "S" || currentDirection == "SE") {
+      Serial.println("Left++");
+      isStraight = false;
+      isLeft = true;
+    } else if(currentDirection == "NE" || currentDirection == "E" || currentDirection == "SE") {
+      Serial.println("Right++");
+      isStraight = false;
+      isLeft = false;
+    }
+  } else if (testName == "W") {
+    if(currentDirection == "SW" || currentDirection == "W" || currentDirection == "NW" ) {
+      Serial.println("Straight");
+      isStraight = true;
+      isLeft = false;
+    } else if(currentDirection == "S" || currentDirection == "SE" || currentDirection == "E") {
+      Serial.println("Left++");
+      isStraight = false;
+      isLeft = true;
+    } else if(currentDirection == "N" || currentDirection == "NE" || currentDirection == "E") {
+      Serial.println("Right++");
+      isStraight = false;
+      isLeft = false;
+    }
+  } else if (testName == "SW") {
+    if(currentDirection == "S" || currentDirection == "SW" || currentDirection == "W" ) {
+      Serial.println("Straight");
+      isStraight = true;
+      isLeft = false;
+    } else if(currentDirection == "SE" || currentDirection == "E" || currentDirection == "NE") {
+      Serial.println("Left++");
+      isStraight = false;
+      isLeft = true;
+    } else if(currentDirection == "NW" || currentDirection == "N" || currentDirection == "E") {
+      Serial.println("Right++");
+      isStraight = false;
+      isLeft = false;
+    }
+  } else if (testName == "S") {
+    if(currentDirection == "SE" || currentDirection == "S" || currentDirection == "SW" ) {
+      Serial.println("Straight");
+      isStraight = true;
+      isLeft = false;
+    } else if(currentDirection == "E" || currentDirection == "NE" || currentDirection == "N") {
+      Serial.println("Left++");
+      isStraight = false;
+      isLeft = true;
+    } else if(currentDirection == "W" || currentDirection == "NW" || currentDirection == "N") {
+      Serial.println("Right++");
+      isStraight = false;
+      isLeft = false;
+    }
+  } else if (testName == "SE") {
+    if(currentDirection == "E" || currentDirection == "SE" || currentDirection == "S" ) {
+      Serial.println("Straight");
+      isStraight = true;
+      isLeft = false;
+    } else if(currentDirection == "NE" || currentDirection == "N" || currentDirection == "NW") {
+      Serial.println("Left++");
+      isStraight = false;
+      isLeft = true;
+    } else if(currentDirection == "SW" || currentDirection == "W" || currentDirection == "NW") {
+      Serial.println("Right++");
+      isStraight = false;
+      isLeft = false;
+    }
+  } else if (testName == "E") {
+    if(currentDirection == "NE" || currentDirection == "E" || currentDirection == "SE" ) {
+      Serial.println("Straight");
+      isStraight = true;
+      isLeft = false;
+    } else if(currentDirection == "N" || currentDirection == "NW" || currentDirection == "NE") {
+      Serial.println("Left++");
+      isStraight = false;
+      isLeft = true;
+    } else if(currentDirection == "S" || currentDirection == "SW" || currentDirection == "W") {
+      Serial.println("Right++");
+      isStraight = false;
+      isLeft = false;
+    }
+  } else if (testName == "NE") {
+    if(currentDirection == "N" || currentDirection == "NE" || currentDirection == "E" ) {
+      Serial.println("Straight");
+      isStraight = true;
+      isLeft = false;
+    } else if(currentDirection == "NW" || currentDirection == "W" || currentDirection == "SW") {
+      Serial.println("Left++");
+      isStraight = false;
+      isLeft = true;
+    } else if(currentDirection == "SE" || currentDirection == "S" || currentDirection == "SW") {
+      Serial.println("Right++");
+      isStraight = false;
+      isLeft = false;
+    }
+  }
+
+  if(isStraight && !isLeft) {
+    digitalWrite(greenLed, LOW);
+    digitalWrite(yellowLed, HIGH);
+    digitalWrite(blueLed, HIGH);
+    digitalWrite(redLed, LOW);
+    escLeft.write(15);
+    escRight.write(15);
+  } else if(!isStraight && !isLeft) {
+    digitalWrite(greenLed, HIGH);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(blueLed, LOW);
+    digitalWrite(redLed, LOW);
+    escLeft.write(15);
+    escRight.write(modifiedSpeed);
+  } else if(!isStraight && isLeft) {
+    digitalWrite(greenLed, LOW);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(blueLed, LOW);
+    digitalWrite(redLed, HIGH);
+    escLeft.write(modifiedSpeed+15);
+    escRight.write(15);
+  }
 }
 
 ///////General functions/////////
