@@ -176,14 +176,14 @@ void loop() {
 
     // State 1: Continuously moving
     if(!hasStopped && !hasDetectedObject) {
-      if(startTime - millis() > 1000) {
-        digitalWrite(greenLed, !digitalRead(greenLed));
-        digitalWrite(yellowLed, LOW);
-        digitalWrite(blueLed, LOW);
-        digitalWrite(redLed, LOW);
+      // if(startTime - millis() > 1000) {
+      //   digitalWrite(greenLed, !digitalRead(greenLed));
+      //   digitalWrite(yellowLed, LOW);
+      //   digitalWrite(blueLed, LOW);
+      //   digitalWrite(redLed, LOW);
 
-        startTime = millis();
-      }
+      //   startTime = millis();
+      // }
 
       move(currentAngle);      
     }
@@ -245,10 +245,25 @@ void move(float currentAngle) {
   }
 
   if((0 < currentAngle < savedAngle) || ((oppositeAngle < currentAngle < 360) && (currentAngle < savedAngle))) {
+    digitalWrite(greenLed, HIGH);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(blueLed, LOW);
+    digitalWrite(redLed, LOW);
+
     Serial.println("right++");
   } else if(savedAngle < currentAngle) {
+    digitalWrite(greenLed, LOW);
+    digitalWrite(yellowLed, LOW);
+    digitalWrite(blueLed, LOW);
+    digitalWrite(redLed, HIGH);
+
     Serial.println("left++");
   } else {
+    digitalWrite(greenLed, LOW);
+    digitalWrite(yellowLed, HIGH);
+    digitalWrite(blueLed, HIGH);
+    digitalWrite(redLed, LOW);
+
     Serial.println("center");
   }
 }
