@@ -30,7 +30,7 @@ const float movingSpeed = 15;
 const float maxSpeed = 20;
 
 const float headingAllowance = 20;
-const float headingAllowanceInBetween = 1/2;
+const float headingAllowanceInBetween = 0.25;
 
 //Booleans for logic
 bool isConnected = false;
@@ -486,10 +486,10 @@ void displayDirection(float currentHeadingX, float currentHeadingY) {
     digitalWrite(redLed, LOW);
   }
   else if(
-    currentHeadingX > headingNW_X-(headingAllowance/2) && 
-    currentHeadingX < headingNW_X+(headingAllowance/2) &&
-    currentHeadingY > headingNW_Y-(headingAllowance/2) && 
-    currentHeadingY < headingNW_Y+(headingAllowance/2)
+    currentHeadingX > headingNW_X-(headingAllowance*headingAllowanceInBetween) && 
+    currentHeadingX < headingNW_X+(headingAllowance*headingAllowanceInBetween) &&
+    currentHeadingY > headingNW_Y-(headingAllowance*headingAllowanceInBetween) && 
+    currentHeadingY < headingNW_Y+(headingAllowance*headingAllowanceInBetween)
   ) {
     Serial.print("\t\t");
     Serial.print(headingNW_X);
@@ -520,10 +520,10 @@ void displayDirection(float currentHeadingX, float currentHeadingY) {
     digitalWrite(redLed, LOW);
   }
   else if(
-    currentHeadingX > headingSW_X-(headingAllowance/2) && 
-    currentHeadingX < headingSW_X+(headingAllowance/2) &&
-    currentHeadingY > headingSW_Y-(headingAllowance/2) && 
-    currentHeadingY < headingSW_Y+(headingAllowance/2)
+    currentHeadingX > headingSW_X-(headingAllowance*headingAllowanceInBetween) && 
+    currentHeadingX < headingSW_X+(headingAllowance*headingAllowanceInBetween) &&
+    currentHeadingY > headingSW_Y-(headingAllowance*headingAllowanceInBetween) && 
+    currentHeadingY < headingSW_Y+(headingAllowance*headingAllowanceInBetween)
   ) {
     Serial.print("\t\t");
     Serial.print(headingSW_X);
@@ -554,10 +554,10 @@ void displayDirection(float currentHeadingX, float currentHeadingY) {
     digitalWrite(redLed, LOW);
   }
   else if(
-    currentHeadingX > headingSE_X-(headingAllowance/2) && 
-    currentHeadingX < headingSE_X+(headingAllowance/2) &&
-    currentHeadingY > headingSE_Y-(headingAllowance/2) && 
-    currentHeadingY < headingSE_Y+(headingAllowance/2)
+    currentHeadingX > headingSE_X-(headingAllowance*headingAllowanceInBetween) && 
+    currentHeadingX < headingSE_X+(headingAllowance*headingAllowanceInBetween) &&
+    currentHeadingY > headingSE_Y-(headingAllowance*headingAllowanceInBetween) && 
+    currentHeadingY < headingSE_Y+(headingAllowance*headingAllowanceInBetween)
   ) {
     Serial.print("\t\t");
     Serial.print(headingSE_X);
@@ -588,10 +588,10 @@ void displayDirection(float currentHeadingX, float currentHeadingY) {
     digitalWrite(redLed, HIGH);
   }
   else if(
-    currentHeadingX > headingNE_X-(headingAllowance/2) && 
-    currentHeadingX < headingNE_X+(headingAllowance/2) &&
-    currentHeadingY > headingNE_Y-(headingAllowance/2) && 
-    currentHeadingY < headingNE_Y+(headingAllowance/2)
+    currentHeadingX > headingNE_X-(headingAllowance*headingAllowanceInBetween) && 
+    currentHeadingX < headingNE_X+(headingAllowance*headingAllowanceInBetween) &&
+    currentHeadingY > headingNE_Y-(headingAllowance*headingAllowanceInBetween) && 
+    currentHeadingY < headingNE_Y+(headingAllowance*headingAllowanceInBetween)
   ) {
     Serial.print("\t\t");
     Serial.print(headingNE_X);
