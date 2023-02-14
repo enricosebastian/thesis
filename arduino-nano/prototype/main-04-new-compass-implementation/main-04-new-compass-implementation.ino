@@ -5,8 +5,8 @@
 #include <Servo.h>
 
 //Name here
-// const String myName = "DRO1";
-const String myName = "DRO2";
+const String myName = "DRO1";
+// const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants (buttons)
@@ -18,9 +18,9 @@ const int waitingTime = 5000;
 const int turnDelay = 30000; //in milliseconds
 
 //movement constants
-const float minSpeed = 7;
+const float minSpeed = 15;
 const float movingSpeed = 15;
-const float maxSpeed = 20;
+const float maxSpeed = 25;
 const float maxAngleChange = 5;
 
 //Booleans for logic
@@ -35,9 +35,9 @@ int savedDirection = 0;
 
 float initialAngle = 0;
 float initialStraightAngle = 0;
-float kp = 8; //5
-float ki = 0.2;
-float kd = 30;
+float kp = 50; //5
+float ki = 1;
+float kd = 10;
 float PID_p, PID_i, PID_d, PID_total;
 
 float maxX = 0;
@@ -204,25 +204,25 @@ void loop() {
 
   // State 1: Move drone normally
   if(!hasStopped && !hasDetectedObject) {
-    if(millis() - startTime > turnDelay) {
-      if(savedDirection == 0) {
-        turnTo("S");
-      } else if(savedDirection == 1) {
-        turnTo("SE");
-      } else if(savedDirection == 2) {
-        turnTo("E");
-      } else if(savedDirection == 3) {
-        turnTo("NE");
-      } else if(savedDirection == 4) {
-        turnTo("N");
-      } else if(savedDirection == -3) {
-        turnTo("NW");
-      } else if(savedDirection == -2) {
-        turnTo("W");
-      } else if(savedDirection == -1) {
-        turnTo("SW");
-      }
-    }
+    // if(millis() - startTime > turnDelay) {
+    //   if(savedDirection == 0) {
+    //     turnTo("S");
+    //   } else if(savedDirection == 1) {
+    //     turnTo("SE");
+    //   } else if(savedDirection == 2) {
+    //     turnTo("E");
+    //   } else if(savedDirection == 3) {
+    //     turnTo("NE");
+    //   } else if(savedDirection == 4) {
+    //     turnTo("N");
+    //   } else if(savedDirection == -3) {
+    //     turnTo("NW");
+    //   } else if(savedDirection == -2) {
+    //     turnTo("W");
+    //   } else if(savedDirection == -1) {
+    //     turnTo("SW");
+    //   }
+    // }
 
     move(headingX, headingY);
   }
@@ -261,9 +261,7 @@ void move(float headingX, float headingY) {
   cumulative_error += error;
   previous_error = error;
 
-  float modifiedSpeed = map(abs(PID_total),0.00,8000.00,minSpeed,maxSpeed);
-  // Serial.print("PID_total: ");
-  // Serial.println(abs(PID_total));
+  float modifiedSpeed = map(abs(PID_total),0.00,60.00,minSpeed,maxSpeed);
 
   int direction = getDirection(headingX, headingY);
   float allowance = 5;
@@ -271,16 +269,43 @@ void move(float headingX, float headingY) {
     
   Serial.print("\t\t\t");
   Serial.println(strDirection(direction));
+  Serial.println(abs(PID_total));
   if(!isStraight) {
     if(direction < savedDirection) {
-      Serial.println("right++");
+      Serial.print("right++ ");
+      Serial.println(modifiedSpeed);
+      escLeft.write(minSpeed);
+      escRight.write(modifiedSpeed-3);   
+      isLeft = false;
     } else if(direction > savedDirection) {
-      Serial.println("left++");
+      Serial.print("left++ ");
+      Serial.println(modifiedSpeed);
+      escLeft.write(modifiedSpeed);
+      escRight.write(minSpeed-3);
+      isLeft = true;
     } else {
-      Serial.println("is straight");
+      Serial.println("is straight ");
+      if(isLeft) {
+        escLeft.write(modifiedSpeed);
+        escRight.write(movingSpeed-3); 
+      } else {
+        escLeft.write(movingSpeed);
+        escRight.write(modifiedSpeed-3); 
+      }
     }
   } else {
     Serial.println("is straight");
+    if(isLeft) {
+      Serial.print("left++ ");
+      Serial.println(modifiedSpeed);
+      escLeft.write(modifiedSpeed);
+      escRight.write(movingSpeed); 
+    } else {
+      Serial.print("right++ ");
+      Serial.println(modifiedSpeed);
+      escLeft.write(movingSpeed);
+      escRight.write(modifiedSpeed); 
+    }
   }
 }
 

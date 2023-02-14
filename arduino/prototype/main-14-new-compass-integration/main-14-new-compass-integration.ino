@@ -5,8 +5,8 @@
 
 //Name here
 // const String myName = "BASE";
-// const String myName = "DRO1";
-const String myName = "DRO2";
+const String myName = "DRO1";
+// const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants (buttons)
@@ -44,6 +44,7 @@ String receivedFromName = "";
 String receivedDetails = "";
 
 //sent message
+
 String sentMessage = "";
 String sentCommand = "";
 String sentToName = "";
