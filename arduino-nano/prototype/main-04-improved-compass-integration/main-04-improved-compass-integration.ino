@@ -705,113 +705,113 @@ void move(float currentHeadingX, float currentHeadingY) {
   }
 
   if(testName == "N") {
-    if(currentDirection == "NW" || currentDirection == "N" || currentDirection == "NE" ) {
+    if(currentDirection == "N") {
       Serial.println("Straight");
       isStraight = true;
       isLeft = false;
-    } else if(currentDirection == "W" || currentDirection == "SW" || currentDirection == "S") {
+    } else if(currentDirection == "NW" || currentDirection == "W" || currentDirection == "SW" || currentDirection == "S") {
       Serial.println("Left++");
       isStraight = false;
       isLeft = true;
-    } else if(currentDirection == "E" || currentDirection == "SE" || currentDirection == "S") {
+    } else if(currentDirection == "NE" || currentDirection == "E" || currentDirection == "SE" || currentDirection == "S") {
       Serial.println("Right++");
       isStraight = false;
       isLeft = false;
     }
   } else if (testName == "NW") {
-    if(currentDirection == "W" || currentDirection == "NW" || currentDirection == "N" ) {
+    if(currentDirection == "NW") {
       Serial.println("Straight");
       isStraight = true;
       isLeft = false;
-    } else if(currentDirection == "SW" || currentDirection == "S" || currentDirection == "SE") {
+    } else if(currentDirection == "W" || currentDirection == "SW" || currentDirection == "S" || currentDirection == "SE") {
       Serial.println("Left++");
       isStraight = false;
       isLeft = true;
-    } else if(currentDirection == "NE" || currentDirection == "E" || currentDirection == "SE") {
+    } else if(currentDirection == "N" || currentDirection == "NE" || currentDirection == "E" || currentDirection == "SE") {
       Serial.println("Right++");
       isStraight = false;
       isLeft = false;
     }
   } else if (testName == "W") {
-    if(currentDirection == "SW" || currentDirection == "W" || currentDirection == "NW" ) {
+    if(currentDirection == "W") {
       Serial.println("Straight");
       isStraight = true;
       isLeft = false;
-    } else if(currentDirection == "S" || currentDirection == "SE" || currentDirection == "E") {
+    } else if(currentDirection == "SW" || currentDirection == "S" || currentDirection == "SE" || currentDirection == "E") {
       Serial.println("Left++");
       isStraight = false;
       isLeft = true;
-    } else if(currentDirection == "N" || currentDirection == "NE" || currentDirection == "E") {
+    } else if(currentDirection == "NW" || currentDirection == "N" || currentDirection == "NE" || currentDirection == "E") {
       Serial.println("Right++");
       isStraight = false;
       isLeft = false;
     }
   } else if (testName == "SW") {
-    if(currentDirection == "S" || currentDirection == "SW" || currentDirection == "W" ) {
+    if(currentDirection == "SW") {
       Serial.println("Straight");
       isStraight = true;
       isLeft = false;
-    } else if(currentDirection == "SE" || currentDirection == "E" || currentDirection == "NE") {
+    } else if(currentDirection == "S" || currentDirection == "SE" || currentDirection == "E" || currentDirection == "NE") {
       Serial.println("Left++");
       isStraight = false;
       isLeft = true;
-    } else if(currentDirection == "NW" || currentDirection == "N" || currentDirection == "E") {
+    } else if(currentDirection == "W" || currentDirection == "NW" || currentDirection == "N" || currentDirection == "E") {
       Serial.println("Right++");
       isStraight = false;
       isLeft = false;
     }
   } else if (testName == "S") {
-    if(currentDirection == "SE" || currentDirection == "S" || currentDirection == "SW" ) {
+    if(currentDirection == "S") {
       Serial.println("Straight");
       isStraight = true;
       isLeft = false;
-    } else if(currentDirection == "E" || currentDirection == "NE" || currentDirection == "N") {
+    } else if(currentDirection == "SE" || currentDirection == "E" || currentDirection == "NE" || currentDirection == "N") {
       Serial.println("Left++");
       isStraight = false;
       isLeft = true;
-    } else if(currentDirection == "W" || currentDirection == "NW" || currentDirection == "N") {
+    } else if(currentDirection == "SW" || currentDirection == "W" || currentDirection == "NW" || currentDirection == "N") {
       Serial.println("Right++");
       isStraight = false;
       isLeft = false;
     }
   } else if (testName == "SE") {
-    if(currentDirection == "E" || currentDirection == "SE" || currentDirection == "S" ) {
+    if( currentDirection == "SE") {
       Serial.println("Straight");
       isStraight = true;
       isLeft = false;
-    } else if(currentDirection == "NE" || currentDirection == "N" || currentDirection == "NW") {
+    } else if(currentDirection == "E" ||currentDirection == "NE" || currentDirection == "N" || currentDirection == "NW") {
       Serial.println("Left++");
       isStraight = false;
       isLeft = true;
-    } else if(currentDirection == "SW" || currentDirection == "W" || currentDirection == "NW") {
+    } else if(currentDirection == "S" || currentDirection == "SW" || currentDirection == "W" || currentDirection == "NW") {
       Serial.println("Right++");
       isStraight = false;
       isLeft = false;
     }
   } else if (testName == "E") {
-    if(currentDirection == "NE" || currentDirection == "E" || currentDirection == "SE" ) {
+    if(currentDirection == "E") {
       Serial.println("Straight");
       isStraight = true;
       isLeft = false;
-    } else if(currentDirection == "N" || currentDirection == "NW" || currentDirection == "NE") {
+    } else if(currentDirection == "NE" ||currentDirection == "N" || currentDirection == "NW" || currentDirection == "NE") {
       Serial.println("Left++");
       isStraight = false;
       isLeft = true;
-    } else if(currentDirection == "S" || currentDirection == "SW" || currentDirection == "W") {
+    } else if(currentDirection == "SE" || currentDirection == "S" || currentDirection == "SW" || currentDirection == "W") {
       Serial.println("Right++");
       isStraight = false;
       isLeft = false;
     }
   } else if (testName == "NE") {
-    if(currentDirection == "N" || currentDirection == "NE" || currentDirection == "E" ) {
+    if(currentDirection == "NE") {
       Serial.println("Straight");
       isStraight = true;
       isLeft = false;
-    } else if(currentDirection == "NW" || currentDirection == "W" || currentDirection == "SW") {
+    } else if(currentDirection == "N" || currentDirection == "NW" || currentDirection == "W" || currentDirection == "SW") {
       Serial.println("Left++");
       isStraight = false;
       isLeft = true;
-    } else if(currentDirection == "SE" || currentDirection == "S" || currentDirection == "SW") {
+    } else if(currentDirection == "E" || currentDirection == "SE" || currentDirection == "S" || currentDirection == "SW") {
       Serial.println("Right++");
       isStraight = false;
       isLeft = false;
