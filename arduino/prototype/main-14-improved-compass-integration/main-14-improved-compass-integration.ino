@@ -26,7 +26,7 @@ const int greenLed = 11;
 //Booleans for logic
 bool isConnected = false;
 bool isDeployed = false;
-bool hasStopped = false;
+bool hasStopped = true;
 bool hasDetectedObject = false;
 
 //millis time variables for storage
