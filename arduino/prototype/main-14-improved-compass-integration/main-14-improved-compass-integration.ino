@@ -52,8 +52,9 @@ String sentToName = "";
 String sentFromName = "";
 String sentDetails = "";
 
-NeoSWSerial HC12(rxHc12, txHc12); // (Blue TX, Green RX)
-NeoSWSerial Nano(rxNano, txNano); // (Blue TX, Green RX)
+// SoftwareSerial(rxPin, txPin, inverse_logic)
+NeoSWSerial HC12(rxHc12, txHc12);
+NeoSWSerial Nano(rxNano, txNano);
 LinkedList<String> drones;
 
 void setup() {
