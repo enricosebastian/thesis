@@ -244,7 +244,7 @@ void move(float currentAngle) {
   bool isStraight = false;
   bool isLeft = false;
 
-  if(error < 5) isStraight = true;
+  if(error < 10) isStraight = true;
   else isStraight = false;
 
   if(isStraight) {
@@ -269,9 +269,9 @@ void move(float currentAngle) {
       oppositeSavedAngle = oppositeSavedAngle - 360;
     }
 
-    isLeft =  ((currentAngle > savedAngle) && (currentAngle <= oppositeSavedAngle)) || 
+    isLeft =  !(((currentAngle > savedAngle) && (currentAngle <= oppositeSavedAngle)) || 
               ((oppositeSavedAngle < savedAngle) && (currentAngle > savedAngle) && (currentAngle <= 360)) ||
-              ((oppositeSavedAngle < savedAngle) && (currentAngle < oppositeSavedAngle))
+              ((oppositeSavedAngle < savedAngle) && (currentAngle < oppositeSavedAngle)))
               ;
 
     if(isLeft) {
