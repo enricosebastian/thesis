@@ -41,11 +41,13 @@ int posX = 0;
 int posY = 0;
 int savedDir = 0;
 
-//PID values
-float kp = 2;
-float ki = 0.2;
-float kd = 3;
-float PID_p, PID_i, PID_d, PID_total;
+//PID variables
+double PID_total;
+double kp=0.5 
+double ki=0.01
+double kd=3;
+double errSum, lastErr;
+unsigned long lastTime;
 
 float savedAngle = 0.0;
 
@@ -63,8 +65,10 @@ String receivedDetails = "";
 Servo escLeft;
 Servo escRight;
 
-NeoSWSerial Nano(txNano, rxNano); // (Blue TX, Green RX)
+NeoSWSerial Nano(txNano, rxNano); // (Green TX, Blue RX)
 Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
+
+String testName = "hi";
 
 void setup() {
   Serial.begin(9600);
@@ -233,19 +237,24 @@ void loop() {
 
 ///////Specific functions/////////
 void move(float currentAngle) {
-  float error = abs(currentAngle - savedAngle);
-  float previous_error;
-  float cumulative_error;
 
-  float PID_p = kp * error;
-  float PID_i = cumulative_error * ki;
-  float PID_d = kd*(error - previous_error);
+  //PID Implementation
+  /*How long since last calculated*/
+  unsigned long now = millis();
+  double timeChange = (double)(now - lastTime);
 
-  double PID_total = PID_p + PID_i + PID_d;
+  /*Compute all error variables*/
+  double error = abs(currentAngle - savedAngle);
+  errSum += (error * timeChange);
+  double dErr = (error - lastErr) / timeChange;
 
-  cumulative_error += error;
-  previous_error = error;
-  
+  /*Compute PID Ouptut*/
+  PID_total = kp*error + ki*errSum + kd*dErr;
+
+  /*Remember variables*/
+  lastErr = error;
+  lastTime = now;
+
   float modifiedSpeed = PID_total;
 
   // Sets a limit for max and min speed
@@ -261,6 +270,7 @@ void move(float currentAngle) {
   if(error < 10) isStraight = true;
   else isStraight = false;
 
+  Serial.println(modifiedSpeed);
 
   if(isStraight) {
     if(isLeft) {
@@ -287,7 +297,6 @@ void move(float currentAngle) {
     if(isLeft) {
       escLeft.write(modifiedSpeed+5);
       escRight.write(stopSpeed);
-      
     } else {
       escLeft.write(stopSpeed);
       escRight.write(modifiedSpeed);

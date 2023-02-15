@@ -17,8 +17,8 @@ const int redLed = 10;
 const int escLeftPin = 5;
 const int escRightPin = 6;
 
-const int rxNano = 12; //blue [these need to be reversed (diff numeral order) cause tx1 --> rx2, and rx1 --> tx2]
-const int txNano = 11; //green
+const int txNano = 11; //blue [these need to be reversed (diff numeral order) cause tx1 --> rx2, and rx1 --> tx2]
+const int rxNano = 12; //green
 
 const int waitingTime = 5000;
 const int turnDelay = 30000; //in milliseconds
@@ -62,7 +62,7 @@ String receivedDetails = "";
 Servo escLeft;
 Servo escRight;
 
-NeoSWSerial Nano(txNano, rxNano); // (Green TX, Blue RX)
+NeoSWSerial Nano(rxNano, txNano);
 Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
 
 String testName = "hi";
