@@ -4,18 +4,18 @@
 #include <LinkedList.h>
 
 //Name here
-const String myName = "BASE";
-// const String myName = "DRO1";
+// const String myName = "BASE";
+const String myName = "DRO1";
 // const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants (buttons)
 const int detectionPin = 10;
 const int btn = 7;
-const int rxHc12 = A0; //blue received
-const int txHc12 = A1; //green tx
-const int rxNano = A2; //blue received
-const int txNano = A3; //green tx
+const int rxHc12 = A0; //green
+const int txHc12 = A1; //blue
+const int rxNano = A2; //green
+const int txNano = A3; //blue
 const int waitingTime = 5000;
 
 // Only for base station

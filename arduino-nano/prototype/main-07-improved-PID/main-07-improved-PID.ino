@@ -5,8 +5,8 @@
 #include <Servo.h>
 
 //Name here
-const String myName = "DRO1";
-// const String myName = "DRO2";
+// const String myName = "DRO1";
+const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants
@@ -17,8 +17,8 @@ const int redLed = 10;
 const int escLeftPin = 5;
 const int escRightPin = 6;
 
-const int txNano = 11; //blue [these need to be reversed (diff numeral order) cause tx1 --> rx2, and rx1 --> tx2]
-const int rxNano = 12; //green
+const int rxNano = 12; //blue [these need to be reversed (diff numeral order) cause tx1 --> rx2, and rx1 --> tx2]
+const int txNano = 11; //green
 
 const int waitingTime = 5000;
 const int turnDelay = 30000; //in milliseconds
@@ -42,10 +42,17 @@ int posY = 0;
 int savedDir = 0;
 
 //PID values
-float kp = 2;
-float ki = 0.2;
-float kd = 3;
-float PID_p, PID_i, PID_d, PID_total;
+float kp = 1;
+float ki = 0.001;
+float kd = 250;
+float error = 0;
+float previous_error;
+float error_change;
+float error_slope = 0;
+float error_area = 0;
+int milliNew;
+int milliOld;
+int dt;
 
 float savedAngle = 0.0;
 
@@ -62,7 +69,7 @@ String receivedDetails = "";
 Servo escLeft;
 Servo escRight;
 
-NeoSWSerial Nano(rxNano, txNano);
+NeoSWSerial Nano(txNano, rxNano); // (Green TX, Blue RX)
 Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
 
 String testName = "hi";
@@ -107,6 +114,8 @@ void setup() {
 
   Serial.print(myName);
   Serial.println(" - Nano has initialized.");
+
+  milliNew = millis();
 }
 
 void loop() {
@@ -218,21 +227,26 @@ void loop() {
 
 ///////Specific functions/////////
 void move(float currentAngle) {
-  float error = abs(currentAngle - savedAngle);
-  float previous_error;
-  float cumulative_error;
-  int period = 50;
-
-  float PID_p = kp * error;
-  float PID_i = cumulative_error * ki;
-  float PID_d = kd*(error - previous_error);
-
-  double PID_total = PID_p + PID_i + PID_d;
-
-  cumulative_error += error;
+  
+  float PID_total;
+  milliOld = milliNew;
+  milliNew = millis();
+  dt = milliNew - milliOld;
   previous_error = error;
+  //error = abs(currentAngle - savedAngle);
+  error = abs(savedAngle - currentAngle);
+  error_change = error - previous_error;
+  error_slope = error_change/dt;
+  error_area = error_area + error*dt;
+
+  PID_total = PID_total + kp*error + kd*error_slope + ki*error_area;
   
   float modifiedSpeed = PID_total;
+
+  Serial.print("error: ");
+  Serial.print(error);
+  Serial.print("/nPID_total: ");
+  Serial.println(PID_total);
 
   // Sets a limit for max and min speed
   if(modifiedSpeed >= maxSpeed) {
@@ -247,7 +261,7 @@ void move(float currentAngle) {
   if(error < 10) isStraight = true;
   else isStraight = false;
 
-  Serial.println(modifiedSpeed);
+  
 
   if(isStraight) {
     digitalWrite(greenLed, LOW);

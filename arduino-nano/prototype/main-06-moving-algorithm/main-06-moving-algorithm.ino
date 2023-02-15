@@ -63,10 +63,8 @@ String receivedDetails = "";
 Servo escLeft;
 Servo escRight;
 
-NeoSWSerial Nano(txNano, rxNano); // (Green TX, Blue RX)
+NeoSWSerial Nano(txNano, rxNano); // (Blue TX, Green RX)
 Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
-
-String testName = "hi";
 
 void setup() {
   Serial.begin(9600);
@@ -238,7 +236,6 @@ void move(float currentAngle) {
   float error = abs(currentAngle - savedAngle);
   float previous_error;
   float cumulative_error;
-  int period = 50;
 
   float PID_p = kp * error;
   float PID_i = cumulative_error * ki;
@@ -264,7 +261,6 @@ void move(float currentAngle) {
   if(error < 10) isStraight = true;
   else isStraight = false;
 
-  Serial.println(modifiedSpeed);
 
   if(isStraight) {
     if(isLeft) {
@@ -291,6 +287,7 @@ void move(float currentAngle) {
     if(isLeft) {
       escLeft.write(modifiedSpeed+5);
       escRight.write(stopSpeed);
+      
     } else {
       escLeft.write(stopSpeed);
       escRight.write(modifiedSpeed);
