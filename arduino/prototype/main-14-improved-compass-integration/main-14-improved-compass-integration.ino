@@ -4,8 +4,8 @@
 #include <LinkedList.h>
 
 //Name here
-const String myName = "BASE";
-// const String myName = "DRO1";
+// const String myName = "BASE";
+const String myName = "DRO1";
 // const String myName = "DRO2";
 // const String myName = "DRO3";
 
@@ -349,11 +349,12 @@ void forDrone() {
 void sendToNano(String command, String toName, String details) {
   HC12.end();
   Nano.listen();
+
   //COMMAND TONAME FROMNAME DETAILS
   if(command != "" && toName != "" && details != "") {
     String sentMessage = command + " " + toName + " " + myName + " " + details;
     String bufferMessage = "BUFF " + toName + " " + myName + " " + "BUFF";
-    Serial.print("Sending: ");
+    Serial.print("Sending to Nano: ");
     Serial.println(sentMessage);
     
     Nano.println(bufferMessage); //Ned to send a buffer message first before sending actual message to clear port
