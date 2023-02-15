@@ -5,8 +5,8 @@
 #include <Servo.h>
 
 //Name here
-// const String myName = "DRO1";
-const String myName = "DRO2";
+const String myName = "DRO1";
+// const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants
@@ -17,8 +17,8 @@ const int redLed = 10;
 const int escLeftPin = 5;
 const int escRightPin = 6;
 
-const int rxNano = 12; //blue [these need to be reversed (diff numeral order) cause tx1 --> rx2, and rx1 --> tx2]
-const int txNano = 11; //green
+const int rxNano = 12;
+const int txNano = 11;
 
 const int waitingTime = 5000;
 const int turnDelay = 30000; //in milliseconds
