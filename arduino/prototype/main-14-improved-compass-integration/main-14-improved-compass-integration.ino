@@ -192,6 +192,14 @@ void forBaseStation() {
   //STATE 2: Base station has deployed everyone. Read and send commands
   if(isDeployed) {
     //TASK 1: If you typed something, send it to base station
+    if(millis() - startTime > 800) {
+      digitalWrite(redLed, LOW);
+      digitalWrite(yellowLed, LOW);
+      digitalWrite(greenLed, !digitalRead(greenLed));
+
+      startTime = millis();
+    }
+    
     while(Serial.available()) {
       char letter = Serial.read();
       if(letter == '\n') {
