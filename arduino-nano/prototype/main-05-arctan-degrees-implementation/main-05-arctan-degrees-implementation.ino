@@ -234,40 +234,63 @@ void move(float currentAngle) {
   
   float modifiedSpeed = PID_total;
 
+  // Sets a limit for max and min speed
   if(modifiedSpeed >= maxSpeed) {
     modifiedSpeed = maxSpeed;
   } else if(modifiedSpeed <= minSpeed) {
     modifiedSpeed = minSpeed;
   }
 
-  float oppositeAngle = savedAngle + 180;
+  bool isStraight = false;
+  bool isLeft = false;
 
-  // Case where it goes over 360-degrees
-  if(oppositeAngle > 360) {
-    oppositeAngle = oppositeAngle - 360;
-  }
+  if(error < 5) isStraight = true;
+  else isStraight = false;
 
-  if((0 < currentAngle < savedAngle) || ((oppositeAngle < currentAngle < 360) && (currentAngle < savedAngle))) {
-    digitalWrite(greenLed, HIGH);
-    digitalWrite(yellowLed, LOW);
-    digitalWrite(blueLed, LOW);
-    digitalWrite(redLed, LOW);
-
-    Serial.println("right++");
-  } else if(savedAngle < currentAngle) {
-    digitalWrite(greenLed, LOW);
-    digitalWrite(yellowLed, LOW);
-    digitalWrite(blueLed, LOW);
-    digitalWrite(redLed, HIGH);
-
-    Serial.println("left++");
-  } else {
+  if(isStraight) {
     digitalWrite(greenLed, LOW);
     digitalWrite(yellowLed, HIGH);
     digitalWrite(blueLed, HIGH);
     digitalWrite(redLed, LOW);
 
-    Serial.println("center");
+    if(isLeft) {
+      escLeft.write(modifiedSpeed);
+      escRight.write(minSpeed);
+    } else {
+      escLeft.write(minSpeed);
+      escRight.write(modifiedSpeed);
+    }
+  } else {
+
+    float oppositeSavedAngle = savedAngle + 180;
+    float oppositeCurrentAngle = 360-currentAngle;
+
+    if(oppositeSavedAngle > 360) {
+      oppositeSavedAngle = oppositeSavedAngle - 360;
+    }
+
+    isLeft =  ((currentAngle > savedAngle) && (currentAngle <= oppositeSavedAngle)) || 
+              ((oppositeSavedAngle < savedAngle) && (currentAngle > savedAngle) && (currentAngle <= 360)) ||
+              ((oppositeSavedAngle < savedAngle) && (currentAngle < oppositeSavedAngle))
+              ;
+
+    if(isLeft) {
+      escLeft.write(modifiedSpeed);
+      escRight.write(minSpeed);
+
+      digitalWrite(greenLed, LOW);
+      digitalWrite(yellowLed, LOW);
+      digitalWrite(blueLed, LOW);
+      digitalWrite(redLed, HIGH);
+    } else {
+      escLeft.write(minSpeed);
+      escRight.write(modifiedSpeed);
+
+      digitalWrite(greenLed, HIGH);
+      digitalWrite(yellowLed, LOW);
+      digitalWrite(blueLed, LOW);
+      digitalWrite(redLed, LOW);
+    }
   }
 }
 
