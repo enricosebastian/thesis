@@ -21,7 +21,7 @@ const int rxNano = 11;
 const int txNano = 12; 
 
 const int waitingTime = 5000;
-const int turnDelay = 30000; //in milliseconds
+const int turnDelay = 5000; //in milliseconds
 
 //movement constants
 const float stopSpeed = 0;
@@ -145,6 +145,7 @@ void loop() {
     } else if(receivedCommand == "GO" && isDeployed) {
       hasStopped = false;
       startTime = millis();
+      startTime2 = millis();
 
       savedAngle = currentAngle;
 
@@ -184,27 +185,39 @@ void loop() {
 
     // State 1: Continuously moving
     if(!hasStopped && !hasDetectedObject) {
-      if(millis() - startTime > 20000 && posX % 2 == 0) {
+
+      if(millis() - startTime > 800) {
+        digitalWrite(greenLed, !digitalRead(greenLed));
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(blueLed, LOW);
+        digitalWrite(redLed, LOW);
+        startTime = millis();
+      }
+
+      if(millis() - startTime2 > turnDelay && posX % 2 == 0) {
         savedAngle = savedAngle - 180;
-        if(savedAngle < 360) {
-          savedAngle = savedAngle + 360;
-        } else if(savedAngle > 360) {
-          savedAngle = 360 - savedAngle;
-        }
-        startTime = millis();
+        startTime2 = millis();
         posX++;
-      } else if(millis() - startTime > 20000 && posX % 2 != 0) {
+      } else if(millis() - startTime2 > turnDelay && posX % 2 != 0) {
         savedAngle = savedAngle + 180;
-        if(savedAngle < 360) {
-          savedAngle = savedAngle + 360;
-        } else if(savedAngle > 360) {
-          savedAngle = 360 - savedAngle;
-        }
-        startTime = millis();
+        startTime2 = millis();
         posX++;
       }
 
-      move(currentAngle);      
+      if(savedAngle < 0) {
+        savedAngle = savedAngle + 360;
+
+        Serial.print("Changed angle: ");
+        Serial.println(savedAngle);
+      }
+      else if(savedAngle > 360) {
+        savedAngle = 360 - savedAngle;
+
+        Serial.print("Changed angle: ");
+        Serial.println(savedAngle);
+      }
+
+      // move(currentAngle);      
     }
 
     // State 2: Detected something, so move there
