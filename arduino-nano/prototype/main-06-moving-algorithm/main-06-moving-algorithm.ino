@@ -21,7 +21,6 @@ const int rxNano = 11;
 const int txNano = 12; 
 
 const int waitingTime = 5000;
-const int turnDelay = 5000; //in milliseconds
 
 //movement constants
 const float stopSpeed = 0;
@@ -50,6 +49,7 @@ float PID_p, PID_i, PID_d, PID_total;
 float savedAngle = 0.0;
 
 //millis time variables for storage
+const unsigned long turnDelay = 5000; //in milliseconds
 unsigned long startTime = 0;
 unsigned long startTime2 = 0;
 
