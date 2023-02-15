@@ -51,6 +51,7 @@ float savedAngle = 0.0;
 
 //millis time variables for storage
 unsigned long startTime = 0;
+unsigned long startTime2 = 0;
 
 //received message
 String receivedMessage = "";
@@ -148,6 +149,11 @@ void loop() {
 
       savedAngle = currentAngle;
 
+      digitalWrite(greenLed, HIGH);
+      digitalWrite(yellowLed, LOW);
+      digitalWrite(blueLed, LOW);
+      digitalWrite(redLed, LOW);
+
       Serial.print(myName);
       Serial.print(" is now moving. Saved angle: ");
       Serial.println(savedAngle);
@@ -179,14 +185,25 @@ void loop() {
 
     // State 1: Continuously moving
     if(!hasStopped && !hasDetectedObject) {
-      // if(startTime - millis() > 1000) {
-      //   digitalWrite(greenLed, !digitalRead(greenLed));
-      //   digitalWrite(yellowLed, LOW);
-      //   digitalWrite(blueLed, LOW);
-      //   digitalWrite(redLed, LOW);
-
-      //   startTime = millis();
-      // }
+      if(millis() - startTime > 20000 && posX % 2 == 0) {
+        savedAngle = savedAngle - 180;
+        if(savedAngle < 360) {
+          savedAngle = savedAngle + 360;
+        } else if(savedAngle > 360) {
+          savedAngle = 360 - savedAngle;
+        }
+        startTime = millis();
+        posX++;
+      } else if(millis() - startTime > 20000 && posX % 2 != 0) {
+        savedAngle = savedAngle + 180;
+        if(savedAngle < 360) {
+          savedAngle = savedAngle + 360;
+        } else if(savedAngle > 360) {
+          savedAngle = 360 - savedAngle;
+        }
+        startTime = millis();
+        posX++;
+      }
 
       move(currentAngle);      
     }
@@ -250,11 +267,6 @@ void move(float currentAngle) {
   Serial.println(modifiedSpeed);
 
   if(isStraight) {
-    digitalWrite(greenLed, LOW);
-    digitalWrite(yellowLed, HIGH);
-    digitalWrite(blueLed, HIGH);
-    digitalWrite(redLed, LOW);
-
     if(isLeft) {
       escLeft.write(modifiedSpeed+5);
       escRight.write(minSpeed);
@@ -279,19 +291,9 @@ void move(float currentAngle) {
     if(isLeft) {
       escLeft.write(modifiedSpeed+5);
       escRight.write(stopSpeed);
-
-      digitalWrite(greenLed, LOW);
-      digitalWrite(yellowLed, LOW);
-      digitalWrite(blueLed, LOW);
-      digitalWrite(redLed, HIGH);
     } else {
       escLeft.write(stopSpeed);
       escRight.write(modifiedSpeed);
-
-      digitalWrite(greenLed, HIGH);
-      digitalWrite(yellowLed, LOW);
-      digitalWrite(blueLed, LOW);
-      digitalWrite(redLed, LOW);
     }
   }
 }
