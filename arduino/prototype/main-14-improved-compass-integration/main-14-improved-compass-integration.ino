@@ -12,10 +12,15 @@ const String myName = "BASE";
 //Constants (buttons)
 const int detectionPin = 10;
 const int btn = 7;
-const int rxHc12 = A0; //green
-const int txHc12 = A1; //blue
-const int rxNano = A2; //green
-const int txNano = A3; //blue
+
+// Rule: For ports, green = RX, blue = TX
+// For modules/chips, green = TX, blue = RX
+const int rxHc12 = A0; //green wire
+const int txHc12 = A1; //blue wire
+const int rxNano = A2; //green wire
+const int txNano = A3; //blue wire
+
+// Waiting times
 const int waitingTime = 5000;
 
 // Only for base station
@@ -136,7 +141,7 @@ void forBaseStation() {
         digitalWrite(greenLed, LOW);
       }
     }
-    
+
     //TASK 2 If you pressed the button, deploy all drones
     if(digitalRead(btn) == HIGH && drones.size() > 0) {
       Serial.println("Button pressed. Starting deployment.");
