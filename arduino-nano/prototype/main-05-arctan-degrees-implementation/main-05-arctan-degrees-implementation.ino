@@ -5,8 +5,8 @@
 #include <Servo.h>
 
 //Name here
-// const String myName = "DRO1";
-const String myName = "DRO2";
+const String myName = "DRO1";
+// const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants
@@ -133,6 +133,8 @@ void loop() {
       digitalWrite(yellowLed, HIGH);
       digitalWrite(blueLed, LOW);
       digitalWrite(redLed, LOW);
+
+      Serial.println("Connected to base station.");
 
       isConnected = true;
     } else if(receivedCommand == "DEPL" && !isDeployed) {
