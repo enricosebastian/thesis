@@ -17,8 +17,8 @@ const int redLed = 10;
 const int escLeftPin = 5;
 const int escRightPin = 6;
 
-const int rxNano = 12;
-const int txNano = 11;
+const int rxNano = 11; 
+const int txNano = 12; 
 
 const int waitingTime = 5000;
 const int turnDelay = 30000; //in milliseconds
@@ -63,7 +63,7 @@ String receivedDetails = "";
 Servo escLeft;
 Servo escRight;
 
-NeoSWSerial Nano(txNano, rxNano); // (Blue TX, Green RX)
+NeoSWSerial Nano(rxNano, txNano);
 Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
 
 void setup() {

@@ -52,8 +52,9 @@ String sentToName = "";
 String sentFromName = "";
 String sentDetails = "";
 
-NeoSWSerial HC12(rxHc12, txHc12); // (Blue TX, Green RX)
-NeoSWSerial Nano(rxNano, txNano); // (Blue TX, Green RX)
+// SoftwareSerial(rxPin, txPin, inverse_logic)
+NeoSWSerial HC12(rxHc12, txHc12);
+NeoSWSerial Nano(rxNano, txNano);
 LinkedList<String> drones;
 
 void setup() {
@@ -349,11 +350,12 @@ void forDrone() {
 void sendToNano(String command, String toName, String details) {
   HC12.end();
   Nano.listen();
+
   //COMMAND TONAME FROMNAME DETAILS
   if(command != "" && toName != "" && details != "") {
     String sentMessage = command + " " + toName + " " + myName + " " + details;
     String bufferMessage = "BUFF " + toName + " " + myName + " " + "BUFF";
-    Serial.print("Sending: ");
+    Serial.print("Sending to Nano: ");
     Serial.println(sentMessage);
     
     Nano.println(bufferMessage); //Ned to send a buffer message first before sending actual message to clear port

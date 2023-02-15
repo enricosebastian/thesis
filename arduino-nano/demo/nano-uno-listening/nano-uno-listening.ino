@@ -2,8 +2,11 @@
 
 String message = "";
 
-const int txNano = 12;
-const int rxNano = 11;
+const int rxNano = 11; 
+const int txNano = 12; 
+
+const int yellowLed = 9;
+const int redLed = 10;
 
 NeoSWSerial Nano(rxNano, txNano);
 
@@ -13,13 +16,21 @@ void setup() {
 
   Nano.listen();
   Serial.println("Nano initializing...");
+
+  pinMode(redLed, OUTPUT);
+  digitalWrite(redLed, HIGH);
 }
 
 void loop() {
 
   if(Nano.available()) {
+    digitalWrite(redLed, HIGH);
     char letter = Nano.read();
     Serial.println(letter);
+    delay(1000);
+  } else {
+    digitalWrite(redLed, LOW);
+    delay(1000);
   }
 
 }
