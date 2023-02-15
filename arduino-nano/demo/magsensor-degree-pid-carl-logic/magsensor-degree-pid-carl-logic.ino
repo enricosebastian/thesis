@@ -18,8 +18,8 @@ void setup(void)
     while(1);
   }
 
-  for(int i=0; i<180; i++) {
-    float savedAngle = 90;
+  for(int i=0; i<360; i++) {
+    float savedAngle = 270;
 
     float currentAngle = i; // 91
 
@@ -33,22 +33,26 @@ void setup(void)
     bool rightStatement = ((0 < currentAngle) && (currentAngle < savedAngle)) || ((oppositeAngle < currentAngle) && (currentAngle <= 360));
     bool leftStatement = savedAngle < currentAngle;
 
-      Serial.print(0);
-    Serial.print("<");
-    Serial.print(currentAngle);
-    Serial.print("<");
-    Serial.print(savedAngle);
-    Serial.print(": ");
-    Serial.println(rightStatement);
+    // Serial.print(0);
+    // Serial.print("<");
+    // Serial.print(currentAngle);
+    // Serial.print("<");
+    // Serial.print(savedAngle);
+    // Serial.print(": ");
+    // Serial.println(rightStatement);
 
-    Serial.print(oppositeAngle);
-    Serial.print("<");
-    Serial.print(currentAngle);
-    Serial.print("<=");
-    Serial.print(360);
-    Serial.print(": ");
-    Serial.println(leftStatement);
+    // Serial.print(oppositeAngle);
+    // Serial.print("<");
+    // Serial.print(currentAngle);
+    // Serial.print("<=");
+    // Serial.print(360);
+    // Serial.print(": ");
+    // Serial.println(leftStatement);
 
+    Serial.print("Saved angle: ");
+    Serial.println(savedAngle);
+    Serial.print("Current angle: ");
+    Serial.println(currentAngle);
     //  0 < 91 < 90    f             271 < 91 < 360 f
     if(rightStatement) {
       Serial.println("\t\tright++");
