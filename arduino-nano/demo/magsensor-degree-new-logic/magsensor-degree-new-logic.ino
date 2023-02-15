@@ -3,13 +3,13 @@ void setup(void)
   Serial.begin(9600);
 
 
-  float savedAngle = 270+45;
+  float savedAngle = 360;
+  
   float oppositeSavedAngle = savedAngle + 180;
   if(oppositeSavedAngle > 360) {
     oppositeSavedAngle = oppositeSavedAngle - 360;
   }
 
-  float iterationsDone = 0;
   for(int i = 0; i <= 360; i++) {
     float currentAngle = i;
     float oppositeCurrentAngle = 360-currentAngle;
@@ -20,16 +20,15 @@ void setup(void)
                   ;
 
     Serial.print("Save: ");
-    Serial.print(savedAngle);
+    Serial.println(savedAngle);
 
     Serial.print("Curr: ");
-    Serial.print(currentAngle);
-    
+    Serial.println(currentAngle);
 
     if(isLeft) {
-      Serial.println("left");
+      Serial.println("\tleft");
     } else {
-      Serial.println("right");
+      Serial.println("\t\tright");
     }
     Serial.println();
   }
