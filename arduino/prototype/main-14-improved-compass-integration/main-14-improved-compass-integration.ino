@@ -4,8 +4,8 @@
 #include <LinkedList.h>
 
 //Name here
-// const String myName = "BASE";
-const String myName = "DRO1";
+const String myName = "BASE";
+// const String myName = "DRO1";
 // const String myName = "DRO2";
 // const String myName = "DRO3";
 
@@ -136,9 +136,9 @@ void forBaseStation() {
         digitalWrite(greenLed, LOW);
       }
     }
-
+    
     //TASK 2 If you pressed the button, deploy all drones
-    if(digitalRead(btn) == HIGH) {
+    if(digitalRead(btn) == HIGH && drones.size() > 0) {
       Serial.println("Button pressed. Starting deployment.");
       digitalWrite(redLed, LOW);
       digitalWrite(yellowLed, HIGH);
@@ -178,6 +178,8 @@ void forBaseStation() {
       digitalWrite(yellowLed, LOW);
       digitalWrite(greenLed, HIGH);
       digitalWrite(detectionPin, HIGH);
+    } else if(digitalRead(btn) == HIGH && drones.size() < 1) {
+      Serial.println("No drones to deploy.");
     }
   }
 
