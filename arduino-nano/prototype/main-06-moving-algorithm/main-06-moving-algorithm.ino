@@ -173,12 +173,17 @@ void loop() {
       digitalWrite(yellowLed, LOW);
       digitalWrite(blueLed, HIGH);
       digitalWrite(redLed, LOW);
-      if(receivedDetails == "DONE") {
+      Serial.println("Object is detected");
+
+      Serial.print("receivedDetails: ");
+      Serial.println(receivedDetails);
+      if(receivedDetails == "DONE\n") {
         hasDetectedObject = false;
         digitalWrite(greenLed, LOW);
         digitalWrite(yellowLed, LOW);
-        digitalWrite(blueLed, HIGH);
+        digitalWrite(blueLed, LOW);
         digitalWrite(redLed, LOW);
+        Serial.println("Object has been acquired");
       }
     }
   }
