@@ -45,7 +45,9 @@ int savedDir = 0;
 float kp = 2;
 float ki = 0.2;
 float kd = 3;
-float PID_p, PID_i, PID_d, PID_total;
+double errSum, lastErr;
+unsigned long lastTime;
+
 
 float savedAngle = 0.0;
 
@@ -246,20 +248,26 @@ void loop() {
 
 ///////Specific functions/////////
 void move(float currentAngle) {
-  float error = abs(currentAngle - savedAngle);
-  float previous_error;
-  float cumulative_error;
+  //PID Implementation
+  /*How long since last calculated*/
+  unsigned long now = millis();
+  double timeChange = (double)(now - lastTime);
 
-  float PID_p = kp * error;
-  float PID_i = cumulative_error * ki;
-  float PID_d = kd*(error - previous_error);
+  /*Compute all error variables*/
+  double error = abs(currentAngle - savedAngle);
+  errSum += (error * timeChange);
+  double dErr = (error - lastErr) / timeChange;
 
-  double PID_total = PID_p + PID_i + PID_d;
+  /*Compute PID Ouptut*/
+  double PID_total = kp*error + ki*errSum + kd*dErr;
 
-  cumulative_error += error;
-  previous_error = error;
+  /*Remember variables*/
+  lastErr = error;
+  lastTime = now;
   
   float modifiedSpeed = PID_total;
+
+  Serial.println(modifiedSpeed);
 
   // Sets a limit for max and min speed
   if(modifiedSpeed >= maxSpeed) {
