@@ -44,7 +44,7 @@ int savedDir = 0;
 //PID values
 float kp = 2;
 float ki = 0.2;
-float kd = 3;
+float kd = 250;
 double errSum, lastErr;
 unsigned long lastTime;
 
