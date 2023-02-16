@@ -267,7 +267,7 @@ void move(float currentAngle) {
   
   float modifiedSpeed = PID_total;
 
-  Serial.println(modifiedSpeed);
+  Serial.println(PID_total);
 
   // Sets a limit for max and min speed
   if(modifiedSpeed >= maxSpeed) {
@@ -281,8 +281,7 @@ void move(float currentAngle) {
 
   if(error < 10) isStraight = true;
   else isStraight = false;
-
-
+  
   if(isStraight) {
     if(isLeft) {
       escLeft.write(modifiedSpeed+5);

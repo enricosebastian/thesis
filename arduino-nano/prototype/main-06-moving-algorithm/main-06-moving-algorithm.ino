@@ -274,7 +274,8 @@ void move(float currentAngle) {
   if(error < 10) isStraight = true;
   else isStraight = false;
 
-
+  Serial.println(modifiedSpeed);
+  
   if(isStraight) {
     if(isLeft) {
       escLeft.write(modifiedSpeed+5);
