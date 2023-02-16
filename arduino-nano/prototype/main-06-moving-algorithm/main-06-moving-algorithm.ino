@@ -5,8 +5,8 @@
 #include <Servo.h>
 
 //Name here
-const String myName = "DRO1";
-// const String myName = "DRO2";
+// const String myName = "DRO1";
+const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants
@@ -21,7 +21,7 @@ const int rxNano = 11;
 const int txNano = 12; 
 
 const int waitingTime = 5000;
-const int turnDelay = 30000; //in milliseconds
+const int turnDelay = 25000; //in milliseconds
 
 //movement constants
 const float stopSpeed = 0;
@@ -48,6 +48,7 @@ float kd = 3;
 float PID_p, PID_i, PID_d, PID_total;
 
 float savedAngle = 0.0;
+float oppositeSavedAngle = 0.0;
 
 //millis time variables for storage
 unsigned long startTime = 0;
@@ -150,14 +151,22 @@ void loop() {
 
       savedAngle = currentAngle;
 
+      oppositeSavedAngle = currentAngle + 210;
+      if(oppositeSavedAngle > 360) {
+        oppositeSavedAngle = oppositeSavedAngle - 360;
+      }
+
       digitalWrite(greenLed, HIGH);
       digitalWrite(yellowLed, LOW);
       digitalWrite(blueLed, LOW);
       digitalWrite(redLed, LOW);
 
       Serial.print(myName);
-      Serial.print(" is now moving. Saved angle: ");
+      Serial.print(" is now moving\nSaved angle: ");
       Serial.println(savedAngle);
+
+      Serial.print("Opposite saved angle: ");
+      Serial.println(oppositeSavedAngle);
     } else if(receivedCommand == "STOP" && isDeployed) {
       hasStopped = true;
       startTime = millis();
@@ -209,15 +218,14 @@ void loop() {
       }
 
       if(millis() - startTime2 > turnDelay) {
-        if(posX % 2 == 0) savedAngle -= 180;
-        else if(posX % 2 != 0) savedAngle += 180;
-        posX++;
+        float tempAngle = savedAngle;
+        savedAngle = oppositeSavedAngle;
+        oppositeSavedAngle = tempAngle;
 
-        if(savedAngle < 0) savedAngle = savedAngle + 360;
-        else if(savedAngle > 360) savedAngle = 360 - savedAngle;
-
-        Serial.print("Changed angle: ");
+        Serial.print("Saved angle: ");
         Serial.println(savedAngle);
+        Serial.print("Opposite angle: ");
+        Serial.println(oppositeSavedAngle);
         startTime2 = millis();
       }
 
