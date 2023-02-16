@@ -27,10 +27,8 @@ void loop() {
     digitalWrite(redLed, HIGH);
     char letter = Nano.read();
     Serial.println(letter);
-    delay(1000);
   } else {
     digitalWrite(redLed, LOW);
-    delay(1000);
   }
 
 }

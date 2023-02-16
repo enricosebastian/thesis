@@ -5,8 +5,8 @@
 #include <Servo.h>
 
 //Name here
-const String myName = "DRO1";
-// const String myName = "DRO2";
+// const String myName = "DRO1";
+const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants
@@ -21,6 +21,7 @@ const int rxNano = 11;
 const int txNano = 12; 
 
 const int waitingTime = 5000;
+const int turnDelay = 30000; //in milliseconds
 
 //movement constants
 const float stopSpeed = 0;
@@ -49,7 +50,6 @@ float PID_p, PID_i, PID_d, PID_total;
 float savedAngle = 0.0;
 
 //millis time variables for storage
-const unsigned long turnDelay = 5000; //in milliseconds
 unsigned long startTime = 0;
 unsigned long startTime2 = 0;
 
@@ -194,27 +194,17 @@ void loop() {
         startTime = millis();
       }
 
-      if(millis() - startTime2 > turnDelay && posX % 2 == 0) {
-        savedAngle = savedAngle - 180;
-        startTime2 = millis();
+      if(millis() - startTime2 > turnDelay) {
+        if(posX % 2 == 0) savedAngle -= 180;
+        else if(posX % 2 != 0) savedAngle += 180;
         posX++;
-      } else if(millis() - startTime2 > turnDelay && posX % 2 != 0) {
-        savedAngle = savedAngle + 180;
-        startTime2 = millis();
-        posX++;
-      }
 
-      if(savedAngle < 0) {
-        savedAngle = savedAngle + 360;
+        if(savedAngle < 0) savedAngle = savedAngle + 360;
+        else if(savedAngle > 360) savedAngle = 360 - savedAngle;
 
         Serial.print("Changed angle: ");
         Serial.println(savedAngle);
-      }
-      else if(savedAngle > 360) {
-        savedAngle = 360 - savedAngle;
-
-        Serial.print("Changed angle: ");
-        Serial.println(savedAngle);
+        startTime2 = millis();
       }
 
       // move(currentAngle);      
