@@ -135,6 +135,7 @@ void loop() {
       digitalWrite(redLed, LOW);
 
       isConnected = true;
+      Serial.println("Connected to the base station.");
     } else if(receivedCommand == "DEPL" && !isDeployed) {
       isDeployed = true;
       hasStopped = true;
@@ -168,8 +169,16 @@ void loop() {
       escRight.write(stopSpeed);
     } else if(receivedCommand == "DETE" && isDeployed) {
       hasDetectedObject = true;
+      digitalWrite(greenLed, LOW);
+      digitalWrite(yellowLed, LOW);
+      digitalWrite(blueLed, HIGH);
+      digitalWrite(redLed, LOW);
       if(receivedDetails == "DONE") {
         hasDetectedObject = false;
+        digitalWrite(greenLed, LOW);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(blueLed, HIGH);
+        digitalWrite(redLed, LOW);
       }
     }
   }
