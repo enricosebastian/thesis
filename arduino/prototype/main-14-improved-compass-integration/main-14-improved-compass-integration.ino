@@ -1,39 +1,42 @@
+// Ubuntu command line for serial port: sudo chmod a+rw /dev/ttyACM0
 #include <Arduino.h>
 #include <NeoSWSerial.h>
 #include <LinkedList.h>
 
 //Name here
 // const String myName = "BASE";
-const String myName = "DRO1";
-// const String myName = "DRO2";
+// const String myName = "DRO1";
+const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants (buttons)
+const int detectionPin = 10;
+const int btn = 7;
+
+// Rule: For ports, green = RX, blue = TX
+// For modules/chips, green = TX, blue = RX
+const int rxHc12 = A0; //green wire
+const int txHc12 = A1; //blue wire
+const int rxNano = A2; //green wire
+const int txNano = A3; //blue wire
+
+// Waiting times
+const int waitingTime = 5000;
+
+// Only for base station
 const int redLed = 13;
 const int yellowLed = 12;
 const int greenLed = 11;
-const int detectionPin = 10;
-const int btn = 7;
-const int txHc12 = A0; //green tx
-const int rxHc12 = A1; //blue received
-const int txNano = A2; //green tx
-const int rxNano = A3; //blue received
-const int waitingTime = 5000;
 
 //Booleans for logic
 bool isConnected = false;
 bool isDeployed = false;
-
-bool hasStopped = false;
+bool hasStopped = true;
 bool hasDetectedObject = false;
 
 //millis time variables for storage
 unsigned long startTime = 0;
 unsigned long startTime2 = 0;
-
-//Variables
-int posX = 0;
-int posY = 0;
 
 //received message
 String receivedMessage = "";
@@ -49,8 +52,9 @@ String sentToName = "";
 String sentFromName = "";
 String sentDetails = "";
 
-NeoSWSerial HC12(txHc12, rxHc12); // (Green TX, Blue RX)
-NeoSWSerial Nano(txNano, rxNano); // (Green TX, Blue RX)
+// SoftwareSerial(rxPin, txPin, inverse_logic)
+NeoSWSerial HC12(rxHc12, txHc12);
+NeoSWSerial Nano(rxNano, txNano);
 LinkedList<String> drones;
 
 void setup() {
@@ -61,29 +65,27 @@ void setup() {
   Serial.println(" is initializing...");
   
   //GPIO initialization
-  pinMode(redLed, OUTPUT);
-  pinMode(yellowLed, OUTPUT);
-  pinMode(greenLed, OUTPUT);
   pinMode(detectionPin, OUTPUT);
   pinMode(btn, INPUT);
-
-  //Turn on all lights first to signify that connections are safely grounded
-  digitalWrite(redLed, HIGH);
-  digitalWrite(yellowLed, HIGH);
-  digitalWrite(greenLed, HIGH);
 
   //Set output pins
   digitalWrite(detectionPin, LOW);
 
   //Successful intialization indicator
   if(myName == "BASE") {
+    pinMode(redLed, OUTPUT);
+    pinMode(yellowLed, OUTPUT);
+    pinMode(greenLed, OUTPUT);
+
+    //Turn on all lights first to signify that connections are safely grounded
+    digitalWrite(redLed, HIGH);
+    digitalWrite(yellowLed, HIGH);
+    digitalWrite(greenLed, HIGH);
+
+    delay(1000);
+
     //For base station, no LED should turn on
     digitalWrite(redLed, LOW);
-    digitalWrite(yellowLed, LOW);
-    digitalWrite(greenLed, LOW);
-  } else {
-    //For drone, it should be on a red LED
-    digitalWrite(redLed, HIGH);
     digitalWrite(yellowLed, LOW);
     digitalWrite(greenLed, LOW);
   }
@@ -142,7 +144,7 @@ void forBaseStation() {
     }
 
     //TASK 2 If you pressed the button, deploy all drones
-    if(digitalRead(btn) == HIGH) {
+    if(digitalRead(btn) == HIGH && drones.size() > 0) {
       Serial.println("Button pressed. Starting deployment.");
       digitalWrite(redLed, LOW);
       digitalWrite(yellowLed, HIGH);
@@ -182,12 +184,22 @@ void forBaseStation() {
       digitalWrite(yellowLed, LOW);
       digitalWrite(greenLed, HIGH);
       digitalWrite(detectionPin, HIGH);
+    } else if(digitalRead(btn) == HIGH && drones.size() < 1) {
+      Serial.println("No drones to deploy.");
     }
   }
 
   //STATE 2: Base station has deployed everyone. Read and send commands
   if(isDeployed) {
     //TASK 1: If you typed something, send it to base station
+    if(millis() - startTime > 800) {
+      digitalWrite(redLed, LOW);
+      digitalWrite(yellowLed, LOW);
+      digitalWrite(greenLed, !digitalRead(greenLed));
+
+      startTime = millis();
+    }
+    
     while(Serial.available()) {
       char letter = Serial.read();
       if(letter == '\n') {
@@ -245,9 +257,6 @@ void forDrone() {
     }
     isConnected = true;
     Serial.println("Successfully detected by base station. Waiting for deployment.");
-    digitalWrite(redLed, LOW);
-    digitalWrite(yellowLed, HIGH);
-    digitalWrite(greenLed, LOW);
     sendToNano("CONN", myName, "SUCC");
   }
 
@@ -278,34 +287,13 @@ void forDrone() {
 
     Serial.println("Drone is deploying.");
 
-    sendToNano("BUFF", myName, "SUCC"); // buffer to clear serial ports
-    digitalWrite(detectionPin, HIGH);
+    sendToNano("DEPL", myName, "SUCC");
   }
 
   //STATE 3: Drone is deployed. Move, receive commands, send commands, and detect objects
   if(isConnected && isDeployed) {
 
-    // Task 1: Keep blinking yellow == ready to deploy
-    if(hasStopped && !receiveCommand() && !hasDetectedObject) {
-      if(millis() - startTime > 800) {
-        digitalWrite(redLed, LOW);
-        digitalWrite(yellowLed, !digitalRead(yellowLed));
-        digitalWrite(greenLed, LOW);
-        startTime = millis();
-      }
-    }
-
-    // Task 2: Keep blinking green == is deployed
-    if(!hasStopped && !receiveCommand() && !hasDetectedObject) {
-      if(millis() - startTime > 800) {
-        digitalWrite(redLed, LOW);
-        digitalWrite(yellowLed, LOW);
-        digitalWrite(greenLed, !digitalRead(greenLed));
-        startTime = millis();
-      }
-    }
-
-    // Task 3: Interpret commands
+    // Task 1: Interpret commands
     if(receiveCommand()) {
 
       //Send acknowledgement that we received the command first
@@ -322,32 +310,17 @@ void forDrone() {
       if(receivedCommand == "STOP") {
         hasStopped = true;
         sendToNano(receivedCommand, myName, receivedDetails);
-        digitalWrite(redLed, HIGH);
-        digitalWrite(yellowLed, LOW);
-        digitalWrite(greenLed, LOW);
-        digitalWrite(detectionPin, LOW);
+        digitalWrite(detectionPin, LOW); // Turn off camera
       } else if(receivedCommand == "GO") {
         hasStopped = false;
         sendToNano(receivedCommand, myName, receivedDetails);
-        digitalWrite(redLed, LOW);
-        digitalWrite(yellowLed, LOW);
-        digitalWrite(greenLed, HIGH);
-        digitalWrite(detectionPin, HIGH);
-      } else if(receivedCommand == "DETE") {
-        hasDetectedObject = true;
-        if(receivedDetails == "DONE") {
-          hasDetectedObject = false;
-        }
-        digitalWrite(redLed, LOW);
-        digitalWrite(yellowLed, LOW);
-        digitalWrite(greenLed, HIGH);
-        sendToNano(receivedCommand, myName, receivedDetails);
+        digitalWrite(detectionPin, HIGH); // Turn on camera
       } else {
         sendToNano(receivedCommand, myName, receivedDetails);
       }
     }
 
-    // Task 4: If serial available, that most likely means you detected something...
+    // Task 2: If serial is available, you detected an object...
     while(Serial.available()) {
       char letter = Serial.read();
       if(letter == '\n') {
@@ -367,6 +340,11 @@ void forDrone() {
   
         receivedMessage = ""; // Erase old message
         if(receivedCommand == "DETE") {
+          if(receivedDetails == "DONE") {
+            hasDetectedObject = false;
+          } else {
+            hasDetectedObject = true;
+          }
           sendToNano(receivedCommand, myName, receivedDetails);
         }
       } else {
@@ -380,11 +358,15 @@ void forDrone() {
 void sendToNano(String command, String toName, String details) {
   HC12.end();
   Nano.listen();
+
   //COMMAND TONAME FROMNAME DETAILS
   if(command != "" && toName != "" && details != "") {
     String sentMessage = command + " " + toName + " " + myName + " " + details;
-    Serial.print("Sending: ");
+    String bufferMessage = "BUFF " + toName + " " + myName + " " + "BUFF";
+    Serial.print("Sending to Nano: ");
     Serial.println(sentMessage);
+    
+    Nano.println(bufferMessage); //Ned to send a buffer message first before sending actual message to clear port
     Nano.println(sentMessage);
   } else {
     Serial.println("Wrong format of command. Try again.");
@@ -427,7 +409,7 @@ bool receiveCommand() {
       receivedDetails = receivedMessage.substring(endIndex+1);
 
       receivedMessage = ""; // Erase old message
-      return (receivedCommand != "") && (receivedToName == myName) && (receivedFromName != "") && (receivedDetails != "");
+      return (receivedCommand != "") && (receivedToName == myName || receivedToName == "ALL") && (receivedFromName != "") && (receivedDetails != "");
     } else {
       receivedMessage += letter;
     }
