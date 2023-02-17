@@ -27,8 +27,9 @@ import RPi.GPIO as GPIO
 import serial
 
 #### Constants
+MYNAME = "ALL"
 # MYNAME = "DRO1"
-MYNAME = "DRO2"
+# MYNAME = "DRO2"
 # MYNAME = "DRO3"
 
 detectionPin = 7
@@ -89,7 +90,7 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
   base_options = core.BaseOptions(
       file_name=model, use_coral=enable_edgetpu, num_threads=num_threads)
   detection_options = processor.DetectionOptions(
-      max_results=1, score_threshold=0.3)
+      max_results=1, score_threshold=0.7)
   options = vision.ObjectDetectorOptions(
       base_options=base_options, detection_options=detection_options)
   detector = vision.ObjectDetector.create_from_options(options)
@@ -156,12 +157,14 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
         sentDetails = "RIGHT"
         
       sentMessage = sentCommand + " " + sentToName + " " + sentFromName + " " + sentDetails + "\n"
+      print(sentMessage)
       ser.write(sentMessage.encode('utf-8'))
     elif(prevSentCommand == "DETE"):
       sentCommand = "DETE"
       prevSentCommand = ""
       sentDetails = "DONE"
       sentMessage = sentCommand + " " + sentToName + " " + sentFromName + " " + sentDetails + "\n"
+      print(sentMessage)
       ser.write(sentMessage.encode('utf-8'))
       
 
