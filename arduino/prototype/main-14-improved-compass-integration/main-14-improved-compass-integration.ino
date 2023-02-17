@@ -202,6 +202,7 @@ void forBaseStation() {
     
     while(Serial.available()) {
       char letter = Serial.read();
+
       if(letter == '\n') {
         sentMessage += '\n';
         Serial.print("final: ");
@@ -325,6 +326,8 @@ void forDrone() {
       char letter = Serial.read();
       if(letter == '\n') {
         receivedMessage += '\n';
+        Serial.print("final: ");
+        Serial.println(receivedMessage);
         
         int endIndex = receivedMessage.indexOf(' ');
         receivedCommand = receivedMessage.substring(0, endIndex);
