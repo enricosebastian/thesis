@@ -156,14 +156,14 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
         # Object is at the right
         sentDetails = "RIGHT"
         
-      sentMessage = sentCommand + " " + sentToName + " " + sentFromName + " " + sentDetails + "\n"
+      sentMessage = sentCommand + " " + sentToName + " " + sentFromName + " " + sentDetails + '\n'
       print(sentMessage)
       ser.write(sentMessage.encode('utf-8'))
     elif(prevSentCommand == "DETE"):
       sentCommand = "DETE"
       prevSentCommand = ""
       sentDetails = "DONE"
-      sentMessage = sentCommand + " " + sentToName + " " + sentFromName + " " + sentDetails + "\n"
+      sentMessage = sentCommand + " " + sentToName + " " + sentFromName + " " + sentDetails + '\n'
       print(sentMessage)
       ser.write(sentMessage.encode('utf-8'))
       
