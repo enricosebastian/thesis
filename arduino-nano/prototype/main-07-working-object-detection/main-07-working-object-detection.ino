@@ -21,7 +21,7 @@ const int rxNano = 11;
 const int txNano = 12; 
 
 const int waitingTime = 5000;
-const int turnDelay = 25000; //in milliseconds
+const int turnDelay = 30000; //in milliseconds
 
 //movement constants
 const float stopSpeed = 0;
