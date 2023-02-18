@@ -53,6 +53,7 @@ float oppositeSavedAngle = 0.0;
 float straightAngle = 0.0;
 float leftAngle = 0.0;
 float rightAngle = 0.0;
+float detectAngle = 30.0;
 
 //millis time variables for storage
 unsigned long startTime = 0;
@@ -187,19 +188,17 @@ void loop() {
       digitalWrite(yellowLed, LOW);
       digitalWrite(blueLed, HIGH);
       digitalWrite(redLed, LOW);
-      Serial.println("Object is detected");
-
-      Serial.print("receivedDetails: ");
+      Serial.println("Object is detected at: ");
       Serial.println(receivedDetails);
 
       if(receivedDetails == "LEFT\n") {
-        leftAngle = savedAngle + 30;
+        leftAngle = savedAngle + detectAngle;
         if(leftAngle > 360) leftAngle = leftAngle - 360;
         if(leftAngle < 0) leftAngle = 360 - leftAngle;
 
         savedAngle = leftAngle;
       } else if(receivedDetails == "RIGHT\n") {
-        rightAngle = savedAngle - 30;
+        rightAngle = savedAngle - detectAngle;
         if(rightAngle > 360) rightAngle = rightAngle - 360;
         if(rightAngle < 0) rightAngle = 360 - rightAngle;
         
