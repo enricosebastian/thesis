@@ -236,7 +236,9 @@ if __name__ == '__main__':
         if ret:
           cv2.imshow('Video recording', frame)
           writer.write(frame)
+          print("Recording...")
         if GPIO.input(recordingPin) == False:
+          print("Recording ended.")
           break
         
       cap.release()
