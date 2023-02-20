@@ -219,8 +219,10 @@ if __name__ == '__main__':
     if GPIO.input(detectionPin) == True:
       main()
     if GPIO.input(offPin) == True:
+      print("Off pin is high")
       os.system("sudo shutdown -h now")
     if GPIO.input(recordingPin) == True:
+      print("Recording pin is high")
       cap = cv2.VideoCapture(0)
       now = datetime.datetime.now()
       now_string = now.strftime("%H-%M-%S")
