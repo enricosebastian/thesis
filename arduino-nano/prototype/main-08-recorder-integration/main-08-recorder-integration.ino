@@ -194,13 +194,13 @@ void loop() {
       if(receivedDetails == "LEFT\n") {
         leftAngle = savedAngle + detectAngle;
         if(leftAngle > 360) leftAngle = leftAngle - 360;
-        if(leftAngle < 0) leftAngle = 360 - leftAngle;
+        if(leftAngle < 0) leftAngle = 360 + leftAngle;
 
         savedAngle = leftAngle;
       } else if(receivedDetails == "RIGHT\n") {
         rightAngle = savedAngle - detectAngle;
         if(rightAngle > 360) rightAngle = rightAngle - 360;
-        if(rightAngle < 0) rightAngle = 360 - rightAngle;
+        if(rightAngle < 0) rightAngle = 360 + rightAngle;
         
         savedAngle = rightAngle;
       } else if(receivedDetails == "CENTER\n") {
