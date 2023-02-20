@@ -10,7 +10,9 @@ import datetime
 recording = False
 
 while True:
-   print(datetime.datetime().microsecond())
+   now = datetime.datetime.now()
+   now_string = now.strftime("%d/%m/%Y %H:%M:%S")
+   print(now_string)
 #    ret, frame = cap.read()
    
 #    if ret:
