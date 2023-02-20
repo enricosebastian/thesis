@@ -191,6 +191,8 @@ void loop() {
       Serial.println("Object is detected at: ");
       Serial.println(receivedDetails);
 
+      startTime = millis();
+
       if(receivedDetails == "LEFT\n") {
         leftAngle = savedAngle + detectAngle;
         if(leftAngle > 360) leftAngle = leftAngle - 360;
