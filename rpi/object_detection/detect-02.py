@@ -50,13 +50,6 @@ sentToName = MYNAME
 sentFromName = MYNAME
 sentDetails = ""
 
-now = datetime.datetime.now()
-now_string = now.strftime("%H-%M-%S")
-filename = now_string+".mp4"
-
-fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-writer = cv2.VideoWriter(filename, fourcc, 24.0, (640, 480))
-
 ser = serial.Serial("/dev/ttyS0", 9600)
 
 GPIO.setmode(GPIO.BOARD)
@@ -229,6 +222,12 @@ if __name__ == '__main__':
       os.system("sudo shutdown -h now")
     if GPIO.input(recordingPin) == True:
       cap = cv2.VideoCapture(0)
+      now = datetime.datetime.now()
+      now_string = now.strftime("%H-%M-%S")
+      filename = now_string+".mp4"
+
+      fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+      writer = cv2.VideoWriter(filename, fourcc, 24.0, (640, 480))
       
       while True:
         ret, frame = cap.read()
