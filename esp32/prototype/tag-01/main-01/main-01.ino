@@ -36,7 +36,7 @@ uint32_t push; // time to push data to arduino
 float startTime = 0;
 float waitingTime = 300;
 
-bool lookingForX = true;
+bool isLookingForX = true;
 
 void setup() {
   Serial.begin(9600);
@@ -55,24 +55,28 @@ void setup() {
 void loop() {
   DW1000Ranging.loop();
 
-  if(millis() - startTime > 500) {
-    if(lookingForX) {
+  if(millis() - startTime > 1000) {
+    if(isLookingForX) {
       DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
-      startTime = millis();
+      isLookingForX = false;
+    } else {
+      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_7,false);
+      isLookingForX = true;
     }
+    startTime = millis();
   }
-
-  if(lookingForX) {
-    r1 = DW1000Ranging.getDistantDevice()->getRange();    
-  } else {
+  
+  if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1001) {
+    r1 = DW1000Ranging.getDistantDevice()->getRange();
+  } else if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1002) {
     r2 = DW1000Ranging.getDistantDevice()->getRange();
   }
 
-  if(r1 != r2) {
-    Serial.print(r1);
-    Serial.print(",");
-    Serial.println(r2);
-  }
+  Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
+  Serial.print(" - ");
+  Serial.print(r1);
+  Serial.print(",");
+  Serial.println(r2);
 }
 
 void coord(){
