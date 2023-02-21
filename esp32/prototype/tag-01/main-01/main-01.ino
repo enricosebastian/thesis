@@ -67,9 +67,9 @@ void loop() {
   }
 
   if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1001) {
-    if(r1 != 0) r1 = DW1000Ranging.getDistantDevice()->getRange();
+    if(DW1000Ranging.getDistantDevice()->getRange() != 0) r1 = DW1000Ranging.getDistantDevice()->getRange();
   } else if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1002) {
-    if(r2 != 0) r2 = DW1000Ranging.getDistantDevice()->getRange();
+    if(DW1000Ranging.getDistantDevice()->getRange() != 0) r2 = DW1000Ranging.getDistantDevice()->getRange();
   }
 
   Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
