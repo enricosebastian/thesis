@@ -40,7 +40,7 @@ float waitingTime = 300;
 bool isLookingForX = true;
 
 int correctTimes = 0;
-int maxCorrectTimes = 50;
+int maxCorrectTimes = 20;
 
 void setup() {
   Serial.begin(9600);
