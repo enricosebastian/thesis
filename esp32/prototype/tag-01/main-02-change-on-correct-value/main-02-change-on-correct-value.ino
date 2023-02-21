@@ -84,4 +84,5 @@ void loop() {
   Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
   Serial.print(" - ");
   Serial.println(message);
+  Serial2.println(message);
 }
