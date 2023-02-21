@@ -55,7 +55,7 @@ void setup() {
 void loop() {
   DW1000Ranging.loop();
 
-  if(millis() - startTime > 1000) {
+  if(millis() - startTime > 2000) {
     if(isLookingForX) {
       DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
       isLookingForX = false;
@@ -65,11 +65,11 @@ void loop() {
     }
     startTime = millis();
   }
-  
+
   if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1001) {
-    r1 = DW1000Ranging.getDistantDevice()->getRange();
+    if(r1 != 0) r1 = DW1000Ranging.getDistantDevice()->getRange();
   } else if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1002) {
-    r2 = DW1000Ranging.getDistantDevice()->getRange();
+    if(r2 != 0) r2 = DW1000Ranging.getDistantDevice()->getRange();
   }
 
   Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
