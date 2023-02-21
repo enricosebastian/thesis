@@ -1,7 +1,7 @@
 #include <NeoSWSerial.h>
 
-const int rxPin = 8;
-const int txPin = 9;
+const int rxPin = A5;
+const int txPin = A4;
 
 NeoSWSerial ser(rxPin, txPin);
 

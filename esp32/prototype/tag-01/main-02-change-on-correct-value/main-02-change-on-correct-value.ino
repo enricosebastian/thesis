@@ -61,7 +61,7 @@ void loop() {
   DW1000Ranging.loop();
 
   // For Anchor 1
-  if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1001) {
+  if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1001 && isLookingForX) {
 
     if(DW1000Ranging.getDistantDevice()->getRange() != 0) {
       r1 = DW1000Ranging.getDistantDevice()->getRange();     
@@ -73,10 +73,11 @@ void loop() {
       Serial.println("Switching to channel 7");
       DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_7,false);
       correctTimes = 0;
+      isLookingForX = false;
     }
 
   // For anchor 2
-  } else if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1002) {
+  } else if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1002 && !isLookingForX) {
     if(DW1000Ranging.getDistantDevice()->getRange() != 0) {
       r2 = DW1000Ranging.getDistantDevice()->getRange();
       correctTimes++; // Error-correction implementation
@@ -87,6 +88,7 @@ void loop() {
       Serial.println("Switching to channel 5");
       DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
       correctTimes = 0;
+      isLookingForX = true;
     }
   }
 
