@@ -34,6 +34,7 @@ uint32_t runtime;
 uint32_t push; // time to push data to arduino
 
 float startTime = 0;
+float startTime2 = 0;
 float waitingTime = 300;
 
 bool isLookingForX = true;
@@ -53,6 +54,7 @@ void setup() {
   DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
 
   startTime = millis();
+  startTime2 = millis();
 }
 
 void loop() {
@@ -80,9 +82,16 @@ void loop() {
     }
   }
 
-  message = String(r1) + "," + String(r2);
   Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
   Serial.print(" - ");
-  Serial.println(message);
-  Serial2.println(message);
+  Serial.print(r1);
+  Serial.print(",");
+  Serial.println(r2);
+
+  if(millis() - startTime2 > 500) {
+    message = "COOR ALL ALL " + String(r1) + "," + String(r2);
+    Serial2.println(message);
+    startTime2 = millis();
+  }
+
 }
