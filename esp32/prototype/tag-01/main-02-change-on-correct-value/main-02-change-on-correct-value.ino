@@ -80,9 +80,8 @@ void loop() {
     }
   }
 
+  message = String(r1) + "," + String(r2);
   Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
   Serial.print(" - ");
-  Serial.print(r1);
-  Serial.print(",");
-  Serial.println(r2);
+  Serial.println(message);
 }
