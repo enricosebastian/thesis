@@ -13,6 +13,7 @@ const String myName = "DRO1";
 const int detectionPin = 10;
 const int recordingPin = 9;
 const int btn = 7;
+const int coordPin = 6;
 
 // Rule: For ports, green = RX, blue = TX
 // For modules/chips, green = TX, blue = RX
@@ -20,6 +21,8 @@ const int rxHc12 = A0; //green wire
 const int txHc12 = A1; //blue wire
 const int rxNano = A2; //green wire
 const int txNano = A3; //blue wire
+const int rxEsp = A4;
+const int txEsp = A5; 
 
 // Waiting times
 const int waitingTime = 5000;
@@ -56,12 +59,16 @@ String sentDetails = "";
 // SoftwareSerial(rxPin, txPin, inverse_logic)
 NeoSWSerial HC12(rxHc12, txHc12);
 NeoSWSerial Nano(rxNano, txNano);
+NeoSWSerial Esp(rxEsp, txEsp);
+
 LinkedList<String> drones;
 
 void setup() {
   Serial.begin(9600);
   HC12.begin(9600);
   Nano.begin(9600);
+  Esp.begin(9600);
+
   Serial.print(myName);
   Serial.println(" is initializing...");
   
@@ -364,6 +371,8 @@ void forDrone() {
         receivedMessage += letter;
       }
     }
+
+    // Task 3: Wait for any coordinates
   }
 }
 
