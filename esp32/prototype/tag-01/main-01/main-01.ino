@@ -18,7 +18,12 @@ const uint8_t PIN_SS = 4;
 String message = "";
 String details = "";
 
-float r1, r2;
+float r1 = 6969.6969;
+float r2 = 6767.6767;
+float currentR1 = 6969.6969;
+float currentR2 = 6969.6969;
+float pastR1 = currentR1;
+float pastR2 = currentR2;
 
 float x0 = 3.7;
 float xval1, yval1;
@@ -28,6 +33,11 @@ int ctr;
 uint32_t runtime;
 uint32_t push; // time to push data to arduino
 
+float startTime = 0;
+float waitingTime = 300;
+
+bool lookingForX = true;
+
 void setup() {
   Serial.begin(9600);
   Serial2.begin(9600,SERIAL_8N1,RX,TX);
@@ -36,35 +46,33 @@ void setup() {
   DW1000Ranging.attachNewRange(0);
   DW1000Ranging.attachNewDevice(0);
   DW1000Ranging.attachInactiveDevice(0);
+
   DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
-  runtime = millis();
-  push = millis();
+
+  startTime = millis();
 }
 
 void loop() {
-  DW1000Ranging.loop(); // gets data
+  DW1000Ranging.loop();
 
-  if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1001){
-    r1 = DW1000Ranging.getDistantDevice()->getRange();
-    r2 = 0;
-
-    DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_7,false); // Change channel to anchor 2
+  if(millis() - startTime > 500) {
+    if(lookingForX) {
+      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
+      startTime = millis();
+    }
   }
-  else if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1002){
-    r1 = 0;
+
+  if(lookingForX) {
+    r1 = DW1000Ranging.getDistantDevice()->getRange();    
+  } else {
     r2 = DW1000Ranging.getDistantDevice()->getRange();
-
-    DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false); // Change channel back to anchor 1
   }
 
-  Serial.print("r1: ");
-  Serial.println(r1); 
-
-  Serial.print("r2: ");
-  Serial.println(r2);
-  Serial.println();
-
-  // coord();
+  if(r1 != r2) {
+    Serial.print(r1);
+    Serial.print(",");
+    Serial.println(r2);
+  }
 }
 
 void coord(){
