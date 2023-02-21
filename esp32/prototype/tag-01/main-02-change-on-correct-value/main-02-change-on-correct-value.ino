@@ -60,23 +60,31 @@ void setup() {
 void loop() {
   DW1000Ranging.loop();
 
+  // For Anchor 1
   if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1001) {
+
     if(DW1000Ranging.getDistantDevice()->getRange() != 0) {
       r1 = DW1000Ranging.getDistantDevice()->getRange();     
-      correctTimes++; 
+      correctTimes++; // Error-correction implementation
     }
 
+    // If you are completely sure that the last coordinate from Anchor 1 is correct, switch channels
     if(correctTimes > maxCorrectTimes) {
+      Serial.println("Switching to channel 7");
       DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_7,false);
       correctTimes = 0;
     }
+
+  // For anchor 2
   } else if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1002) {
     if(DW1000Ranging.getDistantDevice()->getRange() != 0) {
       r2 = DW1000Ranging.getDistantDevice()->getRange();
-      correctTimes++;
+      correctTimes++; // Error-correction implementation
     }
 
+    // If you are completely sure that the last coordinate from Anchor 2 is correct, switch channels
     if(correctTimes > maxCorrectTimes) {
+      Serial.println("Switching to channel 5");
       DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
       correctTimes = 0;
     }
