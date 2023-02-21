@@ -39,6 +39,7 @@ float waitingTime = 300;
 bool isLookingForX = true;
 
 int correctTimes = 0;
+int maxCorrectTimes = 50;
 
 void setup() {
   Serial.begin(9600);
@@ -63,7 +64,7 @@ void loop() {
       correctTimes++; 
     }
 
-    if(correctTimes > 10) {
+    if(correctTimes > maxCorrectTimes) {
       DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_7,false);
       correctTimes = 0;
     }
@@ -73,7 +74,7 @@ void loop() {
       correctTimes++;
     }
 
-    if(correctTimes > 10) {
+    if(correctTimes > maxCorrectTimes) {
       DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
       correctTimes = 0;
     }
