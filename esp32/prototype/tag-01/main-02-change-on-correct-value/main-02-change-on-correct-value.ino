@@ -86,13 +86,3 @@ void loop() {
   Serial.print(",");
   Serial.println(r2);
 }
-
-void coord(){
-  xval1 = (x0*x0 - r2*r2 + r1*r1)/(2*x0);
-  yval1 = sqrt(r1*r1 - xval1*xval1);
-  if(xval1 < 0) xval1 = 0;
-  else if(isnan(xval1)) xval1 = 0;
-  if(isnan(yval1)) yval1 = 0;
-  dtostrf(xval1,3,2,xc1);
-  dtostrf(yval1,3,2,yc1);
-}
