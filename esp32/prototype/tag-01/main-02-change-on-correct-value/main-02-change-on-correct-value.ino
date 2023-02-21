@@ -38,6 +38,8 @@ float waitingTime = 300;
 
 bool isLookingForX = true;
 
+int correctTimes = 0;
+
 void setup() {
   Serial.begin(9600);
   Serial2.begin(9600,SERIAL_8N1,RX,TX);
@@ -55,21 +57,26 @@ void setup() {
 void loop() {
   DW1000Ranging.loop();
 
-  if(millis() - startTime > 2000) {
-    if(isLookingForX) {
-      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
-      isLookingForX = false;
-    } else {
-      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_7,false);
-      isLookingForX = true;
-    }
-    startTime = millis();
-  }
-
   if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1001) {
-    if(DW1000Ranging.getDistantDevice()->getRange() != 0) r1 = DW1000Ranging.getDistantDevice()->getRange();
+    if(DW1000Ranging.getDistantDevice()->getRange() != 0) {
+      r1 = DW1000Ranging.getDistantDevice()->getRange();     
+      correctTimes++; 
+    }
+
+    if(correctTimes > 10) {
+      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_7,false);
+      correctTimes = 0;
+    }
   } else if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1002) {
-    if(DW1000Ranging.getDistantDevice()->getRange() != 0) r2 = DW1000Ranging.getDistantDevice()->getRange();
+    if(DW1000Ranging.getDistantDevice()->getRange() != 0) {
+      r2 = DW1000Ranging.getDistantDevice()->getRange();
+      correctTimes++;
+    }
+
+    if(correctTimes > 10) {
+      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
+      correctTimes = 0;
+    }
   }
 
   Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
