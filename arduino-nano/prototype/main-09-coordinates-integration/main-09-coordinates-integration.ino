@@ -37,9 +37,12 @@ bool hasStopped = true;
 bool hasDetectedObject = false;
 
 //Variables
-float posX = 0;
-float posY = 0;
+float homeX = 0;
+float currentX = 0;
 float savedX = 0;
+
+float homeY = 0;
+float currentY = 0;
 float savedY = 0;
 
 //PID values
@@ -223,6 +226,14 @@ void loop() {
         digitalWrite(redLed, LOW);
         Serial.println("Object has been acquired");
       }
+    } else if(receivedCommand == "COOR" && isDeployed) {
+      int endIndex = receivedDetail.indexOf(',');
+      currentX = receivedDetail.substring(0, endIndex).toFloat();
+      currentY = receivedDetail.substring(endIndex+1).toFloat();
+      Serial.print("X,Y: ");
+      Serial.print(currentX);
+      Serial.print(",");
+      Serial.println(currentY);
     }
   }
 
@@ -246,7 +257,7 @@ void loop() {
         startTime = millis();
       }
 
-      if(millis() - startTime2 > turnDelay) {
+      if(currentY > 10.0) {
         float tempAngle = savedAngle;
         savedAngle = oppositeSavedAngle;
         oppositeSavedAngle = tempAngle;
@@ -255,6 +266,14 @@ void loop() {
         Serial.println(savedAngle);
         Serial.print("Opposite angle: ");
         Serial.println(oppositeSavedAngle);
+
+        savedX = savedX + 5;
+
+        Serial.print("New X,Y:");
+        Serial.print(savedX);
+        Serial.print(",");
+        Serial.println(savedY);
+
         startTime2 = millis();
       }
 
