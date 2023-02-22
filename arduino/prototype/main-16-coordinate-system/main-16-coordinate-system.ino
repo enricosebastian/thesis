@@ -292,11 +292,40 @@ void forDrone() {
         Serial.println("Command 'DEPL' was not received yet. Continue waiting.");
         startTime = millis();        
       }
+
+      // Task 3: Update coordinates
+      if(millis() - startTime > 500) {
+        HC12.end();
+        Esp.listen();
+        startTime2 = millis();
+        while(millis() - startTime2 < 1000) {
+          if(receiveCommand() && receivedCommand == "COOR") {
+            int endIndex = receivedDetails.indexOf(',');
+            d1 = receivedDetails.substring(0, endIndex).toFloat();
+            d2 = receivedDetails.substring(endIndex+1).toFloat();
+
+            currentX = (distanceBetweenTags*distanceBetweenTags - d2*d2 + d1*d1)/(2*distanceBetweenTags);
+            currentY = sqrt(abs(d1*d1 - currentX*currentX));
+            Serial.print("X,Y: ");
+            Serial.print(currentX);
+            Serial.print(",");
+            Serial.println(currentY);
+          }
+        }
+        Esp.end();
+        HC12.listen();
+        startTime = millis();
+        startTime2 = millis();
+        if(receivedCommand == "COOR") sendToNano(receivedCommand, receivedToName, receivedDetails); 
+      }
     }
 
     Serial.println("Base station wants to start deploying. Sending acknowledgement.");
     startTime = millis();
     startTime2 = millis();
+
+    homeX = currentX;
+    homeY = currentY;
 
     while(millis() - startTime < waitingTime) {
       if(millis() - startTime2 > 800) {
@@ -309,7 +338,10 @@ void forDrone() {
     hasStopped = true;
     startTime = millis();
 
-    Serial.println("Drone is deploying.");
+    Serial.print("Drone is deploying. Home coordinate is: ");
+    Serial.print(homeX);
+    Serial.print(",");
+    Serial.println(homeY);
 
     sendToNano("DEPL", myName, "SUCC");
   }
