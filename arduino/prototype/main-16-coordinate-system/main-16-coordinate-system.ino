@@ -408,7 +408,7 @@ void forDrone() {
       HC12.listen();
       startTime = millis();
       startTime2 = millis();
-      sendToNano(receivedCommand, receivedToName, receivedDetails); 
+      if(receivedCommand == "COOR") sendToNano(receivedCommand, receivedToName, receivedDetails); 
     }
   }
 }
