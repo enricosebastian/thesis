@@ -257,19 +257,36 @@ void forBaseStation() {
 
 void forDrone() {
   //STATE 1: Not connected to base station
-  if(!isConnected && !isDeployed) {
-    //TASK 1: Continue to wait for connection acknowledgement
-    while(!receivedSpecificCommand("CONNREP")) {
-      if(millis() - startTime > 800) {
-        Serial.println("Reply 'CONNREP' was not received. Resending message again.");
-        sendCommand("CONN", "BASE", "HELL");
-        startTime = millis();        
-      }
+  HC12.end();
+  Esp.listen();
+  while(millis() - startTime > 1000) {
+    if(receiveCommand()) {
+      startTime = millis();
     }
-    isConnected = true;
-    Serial.println("Successfully detected by base station. Waiting for deployment.");
-    sendToNano("CONN", myName, "SUCC");
   }
+  Esp.end();
+  HC12.listen();
+
+  if(millis() - startTime2 > 500) {
+    Serial.println("Doing something else....");
+    startTime2 = millis();
+  }
+  
+
+
+  // if(!isConnected && !isDeployed) {
+  //   //TASK 1: Continue to wait for connection acknowledgement
+  //   while(!receivedSpecificCommand("CONNREP")) {
+  //     if(millis() - startTime > 800) {
+  //       Serial.println("Reply 'CONNREP' was not received. Resending message again.");
+  //       sendCommand("CONN", "BASE", "HELL");
+  //       startTime = millis();        
+  //     }
+  //   }
+  //   isConnected = true;
+  //   Serial.println("Successfully detected by base station. Waiting for deployment.");
+  //   sendToNano("CONN", myName, "SUCC");
+  // }
 
   //STATE 2: Connected, but waiting for deployment
   if(isConnected && !isDeployed) {
@@ -373,15 +390,21 @@ void forDrone() {
     }
 
     // Task 3: Wait for any coordinates
-    HC12.end();
-    Esp.listen();
-    while(millis() - startTime > 1000) {
-      if(receiveCommand()) {
-        startTime = millis();
-      }      
+    if(millis() - startTime > 500) {
+      HC12.end();
+      Esp.listen();
+
+      while(HC12.available()) {
+        char letter = HC12.read();
+        Serial.print(letter);
+      }
+
+      Esp.end();
+      HC12.listen();
+
+      //TODO: Send to Nano here
+      startTime = millis();
     }
-    Esp.end();
-    HC12.listen();
   }
 }
 
