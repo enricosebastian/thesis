@@ -2,7 +2,8 @@
 #include "DW1000Ranging.h"
 #include "DW1000.h"
 
-#define TAG_ADD "02:20:5B:D5:A9:9A:E2:9C"
+#define TAG_ADD "01:20:5B:D5:A9:9A:E2:9C" // Tag 1
+//#define TAG_ADD "02:20:5B:D5:A9:9A:E2:9C" // Tag 2
 
 #define TX 16
 #define RX 17
@@ -16,25 +17,11 @@ const uint8_t PIN_IRQ = 34;
 const uint8_t PIN_SS = 4;
 
 String message = "";
-String details = "";
 
 float r1 = 0.0;
 float r2 = 0.0;
-float currentR1 = 0.0;
-float currentR2 = 0.0;
-float pastR1 = currentR1;
-float pastR2 = currentR2;
-
-float x0 = 3.7;
-float xval1, yval1;
-char xc1[10], yc1[10];
-int ctr;
-
-uint32_t runtime;
-uint32_t push; // time to push data to arduino
 
 float startTime = 0;
-float startTime2 = 0;
 float waitingTime = 300;
 
 bool isLookingForX = true;
@@ -54,7 +41,6 @@ void setup() {
   DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
 
   startTime = millis();
-  startTime2 = millis();
 }
 
 void loop() {
@@ -98,10 +84,10 @@ void loop() {
   Serial.print(",");
   Serial.println(r2);
 
-  if(millis() - startTime2 > 800) {
+  if(millis() - startTime > 800) {
     message = "COOR ALL ALL " + String(r1) + "," + String(r2);
     Serial2.println(message);
-    startTime2 = millis();
+    startTime = millis();
   }
 
 }
