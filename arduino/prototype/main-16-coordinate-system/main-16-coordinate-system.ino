@@ -401,15 +401,14 @@ void forDrone() {
           Serial.print("X,Y: ");
           Serial.print(currentX);
           Serial.print(",");
-          Serial.println(currentY);     
-
-          sendToNano(receivedCommand, receivedToName, receivedDetails); 
+          Serial.println(currentY);
         }
       }
       Esp.end();
       HC12.listen();
       startTime = millis();
       startTime2 = millis();
+      sendToNano(receivedCommand, receivedToName, receivedDetails); 
     }
   }
 }
