@@ -18,10 +18,10 @@ const uint8_t PIN_SS = 4;
 String message = "";
 String details = "";
 
-float r1 = 6969.6969;
-float r2 = 6767.6767;
-float currentR1 = 6969.6969;
-float currentR2 = 6969.6969;
+float r1 = 0.0;
+float r2 = 0.0;
+float currentR1 = 0.0;
+float currentR2 = 0.0;
 float pastR1 = currentR1;
 float pastR2 = currentR2;
 
@@ -40,7 +40,7 @@ float waitingTime = 300;
 bool isLookingForX = true;
 
 int correctTimes = 0;
-int maxCorrectTimes = 20;
+int maxCorrectTimes = 30;
 
 void setup() {
   Serial.begin(9600);
@@ -98,7 +98,7 @@ void loop() {
   Serial.print(",");
   Serial.println(r2);
 
-  if(millis() - startTime2 > 500) {
+  if(millis() - startTime2 > 800) {
     message = "COOR ALL ALL " + String(r1) + "," + String(r2);
     Serial2.println(message);
     startTime2 = millis();

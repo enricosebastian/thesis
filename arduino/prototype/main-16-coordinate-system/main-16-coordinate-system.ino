@@ -32,6 +32,8 @@ const int redLed = 13;
 const int yellowLed = 12;
 const int greenLed = 11;
 
+const float distanceBetweenTags = 9.5;
+
 //Booleans for logic
 bool isConnected = false;
 bool isDeployed = false;
@@ -41,6 +43,17 @@ bool hasDetectedObject = false;
 //millis time variables for storage
 unsigned long startTime = 0;
 unsigned long startTime2 = 0;
+
+float currentX = 0;
+float homeX = 0;
+float savedX = 0;
+
+float currentY = 0;
+float homeY = 0;
+float savedY = 0;
+
+float d1 = 0;
+float d2 = 0;
 
 //received message
 String receivedMessage = "";
@@ -305,7 +318,7 @@ void forDrone() {
   if(isConnected && isDeployed) {
 
     // Task 1: Interpret commands
-    if(receiveCommand()) {
+    while(receiveCommand()) {
 
       //Send acknowledgement that we received the command first
       startTime = millis();
@@ -372,16 +385,32 @@ void forDrone() {
       }
     }
 
-    // Task 3: Wait for any coordinates
-    HC12.end();
-    Esp.listen();
-    while(millis() - startTime > 1000) {
-      if(receiveCommand()) {
-        startTime = millis();
-      }      
+    // Task 3: Update coordinates
+    if(millis() - startTime > 500) {
+      HC12.end();
+      Esp.listen();
+      startTime2 = millis();
+      while(millis() - startTime2 < 1000) {
+        if(receiveCommand() && receivedCommand == "COOR") {
+          int endIndex = receivedDetails.indexOf(',');
+          d1 = receivedDetails.substring(0, endIndex).toFloat();
+          d2 = receivedDetails.substring(endIndex+1).toFloat();
+
+          currentX = (distanceBetweenTags*distanceBetweenTags - d2*d2 + d1*d1)/(2*distanceBetweenTags);
+          currentY = sqrt(abs(d1*d1 - currentX*currentX));
+          Serial.print("X,Y: ");
+          Serial.print(currentX);
+          Serial.print(",");
+          Serial.println(currentY);     
+
+          sendToNano(receivedCommand, receivedToName, receivedDetails); 
+        }
+      }
+      Esp.end();
+      HC12.listen();
+      startTime = millis();
+      startTime2 = millis();
     }
-    Esp.end();
-    HC12.listen();
   }
 }
 
