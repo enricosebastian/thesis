@@ -37,9 +37,10 @@ bool hasStopped = true;
 bool hasDetectedObject = false;
 
 //Variables
-int posX = 0;
-int posY = 0;
-int savedDir = 0;
+float posX = 0;
+float posY = 0;
+float savedX = 0;
+float savedY = 0;
 
 //PID values
 float kp = 2;
@@ -145,6 +146,11 @@ void loop() {
     } else if(receivedCommand == "DEPL" && !isDeployed) {
       isDeployed = true;
       hasStopped = true;
+
+      int endIndex = receivedDetail.indexOf(',');
+      savedX = receivedDetail.substring(0, endIndex).toFloat();
+      savedY = receivedDetail.substring(endIndex+1).toFloat();
+      
       startTime = millis();
 
       Serial.print(myName);
