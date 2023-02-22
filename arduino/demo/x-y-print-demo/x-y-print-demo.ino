@@ -1,7 +1,7 @@
 #include <NeoSWSerial.h>
 
-const int rxPin = A5;
-const int txPin = A4;
+const int rxPin = A4;
+const int txPin = A5;
 
 NeoSWSerial ser(rxPin, txPin);
 
@@ -12,6 +12,8 @@ void setup() {
   Serial.begin(9600);
   ser.begin(9600);
   ser.listen();
+
+  Serial.println("Coordinates demo initializing");
 }
 
 void loop() {
