@@ -21,6 +21,8 @@ const int rxHc12 = A0; //green wire
 const int txHc12 = A1; //blue wire
 const int rxNano = A2; //green wire
 const int txNano = A3; //blue wire
+const int rxPin = A4;
+const int txPin = A5;
 
 // Waiting times
 const int waitingTime = 5000;
@@ -57,6 +59,7 @@ String sentDetails = "";
 // SoftwareSerial(rxPin, txPin, inverse_logic)
 NeoSWSerial HC12(rxHc12, txHc12);
 NeoSWSerial Nano(rxNano, txNano);
+NeoSWSerial Esp(rxPin, txPin);
 
 LinkedList<String> drones;
 
@@ -64,6 +67,7 @@ void setup() {
   Serial.begin(9600);
   HC12.begin(9600);
   Nano.begin(9600);
+  Esp.begin(9600);
 
   Serial.print(myName);
   Serial.println(" is initializing...");
@@ -253,7 +257,6 @@ void forBaseStation() {
 void forDrone() {
   //STATE 1: Not connected to base station
   if(!isConnected && !isDeployed) {
-
     //TASK 1: Continue to wait for connection acknowledgement
     while(!receivedSpecificCommand("CONNREP")) {
       if(millis() - startTime > 800) {
@@ -369,6 +372,18 @@ void forDrone() {
     }
 
     // Task 3: Wait for any coordinates
+    if(millis() - startTime > 500) {
+      HC12.end();
+      Esp.listen();
+      while(HC12.available()) {
+        char letter = HC12.read();
+        Serial.print(letter);
+      }
+      Esp.end();
+      HC12.listen();
+
+      //TODO: Send to Nano here
+    }
   }
 }
 
