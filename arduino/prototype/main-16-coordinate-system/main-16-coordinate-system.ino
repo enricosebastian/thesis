@@ -378,7 +378,9 @@ void forDrone() {
         sendToNano("GO", myName, receivedDetails);
         digitalWrite(detectionPin, LOW);
         digitalWrite(recordingPin, HIGH);
-      }else {
+      } else if(receivedCommand == "WHER") {
+
+      } else {
         sendToNano(receivedCommand, myName, receivedDetails);
       }
     }
