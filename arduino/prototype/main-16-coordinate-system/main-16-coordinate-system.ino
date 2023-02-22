@@ -343,7 +343,7 @@ void forDrone() {
     Serial.print(",");
     Serial.println(homeY);
 
-    sendToNano("DEPL", myName, "SUCC");
+    sendToNano("DEPL", myName, receivedDetails);
   }
 
   //STATE 3: Drone is deployed. Move, receive commands, send commands, and detect objects

@@ -37,13 +37,16 @@ bool hasStopped = true;
 bool hasDetectedObject = false;
 
 //Variables
-float homeX = 0;
 float currentX = 0;
+float homeX = 0;
 float savedX = 0;
 
-float homeY = 0;
 float currentY = 0;
+float homeY = 0;
 float savedY = 0;
+
+float d1 = 0;
+float d2 = 0;
 
 //PID values
 float kp = 2;
@@ -55,6 +58,7 @@ float savedAngle = 0.0;
 float oppositeSavedAngle = 0.0;
 
 float straightAngle = 0.0;
+float oppositeStraightAngle = 0.0;
 float leftAngle = 0.0;
 float rightAngle = 0.0;
 float detectAngle = 30.0;
@@ -150,14 +154,20 @@ void loop() {
       isDeployed = true;
       hasStopped = true;
 
-      int endIndex = receivedDetail.indexOf(',');
-      savedX = receivedDetail.substring(0, endIndex).toFloat();
-      savedY = receivedDetail.substring(endIndex+1).toFloat();
-      
+      int endIndex = receivedDetails.indexOf(',');
+      d1 = receivedDetails.substring(0, endIndex).toFloat();
+      d2 = receivedDetails.substring(endIndex+1).toFloat();
+
+      homeX = (distanceBetweenTags*distanceBetweenTags - d2*d2 + d1*d1)/(2*distanceBetweenTags);
+      homeY = sqrt(abs(d1*d1 - currentX*currentX));
+
       startTime = millis();
 
       Serial.print(myName);
-      Serial.println(" is deployed.");
+      Serial.print(" is deployed. Home coordinates are: ");
+      Serial.print(homeX);
+      Serial.print(",");
+      Serial.println(homeY);
     } else if(receivedCommand == "GO" && isDeployed) {
       hasStopped = false;
       startTime = millis();
@@ -165,11 +175,13 @@ void loop() {
 
       savedAngle = currentAngle;
       straightAngle = savedAngle;
+      savedX = currentX;
 
       oppositeSavedAngle = currentAngle + 210;
       if(oppositeSavedAngle > 360) {
         oppositeSavedAngle = oppositeSavedAngle - 360;
       }
+      oppositeStraightAngle = oppositeSavedAngle;
 
       digitalWrite(greenLed, HIGH);
       digitalWrite(yellowLed, LOW);
@@ -179,6 +191,9 @@ void loop() {
       Serial.print(myName);
       Serial.print(" is now moving\nSaved angle: ");
       Serial.println(savedAngle);
+
+      Serial.print("Saved X: ");
+      Serial.println(savedX);
 
       Serial.print("Opposite saved angle: ");
       Serial.println(oppositeSavedAngle);
@@ -227,9 +242,13 @@ void loop() {
         Serial.println("Object has been acquired");
       }
     } else if(receivedCommand == "COOR" && isDeployed) {
-      int endIndex = receivedDetail.indexOf(',');
-      currentX = receivedDetail.substring(0, endIndex).toFloat();
-      currentY = receivedDetail.substring(endIndex+1).toFloat();
+      int endIndex = receivedDetails.indexOf(',');
+      d1 = receivedDetails.substring(0, endIndex).toFloat();
+      d2 = receivedDetails.substring(endIndex+1).toFloat();
+
+      currentX = (distanceBetweenTags*distanceBetweenTags - d2*d2 + d1*d1)/(2*distanceBetweenTags);
+      currentY = sqrt(abs(d1*d1 - currentX*currentX));
+
       Serial.print("X,Y: ");
       Serial.print(currentX);
       Serial.print(",");
@@ -241,6 +260,8 @@ void loop() {
   if(isConnected && !isDeployed) {
     Serial.print("Current angle: ");
     Serial.println(currentAngle);
+    Serial.print("Saved X: ");
+    Serial.println(savedX);
   }
 
   // State 3: Do all possible functions since you've been deployed
@@ -258,9 +279,12 @@ void loop() {
       }
 
       if(currentY > 10.0) {
-        float tempAngle = savedAngle;
-        savedAngle = oppositeSavedAngle;
-        oppositeSavedAngle = tempAngle;
+        float tempAngle = oppositeStraightAngle;
+        oppositeStraightAngle = straightAngle;
+        straightAngle = tempAngle;
+
+        savedAngle = oppositeStraightAngle;
+        oppositeSavedAngle = straightAngle;
 
         Serial.print("Saved angle: ");
         Serial.println(savedAngle);
@@ -273,8 +297,6 @@ void loop() {
         Serial.print(savedX);
         Serial.print(",");
         Serial.println(savedY);
-
-        startTime2 = millis();
       }
 
       if(!(abs(savedX - currentX) < 10)) {
@@ -294,9 +316,12 @@ void loop() {
           
           savedAngle = rightAngle;
         }
+      } else {
+        savedAngle = straightAngle;
       }
+
+      // After all that movement processing, actually move...      
       move(savedAngle);
-          
     }
 
     // State 2: Detected something, so move there
@@ -311,7 +336,6 @@ void loop() {
 
     // State 3: Stop moving
     if(hasStopped) {
-
       if(startTime - millis() > 1000) {
         digitalWrite(greenLed, LOW);
         digitalWrite(yellowLed, LOW);
