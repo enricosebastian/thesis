@@ -14,7 +14,7 @@ tf.get_logger().setLevel('ERROR')
 from absl import logging
 logging.set_verbosity(logging.ERROR)
 
-objects = ['plastic_bottle']
+objects = ['plastic_bottle', 'drone']
 train_folder = 'images/train'
 validate_folder = 'images/validate'
 
