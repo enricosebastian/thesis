@@ -258,7 +258,26 @@ void loop() {
         startTime2 = millis();
       }
 
-      move(currentAngle);      
+      if(!(abs(savedX - currentX) < 10)) {
+        // Drone has drifted
+        if((savedX - currentX) < 0) {
+          // Move a little to the left
+          leftAngle = savedAngle + detectAngle;
+          if(leftAngle > 360) leftAngle = leftAngle - 360;
+          if(leftAngle < 0) leftAngle = 360 + leftAngle;
+
+          savedAngle = leftAngle;
+        } else if((savedX - currentX) > 0) {
+          // Move a little to the right
+          rightAngle = savedAngle - detectAngle;
+          if(rightAngle > 360) rightAngle = rightAngle - 360;
+          if(rightAngle < 0) rightAngle = 360 + rightAngle;
+          
+          savedAngle = rightAngle;
+        }
+      }
+      move(savedAngle);
+          
     }
 
     // State 2: Detected something, so move there
@@ -267,6 +286,8 @@ void loop() {
       digitalWrite(yellowLed, LOW);
       digitalWrite(blueLed, HIGH);
       digitalWrite(redLed, LOW);
+
+      move(savedAngle);
     }
 
     // State 3: Stop moving
