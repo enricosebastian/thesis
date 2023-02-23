@@ -139,7 +139,7 @@ void forBaseStation() {
     Serial.print("' to ");
     Serial.println(sentToName);
 
-    hasReceivedAcknowledgement(sentCommand, sentToName, sentDetails);
+    //hasReceivedAcknowledgement(sentCommand, sentToName, sentDetails);
   }
 }
 
@@ -280,11 +280,11 @@ void interpretCommand(String command, String fromName, String details) {
     Serial.print("Greetings, ");
     Serial.print(fromName);
     Serial.println("!");
-    sendAcknowledgement("HELL", fromName, "hello!");
-  } else if(command == "HELLREP") {
+    sendCommand("HELL", fromName, "hello!");
+  } else if(command == "HELL") {
     // Shows the status of the Arduino
     Serial.print(fromName);
-    Serial.println(" says ");
+    Serial.print(" says ");
     Serial.println(details);
   }
 }
