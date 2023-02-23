@@ -110,6 +110,60 @@ void setup() {
 }
 
 void loop() {
+  // State 1: Check if you received anything from base station
+  if(hasReceivedMessage()) {
+    Serial.print("Received '");
+    Serial.print(receivedCommand);
+    Serial.print("' from ");
+    Serial.println(receivedFromName);
+
+    // Step 1: Successful receive warrants an acknowledgement
+    startTime = millis();
+    while(millis() - startTime < 1000) {
+      if(millis() - startTime2 > 300) {
+        if(receivedCommand == "GREE") {
+          receivedDetails = "hello!";
+        }        
+        sendCommand(receivedCommand+"REP", receivedFromName, receivedDetails);
+        startTime2 = millis();
+      }
+    }
+
+    // Step 2: Interpret command
+    if(receivedCommand == "GREE") {
+      Serial.print(receivedFromName);
+      Serial.println(" wants us to say hi.");
+    }
+  }
+
+  // State 2: Check if user is sending anything to base station
+  if(hasSentSerially()) {
+    Serial.print("Sent '");
+    Serial.print(sentCommand);
+    Serial.print("' to ");
+    Serial.println(sentToName);
+
+    // Step 1: Wait for acknowledgement
+    sendCommand(sentCommand, sentToName, sentDetails);
+    startTime = millis();
+    while(!hasReceivedCommand(sentCommand+"REP")) {
+      if(millis() - startTime > 300) {
+        Serial.print("'");
+        Serial.print(sentCommand);
+        Serial.println("' was not received. Sending command again.");
+        sendCommand(sentCommand, sentToName, sentDetails);
+        startTime = millis();
+      }
+
+      if(Serial.available() && Serial.read() == 'c') {
+        Serial.print("User canceled sending of '");
+        Serial.print(sentCommand);
+        Serial.println("'");
+        break;
+      }
+    }
+  }
+
   if(myName == "BASE") {
     forBaseStation();
   } else {
@@ -118,55 +172,11 @@ void loop() {
 }
 
 void forBaseStation() {
-  // State 1: Check if you received anything from base station
-  if(hasReceivedMessage()) {
-    Serial.print("Received '");
-    Serial.print(receivedCommand);
-    Serial.print("' from ");
-    Serial.println(receivedFromName);
-
-    // Step 1: Successful receive warrants an acknowledgement
-    sendAcknowledgement(receivedCommand, receivedFromName, receivedDetails);
-
-    // Interpret command
-    interpretCommand(receivedCommand, receivedFromName, receivedDetails);
-  }
-
-  // State 2: Check if user is sending anything to base station
-  if(hasSentSerially()) {
-    Serial.print("Sent '");
-    Serial.print(sentCommand);
-    Serial.print("' to ");
-    Serial.println(sentToName);
-
-    //hasReceivedAcknowledgement(sentCommand, sentToName, sentDetails);
-  }
+  
 }
 
 void forDrone() {
-  // State 1: Check if you received anything from base station
-  if(hasReceivedMessage()) {
-    Serial.print("Received '");
-    Serial.print(receivedCommand);
-    Serial.print("' from ");
-    Serial.println(receivedFromName);
-
-    // Step 1: Successful receive warrants an acknowledgement
-    sendAcknowledgement(receivedCommand, receivedFromName, receivedDetails);
-
-    // Interpret command
-    interpretCommand(receivedCommand, receivedFromName, receivedDetails);
-  }
-
-  // State 2: Check if user is sending anything to base station
-  if(hasSentSerially()) {
-    Serial.print("Sent '");
-    Serial.print(sentCommand);
-    Serial.print("' to ");
-    Serial.println(sentToName);
-
-    hasReceivedAcknowledgement(sentCommand, sentToName, sentDetails);
-  }
+  
 }
 
 ///////General functions/////////
@@ -234,57 +244,4 @@ bool hasSentSerially() {
   }
 
   return false;
-}
-
-void sendAcknowledgement(String command, String toName, String details) {
-  startTime = millis();
-  while(millis() - startTime < 1000) {
-    if(millis() - startTime2 > 300) {
-      sendCommand(command+"REP", toName, details);
-      startTime2 = millis();
-    }
-  }
-  startTime = millis();  
-}
-
-void hasReceivedAcknowledgement(String command, String toName, String details) {
-  sendCommand(command, toName, details); 
-
-  startTime = millis();   
-  while(!hasReceivedCommand(command+"REP")) {
-    if(millis() - startTime > 500) {
-      Serial.print("'");
-      Serial.print(command);
-      Serial.print("REP' has not been received. Resending '");
-      Serial.print(command);
-      Serial.println("'");
-      startTime = millis();
-      sendCommand(command, toName, details);
-    }
-
-    if(Serial.available() && (Serial.read() == 'c' || Serial.read() == 'C')) {
-      Serial.println("User canceled sending of command.");
-      return false;
-    }
-  }
-
-  Serial.print("'");
-  Serial.print(command);
-  Serial.println("REP' acknowledgment has been received");
-  return true;
-}
-
-void interpretCommand(String command, String fromName, String details) {
-  if(command == "GREE") {
-    // Greetings message for debugging and testing
-    Serial.print("Greetings, ");
-    Serial.print(fromName);
-    Serial.println("!");
-    sendCommand("HELL", fromName, "hello!");
-  } else if(command == "HELL") {
-    // Shows the status of the Arduino
-    Serial.print(fromName);
-    Serial.print(" says ");
-    Serial.println(details);
-  }
 }
