@@ -129,7 +129,7 @@ void forBaseStation() {
     sendAcknowledgement(receivedCommand, receivedFromName, receivedDetails);
 
     // Interpret command
-    interpretCommand(receivedCommand, receivedDetails);
+    interpretCommand(receivedCommand, receivedFromName, receivedDetails);
   }
 
   // State 2: Check if user is sending anything to base station
@@ -271,10 +271,11 @@ void hasReceivedAcknowledgement(String command, String toName, String details) {
   return true;
 }
 
-void interpretCommand(String command, String details) {
+void interpretCommand(String command, String fromName, String details) {
   if(command == "GREE") {
     // Greetings message for debugging and testing
     Serial.println("Greetings, user!");
+    sendAcknowledgement(command, fromName, "Hello!");
   } else if(command == "STAT") {
     // Shows the status of the Arduino
     Serial.println("Status");
