@@ -56,14 +56,12 @@ float d1 = 0;
 float d2 = 0;
 
 //received message
-String receivedMessage = "";
 String receivedCommand = "";
 String receivedToName = "";
 String receivedFromName = "";
 String receivedDetails = "";
 
-//sent message
-String sentMessage = "";
+//send message
 String sentCommand = "";
 String sentToName = "";
 String sentFromName = "";
@@ -130,6 +128,26 @@ void loop() {
 }
 
 void forBaseStation() {
+
+  // STATE 1: Always check if you received a command
+  while(hasReceivedMessage()) {
+    // Interpret message;
+    if(receivedCommand == "") {
+
+    } else if(receivedCommand == "") {
+
+    } else if(receivedCommand == "") {
+
+    }
+  }
+
+  // STATE 2: Always check if you want to send a command
+  while(hasSentSerially()) {
+    sendCommand(sentCommand, sentToName, sentDetails);
+  }
+
+
+
   //STATE 1: If you are not yet deploying, capture all the drones that want to connect with you.
   if(!isDeployed) {
 
@@ -521,13 +539,14 @@ void addDrone(String droneName) {
 }
 
 ///////General functions/////////
-bool receiveCommand() {
+bool hasReceivedMessage() {
+  String receivedMessage = "";
+
   while(HC12.available()) {
     char letter = HC12.read();
     if(letter == '\n') {
-      receivedMessage += '\n';
       Serial.print("Received: ");
-      Serial.print(receivedMessage);
+      Serial.println(receivedMessage);
 
       int endIndex = receivedMessage.indexOf(' ');
       receivedCommand = receivedMessage.substring(0, endIndex);
@@ -541,12 +560,38 @@ bool receiveCommand() {
       receivedFromName = receivedMessage.substring(0, endIndex);
       receivedDetails = receivedMessage.substring(endIndex+1);
 
-      receivedMessage = ""; // Erase old message
       return (receivedCommand != "") && (receivedToName == myName || receivedToName == "ALL") && (receivedFromName != "") && (receivedDetails != "");
     } else {
       receivedMessage += letter;
     }
   }
+
+  return false;
+}
+
+bool hasSentSerially() {
+  String sentMessage = "";
+
+  while(Serial.available()) {
+    char letter = Serial.read();
+    if(letter == '\n') {
+      Serial.print("Sending: ");
+      Serial.println(sentMessage);
+
+      int endIndex = sentMessage.indexOf(' ');
+      sentCommand = sentMessage.substring(0, endIndex);
+      sentMessage = sentMessage.substring(endIndex+1);
+
+      endIndex = sentMessage.indexOf(' ');
+      sentToName = sentMessage.substring(0, endIndex);
+      sentDetails = sentMessage.substring(endIndex+1);
+
+      return (sentCommand != "") && (sentToName != "") && (sentDetails != "");
+    } else {
+      sentMessage += letter;
+    }
+  }
+
   return false;
 }
 
@@ -555,22 +600,23 @@ void sendCommand(String command, String toName, String details) {
   Esp.end();
   Nano.end();
   HC12.listen();
-
   if(command != "" && toName != "" && details != "") {
-    String message = command + " " + toName + " " + myName + " " + details;
-    Serial.println("==============\nSending: ");
-    Serial.print("command: ");
-    Serial.println(command);
-    Serial.print("toName: ");
-    Serial.println(toName);
-    Serial.print("myName: ");
-    Serial.println(myName);
-    Serial.print("details: ");
-    Serial.println(details);
-    Serial.print("Message: ");
-    Serial.println(message);
-    Serial.println("============");
-    HC12.println(message);
+    // Serial.println("==============\nSending: ");
+    // Serial.print("command: ");
+    // Serial.println(command);
+    // Serial.print("toName: ");
+    // Serial.println(toName);
+    // Serial.print("myName: ");
+    // Serial.println(myName);
+    // Serial.print("details: ");
+    // Serial.println(details);
+
+    sentMessage = command + " " + toName + " " + myName + " " + details;
+
+    // Serial.print("Message: ");
+    // Serial.println(message);
+    // Serial.println("============");
+    HC12.println(sentMessage);
   } else {
     Serial.println("==============\nWrong format of command: ");
     Serial.print("command: ");
