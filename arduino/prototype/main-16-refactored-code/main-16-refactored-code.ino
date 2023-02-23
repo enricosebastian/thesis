@@ -281,7 +281,7 @@ void interpretCommand(String command, String fromName, String details) {
     Serial.print(fromName);
     Serial.println("!");
     sendAcknowledgement("HELL", fromName, "hello!");
-  } else if(command == "HELL") {
+  } else if(command == "HELLREP") {
     // Shows the status of the Arduino
     Serial.print(fromName);
     Serial.println(" says ");
