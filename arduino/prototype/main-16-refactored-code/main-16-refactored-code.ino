@@ -4,8 +4,8 @@
 #include <LinkedList.h>
 
 //Name here
-const String myName = "BASE";
-// const String myName = "DRO1";
+// const String myName = "BASE";
+const String myName = "DRO1";
 // const String myName = "DRO2";
 // const String myName = "DRO3";
 
@@ -155,7 +155,7 @@ void forDrone() {
     sendAcknowledgement(receivedCommand, receivedFromName, receivedDetails);
 
     // Interpret command
-    interpretCommand(receivedCommand, receivedDetails);
+    interpretCommand(receivedCommand, receivedFromName, receivedDetails);
   }
 
   // State 2: Check if user is sending anything to base station
