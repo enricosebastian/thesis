@@ -135,11 +135,21 @@ void loop() {
     if(receivedCommand == "GREE") {
       Serial.print(receivedFromName);
       Serial.println(" wants us to say hi.");
-    } else if(receivedCommand == "CONN" && !isConnected && myName == "BASE") {
+    } else if(receivedCommand == "CONN" && !isDeployed && myName == "BASE") {
       Serial.print("Drone '");
       Serial.print(receivedFromName);
       Serial.println("' wants to connect.");
       addDrone(receivedFromName);
+    } else if(receivedCommand == "CONNREP" && !isConnected && myName != "BASE") {
+      isConnected = true;
+
+      Serial.print(myName);
+      Serial.println(" is now connected. Ready for deployment.");
+    } else if(receivedCommand == "DEPL" && isConnected && myName != "BASE") {
+      isDeployed = true;
+
+      Serial.print(myName);
+      Serial.println(" is now deployed.");
     }
   }
 
@@ -179,11 +189,60 @@ void loop() {
 }
 
 void forBaseStation() {
+  if(!isDeployed) {
+    if(digitalRead(btn) == HIGH && drones.size() > 0) {
+      isDeployed = true;
+      Serial.println("Deploying all drones.");
+
+      for(int i = 0; i < drones.size(); i++) {
+        //Reset values first 
+        receivedFromName = "";
+        receivedCommand = "";
+        receivedToName = "";
+        receivedDetails = "";
+
+        Serial.print("Deploying ");
+        Serial.println(drones.get(i));
+
+        startTime = millis();
+        sendCommand("DEPL", drones.get(i), "YEET");
+        while(!hasReceivedCommand("DEPLREP") && receivedFromName != drones.get(i)) {
+          if(millis() - startTime > 500) {
+            Serial.print("Did not receive DEPLREP from");
+            Serial.print(drones.get(i));
+            Serial.println(". Sending DEPL again.");
+            sendCommand("DEPL", drones.get(i), "YEET");
+            startTime = millis();
+          }
+        }
+        Serial.print("Successfully deployed ");
+        Serial.println(drones.get(i));
+      }
+
+      isDeployed = true;
+      Serial.println("All drones have been deployed.");    
+    } else if(digitalRead(btn) && drones.size() <= 0) {
+      Serial.println("No drones to deploy.");
+    }
+  }
   
 }
 
 void forDrone() {
-  
+  if(!isConnected && !isDeployed) {
+    if(millis() - startTime > 500) {
+      sendCommand("CONN", "BASE", "PLES");
+      startTime = millis();
+    }
+  }
+
+  if(isConnected && !isDeployed) {
+    // wait for depl
+  }
+
+  if(isConnected && isDeployed) {
+    // move
+  }
 }
 
 //////Specific functions/////////
