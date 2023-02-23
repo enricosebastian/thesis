@@ -136,7 +136,7 @@ void loop() {
       Serial.print(receivedFromName);
       Serial.println(" wants us to say hi.");
     } else if(receivedCommand == "CONN" && !isConnected && myName == "BASE") {
-      Serial.print("Drone '")
+      Serial.print("Drone '");
       Serial.print(receivedFromName);
       Serial.println("' wants to connect.");
       addDrone(receivedFromName);
