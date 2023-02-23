@@ -206,7 +206,7 @@ void loop() {
         
         savedAngle = rightAngle;
       } else if(receivedDetails == "CENTER\n") {
-        savedAngle = savedAngle;
+        savedAngle = straightAngle;
       } else if(receivedDetails == "DONE\n") {
         hasDetectedObject = false;
         savedAngle = straightAngle;
@@ -252,7 +252,7 @@ void loop() {
         startTime2 = millis();
       }
 
-      move(currentAngle);      
+      move(currentAngle);
     }
 
     // State 2: Detected something, so move there
@@ -261,6 +261,7 @@ void loop() {
       digitalWrite(yellowLed, LOW);
       digitalWrite(blueLed, HIGH);
       digitalWrite(redLed, LOW);
+      move(currentAngle);
     }
 
     // State 3: Stop moving
