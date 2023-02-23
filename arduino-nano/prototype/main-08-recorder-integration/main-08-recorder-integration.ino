@@ -5,8 +5,8 @@
 #include <Servo.h>
 
 //Name here
-const String myName = "DRO1";
-// const String myName = "DRO2";
+// const String myName = "DRO1";
+const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants
@@ -112,7 +112,7 @@ void setup() {
   digitalWrite(redLed, HIGH);
 
   Serial.print(myName);
-  Serial.println(" - Nano has initialized.");
+  Serial.println(" - Nano version 8 has initialized.");
 }
 
 void loop() {

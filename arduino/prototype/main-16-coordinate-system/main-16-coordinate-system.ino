@@ -81,7 +81,7 @@ void setup() {
   Esp.begin(9600);
 
   Serial.print(myName);
-  Serial.println(" is initializing...");
+  Serial.println(" version 16 is initializing...");
   
   //GPIO initialization
   pinMode(detectionPin, OUTPUT);
@@ -129,30 +129,35 @@ void loop() {
 
 void forBaseStation() {
 
-  // STATE 1: Always check if you received a command
-  while(hasReceivedMessage()) {
-    // Interpret message;
-    if(receivedCommand == "") {
-
-    } else if(receivedCommand == "") {
-
-    } else if(receivedCommand == "") {
-
-    }
+  // DEFAULT STATE 1: Always check if you received a command
+  if(hasReceivedMessage()) {
+    // Interpret command;
+    Serial.println(receivedCommand);
   }
 
-  // STATE 2: Always check if you want to send a command
-  while(hasSentSerially()) {
+  // DEFAULT STATE 2: Always check if you want to send a command
+  if(hasSentSerially()) {
     sendCommand(sentCommand, sentToName, sentDetails);
+    while(!hasReceivedCommand(sentCommand+"REP")) {
+      if(millis() - startTime > 500) {
+        Serial.print("'");
+        Serial.print(sentCommand);
+        Serial.println("REP' not received yet. Resending command.");
+        sendCommand(sentCommand, sentToName, sentDetails);
+        startTime = millis();
+      }
+    }
+    Serial.print("'");
+    Serial.print(sentCommand);
+    Serial.println("REP' was received. Successful sent.");
   }
 
-
+  /////////////////Actual functionalities//////////////////////
 
   //STATE 1: If you are not yet deploying, capture all the drones that want to connect with you.
   if(!isDeployed) {
-
     //TASK 1 Waiting for a drone to connect. Add it to list
-    if(receivedSpecificCommand("CONN")) {
+    if(hasReceivedCommand("CONN")) {
       Serial.print(receivedFromName);
       Serial.println(" wanted to connect. Sending handshake.");
       startTime = millis();
@@ -284,6 +289,8 @@ void forBaseStation() {
     if(receiveCommand()) {      
     }
   }
+
+
 }
 
 void forDrone() {
@@ -540,6 +547,10 @@ void addDrone(String droneName) {
 
 ///////General functions/////////
 bool hasReceivedMessage() {
+  Esp.end();
+  Nano.end();
+  HC12.listen();
+
   String receivedMessage = "";
 
   while(HC12.available()) {
@@ -600,23 +611,9 @@ void sendCommand(String command, String toName, String details) {
   Esp.end();
   Nano.end();
   HC12.listen();
+
   if(command != "" && toName != "" && details != "") {
-    // Serial.println("==============\nSending: ");
-    // Serial.print("command: ");
-    // Serial.println(command);
-    // Serial.print("toName: ");
-    // Serial.println(toName);
-    // Serial.print("myName: ");
-    // Serial.println(myName);
-    // Serial.print("details: ");
-    // Serial.println(details);
-
-    sentMessage = command + " " + toName + " " + myName + " " + details;
-
-    // Serial.print("Message: ");
-    // Serial.println(message);
-    // Serial.println("============");
-    HC12.println(sentMessage);
+    HC12.println(command + " " + toName + " " + myName + " " + details);
   } else {
     Serial.println("==============\nWrong format of command: ");
     Serial.print("command: ");
@@ -631,6 +628,6 @@ void sendCommand(String command, String toName, String details) {
   }
 }
 
-bool receivedSpecificCommand(String command) {
-  return receiveCommand() && (receivedCommand == command);
+bool hasReceivedCommand(String command) {
+  return hasReceivedMessage() && (receivedCommand == command);
 }
