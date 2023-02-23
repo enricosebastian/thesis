@@ -338,11 +338,10 @@ void forDrone() {
     hasStopped = true;
     startTime = millis();
 
-    Serial.print("Drone is deploying. Home coordinate is: ");
-    Serial.print(homeX);
-    Serial.print(",");
-    Serial.println(homeY);
+    receivedDetails = String(homeX) + "," String(homeY);
 
+    Serial.print("Drone is deploying. Home coordinate is: ");
+    Serial.println(receivedDetails);
     sendToNano("DEPL", myName, receivedDetails);
   }
 
@@ -361,7 +360,6 @@ void forDrone() {
           startTime2 = millis();
         }
       }
-
       //Interpret the command
       if(receivedCommand == "STOP") {
         hasStopped = true;
@@ -370,6 +368,11 @@ void forDrone() {
         digitalWrite(recordingPin, LOW);
       } else if(receivedCommand == "GO") {
         hasStopped = false;
+        savedX = currentX;
+        savedY = currentY;
+
+        receivedDetails = String(savedX) + "," String(savedY);
+
         sendToNano(receivedCommand, myName, receivedDetails);
         digitalWrite(detectionPin, HIGH); // Turn on camera
         digitalWrite(recordingPin, LOW);
@@ -379,7 +382,17 @@ void forDrone() {
         digitalWrite(detectionPin, LOW);
         digitalWrite(recordingPin, HIGH);
       } else if(receivedCommand == "WHER") {
-
+        if(receivedDetails == "HOME") {
+          sentDetails = String(homeX) + "," + String(homeY); // Send home coordinates
+        } else if(receivedDetails == "CURR") {
+          sentDetails = String(currentX) + "," + String(currentY); // Send current coordinates
+        } else if(receivedDetails == "SAVE") {
+          sentDetails = String(savedX) + "," + String(savedY); // Send saved coordinates
+        }
+        startTime = millis();
+        while(millis() - startTime < 500) {
+          sendCommand("HOME", "BASE", sentDetails);
+        }
       } else {
         sendToNano(receivedCommand, myName, receivedDetails);
       }
