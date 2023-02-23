@@ -382,19 +382,28 @@ void forDrone() {
         digitalWrite(detectionPin, LOW);
         digitalWrite(recordingPin, HIGH);
       } else if(receivedCommand == "WHER") {
-        if(receivedDetails == "HOME") {
-          sentDetails = String(homeX) + "," + String(homeY); // Send home coordinates
-        } else if(receivedDetails == "CURR") {
-          sentDetails = String(currentX) + "," + String(currentY); // Send current coordinates
-        } else if(receivedDetails == "SAVE") {
-          sentDetails = String(savedX) + "," + String(savedY); // Send saved coordinates
-        }
+        Serial.print("Base is asking for ");
+        Serial.println(receivedDetails);
+
         startTime = millis();
-        while(millis() - startTime < 500) {
-          if(d1 == 0 || d2 == 0) {
-            sendCommand("LOCA", "BASE", "ERROR");
-          } else {
-            sendCommand("LOCA", "BASE", sentDetails);
+        startTime2 = millis();
+
+        if(receivedDetails == "HOME\n") {
+          sentDetails = String(homeX) + "," + String(homeY);
+        } else if(receivedDetails == "CURR\n") {
+          sentDetails = String(currentX) + "," + String(currentY);
+        } else if(receivedDetails == "SAVE\n") {
+          sentDetails = String(savedX) + "," + String(savedY);
+        }
+
+        while(millis() - startTime < 1000) {
+          if(millis() - startTime2 > 300) {
+            if(d1 == 0 || d2 == 0) {
+              sendCommand("LOCA", receivedFromName, "ERRO");
+            } else {
+              sendCommand("LOCA", receivedFromName, sentDetails);
+            }
+            startTime2 = millis();
           }
         }
       } else {
@@ -530,11 +539,26 @@ bool receiveCommand() {
 
 void sendCommand(String command, String toName, String details) {
   //COMMAND TONAME FROMNAME DETAILS
+  Esp.end();
+  Nano.end();
+  HC12.listen();
+
   if(command != "" && toName != "" && details != "") {
-    String sentMessage = command + " " + toName + " " + myName + " " + details;
-    HC12.println(sentMessage);
+    String message = command + " " + toName + " " + myName + " " + details;
+    Serial.print("Sent: ");
+    Serial.println(message);
+    HC12.println(message);
   } else {
-    Serial.println("Wrong format of command. Try again.");
+    Serial.println("==============\nWrong format of command: ");
+    Serial.print("command: ");
+    Serial.println(command);
+    Serial.print("toName: ");
+    Serial.println(toName);
+    Serial.print("myName: ");
+    Serial.println(myName);
+    Serial.print("details: ");
+    Serial.println(details);
+    Serial.println("Try again.\n============");
   }
 }
 
