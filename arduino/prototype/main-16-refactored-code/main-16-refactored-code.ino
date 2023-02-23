@@ -115,7 +115,9 @@ void loop() {
     Serial.print("Received '");
     Serial.print(receivedCommand);
     Serial.print("' from ");
-    Serial.println(receivedFromName);
+    Serial.print(receivedFromName);
+    Serial.print(". Details: ");
+    Serial.println(receivedDetails);
 
     // Step 1: Successful receive warrants an acknowledgement
     startTime = millis();
