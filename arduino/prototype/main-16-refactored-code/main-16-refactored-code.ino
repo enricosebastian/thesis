@@ -135,6 +135,11 @@ void loop() {
     if(receivedCommand == "GREE") {
       Serial.print(receivedFromName);
       Serial.println(" wants us to say hi.");
+    } else if(receivedCommand == "CONN" && !isConnected && myName == "BASE") {
+      Serial.print("Drone '")
+      Serial.print(receivedFromName);
+      Serial.println("' wants to connect.");
+      addDrone(receivedFromName);
     }
   }
 
@@ -179,6 +184,21 @@ void forBaseStation() {
 
 void forDrone() {
   
+}
+
+//////Specific functions/////////
+void addDrone(String droneName) {
+  //Check first if drone already exists in list
+  for(int i = 0; i < drones.size(); i++) {
+    if(drones.get(i) == droneName) {
+      Serial.print(droneName);
+      Serial.println(" is already connected!");
+      return;
+    }
+  }
+  drones.add(droneName); //Successfully added this drone.
+  Serial.print(droneName);
+  Serial.println(" has been added.");
 }
 
 ///////General functions/////////
