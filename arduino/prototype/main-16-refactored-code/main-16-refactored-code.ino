@@ -144,7 +144,29 @@ void forBaseStation() {
 }
 
 void forDrone() {
-  
+  // State 1: Check if you received anything from base station
+  if(hasReceivedMessage()) {
+    Serial.print("Received '");
+    Serial.print(receivedCommand);
+    Serial.print("' from ");
+    Serial.println(receivedFromName);
+
+    // Step 1: Successful receive warrants an acknowledgement
+    sendAcknowledgement(receivedCommand, receivedFromName, receivedDetails);
+
+    // Interpret command
+    interpretCommand(receivedCommand, receivedDetails);
+  }
+
+  // State 2: Check if user is sending anything to base station
+  if(hasSentSerially()) {
+    Serial.print("Sent '");
+    Serial.print(sentCommand);
+    Serial.print("' to ");
+    Serial.println(sentToName);
+
+    hasReceivedAcknowledgement(sentCommand, sentToName, sentDetails);
+  }
 }
 
 ///////General functions/////////
