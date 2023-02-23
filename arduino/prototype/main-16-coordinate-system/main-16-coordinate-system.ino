@@ -316,7 +316,7 @@ void forDrone() {
         HC12.listen();
         startTime = millis();
         startTime2 = millis();
-        if(receivedCommand == "COOR") sendToNano(receivedCommand, receivedToName, receivedDetails); 
+        if(receivedCommand == "COOR" && !(d1 == 0 || d2 == 0)) sendToNano(receivedCommand, receivedToName, receivedDetails);
       }
     }
 
@@ -391,7 +391,11 @@ void forDrone() {
         }
         startTime = millis();
         while(millis() - startTime < 500) {
-          sendCommand("HOME", "BASE", sentDetails);
+          if(d1 == 0 || d2 == 0) {
+            sendCommand("LOCA", "BASE", "ERROR");
+          } else {
+            sendCommand("LOCA", "BASE", sentDetails);
+          }
         }
       } else {
         sendToNano(receivedCommand, myName, receivedDetails);
@@ -456,7 +460,7 @@ void forDrone() {
       startTime = millis();
       startTime2 = millis();
       receivedDetails = String(currentX) + "," + String(currentY);
-      if(receivedCommand == "COOR") sendToNano(receivedCommand, receivedToName, receivedDetails); 
+      if(receivedCommand == "COOR" && !(d1 == 0 || d2 == 0)) sendToNano(receivedCommand, receivedToName, receivedDetails); 
     }
   }
 }
