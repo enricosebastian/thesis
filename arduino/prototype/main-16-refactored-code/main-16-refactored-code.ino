@@ -278,7 +278,7 @@ void interpretCommand(String command, String fromName, String details) {
   if(command == "GREE") {
     // Greetings message for debugging and testing
     Serial.println("Greetings, user!");
-    sendAcknowledgement(command, fromName, "Hello!");
+    sendCommand("HELL", fromName, "Hello!");
   } else if(command == "STAT") {
     // Shows the status of the Arduino
     Serial.println("Status");
