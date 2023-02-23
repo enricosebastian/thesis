@@ -21,8 +21,8 @@ const int rxHc12 = A0; //green wire
 const int txHc12 = A1; //blue wire
 const int rxNano = A2; //green wire
 const int txNano = A3; //blue wire
-const int rxPin = A4;
-const int txPin = A5;
+const int rxEsp = A4;
+const int txEsp = A5;
 
 // Waiting times
 const int waitingTime = 5000;
@@ -58,15 +58,19 @@ String sentDetails = "";
 
 // SoftwareSerial(rxPin, txPin, inverse_logic)
 NeoSWSerial HC12(rxHc12, txHc12);
+NeoSWSerial Nano(rxNano, txNano);
+NeoSWSerial Esp(rxEsp, txEsp);
 
 LinkedList<String> drones;
 
 void setup() {
+  // Actual serial
   Serial.begin(9600);
-  HC12.begin(9600);
 
-  Serial.print(myName);
-  Serial.println(" is initializing...");
+  // Software serial
+  HC12.begin(9600);
+  Nano.begin(9600);
+  Esp.begin(9600);
   
   //GPIO initialization
   pinMode(detectionPin, OUTPUT);
@@ -99,8 +103,10 @@ void setup() {
   HC12.listen();
 
   Serial.print(myName);
-  Serial.println("v16 has initialized.");
+  Serial.println("v16 is finished initializing.");
+
   startTime = millis();
+  startTime2 = millis();
 }
 
 void loop() {
@@ -119,7 +125,11 @@ void forBaseStation() {
     Serial.print("' from ");
     Serial.println(receivedFromName);
 
+    // Step 1: Successful receive warrants an acknowledgement
+    sendAcknowledgement(receivedCommand, receivedFromName, receivedDetails);
+
     // Interpret command
+    interpretCommand(receivedCommand, receivedDetails);
   }
 
   // State 2: Check if user is sending anything to base station
@@ -129,11 +139,34 @@ void forBaseStation() {
     Serial.print("' to ");
     Serial.println(sentToName);
 
-    // send command    
+    hasReceivedAcknowledgement(sentCommand, sentToName, sentDetails);
   }
 }
 
 void forDrone() {
+  // State 1: Check if you received anything from base station
+  if(hasReceivedMessage()) {
+    Serial.print("Received '");
+    Serial.print(receivedCommand);
+    Serial.print("' from ");
+    Serial.println(receivedFromName);
+
+    // Step 1: Successful receive warrants an acknowledgement
+    sendAcknowledgement(receivedCommand, receivedFromName, receivedDetails);
+
+    // Interpret command
+    interpretCommand(receivedCommand, receivedDetails);
+  }
+
+  // State 2: Check if user is sending anything to base station
+  if(hasSentSerially()) {
+    Serial.print("Sent '");
+    Serial.print(sentCommand);
+    Serial.print("' to ");
+    Serial.println(sentToName);
+    
+    hasReceivedAcknowledgement(sentCommand, sentToName, sentDetails);
+  }
 
 }
 
@@ -173,6 +206,8 @@ void sendCommand(String command, String toName, String details) {
   } else {
     Serial.println("Wrong format of command. Try again.");
   }
+
+  sentMessage = ""; // Clears the message after sending
 }
 
 bool hasReceivedCommand(String command) {
@@ -200,4 +235,49 @@ bool hasSentSerially() {
   }
 
   return false;
+}
+
+void sendAcknowledgement(String command, String toName, String details) {
+  startTime = millis();
+  while(millis() - startTime < 1000) {
+    if(millis() - startTime2 > 300) {
+      sendCommand(command+"REP", toName, details);
+      startTime2 = millis();
+    }
+  }
+  startTime = millis();  
+}
+
+void hasReceivedAcknowledgement(String command, String toName, String details) {
+  sendCommand(command, toName, details); 
+
+  startTime = millis();   
+  while(!hasReceivedCommand(command+"REP")) {
+    if(millis() - startTime > 500) {
+      Serial.print("'");
+      Serial.print(command);
+      Serial.print("REP' has not been received. Resending '");
+      Serial.print(command);
+      Serial.println("'");
+      startTime = millis();
+      sendCommand(command, toName, details);
+    }
+
+    if(Serial.available() && (Serial.read() == 'c' || Serial.read() == 'C')) {
+      Serial.println("User canceled sending of command.");
+      return false;
+    }
+  }
+
+  return true;
+}
+
+void interpretCommand(String command, String details) {
+  if(command == "GREE") {
+    // Greetings message for debugging and testing
+    Serial.println("Greetings, user!");
+  } else if(command == "STAT") {
+    // Shows the status of the Arduino
+    Serial.println("Status");
+  }
 }
