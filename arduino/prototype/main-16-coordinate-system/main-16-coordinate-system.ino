@@ -32,6 +32,8 @@ const int redLed = 13;
 const int yellowLed = 12;
 const int greenLed = 11;
 
+const float x0 = 9.5;
+
 //Booleans for logic
 bool isConnected = false;
 bool isDeployed = false;
@@ -41,6 +43,18 @@ bool hasDetectedObject = false;
 //millis time variables for storage
 unsigned long startTime = 0;
 unsigned long startTime2 = 0;
+
+float d1 = 0;
+float d2 = 0;
+
+float savedX = 0;
+float savedY = 0;
+
+float currentX = 0;
+float currentY = 0;
+
+float homeX = 0;
+float homeY = 0;
 
 //received message
 String receivedMessage = "";
@@ -254,9 +268,9 @@ void forBaseStation() {
 }
 
 void forDrone() {
+
   //STATE 1: Not connected to base station
   if(!isConnected && !isDeployed) {
-
     //TASK 1: Continue to wait for connection acknowledgement
     while(!receivedSpecificCommand("CONNREP")) {
       if(millis() - startTime > 800) {
@@ -278,6 +292,16 @@ void forDrone() {
         Serial.println("Command 'DEPL' was not received yet. Continue waiting.");
         startTime = millis();        
       }
+
+      if(millis() - startTime2 > 500) {
+        HC12.end();
+        Nano.end();
+        Esp.listen();
+        startTime2 = millis();
+      }
+      Nano.end();
+      Esp.end();
+      HC12.listen();
     }
 
     Serial.println("Base station wants to start deploying. Sending acknowledgement.");
