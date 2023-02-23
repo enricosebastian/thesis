@@ -338,7 +338,7 @@ void forDrone() {
     hasStopped = true;
     startTime = millis();
 
-    receivedDetails = String(homeX) + "," String(homeY);
+    receivedDetails = String(homeX) + "," + String(homeY);
 
     Serial.print("Drone is deploying. Home coordinate is: ");
     Serial.println(receivedDetails);
@@ -371,7 +371,7 @@ void forDrone() {
         savedX = currentX;
         savedY = currentY;
 
-        receivedDetails = String(savedX) + "," String(savedY);
+        receivedDetails = String(savedX) + "," + String(savedY);
 
         sendToNano(receivedCommand, myName, receivedDetails);
         digitalWrite(detectionPin, HIGH); // Turn on camera
@@ -455,6 +455,7 @@ void forDrone() {
       HC12.listen();
       startTime = millis();
       startTime2 = millis();
+      receivedDetails = String(currentX) + "," + String(currentY);
       if(receivedCommand == "COOR") sendToNano(receivedCommand, receivedToName, receivedDetails); 
     }
   }
