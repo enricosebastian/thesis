@@ -2,4 +2,4 @@
 images
 
 # any file types that are:
-.mp4
+*.mp4
