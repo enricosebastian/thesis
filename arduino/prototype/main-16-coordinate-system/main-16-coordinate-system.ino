@@ -362,11 +362,20 @@ void forDrone() {
       }
       //Interpret the command
       if(receivedCommand == "STOP") {
+        Serial.print("Base wants ");
+        Serial.print(myName);
+        Serial.println(" to stop.");
+
         hasStopped = true;
+
         sendToNano(receivedCommand, myName, receivedDetails);
         digitalWrite(detectionPin, LOW); // Turn off camera
         digitalWrite(recordingPin, LOW);
       } else if(receivedCommand == "GO") {
+        Serial.print("Base wants ");
+        Serial.print(myName);
+        Serial.println(" to start moving.");
+
         hasStopped = false;
         savedX = currentX;
         savedY = currentY;
@@ -377,6 +386,10 @@ void forDrone() {
         digitalWrite(detectionPin, HIGH); // Turn on camera
         digitalWrite(recordingPin, LOW);
       } else if(receivedCommand == "RECO") {
+        Serial.print("Base wants ");
+        Serial.print(myName);
+        Serial.println(" to start recording.");
+        
         hasStopped = false;
         sendToNano("GO", myName, receivedDetails);
         digitalWrite(detectionPin, LOW);
@@ -545,8 +558,18 @@ void sendCommand(String command, String toName, String details) {
 
   if(command != "" && toName != "" && details != "") {
     String message = command + " " + toName + " " + myName + " " + details;
-    Serial.print("Sent: ");
+    Serial.println("==============\nSending: ");
+    Serial.print("command: ");
+    Serial.println(command);
+    Serial.print("toName: ");
+    Serial.println(toName);
+    Serial.print("myName: ");
+    Serial.println(myName);
+    Serial.print("details: ");
+    Serial.println(details);
+    Serial.print("Message: ");
     Serial.println(message);
+    Serial.println("============");
     HC12.println(message);
   } else {
     Serial.println("==============\nWrong format of command: ");
