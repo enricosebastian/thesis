@@ -277,10 +277,14 @@ void hasReceivedAcknowledgement(String command, String toName, String details) {
 void interpretCommand(String command, String fromName, String details) {
   if(command == "GREE") {
     // Greetings message for debugging and testing
-    Serial.println("Greetings, user!");
-    sendCommand("HELL", fromName, "Hello!");
-  } else if(command == "STAT") {
+    Serial.print("Greetings, ");
+    Serial.print(fromName);
+    Serial.println("!");
+    sendAcknowledgement("HELL", fromName, "hello!");
+  } else if(command == "HELL") {
     // Shows the status of the Arduino
-    Serial.println("Status");
+    Serial.print(fromName);
+    Serial.println(" says ");
+    Serial.println(details);
   }
 }
