@@ -268,6 +268,9 @@ void hasReceivedAcknowledgement(String command, String toName, String details) {
     }
   }
 
+  Serial.print("'");
+  Serial.print(command);
+  Serial.println("REP' acknowledgment has been received");
   return true;
 }
 
