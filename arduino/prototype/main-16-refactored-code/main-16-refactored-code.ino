@@ -111,7 +111,7 @@ void setup() {
 
 void loop() {
   // State 1: Check if you received anything from base station
-  if(hasReceivedMessage()) {
+  if(hasReceivedMessage() && !hasSentSerially()) {
     Serial.print("Received '");
     Serial.print(receivedCommand);
     Serial.print("' from ");
@@ -124,7 +124,7 @@ void loop() {
     while(millis() - startTime < 1000) {
       if(millis() - startTime2 > 300) {
         if(receivedCommand == "GREE") {
-          receivedDetails = "hello!";
+          receivedDetails = "Hello!";
         }        
         sendCommand(receivedCommand+"REP", receivedFromName, receivedDetails);
         startTime2 = millis();
@@ -139,7 +139,7 @@ void loop() {
   }
 
   // State 2: Check if user is sending anything to base station
-  if(hasSentSerially()) {
+  if(hasSentSerially() && !hasReceivedMessage()) {
     Serial.print("Sent '");
     Serial.print(sentCommand);
     Serial.print("' to ");
