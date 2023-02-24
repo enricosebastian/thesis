@@ -3,6 +3,8 @@
 import numpy as np
 import os
 
+from tflite_model_maker import image_classifier
+from tflite_model_maker.image_classifier import DataLoader
 from tflite_model_maker.config import QuantizationConfig
 from tflite_model_maker.config import ExportFormat
 from tflite_model_maker import model_spec
@@ -15,14 +17,14 @@ tf.get_logger().setLevel('ERROR')
 from absl import logging
 logging.set_verbosity(logging.ERROR)
 
-# CONSTANTS HERE
+# CHANGE VALUES HERE ONLY
 model_name = 'efficientdet_lite0'
-train_dir = './images/new-hand-images/train'
-validate_dir = './images/new-hand-images/validate'
-label_map = ['thumbs_up', 'ok', 'thumbs_down']
+train_dir = './images/plastic/train'
+validate_dir = './images/plastic/validate'
+label_map = ['plastic']
 
 export_dir = './models/'
-model_filename = 'new-hand-images.tflite'
+model_filename = 'plastic.tflite'
 #######################
 
 spec = model_spec.get(model_name)

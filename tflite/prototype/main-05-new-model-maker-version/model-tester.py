@@ -19,7 +19,7 @@ tf.get_logger().setLevel('ERROR')
 from absl import logging
 logging.set_verbosity(logging.ERROR)
 
-# CONSTANTS HERE
+# CHANGE VALUES HERE ONLY
 train_dir = './images/new-hand-images/train/'
 validate_dir = './images/new-hand-images/validate/'
 classes = ['thumbs_up', 'ok', 'thumbs_down']
