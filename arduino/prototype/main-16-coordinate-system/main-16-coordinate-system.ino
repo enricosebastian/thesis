@@ -5,8 +5,8 @@
 
 //Name here
 // const String myName = "BASE";
-// const String myName = "DRO1";
-const String myName = "DRO2";
+const String myName = "DRO1";
+// const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants (buttons)
@@ -372,12 +372,12 @@ void forDrone() {
         digitalWrite(recordingPin, LOW);
       } else if(receivedCommand == "GO") {
         hasStopped = false;
-        sendToNano(receivedCommand, myName, currentX+","+currentY);
+        sendToNano(receivedCommand, myName, String(currentX)+","+String(currentY));
         digitalWrite(detectionPin, HIGH); // Turn on camera
         digitalWrite(recordingPin, LOW);
       } else if(receivedCommand == "RECO") {
         hasStopped = false;
-        sendToNano("GO", myName, currentX+","+currentY);
+        sendToNano("GO", myName, String(currentX)+","+String(currentY));
         digitalWrite(detectionPin, LOW);
         digitalWrite(recordingPin, HIGH);
       } else {
