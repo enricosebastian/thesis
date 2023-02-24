@@ -140,6 +140,6 @@ detection_result_image = run_odt_and_draw_results(
 )
 
 # Show the detection result
-print("\n\nDone testing!")
+print("\n\nDone testing a sample image!")
 im = Image.fromarray(detection_result_image)
 im.show()
