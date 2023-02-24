@@ -43,6 +43,7 @@ bool hasDetectedObject = false;
 //millis time variables for storage
 unsigned long startTime = 0;
 unsigned long startTime2 = 0;
+unsigned long startTime3 = 0;
 
 float d1 = 0;
 float d2 = 0;
@@ -118,6 +119,8 @@ void setup() {
   Serial.print(myName);
   Serial.println(" v15 has initialized.");
   startTime = millis();
+  startTime2 = millis();
+  startTime3 = millis();
 }
 
 void loop() {
@@ -268,7 +271,6 @@ void forBaseStation() {
 }
 
 void forDrone() {
-
   //STATE 1: Not connected to base station
   if(!isConnected && !isDeployed) {
     //TASK 1: Continue to wait for connection acknowledgement
@@ -277,6 +279,28 @@ void forDrone() {
         Serial.println("Reply 'CONNREP' was not received. Resending message again.");
         sendCommand("CONN", "BASE", "HELL");
         startTime = millis();        
+      }
+      
+      while(millis() - startTime2 > 300) {
+        Nano.end();
+        HC12.end();
+        Esp.listen();
+        startTime3 = millis();
+        while(millis() - startTime3 < 1000) {
+          if(receiveCommand()) {
+            int endIndex = receivedDetails.indexOf(',');
+            d1 = receivedDetails.substring(0, endIndex).toFloat();
+            d2 = receivedDetails.substring(endIndex+1).toFloat();
+            Serial.print(d1);
+            Serial.print(" , ");
+            Serial.println(d2);
+          }
+        }
+        startTime3 = millis();
+        startTime2 = millis();
+        Nano.end();
+        Esp.end();
+        HC12.listen();
       }
     }
     isConnected = true;
