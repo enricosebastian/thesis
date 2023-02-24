@@ -20,19 +20,18 @@ from absl import logging
 logging.set_verbosity(logging.ERROR)
 
 # CHANGE VALUES HERE ONLY
-train_dir = './images/new-hand-images/train/'
-validate_dir = './images/new-hand-images/validate/'
-classes = ['thumbs_up', 'ok', 'thumbs_down']
+test_dir = './images/plastic/test/'
+classes = ['plastic']
 
 export_dir = './models/'
-model_filename = 'new-hand-images.tflite'
+model_filename = 'plastic.tflite'
 
 model_path = export_dir+model_filename
 
 threshold = 0.5
 
-image_name = 'WIN_20220707_19_55_15_Pro.jpg' 
-image_path = validate_dir+image_name
+image_name = 'output_795.jpg' 
+image_path = test_dir+image_name
 #######################
 
 # Load the TFLite model
