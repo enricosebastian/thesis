@@ -372,15 +372,15 @@ void forDrone() {
         digitalWrite(recordingPin, LOW);
       } else if(receivedCommand == "GO") {
         hasStopped = false;
-        sendToNano(receivedCommand, myName, receivedDetails);
+        sendToNano(receivedCommand, myName, currentX+","+currentY);
         digitalWrite(detectionPin, HIGH); // Turn on camera
         digitalWrite(recordingPin, LOW);
       } else if(receivedCommand == "RECO") {
         hasStopped = false;
-        sendToNano("GO", myName, receivedDetails);
+        sendToNano("GO", myName, currentX+","+currentY);
         digitalWrite(detectionPin, LOW);
         digitalWrite(recordingPin, HIGH);
-      }else {
+      } else {
         sendToNano(receivedCommand, myName, receivedDetails);
       }
     }
