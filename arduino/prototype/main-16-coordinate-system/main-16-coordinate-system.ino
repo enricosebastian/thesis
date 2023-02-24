@@ -345,7 +345,7 @@ void forDrone() {
     Serial.print(",");
     Serial.println(homeY);
 
-    sendToNano("DEPL", myName, "SUCC");
+    sendToNano("DEPL", myName, String(homeX)+","+String(homeY));
   }
 
   //STATE 3: Drone is deployed. Move, receive commands, send commands, and detect objects
@@ -420,6 +420,34 @@ void forDrone() {
     }
 
     // Task 3: Wait for any coordinates
+    while(millis() - startTime > 800) {
+      Nano.end();
+      HC12.end();
+      Esp.listen();
+      startTime2 = millis();
+      while(millis() - startTime2 < 300) {
+        if(receiveCommand()) {
+          int endIndex = receivedDetails.indexOf(',');
+          d1 = receivedDetails.substring(0, endIndex).toFloat();
+          d2 = receivedDetails.substring(endIndex+1).toFloat();
+          if(d1 != 0 || d2 != 0) {
+            currentX = (x0*x0 - d2*d2 + d1*d1)/(2*x0);
+            currentY = sqrt(d1*d1 - currentX*currentX);
+            Serial.print("Current location: ");
+            Serial.print(currentX);
+            Serial.print(",");
+            Serial.println(currentY);
+            sendToNano("COOR", myName, String(currentX)+","+String(currentY));
+          }
+        }
+      }
+      startTime = millis();
+      startTime2 = millis();
+      Nano.end();
+      Esp.end();
+      HC12.listen();
+    }
+
   }
 }
 
