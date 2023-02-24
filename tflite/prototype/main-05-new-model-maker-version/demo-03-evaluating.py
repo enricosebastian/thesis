@@ -19,17 +19,26 @@ tf.get_logger().setLevel('ERROR')
 from absl import logging
 logging.set_verbosity(logging.ERROR)
 
-model_path = 'demo-02.tflite'
+# CONSTANTS HERE
+model_name = 'efficientdet_lite0'
+train_dir = './images/new-hand-images/train/'
+validate_dir = './images/new-hand-images/validate/'
+classes = ['thumbs_up', 'ok', 'thumbs_down']
+
+export_dir = './models/'
+model_filename = 'new-hand-images.tflite'
+
+model_path = export_dir+model_filename
+
+threshold = 0.5
+
+image_name = 'WIN_20220707_19_55_04_Pro.jpg' 
+image_path = validate_dir+image_name
+#######################
 
 # Load the TFLite model
 interpreter = tf.lite.Interpreter(model_path=model_path)
 interpreter.allocate_tensors()
-
-# Load the labels into a list
-classes = ['thumbs', 'peace'] * model.model_spec.config.num_classes
-label_map = model.model_spec.config.label_map
-for label_id, label_name in label_map.as_dict().items():
-  classes[label_id-1] = label_name
 
 # Define a list of colors for visualization
 COLORS = np.random.randint(0, 255, size=(len(classes), 3), dtype=np.uint8)
@@ -126,12 +135,12 @@ def run_odt_and_draw_results(image_path, interpreter, threshold=0.5):
 
 # Run inference and draw detection result on the local copy of the original file
 detection_result_image = run_odt_and_draw_results(
-    './hand-signs/train/picture_2023-02-24_10-47-22.jpg',
-    interpreter,
-    threshold=0.5
+    image_path=image_path,
+    interpreter=interpreter,
+    threshold=threshold
 )
 
 # Show the detection result
-print("done")
+print("\n\nDone testing!")
 im = Image.fromarray(detection_result_image)
 im.show()

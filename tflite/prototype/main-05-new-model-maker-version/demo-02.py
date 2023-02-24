@@ -15,18 +15,28 @@ tf.get_logger().setLevel('ERROR')
 from absl import logging
 logging.set_verbosity(logging.ERROR)
 
-spec = model_spec.get('efficientdet_lite0')
+# CONSTANTS HERE
+model_name = 'efficientdet_lite0'
+train_dir = './images/new-hand-images/train'
+validate_dir = './images/new-hand-images/validate'
+label_map = ['thumbs_up', 'ok', 'thumbs_down']
+
+export_dir = './models/'
+model_filename = 'new-hand-images.tflite'
+#######################
+
+spec = model_spec.get(model_name)
 
 train_data = object_detector.DataLoader.from_pascal_voc(
-    images_dir="./hand-signs/train",
-    annotations_dir="./hand-signs/train",
-    label_map=["thumbs", "peace"]
+    images_dir=train_dir,
+    annotations_dir=train_dir,
+    label_map=label_map
 )
 
 validation_data = object_detector.DataLoader.from_pascal_voc(
-    images_dir="./hand-signs/validate",
-    annotations_dir="./hand-signs/validate",
-    label_map=["thumbs", "peace"]
+    images_dir=validate_dir,
+    annotations_dir=validate_dir,
+    label_map=label_map
 )
 
 model = object_detector.create(train_data, model_spec=spec, batch_size=8, train_whole_model=True, validation_data=validation_data)
@@ -35,10 +45,10 @@ print(
     model.evaluate(validation_data)
 )
 
-model.export(export_dir='.', tflite_filename='demo-02.tflite')
+model.export(export_dir=export_dir, tflite_filename=model_filename)
 
 print(
-    model.evaluate_tflite('demo-02.tflite', validation_data)
+    model.evaluate_tflite(export_dir+model_filename, validation_data)
 )
 
-print("Done!")
+print("\n\nDone!")
