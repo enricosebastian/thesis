@@ -280,28 +280,6 @@ void forDrone() {
         sendCommand("CONN", "BASE", "HELL");
         startTime = millis();        
       }
-      
-      while(millis() - startTime2 > 300) {
-        Nano.end();
-        HC12.end();
-        Esp.listen();
-        startTime3 = millis();
-        while(millis() - startTime3 < 1000) {
-          if(receiveCommand()) {
-            int endIndex = receivedDetails.indexOf(',');
-            d1 = receivedDetails.substring(0, endIndex).toFloat();
-            d2 = receivedDetails.substring(endIndex+1).toFloat();
-            Serial.print(d1);
-            Serial.print(" , ");
-            Serial.println(d2);
-          }
-        }
-        startTime3 = millis();
-        startTime2 = millis();
-        Nano.end();
-        Esp.end();
-        HC12.listen();
-      }
     }
     isConnected = true;
     Serial.println("Successfully detected by base station. Waiting for deployment.");
@@ -317,15 +295,32 @@ void forDrone() {
         startTime = millis();        
       }
 
-      if(millis() - startTime2 > 500) {
-        HC12.end();
+      while(millis() - startTime2 > 800) {
         Nano.end();
+        HC12.end();
         Esp.listen();
+        startTime3 = millis();
+        while(millis() - startTime3 < 300) {
+          if(receiveCommand()) {
+            int endIndex = receivedDetails.indexOf(',');
+            d1 = receivedDetails.substring(0, endIndex).toFloat();
+            d2 = receivedDetails.substring(endIndex+1).toFloat();
+            if(d1 != 0 || d2 != 0) {
+              currentX = (x0*x0 - d2*d2 + d1*d1)/(2*x0);
+              currentY = sqrt(d1*d1 - currentX*currentX);
+              Serial.print("Current location: ");
+              Serial.print(currentX);
+              Serial.print(",");
+              Serial.println(currentY);
+            }
+          }
+        }
+        startTime3 = millis();
         startTime2 = millis();
+        Nano.end();
+        Esp.end();
+        HC12.listen();
       }
-      Nano.end();
-      Esp.end();
-      HC12.listen();
     }
 
     Serial.println("Base station wants to start deploying. Sending acknowledgement.");
@@ -342,8 +337,13 @@ void forDrone() {
     isDeployed = true;
     hasStopped = true;
     startTime = millis();
+    homeX = currentX;
+    homeY = currentY;
 
-    Serial.println("Drone is deploying.");
+    Serial.print("Drone has deployed at ");
+    Serial.print(homeX);
+    Serial.print(",");
+    Serial.println(homeY);
 
     sendToNano("DEPL", myName, "SUCC");
   }
