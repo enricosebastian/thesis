@@ -5,8 +5,8 @@
 
 //Name here
 // const String myName = "BASE";
-const String myName = "DRO1";
-// const String myName = "DRO2";
+// const String myName = "DRO1";
+const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants (buttons)
@@ -21,8 +21,8 @@ const int rxHc12 = A0; //green wire
 const int txHc12 = A1; //blue wire
 const int rxNano = A2; //green wire
 const int txNano = A3; //blue wire
-const int rxPin = A4;
-const int txPin = A5;
+const int rxEsp = A4;
+const int txEsp = A5;
 
 // Waiting times
 const int waitingTime = 5000;
@@ -32,7 +32,7 @@ const int redLed = 13;
 const int yellowLed = 12;
 const int greenLed = 11;
 
-const float distanceBetweenTags = 9.5;
+const float x0 = 9.5;
 
 //Booleans for logic
 bool isConnected = false;
@@ -44,16 +44,17 @@ bool hasDetectedObject = false;
 unsigned long startTime = 0;
 unsigned long startTime2 = 0;
 
-float currentX = 0;
-float homeX = 0;
-float savedX = 0;
-
-float currentY = 0;
-float homeY = 0;
-float savedY = 0;
-
 float d1 = 0;
 float d2 = 0;
+
+float savedX = 0;
+float savedY = 0;
+
+float currentX = 0;
+float currentY = 0;
+
+float homeX = 0;
+float homeY = 0;
 
 //received message
 String receivedMessage = "";
@@ -72,7 +73,7 @@ String sentDetails = "";
 // SoftwareSerial(rxPin, txPin, inverse_logic)
 NeoSWSerial HC12(rxHc12, txHc12);
 NeoSWSerial Nano(rxNano, txNano);
-NeoSWSerial Esp(rxPin, txPin);
+NeoSWSerial Esp(rxEsp, txEsp);
 
 LinkedList<String> drones;
 
@@ -81,9 +82,6 @@ void setup() {
   HC12.begin(9600);
   Nano.begin(9600);
   Esp.begin(9600);
-
-  Serial.print(myName);
-  Serial.println(" is initializing...");
   
   //GPIO initialization
   pinMode(detectionPin, OUTPUT);
@@ -113,12 +111,13 @@ void setup() {
     digitalWrite(greenLed, LOW);
   }
 
+  Nano.end();
+  Esp.end();
   HC12.listen();
 
   Serial.print(myName);
-  Serial.println(" has initialized.");
+  Serial.println(" v15 has initialized.");
   startTime = millis();
-  startTime2 = millis();
 }
 
 void loop() {
@@ -269,6 +268,7 @@ void forBaseStation() {
 }
 
 void forDrone() {
+
   //STATE 1: Not connected to base station
   if(!isConnected && !isDeployed) {
     //TASK 1: Continue to wait for connection acknowledgement
@@ -293,39 +293,20 @@ void forDrone() {
         startTime = millis();        
       }
 
-      // Task 3: Update coordinates
-      if(millis() - startTime > 500) {
+      if(millis() - startTime2 > 500) {
         HC12.end();
+        Nano.end();
         Esp.listen();
         startTime2 = millis();
-        while(millis() - startTime2 < 1000) {
-          if(receiveCommand() && receivedCommand == "COOR") {
-            int endIndex = receivedDetails.indexOf(',');
-            d1 = receivedDetails.substring(0, endIndex).toFloat();
-            d2 = receivedDetails.substring(endIndex+1).toFloat();
-
-            currentX = (distanceBetweenTags*distanceBetweenTags - d2*d2 + d1*d1)/(2*distanceBetweenTags);
-            currentY = sqrt(abs(d1*d1 - currentX*currentX));
-            Serial.print("X,Y: ");
-            Serial.print(currentX);
-            Serial.print(",");
-            Serial.println(currentY);
-          }
-        }
-        Esp.end();
-        HC12.listen();
-        startTime = millis();
-        startTime2 = millis();
-        if(receivedCommand == "COOR") sendToNano(receivedCommand, receivedToName, receivedDetails); 
       }
+      Nano.end();
+      Esp.end();
+      HC12.listen();
     }
 
     Serial.println("Base station wants to start deploying. Sending acknowledgement.");
     startTime = millis();
     startTime2 = millis();
-
-    homeX = currentX;
-    homeY = currentY;
 
     while(millis() - startTime < waitingTime) {
       if(millis() - startTime2 > 800) {
@@ -338,18 +319,16 @@ void forDrone() {
     hasStopped = true;
     startTime = millis();
 
-    receivedDetails = String(homeX) + "," String(homeY);
+    Serial.println("Drone is deploying.");
 
-    Serial.print("Drone is deploying. Home coordinate is: ");
-    Serial.println(receivedDetails);
-    sendToNano("DEPL", myName, receivedDetails);
+    sendToNano("DEPL", myName, "SUCC");
   }
 
   //STATE 3: Drone is deployed. Move, receive commands, send commands, and detect objects
   if(isConnected && isDeployed) {
 
     // Task 1: Interpret commands
-    while(receiveCommand()) {
+    if(receiveCommand()) {
 
       //Send acknowledgement that we received the command first
       startTime = millis();
@@ -360,6 +339,7 @@ void forDrone() {
           startTime2 = millis();
         }
       }
+
       //Interpret the command
       if(receivedCommand == "STOP") {
         hasStopped = true;
@@ -368,11 +348,6 @@ void forDrone() {
         digitalWrite(recordingPin, LOW);
       } else if(receivedCommand == "GO") {
         hasStopped = false;
-        savedX = currentX;
-        savedY = currentY;
-
-        receivedDetails = String(savedX) + "," String(savedY);
-
         sendToNano(receivedCommand, myName, receivedDetails);
         digitalWrite(detectionPin, HIGH); // Turn on camera
         digitalWrite(recordingPin, LOW);
@@ -381,19 +356,7 @@ void forDrone() {
         sendToNano("GO", myName, receivedDetails);
         digitalWrite(detectionPin, LOW);
         digitalWrite(recordingPin, HIGH);
-      } else if(receivedCommand == "WHER") {
-        if(receivedDetails == "HOME") {
-          sentDetails = String(homeX) + "," + String(homeY); // Send home coordinates
-        } else if(receivedDetails == "CURR") {
-          sentDetails = String(currentX) + "," + String(currentY); // Send current coordinates
-        } else if(receivedDetails == "SAVE") {
-          sentDetails = String(savedX) + "," + String(savedY); // Send saved coordinates
-        }
-        startTime = millis();
-        while(millis() - startTime < 500) {
-          sendCommand("HOME", "BASE", sentDetails);
-        }
-      } else {
+      }else {
         sendToNano(receivedCommand, myName, receivedDetails);
       }
     }
@@ -432,31 +395,7 @@ void forDrone() {
       }
     }
 
-    // Task 3: Update coordinates
-    if(millis() - startTime > 500) {
-      HC12.end();
-      Esp.listen();
-      startTime2 = millis();
-      while(millis() - startTime2 < 1000) {
-        if(receiveCommand() && receivedCommand == "COOR") {
-          int endIndex = receivedDetails.indexOf(',');
-          d1 = receivedDetails.substring(0, endIndex).toFloat();
-          d2 = receivedDetails.substring(endIndex+1).toFloat();
-
-          currentX = (distanceBetweenTags*distanceBetweenTags - d2*d2 + d1*d1)/(2*distanceBetweenTags);
-          currentY = sqrt(abs(d1*d1 - currentX*currentX));
-          Serial.print("X,Y: ");
-          Serial.print(currentX);
-          Serial.print(",");
-          Serial.println(currentY);
-        }
-      }
-      Esp.end();
-      HC12.listen();
-      startTime = millis();
-      startTime2 = millis();
-      if(receivedCommand == "COOR") sendToNano(receivedCommand, receivedToName, receivedDetails); 
-    }
+    // Task 3: Wait for any coordinates
   }
 }
 
