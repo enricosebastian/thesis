@@ -380,6 +380,14 @@ void forDrone() {
         sendToNano("GO", myName, String(currentX)+","+String(currentY));
         digitalWrite(detectionPin, LOW);
         digitalWrite(recordingPin, HIGH);
+      } else if(receivedCommand == "WHER") {
+        startTime = millis();
+        Serial.println("Base station wants to know your location.");
+        while(millis() - startTime < 800) {
+          if(millis() - startTime2 > 300) {
+            sendCommand("HERE", receivedFromName, String(currentX) + "," + String(currentY));
+          }
+        }
       } else {
         sendToNano(receivedCommand, myName, receivedDetails);
       }
