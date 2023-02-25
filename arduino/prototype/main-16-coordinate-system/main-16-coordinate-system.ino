@@ -32,7 +32,7 @@ const int redLed = 13;
 const int yellowLed = 12;
 const int greenLed = 11;
 
-const float x0 = 9.5;
+const float x0 = 2.0;
 
 //Booleans for logic
 bool isConnected = false;
@@ -280,29 +280,6 @@ void forDrone() {
         sendCommand("CONN", "BASE", "HELL");
         startTime = millis();        
       }
-
-      while(millis() - startTime2 > 800) {
-        Nano.end();
-        HC12.end();
-        Esp.listen();
-        startTime3 = millis();
-        while(millis() - startTime3 < 300) {
-          if(receiveCommand()) {
-            int endIndex = receivedDetails.indexOf(',');
-            d1 = receivedDetails.substring(0, endIndex).toFloat();
-            d2 = receivedDetails.substring(endIndex+1).toFloat();
-            Serial.print("Current distances: ");
-            Serial.print(d1);
-            Serial.print(",");
-            Serial.println(d2);
-          }
-        }
-        startTime3 = millis();
-        startTime2 = millis();
-        Nano.end();
-        Esp.end();
-        HC12.listen();
-      }
     }
     isConnected = true;
     Serial.println("Successfully detected by base station. Waiting for deployment.");
@@ -328,9 +305,9 @@ void forDrone() {
             int endIndex = receivedDetails.indexOf(',');
             d1 = receivedDetails.substring(0, endIndex).toFloat();
             d2 = receivedDetails.substring(endIndex+1).toFloat();
-            if(d1 != 0 || d2 != 0) {
+            if(d1 != 0 && d2 != 0) {
               currentX = (x0*x0 - d2*d2 + d1*d1)/(2*x0);
-              currentY = sqrt(d1*d1 - currentX*currentX);
+              currentY = sqrt(abs(d1*d1 - currentX*currentX));
               Serial.print("Current location: ");
               Serial.print(currentX);
               Serial.print(",");
@@ -461,7 +438,7 @@ void forDrone() {
           int endIndex = receivedDetails.indexOf(',');
           d1 = receivedDetails.substring(0, endIndex).toFloat();
           d2 = receivedDetails.substring(endIndex+1).toFloat();
-          if(d1 != 0 || d2 != 0) {
+          if(d1 != 0 && d2 != 0) {
             currentX = (x0*x0 - d2*d2 + d1*d1)/(2*x0);
             currentY = sqrt(d1*d1 - currentX*currentX);
             Serial.print("Current location: ");
