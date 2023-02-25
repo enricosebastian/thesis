@@ -280,6 +280,29 @@ void forDrone() {
         sendCommand("CONN", "BASE", "HELL");
         startTime = millis();        
       }
+
+      while(millis() - startTime2 > 800) {
+        Nano.end();
+        HC12.end();
+        Esp.listen();
+        startTime3 = millis();
+        while(millis() - startTime3 < 300) {
+          if(receiveCommand()) {
+            int endIndex = receivedDetails.indexOf(',');
+            d1 = receivedDetails.substring(0, endIndex).toFloat();
+            d2 = receivedDetails.substring(endIndex+1).toFloat();
+            Serial.print("Current distances: ");
+            Serial.print(d1);
+            Serial.print(",");
+            Serial.println(d2);
+          }
+        }
+        startTime3 = millis();
+        startTime2 = millis();
+        Nano.end();
+        Esp.end();
+        HC12.listen();
+      }
     }
     isConnected = true;
     Serial.println("Successfully detected by base station. Waiting for deployment.");
