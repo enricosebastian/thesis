@@ -4,8 +4,8 @@
 #include <LinkedList.h>
 
 //Name here
-// const String myName = "BASE";
-const String myName = "DRO1";
+const String myName = "BASE";
+// const String myName = "DRO1";
 // const String myName = "DRO2";
 // const String myName = "DRO3";
 
@@ -553,8 +553,9 @@ bool receiveCommand() {
 void sendCommand(String command, String toName, String details) {
   //COMMAND TONAME FROMNAME DETAILS
   if(command != "" && toName != "" && details != "") {
-    String sentMessage = command + " " + toName + " " + myName + " " + details;
+    sentMessage = command + " " + toName + " " + myName + " " + details;
     HC12.println(sentMessage);
+    sentMessage = "";
   } else {
     Serial.println("Wrong format of command. Try again.");
   }
