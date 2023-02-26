@@ -49,7 +49,10 @@ void loop() {
 
   if(Serial2.available()) {
     char letter = Serial.read();
+    Serial.println(letter);
     if(letter == '\n') {
+      Serial.print("rec: ");
+      Serial.println(message);
       if(message == "CHAN5") {
         Serial.println("Changing to Channel 5");
         DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);

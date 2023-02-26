@@ -390,7 +390,7 @@ void forDrone() {
           }
         }
       } else if(receivedCommand == "CHAN") {
-        if(receivedDetails == "5\n" || receivedDetails == "7\n" || receivedDetails == "9\n") {
+        if(receivedDetails == "CHAN5\n" || receivedDetails == "CHAN7\n" || receivedDetails == "CHAN9\n") {
           changeToChannel(receivedDetails);
         }
       } else {
