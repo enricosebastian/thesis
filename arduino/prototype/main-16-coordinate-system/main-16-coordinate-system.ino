@@ -15,7 +15,7 @@ const int recordingPin = 9;
 const int btn = 7;
 const int coordPin = 6;
 
-// Rule: For ports, green = RX, blue = TX
+// Rule: For ports, green = RX, blue = TXd1
 // For modules/chips, green = TX, blue = RX
 const int rxHc12 = A0; //green wire
 const int txHc12 = A1; //blue wire
@@ -222,8 +222,6 @@ void forBaseStation() {
       digitalWrite(redLed, LOW);
       digitalWrite(yellowLed, LOW);
       digitalWrite(greenLed, !digitalRead(greenLed));
-
-      startTime = millis();
     }
     
     while(Serial.available()) {
@@ -267,6 +265,7 @@ void forBaseStation() {
     //TASK 2: Wait for base station to send me a command
     if(receiveCommand()) {      
     }
+
   }
 }
 
@@ -390,7 +389,11 @@ void forDrone() {
           }
         }
       } else if(receivedCommand == "CHAN") {
-        if(receivedDetails == "CHAN5\n" || receivedDetails == "CHAN7\n" || receivedDetails == "CHAN9\n") {
+        Serial.print("Changing to channel: ");
+        Serial.print("DETAILS: ");
+        Serial.println(receivedDetails);
+        if(receivedDetails == "CHAN5" || receivedDetails == "CHAN7" || receivedDetails == "CHAN9") {
+          Serial.println(receivedDetails);
           changeToChannel(receivedDetails);
         }
       } else {
@@ -445,7 +448,7 @@ void forDrone() {
           d2 = receivedDetails.substring(endIndex+1).toFloat();
           if(d1 != 0 && d2 != 0) {
             currentX = (x0*x0 - d2*d2 + d1*d1)/(2*x0);
-            currentY = sqrt(d1*d1 - currentX*currentX);
+            currentY = sqrt(abs(d1*d1 - currentX*currentX));
             Serial.print("Current location: ");
             Serial.print(currentX);
             Serial.print(",");
@@ -471,14 +474,12 @@ void sendToNano(String command, String toName, String details) {
   Nano.listen();
 
   //COMMAND TONAME FROMNAME DETAILS
-  if(command != "" && toName != "" && details != "") {
-    String sentMessage = command + " " + toName + " " + myName + " " + details;
-    String bufferMessage = "BUFF " + toName + " " + myName + " " + "BUFF";
-    Serial.print("Sending to Nano: ");
-    Serial.println(sentMessage);
-    
+  if(c ommand != "" && toName != "" && details != "") {
+    sentMessage = command + " " + toName + " " + myName + " " + details + "\n";
+    String bufferMessage = "BUFF " + toName + " " + myName + " " + "BUFF\n";    
     Nano.println(bufferMessage); //Ned to send a buffer message first before sending actual message to clear port
     Nano.println(sentMessage);
+    sentMessage = "";
   } else {
     Serial.println("Wrong format of command. Try again.");
   }
@@ -553,8 +554,9 @@ bool receiveCommand() {
 void sendCommand(String command, String toName, String details) {
   //COMMAND TONAME FROMNAME DETAILS
   if(command != "" && toName != "" && details != "") {
-    String sentMessage = command + " " + toName + " " + myName + " " + details;
+    sentMessage = command + " " + toName + " " + myName + " " + details;
     HC12.println(sentMessage);
+    sentMessage = "";
   } else {
     Serial.println("Wrong format of command. Try again.");
   }

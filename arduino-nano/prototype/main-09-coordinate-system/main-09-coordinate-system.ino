@@ -325,7 +325,7 @@ void loop() {
       }
 
       // After all that movement processing, actually move...      
-      move(savedAngle);
+      move(currentAngle);
     }
 
     // State 2: Detected something, so move there
@@ -384,15 +384,21 @@ void move(float currentAngle) {
   if(error < 10) isStraight = true;
   else isStraight = false;
 
-  Serial.println(modifiedSpeed);
+  Serial.print(currentX);
+  Serial.print(" vs ");
+  Serial.println(savedX);
+
+  Serial.print(currentAngle);
+  Serial.print(" vs ");
+  Serial.println(savedAngle);
   
   if(isStraight) {
     if(isLeft) {
-      Serial.println("Left ++");
+      Serial.println("Left++");
       escLeft.write(modifiedSpeed+5);
       escRight.write(minSpeed);
     } else {
-      Serial.println("Right ++");
+      Serial.println("Right++");
       escLeft.write(minSpeed);
       escRight.write(modifiedSpeed);
     }

@@ -18,13 +18,19 @@ const uint8_t PIN_SS = 4;
 
 String message = "";
 
+String tempChannel = "";
+String channel1 = "5";
+String channel2 = "7";
+String channel3 = "9";
+
 float r1 = 0.0;
 float r2 = 0.0;
 
 float startTime = 0;
+float startTime2 = 0;
 float waitingTime = 300;
 
-bool isLookingForX = false;
+bool isLookingForX = true;
 bool isLookingForY = false;
 
 int correctTimes = 0;
@@ -39,53 +45,47 @@ void setup() {
   DW1000Ranging.attachNewDevice(0);
   DW1000Ranging.attachInactiveDevice(0);
 
+  DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
+
   startTime = millis();
 }
 
 void loop() {
   DW1000Ranging.loop();
 
-  if(Serial2.available()) {
-    char letter = Serial2.read();
-    Serial.println(letter);
-    if(letter == '\n') {
-      Serial.print("rec: ");
-      Serial.println(message);
-      if(message == "CHAN5") {
-        Serial.println("Changing to Channel 5");
-        DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
-        isLookingForX = true;
-        isLookingForY = false;
-      } else if (message == "CHAN7") {
-        Serial.println("Changing to Channel 7");
-        DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_7,false);
-        isLookingForX = false;
-        isLookingForY = true;
-      } else if (message == "CHAN9") {
-        Serial.println("Changing to Channel 9");
-        isLookingForX = false;
-        isLookingForY = false;
-      }
-      message = "";
-    } else {
-      message += letter;
+  if(millis() - startTime > 2000) {
+    tempChannel = channel1;
+    channel1 = channel2;
+    channel2 = channel3;
+    channel3 = tempChannel;
+
+    if(channel1 == "5") {
+      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
+    } else if(channel1 == "7") {
+      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_7,false);
+    } else if(channel1 == "9") {
+
     }
+
+    startTime = millis();
   }
 
   // For Anchor 1
-  if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1001 && isLookingForX && !isLookingForY) {
+  if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1001 && channel1 == "5") {
 
     if(DW1000Ranging.getDistantDevice()->getRange() != 0) {
       r1 = DW1000Ranging.getDistantDevice()->getRange();
     }
 
   // For anchor 2
-  } else if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1002 && !isLookingForX && isLookingForY) {
+  } else if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1002 && channel1 == "7") {
+    
     if(DW1000Ranging.getDistantDevice()->getRange() != 0) {
       r2 = DW1000Ranging.getDistantDevice()->getRange();
     }
-  } else if(!isLookingForX && !isLookingForY) {
-    Serial.println("Doing nothing");
+
+  } else if(channel1 == "9") {
+    Serial.println("Doing nothing");    
   }
 
   Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
@@ -94,11 +94,11 @@ void loop() {
   Serial.print(",");
   Serial.println(r2);
 
-  if(millis() - startTime > 800) {
+  if(millis() - startTime2 > 800) {
     message = "COOR ALL ALL " + String(r1) + "," + String(r2);
     Serial2.println(message);
     message = "";
-    startTime = millis();
+    startTime2 = millis();
   }
   
 }
