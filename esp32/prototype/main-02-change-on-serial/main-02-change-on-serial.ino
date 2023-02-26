@@ -39,6 +39,8 @@ void setup() {
   DW1000Ranging.attachNewDevice(0);
   DW1000Ranging.attachInactiveDevice(0);
 
+  DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
+
   startTime = millis();
 }
 
