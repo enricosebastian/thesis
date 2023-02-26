@@ -388,9 +388,11 @@ void move(float currentAngle) {
   
   if(isStraight) {
     if(isLeft) {
+      Serial.println("Left ++");
       escLeft.write(modifiedSpeed+5);
       escRight.write(minSpeed);
     } else {
+      Serial.println("Right ++");
       escLeft.write(minSpeed);
       escRight.write(modifiedSpeed);
     }
