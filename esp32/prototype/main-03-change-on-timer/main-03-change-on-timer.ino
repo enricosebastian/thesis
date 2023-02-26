@@ -2,8 +2,9 @@
 #include "DW1000Ranging.h"
 #include "DW1000.h"
 
-#define TAG_ADD "01:20:5B:D5:A9:9A:E2:9C" // Tag 1
-//#define TAG_ADD "02:20:5B:D5:A9:9A:E2:9C" // Tag 2
+// #define TAG_ADD "01:20:5B:D5:A9:9A:E2:9C" // Tag 1
+#define TAG_ADD "02:20:5B:D5:A9:9A:E2:9C" // Tag 2
+// #define TAG_ADD "03:20:5B:D5:A9:9A:E2:9C" // Tag 3
 
 #define TX 16
 #define RX 17
@@ -19,9 +20,21 @@ const uint8_t PIN_SS = 4;
 String message = "";
 
 String tempChannel = "";
-String channel1 = "5";
-String channel2 = "7";
-String channel3 = "9";
+
+// // tag 1
+// String channel1 = "5";
+// String channel2 = "7";
+// String channel3 = "9";
+
+// tag 2
+String channel1 = "7";
+String channel2 = "9";
+String channel3 = "5";
+
+// // tag 3
+// String channel1 = "9";
+// String channel2 = "5";
+// String channel3 = "7";
 
 float r1 = 0.0;
 float r2 = 0.0;
@@ -29,12 +42,6 @@ float r2 = 0.0;
 float startTime = 0;
 float startTime2 = 0;
 float waitingTime = 300;
-
-bool isLookingForX = true;
-bool isLookingForY = false;
-
-int correctTimes = 0;
-int maxCorrectTimes = 30;
 
 void setup() {
   Serial.begin(9600);
@@ -45,7 +52,7 @@ void setup() {
   DW1000Ranging.attachNewDevice(0);
   DW1000Ranging.attachInactiveDevice(0);
 
-  DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
+  DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_7,false);
 
   startTime = millis();
 }
