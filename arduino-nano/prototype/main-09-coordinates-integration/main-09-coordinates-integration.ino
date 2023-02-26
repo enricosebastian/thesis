@@ -243,11 +243,8 @@ void loop() {
       }
     } else if(receivedCommand == "COOR" && isDeployed) {
       int endIndex = receivedDetails.indexOf(',');
-      d1 = receivedDetails.substring(0, endIndex).toFloat();
-      d2 = receivedDetails.substring(endIndex+1).toFloat();
-
-      currentX = (distanceBetweenTags*distanceBetweenTags - d2*d2 + d1*d1)/(2*distanceBetweenTags);
-      currentY = sqrt(abs(d1*d1 - currentX*currentX));
+      currentX = receivedDetails.substring(0, endIndex).toFloat();
+      currentY = receivedDetails.substring(endIndex+1).toFloat();
 
       Serial.print("X,Y: ");
       Serial.print(currentX);

@@ -1,30 +1,31 @@
 #include <NeoSWSerial.h>
 
 //Constants (buttons)
-const int txHc12 = A0; //green tx
-const int rxHc12 = A1; //blue received
-const int txNano = 9; //green tx
-const int rxNano = 8; //blue received
-const int waitingTime = 5000;
+const int rxHc12 = A0; //green wire
+const int txHc12 = A1; //blue wire
+const int rxNano = A2; //green wire
+const int txNano = A3; //blue wire
+const int rxEsp = A4;
+const int txEsp = A5;
 
 String message = "";
 
-NeoSWSerial HC12(txHc12, rxHc12); // (Green TX, Blue RX)
-NeoSWSerial Nano(txNano, rxNano); // (Green TX, Blue RX)
+// SoftwareSerial(rxPin, txPin, inverse_logic)
+NeoSWSerial HC12(rxHc12, txHc12);
+NeoSWSerial Nano(rxNano, txNano);
 
 void setup() {
   Serial.begin(9600);
-  HC12.begin(9600);
   Nano.begin(9600);
+
+  Nano.listen();
   Serial.println("Initializing...");
 }
 
 void loop() {
 
-  HC12.listen();
-  if(HC12.available()) {
-    char letter = HC12.read();
-    Serial.println(letter);
-  }
+  Nano.println("Hallo");
+  Serial.println("Hallo");
+  delay(500);
   
 }

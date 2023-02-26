@@ -312,6 +312,7 @@ void forDrone() {
               Serial.print(currentX);
               Serial.print(",");
               Serial.println(currentY);
+              sendToNano("COOR", myName, String(currentX)+","+String(currentY));
             }
           }
         }
@@ -462,6 +463,7 @@ void forDrone() {
 ///////Specific functions/////////
 void sendToNano(String command, String toName, String details) {
   HC12.end();
+  Esp.end();
   Nano.listen();
 
   //COMMAND TONAME FROMNAME DETAILS
@@ -477,6 +479,7 @@ void sendToNano(String command, String toName, String details) {
     Serial.println("Wrong format of command. Try again.");
   }
   Nano.end();
+  Esp.end();
   HC12.listen();
 }
 

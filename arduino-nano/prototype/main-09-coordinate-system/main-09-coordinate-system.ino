@@ -17,8 +17,8 @@ const int redLed = 10;
 const int escLeftPin = 5;
 const int escRightPin = 6;
 
-const int rxNano = 11; 
-const int txNano = 12; 
+const int rxNano = 12; 
+const int txNano = 11; 
 
 const int waitingTime = 5000;
 const int turnDelay = 30000; //in milliseconds
@@ -37,16 +37,17 @@ bool hasStopped = true;
 bool hasDetectedObject = false;
 
 //Variables
-float currentX = 0;
-float homeX = 0;
-float savedX = 0;
-
-float currentY = 0;
-float homeY = 0;
-float savedY = 0;
-
 float d1 = 0;
 float d2 = 0;
+
+float savedX = 0;
+float savedY = 0;
+
+float currentX = 0;
+float currentY = 0;
+
+float homeX = 0;
+float homeY = 0;
 
 //PID values
 float kp = 2;
@@ -155,11 +156,8 @@ void loop() {
       hasStopped = true;
 
       int endIndex = receivedDetails.indexOf(',');
-      d1 = receivedDetails.substring(0, endIndex).toFloat();
-      d2 = receivedDetails.substring(endIndex+1).toFloat();
-
-      homeX = (distanceBetweenTags*distanceBetweenTags - d2*d2 + d1*d1)/(2*distanceBetweenTags);
-      homeY = sqrt(abs(d1*d1 - currentX*currentX));
+      homeX = receivedDetails.substring(0, endIndex).toFloat();
+      homeY = receivedDetails.substring(endIndex+1).toFloat();
 
       startTime = millis();
 
@@ -175,7 +173,10 @@ void loop() {
 
       savedAngle = currentAngle;
       straightAngle = savedAngle;
-      savedX = currentX;
+
+      int endIndex = receivedDetails.indexOf(',');
+      savedX = receivedDetails.substring(0, endIndex).toFloat();
+      savedY = receivedDetails.substring(endIndex+1).toFloat();
 
       oppositeSavedAngle = currentAngle + 210;
       if(oppositeSavedAngle > 360) {
@@ -189,11 +190,12 @@ void loop() {
       digitalWrite(redLed, LOW);
 
       Serial.print(myName);
-      Serial.print(" is now moving\nSaved angle: ");
-      Serial.println(savedAngle);
-
-      Serial.print("Saved X: ");
-      Serial.println(savedX);
+      Serial.print(" is now moving at ");
+      Serial.print(savedAngle);
+      Serial.print(" degrees in");
+      Serial.print(savedX);
+      Serial.print(",");
+      Serial.println(savedY);
 
       Serial.print("Opposite saved angle: ");
       Serial.println(oppositeSavedAngle);
@@ -239,15 +241,12 @@ void loop() {
         digitalWrite(yellowLed, LOW);
         digitalWrite(blueLed, LOW);
         digitalWrite(redLed, LOW);
-        Serial.println("Object has been acquired");
+        Serial.println("Object has been acquired.");
       }
     } else if(receivedCommand == "COOR" && isDeployed) {
       int endIndex = receivedDetails.indexOf(',');
-      d1 = receivedDetails.substring(0, endIndex).toFloat();
-      d2 = receivedDetails.substring(endIndex+1).toFloat();
-
-      currentX = (distanceBetweenTags*distanceBetweenTags - d2*d2 + d1*d1)/(2*distanceBetweenTags);
-      currentY = sqrt(abs(d1*d1 - currentX*currentX));
+      currentX = receivedDetails.substring(0, endIndex).toFloat();
+      currentY = receivedDetails.substring(endIndex+1).toFloat();
 
       Serial.print("X,Y: ");
       Serial.print(currentX);
@@ -256,12 +255,10 @@ void loop() {
     }
   }
 
-  // State 1: Just connected to base station. Show current angle
+  // State 1: Just connected to base station. Show current angle for debugging purposes
   if(isConnected && !isDeployed) {
     Serial.print("Current angle: ");
     Serial.println(currentAngle);
-    Serial.print("Saved X: ");
-    Serial.println(savedX);
   }
 
   // State 3: Do all possible functions since you've been deployed
@@ -276,15 +273,16 @@ void loop() {
         digitalWrite(blueLed, LOW);
         digitalWrite(redLed, LOW);
         startTime = millis();
-      }
+      } 
 
+      // State 2: Maneuvering. If Y reaches limit, turn
       if(currentY > 10.0) {
         float tempAngle = oppositeStraightAngle;
         oppositeStraightAngle = straightAngle;
         straightAngle = tempAngle;
 
-        savedAngle = oppositeStraightAngle;
-        oppositeSavedAngle = straightAngle;
+        savedAngle = straightAngle;
+        oppositeSavedAngle = oppositeStraightAngle;
 
         Serial.print("Saved angle: ");
         Serial.println(savedAngle);
@@ -299,6 +297,7 @@ void loop() {
         Serial.println(savedY);
       }
 
+      // Task 1: If X is slightly deviating, adjust
       if(!(abs(savedX - currentX) < 10)) {
         // Drone has drifted
         if((savedX - currentX) < 0) {
@@ -419,6 +418,7 @@ void move(float currentAngle) {
 bool receiveCommand() {
   while(Nano.available()) {
     char letter = Nano.read();
+    Serial.println(letter);
     if(letter == '\n') {
       receivedMessage += '\n';
       Serial.print("Received: ");
