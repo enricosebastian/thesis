@@ -391,6 +391,8 @@ void forDrone() {
         }
       } else if(receivedCommand == "CHAN") {
         if(receivedDetails == "CHAN5\n" || receivedDetails == "CHAN7\n" || receivedDetails == "CHAN9\n") {
+          Serial.print("Changing to channel: ");
+          Serial.println(receivedDetails);
           changeToChannel(receivedDetails);
         }
       } else {

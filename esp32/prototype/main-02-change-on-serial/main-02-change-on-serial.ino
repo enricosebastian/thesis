@@ -48,7 +48,7 @@ void loop() {
   DW1000Ranging.loop();
 
   if(Serial2.available()) {
-    char letter = Serial.read();
+    char letter = Serial2.read();
     Serial.println(letter);
     if(letter == '\n') {
       Serial.print("rec: ");
@@ -56,29 +56,38 @@ void loop() {
       if(message == "CHAN5") {
         Serial.println("Changing to Channel 5");
         DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
+        isLookingForX = true;
+        isLookingForY = false;
       } else if (message == "CHAN7") {
         Serial.println("Changing to Channel 7");
         DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_7,false);
+        isLookingForX = false;
+        isLookingForY = true;
       } else if (message == "CHAN9") {
         Serial.println("Changing to Channel 9");
+        isLookingForX = false;
+        isLookingForY = false;
       }
+      message = "";
     } else {
       message += letter;
     }
   }
 
   // For Anchor 1
-  if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1001) {
+  if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1001 && isLookingForX && !isLookingForY) {
 
     if(DW1000Ranging.getDistantDevice()->getRange() != 0) {
       r1 = DW1000Ranging.getDistantDevice()->getRange();
     }
 
   // For anchor 2
-  } else if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1002 && !isLookingForX) {
+  } else if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1002 && !isLookingForX && isLookingForY) {
     if(DW1000Ranging.getDistantDevice()->getRange() != 0) {
       r2 = DW1000Ranging.getDistantDevice()->getRange();
     }
+  } else if(!isLookingForX && !isLookingForY) {
+    Serial.println("Doing nothing");
   }
 
   Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
@@ -90,6 +99,7 @@ void loop() {
   if(millis() - startTime > 800) {
     message = "COOR ALL ALL " + String(r1) + "," + String(r2);
     Serial2.println(message);
+    message = "";
     startTime = millis();
   }
   
