@@ -224,6 +224,33 @@ void forBaseStation() {
       digitalWrite(greenLed, !digitalRead(greenLed));
 
       startTime = millis();
+      String tempChannelName = "CHAN0";
+      String channel1 = "CHAN5";
+      String channel2 = "CHAN7";
+      String channel3 = "CHAN9";
+      for(int i = 0; i<drones.size(); i++) {
+        if(drones.size() == 3) {
+          tempChannelName = channel1;
+          channel1 = channel2;
+          channel2 = channel3;
+          channel3 = tempChannelName;
+        } else if(drones.size() <= 2) {
+          tempChannelName = channel1;
+          channel1 = channel2;
+          channel2 = tempChannelName;
+        }
+        
+        sendCommand("CHAN", drones.get(i), channelName);
+        while(!receivedSpecificCommand("CONNREP")) {
+          if(millis() - startTime > 800) {
+            Serial.println("Reply 'CHANREP' was not received. Resending message again.");
+            sendCommand("CHAN", drones.get(i), channelName);
+            startTime = millis();        
+          }
+        }
+
+      }
+
     }
     
     while(Serial.available()) {
@@ -267,6 +294,7 @@ void forBaseStation() {
     //TASK 2: Wait for base station to send me a command
     if(receiveCommand()) {      
     }
+
   }
 }
 
