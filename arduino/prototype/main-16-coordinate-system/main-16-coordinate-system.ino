@@ -389,6 +389,10 @@ void forDrone() {
             sendCommand("HERE", receivedFromName, String(currentX) + "," + String(currentY));
           }
         }
+      } else if(receivedCommand == "CHAN") {
+        if(receivedDetails == "5\n" || receivedDetails == "7\n" || receivedDetails == "9\n") {
+          changeToChannel(receivedDetails);
+        }
       } else {
         sendToNano(receivedCommand, myName, receivedDetails);
       }
@@ -477,6 +481,27 @@ void sendToNano(String command, String toName, String details) {
     Nano.println(sentMessage);
   } else {
     Serial.println("Wrong format of command. Try again.");
+  }
+  Nano.end();
+  Esp.end();
+  HC12.listen();
+}
+
+void changeToChannel(String channelName) {
+  HC12.end();
+  Nano.end();
+  Esp.listen();
+
+  //COMMAND TONAME FROMNAME DETAILS
+  if(channelName != "") {
+    String bufferMessage = "BUFF ALL ALL ALL";
+    Serial.print("Changing to channel: ");
+    Serial.println(channelName);
+    
+    Esp.println(bufferMessage); //Ned to send a buffer message first before sending actual message to clear port
+    Esp.println(channelName);
+  } else {
+    Serial.println("Channel doesn't exist. Try again.");
   }
   Nano.end();
   Esp.end();
