@@ -474,7 +474,7 @@ void sendToNano(String command, String toName, String details) {
   Nano.listen();
 
   //COMMAND TONAME FROMNAME DETAILS
-  if(c ommand != "" && toName != "" && details != "") {
+  if(command != "" && toName != "" && details != "") {
     sentMessage = command + " " + toName + " " + myName + " " + details + "\n";
     String bufferMessage = "BUFF " + toName + " " + myName + " " + "BUFF\n";    
     Nano.println(bufferMessage); //Ned to send a buffer message first before sending actual message to clear port
