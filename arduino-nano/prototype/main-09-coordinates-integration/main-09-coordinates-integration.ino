@@ -17,8 +17,8 @@ const int redLed = 10;
 const int escLeftPin = 5;
 const int escRightPin = 6;
 
-const int rxNano = 11; 
-const int txNano = 12; 
+const int rxNano = 12; 
+const int txNano = 11; 
 
 const int waitingTime = 5000;
 const int turnDelay = 30000; //in milliseconds
@@ -155,8 +155,8 @@ void loop() {
       hasStopped = true;
 
       int endIndex = receivedDetails.indexOf(',');
-      d1 = receivedDetails.substring(0, endIndex).toFloat();
-      d2 = receivedDetails.substring(endIndex+1).toFloat();
+      homeX = receivedDetails.substring(0, endIndex).toFloat();
+      homeY = receivedDetails.substring(endIndex+1).toFloat();
 
       homeX = (distanceBetweenTags*distanceBetweenTags - d2*d2 + d1*d1)/(2*distanceBetweenTags);
       homeY = sqrt(abs(d1*d1 - currentX*currentX));

@@ -17,8 +17,8 @@ const int redLed = 10;
 const int escLeftPin = 5;
 const int escRightPin = 6;
 
-const int rxNano = 12; 
-const int txNano = 11; 
+const int rxNano = 11; 
+const int txNano = 12; 
 
 const int waitingTime = 5000;
 const int turnDelay = 30000; //in milliseconds
@@ -29,6 +29,7 @@ const float minSpeed = 15;
 const float maxSpeed = 25;
 
 const float angleAllowance = 5.0;
+const float currentXAllowance = 0.5;
 
 //Booleans for logic
 bool isConnected = false;
@@ -192,7 +193,7 @@ void loop() {
       Serial.print(myName);
       Serial.print(" is now moving at ");
       Serial.print(savedAngle);
-      Serial.print(" degrees in");
+      Serial.print(" degrees in ");
       Serial.print(savedX);
       Serial.print(",");
       Serial.println(savedY);
@@ -298,10 +299,12 @@ void loop() {
       }
 
       // Task 1: If X is slightly deviating, adjust
-      if(!(abs(savedX - currentX) < 10)) {
+      if(abs(savedX - currentX) > currentXAllowance) {
         // Drone has drifted
+
         if((savedX - currentX) < 0) {
           // Move a little to the left
+          Serial.println("Drone has drifted to the right.");
           leftAngle = savedAngle + detectAngle;
           if(leftAngle > 360) leftAngle = leftAngle - 360;
           if(leftAngle < 0) leftAngle = 360 + leftAngle;
@@ -309,6 +312,7 @@ void loop() {
           savedAngle = leftAngle;
         } else if((savedX - currentX) > 0) {
           // Move a little to the right
+          Serial.println("Drone has drifted to the left.");
           rightAngle = savedAngle - detectAngle;
           if(rightAngle > 360) rightAngle = rightAngle - 360;
           if(rightAngle < 0) rightAngle = 360 + rightAngle;
@@ -316,11 +320,12 @@ void loop() {
           savedAngle = rightAngle;
         }
       } else {
+        Serial.println("X coordinate is straight");
         savedAngle = straightAngle;
       }
 
       // After all that movement processing, actually move...      
-      move(savedAngle);
+      //move(savedAngle);
     }
 
     // State 2: Detected something, so move there
@@ -418,7 +423,6 @@ void move(float currentAngle) {
 bool receiveCommand() {
   while(Nano.available()) {
     char letter = Nano.read();
-    Serial.println(letter);
     if(letter == '\n') {
       receivedMessage += '\n';
       Serial.print("Received: ");
