@@ -325,7 +325,7 @@ void loop() {
       }
 
       // After all that movement processing, actually move...      
-      //move(savedAngle);
+      move(savedAngle);
     }
 
     // State 2: Detected something, so move there
