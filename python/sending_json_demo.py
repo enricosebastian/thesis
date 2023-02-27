@@ -30,7 +30,7 @@ while True:
         data = json.dumps(data)
         print(data)
         ser.write(data.encode('utf-8'))
-        os.system("shutdown now -h")
+        os.system("shutdown -h now")
         time.sleep(1)
         
 
