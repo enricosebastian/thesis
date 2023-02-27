@@ -5,8 +5,8 @@
 
 //Name here
 // const String myName = "BASE";
-// const String myName = "DRO1";
-const String myName = "DRO2";
+const String myName = "DRO1";
+// const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants (buttons)
@@ -32,7 +32,7 @@ const int redLed = 13;
 const int yellowLed = 12;
 const int greenLed = 11;
 
-const float x0 = 6.9;
+const float x0 = 10.72;
 
 //Booleans for logic
 bool isConnected = false;
@@ -306,7 +306,7 @@ void forDrone() {
             d2 = receivedDetails.substring(endIndex+1).toFloat();
             if(d1 != 0 && d2 != 0) {
               currentX = (x0*x0 - d2*d2 + d1*d1)/(2*x0);
-              currentY = sqrt(d1*d1 - currentX*currentX);
+              currentY = sqrt(abs(d1*d1 - currentX*currentX));
               Serial.print("Current location: ");
               Serial.print(currentX);
               Serial.print(",");
@@ -448,7 +448,7 @@ void forDrone() {
           d2 = receivedDetails.substring(endIndex+1).toFloat();
           if(d1 != 0 && d2 != 0) {
             currentX = (x0*x0 - d2*d2 + d1*d1)/(2*x0);
-            currentY = sqrt(d1*d1 - currentX*currentX);
+            currentY = sqrt(abs(d1*d1 - currentX*currentX));
             Serial.print("Current location: ");
             Serial.print(currentX);
             Serial.print(",");
