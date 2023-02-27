@@ -6,8 +6,8 @@
 
 //Name here
 // const String myName = "DRO1";
-// const String myName = "DRO2";
-const String myName = "DRO3";
+const String myName = "DRO2";
+// const String myName = "DRO3";
 
 //Constants
 const int greenLed = 7;
@@ -277,25 +277,26 @@ void loop() {
       } 
 
       // State 2: Maneuvering. If Y reaches limit, turn
-      if(currentY > 10.0) {
-        float tempAngle = oppositeStraightAngle;
-        oppositeStraightAngle = straightAngle;
-        straightAngle = tempAngle;
+      if(currentY > 8.0) {
+        hasStopped = true;
+        // float tempAngle = oppositeStraightAngle;
+        // oppositeStraightAngle = straightAngle;
+        // straightAngle = tempAngle;
 
-        savedAngle = straightAngle;
-        oppositeSavedAngle = oppositeStraightAngle;
+        // savedAngle = straightAngle;
+        // oppositeSavedAngle = oppositeStraightAngle;
 
-        Serial.print("Saved angle: ");
-        Serial.println(savedAngle);
-        Serial.print("Opposite angle: ");
-        Serial.println(oppositeSavedAngle);
+        // Serial.print("Saved angle: ");
+        // Serial.println(savedAngle);
+        // Serial.print("Opposite angle: ");
+        // Serial.println(oppositeSavedAngle);
 
-        savedX = savedX + 5;
+        // savedX = savedX + 5;
 
-        Serial.print("New X,Y:");
-        Serial.print(savedX);
-        Serial.print(",");
-        Serial.println(savedY);
+        // Serial.print("New X,Y:");
+        // Serial.print(savedX);
+        // Serial.print(",");
+        // Serial.println(savedY);
       }
 
       // Task 1: If X is slightly deviating, adjust
