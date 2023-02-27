@@ -6,8 +6,13 @@
 //Name here
 // const String myName = "BASE";
 // const String myName = "DRO1";
+<<<<<<< HEAD
 // const String myName = "DRO2";
 const String myName = "DRO3";
+=======
+const String myName = "DRO2";
+// const String myName = "DRO3";
+>>>>>>> 751b7d9311d477e9c3bfff3437c3f7a3d52a6c88
 
 //Constants (buttons)
 const int detectionPin = 10;

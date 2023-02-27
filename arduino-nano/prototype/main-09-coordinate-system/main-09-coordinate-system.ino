@@ -215,8 +215,8 @@ void loop() {
       digitalWrite(yellowLed, LOW);
       digitalWrite(blueLed, HIGH);
       digitalWrite(redLed, LOW);
-      Serial.println("Object is detected at: ");
-      Serial.println(receivedDetails);
+      // Serial.println("Object is detected at: ");
+      // Serial.println(receivedDetails);
 
       startTime2 = millis();
 
@@ -320,7 +320,7 @@ void loop() {
           savedAngle = rightAngle;
         }
       } else {
-        Serial.println("X coordinate is straight");
+        // Serial.println("X coordinate is straight");
         savedAngle = straightAngle;
       }
 
@@ -384,21 +384,21 @@ void move(float currentAngle) {
   if(error < 10) isStraight = true;
   else isStraight = false;
 
-  Serial.print(currentX);
-  Serial.print(" vs ");
-  Serial.println(savedX);
+  // Serial.print(currentX);
+  // Serial.print(" vs ");
+  // Serial.println(savedX);
 
-  Serial.print(currentAngle);
-  Serial.print(" vs ");
-  Serial.println(savedAngle);
+  // Serial.print(currentAngle);
+  // Serial.print(" vs ");
+  // Serial.println(savedAngle);
   
   if(isStraight) {
     if(isLeft) {
-      Serial.println("Left++");
+      // Serial.println("Left++");
       escLeft.write(modifiedSpeed+5);
       escRight.write(minSpeed);
     } else {
-      Serial.println("Right++");
+      // Serial.println("Right++");
       escLeft.write(minSpeed);
       escRight.write(modifiedSpeed);
     }
