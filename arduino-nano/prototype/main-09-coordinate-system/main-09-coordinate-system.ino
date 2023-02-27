@@ -296,19 +296,19 @@ void loop() {
           digitalWrite(yellowLed, LOW);
           digitalWrite(blueLed, HIGH);
           digitalWrite(redLed, LOW);
-          move(savedAngle, false, false);
+          move(currentAngle, false, false);
         } else if (currentX - savedX < 0) {
           digitalWrite(greenLed, LOW);
           digitalWrite(yellowLed, HIGH);
           digitalWrite(blueLed, LOW);
           digitalWrite(redLed, LOW);
-          move(savedAngle, false, true);
+          move(currentAngle, false, true);
         } else {
           digitalWrite(greenLed, LOW);
           digitalWrite(yellowLed, HIGH);
           digitalWrite(blueLed, HIGH);
           digitalWrite(redLed, LOW);
-          move(savedAngle, true, false);
+          move(currentAngle, true, false);
         }
       } else {
         // Serial.println("X coordinate is straight");
@@ -316,7 +316,7 @@ void loop() {
         digitalWrite(yellowLed, HIGH);
         digitalWrite(blueLed, HIGH);
         digitalWrite(redLed, LOW);
-        move(savedAngle, true, false);
+        move(currentAngle, true, false);
       }
     }
 
