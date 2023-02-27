@@ -19,27 +19,18 @@ String message = "";
 
 String tempChannel = "";
 
-// // tag 1
-// String channel1 = "5";
-// String channel2 = "7";
-// String channel3 = "9";
-
-// tag 2
-String channel1 = "7";
-String channel2 = "9";
-String channel3 = "5";
-
-// // tag 3
-// String channel1 = "9";
-// String channel2 = "5";
-// String channel3 = "7";
+// tag 1
+String channel1 = "5";
+String channel2 = "1";
+String channel3 = "7";
+String channel4 = "1";
 
 float r1 = 0.0;
 float r2 = 0.0;
 
-float startTime = 0;
-float startTime2 = 0;
-float waitingTime = 300;
+unsigned long startTime = 0;
+unsigned long startTime2 = 0;
+unsigned long waitingTime = 300;
 
 void setup() {
   Serial.begin(9600);
@@ -50,6 +41,8 @@ void setup() {
   DW1000Ranging.attachNewDevice(0);
   DW1000Ranging.attachInactiveDevice(0);
 
+  Serial.println("Starting Tag 1");
+
   DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
 
   startTime = millis();
@@ -58,46 +51,54 @@ void setup() {
 void loop() {
   DW1000Ranging.loop();
 
+  if(channel1 != "1") {
+    // For Anchor 1
+    if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1001 && channel1 == "5") {
+
+      if(DW1000Ranging.getDistantDevice()->getRange() > 0) {
+        r1 = DW1000Ranging.getDistantDevice()->getRange();
+      }
+
+      Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
+      Serial.print(" - ");
+      Serial.print(r1);
+      Serial.print(",");
+      Serial.println(r2);
+    // For anchor 2
+    } else if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1002 && channel1 == "7") {
+      
+      if(DW1000Ranging.getDistantDevice()->getRange() > 0) {
+        r2 = DW1000Ranging.getDistantDevice()->getRange();
+      }
+
+      Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
+      Serial.print(" - ");
+      Serial.print(r1);
+      Serial.print(",");
+      Serial.println(r2);
+    }
+  }
+  
   if(millis() - startTime > 2000) {
     tempChannel = channel1;
     channel1 = channel2;
     channel2 = channel3;
-    channel3 = tempChannel;
+    channel3 = channel4;
+    channel4 = tempChannel;
 
     if(channel1 == "5") {
       DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
+      Serial.print("Changing to channel ");
+      Serial.println(channel1);
     } else if(channel1 == "7") {
       DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_7,false);
-    } else if(channel1 == "9") {
+      Serial.print("Changing to channel ");
+      Serial.println(channel1);
+    } else if(channel1 == "1") {
       DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_1,false);
     }
-
     startTime = millis();
   }
-
-  // For Anchor 1
-  if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1001 && channel1 == "5") {
-
-    if(DW1000Ranging.getDistantDevice()->getRange() != 0) {
-      r1 = DW1000Ranging.getDistantDevice()->getRange();
-    }
-
-  // For anchor 2
-  } else if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1002 && channel1 == "7") {
-    
-    if(DW1000Ranging.getDistantDevice()->getRange() != 0) {
-      r2 = DW1000Ranging.getDistantDevice()->getRange();
-    }
-
-  } else if(channel1 == "9") {
-    Serial.println("Doing nothing");    
-  }
-
-  Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
-  Serial.print(" - ");
-  Serial.print(r1);
-  Serial.print(",");
-  Serial.println(r2);
 
   if(millis() - startTime2 > 300) {
     message = "COOR ALL ALL " + String(r1) + "," + String(r2);
