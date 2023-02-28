@@ -191,7 +191,7 @@ void loop() {
 
       digitalWrite(greenLed, HIGH);
       digitalWrite(yellowLed, LOW);
-      digitalWrite(blueLed, LOW);
+      digitalWrite(blueLed, HIGH);
       digitalWrite(redLed, LOW);
 
       Serial.print(myName);
@@ -287,7 +287,6 @@ void loop() {
 
       if(millis() - startTime > 800) {
         digitalWrite(greenLed, !digitalRead(greenLed));
-        digitalWrite(blueLed, LOW);
         digitalWrite(redLed, LOW);
         startTime = millis();
       } 
@@ -299,6 +298,7 @@ void loop() {
         oppositeSavedAngle = tempAngle;
 
         digitalWrite(yellowLed, !digitalRead(yellowLed));
+        digitalWrite(blueLed, !digitalRead(yellowLed));
 
         Serial.print("Saved angle: ");
         Serial.println(savedAngle);
