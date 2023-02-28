@@ -5,8 +5,8 @@
 #include <Servo.h>
 
 //Name here
-// const String myName = "DRO1";
-const String myName = "DRO2";
+const String myName = "DRO1";
+// const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants
@@ -30,8 +30,8 @@ const float maxSpeed = 25;
 
 const float angleAllowance = 5.0;
 const float currentXAllowance = 0.5;
-const float maxY = 12.0;
-const float minY = 5.0;
+const float maxY = 6.0;
+const float minY = 2.0;
 
 //Booleans for logic
 bool isConnected = false;
@@ -191,7 +191,7 @@ void loop() {
 
       digitalWrite(greenLed, HIGH);
       digitalWrite(yellowLed, LOW);
-      digitalWrite(blueLed, LOW);
+      digitalWrite(blueLed, HIGH);
       digitalWrite(redLed, LOW);
 
       Serial.print(myName);
@@ -274,10 +274,10 @@ void loop() {
   }
 
   // State 1: Just connected to base station. Show current angle for debugging purposes
-  if(isConnected && !isDeployed) {
-    Serial.print("Current angle: ");
-    Serial.println(currentAngle);
-  }
+  // if(isConnected && !isDeployed) {
+  //   Serial.print("Current angle: ");
+  //   Serial.println(currentAngle);
+  // }
 
   // State 3: Do all possible functions since you've been deployed
   if(isConnected && isDeployed) {
@@ -287,8 +287,6 @@ void loop() {
 
       if(millis() - startTime > 800) {
         digitalWrite(greenLed, !digitalRead(greenLed));
-        digitalWrite(yellowLed, LOW);
-        digitalWrite(blueLed, LOW);
         digitalWrite(redLed, LOW);
         startTime = millis();
       } 
@@ -298,6 +296,9 @@ void loop() {
         float tempAngle = savedAngle;
         savedAngle = oppositeSavedAngle;
         oppositeSavedAngle = tempAngle;
+
+        digitalWrite(yellowLed, !digitalRead(yellowLed));
+        digitalWrite(blueLed, !digitalRead(blueLed));
 
         Serial.print("Saved angle: ");
         Serial.println(savedAngle);
