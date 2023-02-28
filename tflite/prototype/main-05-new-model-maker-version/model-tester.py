@@ -20,17 +20,17 @@ from absl import logging
 logging.set_verbosity(logging.ERROR)
 
 # CHANGE VALUES HERE ONLY
-test_dir = './images/plastic/test/'
-classes = ['plastic']
+test_dir = './images/plastic_bottle/test/'
+classes = ['plastic_bottle']
 
 export_dir = './models/'
-model_filename = 'plastic.tflite'
+model_filename = 'plastic_bottle.tflite'
 
 model_path = export_dir+model_filename
 
 threshold = 0.5
 
-image_name = 'output_795.jpg' 
+image_name = 'test8.jpg' 
 image_path = test_dir+image_name
 #######################
 
