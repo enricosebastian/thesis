@@ -4,8 +4,8 @@
 #include <LinkedList.h>
 
 //Name here
-// const String myName = "BASE";
-const String myName = "DRO1";
+const String myName = "BASE";
+// const String myName = "DRO1";
 // const String myName = "DRO2";
 // const String myName = "DRO3";
 
@@ -117,7 +117,7 @@ void setup() {
   HC12.listen();
 
   Serial.print(myName);
-  Serial.println(" v15 has initialized.");
+  Serial.println(" v16 has initialized.");
   startTime = millis();
   startTime2 = millis();
   startTime3 = millis();
