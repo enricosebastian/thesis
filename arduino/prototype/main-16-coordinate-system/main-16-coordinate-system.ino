@@ -5,8 +5,8 @@
 
 //Name here
 // const String myName = "BASE";
-const String myName = "DRO1";
-// const String myName = "DRO2";
+// const String myName = "DRO1";
+const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants (buttons)
@@ -32,7 +32,7 @@ const int redLed = 13;
 const int yellowLed = 12;
 const int greenLed = 11;
 
-const float x0 = 3.8; //3.8 strc
+const float x0 = 13.5; //3.8 strc
 
 //Booleans for logic
 bool isConnected = false;
