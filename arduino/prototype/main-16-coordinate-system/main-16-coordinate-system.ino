@@ -293,7 +293,7 @@ void forDrone() {
         startTime = millis();        
       }
 
-      while(millis() - startTime2 > 800) {
+      while(millis() - startTime2 > 1000) {
         Nano.end();
         HC12.end();
         Esp.listen();
