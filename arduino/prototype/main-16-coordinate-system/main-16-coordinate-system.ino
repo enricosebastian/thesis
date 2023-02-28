@@ -137,19 +137,18 @@ void forBaseStation() {
 
     //TASK 1 Waiting for a drone to connect. Add it to list
     if(receivedSpecificCommand("CONN")) {
-      if(receivedFromName == "DRO1" || receivedFromName == "DRO2" || receivedFromName == "DRO3") {
-        Serial.print(receivedFromName);
-        Serial.println(" wanted to connect. Sending handshake.");
-        startTime = millis();
-        startTime2 = millis();
-        while(millis() - startTime < waitingTime) {
-          if(millis() - startTime2 >= 800) {
-            startTime2 = millis();
-            sendCommand("CONNREP", receivedFromName, "SUCC");
-          }
+
+      Serial.print(receivedFromName);
+      Serial.println(" wanted to connect. Sending handshake.");
+      startTime = millis();
+      startTime2 = millis();
+      while(millis() - startTime < waitingTime) {
+        if(millis() - startTime2 >= 800) {
+          startTime2 = millis();
+          sendCommand("CONNREP", receivedFromName, "SUCC");
         }
-        addDrone(receivedFromName);
       }
+      addDrone(receivedFromName);
 
       //Count drones
       if(drones.size() == 1) {
@@ -512,6 +511,7 @@ bool receiveCommand() {
       receivedDetails = receivedMessage.substring(endIndex+1);
 
       receivedMessage = ""; // Erase old message
+      if(receivedFromName != "DRO1" && receivedFromName != "DRO2" && receivedFromName != "DRO3" && receivedFromName != "ALL") return false;
       return (receivedCommand != "") && (receivedToName == myName || receivedToName == "ALL") && (receivedFromName != "") && (receivedDetails != "");
     } else {
       receivedMessage += letter;
