@@ -274,10 +274,10 @@ void loop() {
   }
 
   // State 1: Just connected to base station. Show current angle for debugging purposes
-  if(isConnected && !isDeployed) {
-    Serial.print("Current angle: ");
-    Serial.println(currentAngle);
-  }
+  // if(isConnected && !isDeployed) {
+  //   Serial.print("Current angle: ");
+  //   Serial.println(currentAngle);
+  // }
 
   // State 3: Do all possible functions since you've been deployed
   if(isConnected && isDeployed) {
@@ -287,7 +287,6 @@ void loop() {
 
       if(millis() - startTime > 800) {
         digitalWrite(greenLed, !digitalRead(greenLed));
-        digitalWrite(yellowLed, LOW);
         digitalWrite(blueLed, LOW);
         digitalWrite(redLed, LOW);
         startTime = millis();
@@ -298,6 +297,8 @@ void loop() {
         float tempAngle = savedAngle;
         savedAngle = oppositeSavedAngle;
         oppositeSavedAngle = tempAngle;
+
+        digitalWrite(yellowLed, !digitalRead(yellowLed));
 
         Serial.print("Saved angle: ");
         Serial.println(savedAngle);
