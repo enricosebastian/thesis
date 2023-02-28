@@ -496,9 +496,8 @@ bool receiveCommand() {
   while(HC12.available()) {
     char letter = HC12.read();
     if(letter == '\n') {
-      receivedMessage += '\n';
       Serial.print("Received: ");
-      Serial.print(receivedMessage);
+      Serial.println(receivedMessage);
 
       int endIndex = receivedMessage.indexOf(' ');
       receivedCommand = receivedMessage.substring(0, endIndex);
