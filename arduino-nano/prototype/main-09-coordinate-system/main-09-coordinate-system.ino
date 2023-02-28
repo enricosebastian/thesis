@@ -5,8 +5,8 @@
 #include <Servo.h>
 
 //Name here
-// const String myName = "DRO1";
-const String myName = "DRO2";
+const String myName = "DRO1";
+// const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants
@@ -30,8 +30,8 @@ const float maxSpeed = 25;
 
 const float angleAllowance = 5.0;
 const float currentXAllowance = 0.5;
-const float maxY = 12.0;
-const float minY = 5.0;
+const float maxY = 6.0;
+const float minY = 2.0;
 
 //Booleans for logic
 bool isConnected = false;
@@ -298,7 +298,7 @@ void loop() {
         oppositeSavedAngle = tempAngle;
 
         digitalWrite(yellowLed, !digitalRead(yellowLed));
-        digitalWrite(blueLed, !digitalRead(yellowLed));
+        digitalWrite(blueLed, !digitalRead(blueLed));
 
         Serial.print("Saved angle: ");
         Serial.println(savedAngle);
