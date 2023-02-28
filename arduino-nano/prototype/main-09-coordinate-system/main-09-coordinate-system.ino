@@ -278,46 +278,18 @@ void loop() {
 
       // State 2: Maneuvering. If Y reaches limit, turn
       if(currentY > 12.0) {
-        hasStopped = true;
-        startTime = millis();
+        float tempAngle = savedAngle;
+        savedAngle = oppositeSavedAngle;
+        oppositeSavedAngle = tempAngle;
 
-        Serial.print(myName);
-        Serial.println(" has stopped.");
-        
-        escLeft.write(stopSpeed);
-        escRight.write(stopSpeed);
+        Serial.print("Saved angle: ");
+        Serial.println(savedAngle);
+        Serial.print("Opposite angle: ");
+        Serial.println(oppositeSavedAngle);
+        startTime2 = millis();
       }
-
-      // Task 1: If X is slightly deviating, adjust
-      if(abs(savedX - currentX) > currentXAllowance) {
-        // Drone has drifted
-        if(currentX - savedX > 0) {
-          digitalWrite(greenLed, LOW);
-          digitalWrite(yellowLed, LOW);
-          digitalWrite(blueLed, HIGH);
-          digitalWrite(redLed, LOW);
-          move(currentAngle, false, false);
-        } else if (currentX - savedX < 0) {
-          digitalWrite(greenLed, LOW);
-          digitalWrite(yellowLed, HIGH);
-          digitalWrite(blueLed, LOW);
-          digitalWrite(redLed, LOW);
-          move(currentAngle, false, true);
-        } else {
-          digitalWrite(greenLed, LOW);
-          digitalWrite(yellowLed, HIGH);
-          digitalWrite(blueLed, HIGH);
-          digitalWrite(redLed, LOW);
-          move(currentAngle, true, false);
-        }
-      } else {
-        // Serial.println("X coordinate is straight");
-        digitalWrite(greenLed, LOW);
-        digitalWrite(yellowLed, HIGH);
-        digitalWrite(blueLed, HIGH);
-        digitalWrite(redLed, LOW);
-        move(currentAngle, true, false);
-      }
+      
+      move(currentAngle);
     }
 
     // State 2: Detected something, so move there
@@ -347,7 +319,7 @@ void loop() {
 }
 
 ///////Specific functions/////////
-void move(float currentAngle, bool isStraight, bool isLeft) {
+void move(float currentAngle) {
   float error = abs(currentAngle - savedAngle);
   float previous_error;
   float cumulative_error;
@@ -369,6 +341,20 @@ void move(float currentAngle, bool isStraight, bool isLeft) {
   } else if(modifiedSpeed <= minSpeed) {
     modifiedSpeed = minSpeed;
   }
+
+  bool isStraight = false;
+  bool isLeft = false;
+
+  if(error < 10) isStraight = true;
+  else isStraight = false;
+
+  // Serial.print(currentX);
+  // Serial.print(" vs ");
+  // Serial.println(savedX);
+
+  // Serial.print(currentAngle);
+  // Serial.print(" vs ");
+  // Serial.println(savedAngle);
   
   if(isStraight) {
     if(isLeft) {
