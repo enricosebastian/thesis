@@ -1,5 +1,8 @@
 # based on prerequisites here: https://www.tensorflow.org/lite/models/modify/model_maker/object_detection
 # and https://www.tensorflow.org/lite/api_docs/python/tflite_model_maker/object_detector/DataLoader#from_csv
+
+# cd Desktop/thesis/tflite/prototype/main-05-new-model-maker-version
+
 import numpy as np
 import os
 
@@ -19,12 +22,12 @@ logging.set_verbosity(logging.ERROR)
 
 # CHANGE VALUES HERE ONLY
 model_name = 'efficientdet_lite0'
-train_dir = './images/plastic/train'
-validate_dir = './images/plastic/validate'
-label_map = ['plastic']
+train_dir = './images/plastic_bottle/train'
+validate_dir = './images/plastic_bottle/validate'
+label_map = ['plastic_bottle']
 
 export_dir = './models/'
-model_filename = 'plastic.tflite'
+model_filename = 'plastic_bottle.tflite'
 #######################
 
 spec = model_spec.get(model_name)
