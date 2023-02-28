@@ -5,8 +5,8 @@
 #include <Servo.h>
 
 //Name here
-const String myName = "DRO1";
-// const String myName = "DRO2";
+// const String myName = "DRO1";
+const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants
@@ -415,7 +415,7 @@ bool receiveCommand() {
     char letter = Nano.read();
     if(letter == '\n') {
       Serial.print("Received: ");
-      Serial.print(receivedMessage);
+      Serial.println(receivedMessage);
 
       int endIndex = receivedMessage.indexOf(' ');
       receivedCommand = receivedMessage.substring(0, endIndex);
