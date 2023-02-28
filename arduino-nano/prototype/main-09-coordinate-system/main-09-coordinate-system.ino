@@ -30,6 +30,8 @@ const float maxSpeed = 25;
 
 const float angleAllowance = 5.0;
 const float currentXAllowance = 0.5;
+const float maxY = 12.0;
+const float minY = 5.0;
 
 //Booleans for logic
 bool isConnected = false;
@@ -78,6 +80,8 @@ String receivedDetails = "";
 
 Servo escLeft;
 Servo escRight;
+
+int counter = 0;
 
 NeoSWSerial Nano(rxNano, txNano);
 
@@ -220,21 +224,21 @@ void loop() {
 
       startTime2 = millis();
 
-      if(receivedDetails == "LEFT\n") {
+      if(receivedDetails == "LEFT") {
         leftAngle = savedAngle + detectAngle;
         if(leftAngle > 360) leftAngle = leftAngle - 360;
         if(leftAngle < 0) leftAngle = 360 + leftAngle;
 
         savedAngle = leftAngle;
-      } else if(receivedDetails == "RIGHT\n") {
+      } else if(receivedDetails == "RIGHT") {
         rightAngle = savedAngle - detectAngle;
         if(rightAngle > 360) rightAngle = rightAngle - 360;
         if(rightAngle < 0) rightAngle = 360 + rightAngle;
         
         savedAngle = rightAngle;
-      } else if(receivedDetails == "CENTER\n") {
+      } else if(receivedDetails == "CENTER") {
         savedAngle = savedAngle;
-      } else if(receivedDetails == "DONE\n") {
+      } else if(receivedDetails == "DONE") {
         hasDetectedObject = false;
         savedAngle = straightAngle;
 
@@ -253,6 +257,19 @@ void loop() {
       Serial.print(currentX);
       Serial.print(",");
       Serial.println(currentY);
+    } else if(receivedCommand == "TURN" && isDeployed) {
+      savedAngle = savedAngle + receivedDetails.toFloat();
+
+      if(savedAngle > 360) {
+        savedAngle = savedAngle - 360;
+      }
+      straightAngle = savedAngle;
+
+      oppositeSavedAngle = savedAngle + 210;
+      if(oppositeSavedAngle > 360) {
+        oppositeSavedAngle = oppositeSavedAngle - 360;
+      }
+      oppositeStraightAngle = oppositeSavedAngle;
     }
   }
 
@@ -277,7 +294,7 @@ void loop() {
       } 
 
       // State 2: Maneuvering. If Y reaches limit, turn
-      if(currentY > 12.0) {
+      if((currentY > maxY && counter % 2 == 0) || (currentY < minY && counter % 2 != 0)) {
         float tempAngle = savedAngle;
         savedAngle = oppositeSavedAngle;
         oppositeSavedAngle = tempAngle;
@@ -287,6 +304,7 @@ void loop() {
         Serial.print("Opposite angle: ");
         Serial.println(oppositeSavedAngle);
         startTime2 = millis();
+        counter++;
       }
       
       move(currentAngle);
@@ -396,7 +414,6 @@ bool receiveCommand() {
   while(Nano.available()) {
     char letter = Nano.read();
     if(letter == '\n') {
-      receivedMessage += '\n';
       Serial.print("Received: ");
       Serial.print(receivedMessage);
 
