@@ -179,6 +179,14 @@ void loop() {
       savedAngle = currentAngle;
       straightAngle = savedAngle;
 
+      leftAngle = savedAngle + detectAngle;
+      if(leftAngle > 360) leftAngle = leftAngle - 360;
+      if(leftAngle < 0) leftAngle = 360 + leftAngle;
+
+      rightAngle = savedAngle + detectAngle;
+      if(rightAngle > 360) rightAngle = rightAngle - 360;
+      if(rightAngle < 0) rightAngle = 360 + rightAngle;
+
       int endIndex = receivedDetails.indexOf(',');
       savedX = receivedDetails.substring(0, endIndex).toFloat();
       savedY = receivedDetails.substring(endIndex+1).toFloat();
@@ -187,6 +195,7 @@ void loop() {
 
       if(myName == "DRO1") oppositeSavedAngle = savedAngle + 235;
       else if(myName == "DRO2") oppositeSavedAngle = savedAngle + 210;
+
       if(oppositeSavedAngle > 360) {
         oppositeSavedAngle = oppositeSavedAngle - 360;
       }
@@ -194,7 +203,7 @@ void loop() {
 
       digitalWrite(greenLed, HIGH);
       digitalWrite(yellowLed, LOW);
-      digitalWrite(blueLed, HIGH);
+      digitalWrite(blueLed, LOW);
       digitalWrite(redLed, LOW);
 
       Serial.print(myName);
@@ -218,29 +227,29 @@ void loop() {
       escRight.write(stopSpeed);
     } else if(receivedCommand == "DETE" && isDeployed) {
       hasDetectedObject = true;
-      // Serial.println("Object is detected at: ");
-      // Serial.println(receivedDetails);
-      digitalWrite(greenLed, HIGH);
-      digitalWrite(yellowLed, LOW);
-      digitalWrite(blueLed, LOW);
-      digitalWrite(redLed, HIGH);
-
       startTime2 = millis();
 
       if(receivedDetails == "LEFT") {
-        leftAngle = savedAngle + detectAngle;
-        if(leftAngle > 360) leftAngle = leftAngle - 360;
-        if(leftAngle < 0) leftAngle = 360 + leftAngle;
-
         savedAngle = leftAngle;
+
+        digitalWrite(greenLed, LOW);
+        digitalWrite(yellowLed, HIGH);
+        digitalWrite(blueLed, LOW);
+        digitalWrite(redLed, LOW);
       } else if(receivedDetails == "RIGHT") {
-        rightAngle = savedAngle - detectAngle;
-        if(rightAngle > 360) rightAngle = rightAngle - 360;
-        if(rightAngle < 0) rightAngle = 360 + rightAngle;
-        
         savedAngle = rightAngle;
+
+        digitalWrite(greenLed, LOW);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(blueLed, HIGH);
+        digitalWrite(redLed, LOW);
       } else if(receivedDetails == "CENTER") {
-        savedAngle = savedAngle;
+        savedAngle = straightAngle;
+
+        digitalWrite(greenLed, LOW);
+        digitalWrite(yellowLed, HIGH);
+        digitalWrite(blueLed, HIGH);
+        digitalWrite(redLed, LOW);
       } else if(receivedDetails == "DONE") {
         hasDetectedObject = false;
         savedAngle = straightAngle;
@@ -263,24 +272,27 @@ void loop() {
     } else if(receivedCommand == "TURN" && isDeployed) {
       savedAngle = savedAngle + receivedDetails.toFloat();
 
-      if(savedAngle > 360) {
-        savedAngle = savedAngle - 360;
-      }
-      straightAngle = savedAngle;
+      if(myName == "DRO1") oppositeSavedAngle = savedAngle + 235;
+      else if(myName == "DRO2") oppositeSavedAngle = savedAngle + 210;
 
-      oppositeSavedAngle = savedAngle + 210;
-      if(oppositeSavedAngle > 360) {
-        oppositeSavedAngle = oppositeSavedAngle - 360;
-      }
+      if(savedAngle > 360) savedAngle = savedAngle - 360;
+      else if(savedAngle < 0) savedAngle = 360 + savedAngle;
+      straightAngle = savedAngle;
+      
+      if(oppositeSavedAngle > 360) oppositeSavedAngle = oppositeSavedAngle - 360;
+      else if(oppositeSavedAngle < 0) oppositeSavedAngle = 360 + oppositeSavedAngle;
       oppositeStraightAngle = oppositeSavedAngle;
+
+      leftAngle = savedAngle + detectAngle;
+      if(leftAngle > 360) leftAngle = leftAngle - 360;
+      if(leftAngle < 0) leftAngle = 360 + leftAngle;
+
+      rightAngle = savedAngle + detectAngle;
+      if(rightAngle > 360) rightAngle = rightAngle - 360;
+      if(rightAngle < 0) rightAngle = 360 + rightAngle;
+      
     }
   }
-
-  // State 1: Just connected to base station. Show current angle for debugging purposes
-  // if(isConnected && !isDeployed) {
-  //   Serial.print("Current angle: ");
-  //   Serial.println(currentAngle);
-  // }
 
   // State 3: Do all possible functions since you've been deployed
   if(isConnected && isDeployed) {
@@ -300,8 +312,13 @@ void loop() {
         savedAngle = oppositeSavedAngle;
         oppositeSavedAngle = tempAngle;
 
-        digitalWrite(yellowLed, !digitalRead(yellowLed));
-        digitalWrite(blueLed, !digitalRead(blueLed));
+        leftAngle = savedAngle + detectAngle;
+        if(leftAngle > 360) leftAngle = leftAngle - 360;
+        if(leftAngle < 0) leftAngle = 360 + leftAngle;
+
+        rightAngle = savedAngle + detectAngle;
+        if(rightAngle > 360) rightAngle = rightAngle - 360;
+        if(rightAngle < 0) rightAngle = 360 + rightAngle;
 
         Serial.print("Saved angle: ");
         Serial.println(savedAngle);
@@ -321,7 +338,7 @@ void loop() {
       digitalWrite(blueLed, LOW);
       digitalWrite(redLed, HIGH);
 
-      move(savedAngle);
+      move(currentAngle);
     }
 
     // State 3: Stop moving

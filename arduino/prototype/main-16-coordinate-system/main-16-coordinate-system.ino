@@ -4,8 +4,8 @@
 #include <LinkedList.h>
 
 //Name here
-// const String myName = "BASE";
-const String myName = "DRO1";
+const String myName = "BASE";
+// const String myName = "DRO1";g
 // const String myName = "DRO2";
 // const String myName = "DRO3";
 
@@ -137,6 +137,7 @@ void forBaseStation() {
 
     //TASK 1 Waiting for a drone to connect. Add it to list
     if(receivedSpecificCommand("CONN")) {
+
       Serial.print(receivedFromName);
       Serial.println(" wanted to connect. Sending handshake.");
       startTime = millis();
@@ -510,6 +511,7 @@ bool receiveCommand() {
       receivedDetails = receivedMessage.substring(endIndex+1);
 
       receivedMessage = ""; // Erase old message
+      if(receivedFromName != "DRO1" && receivedFromName != "DRO2" && receivedFromName != "DRO3" && receivedFromName != "ALL") return false;
       return (receivedCommand != "") && (receivedToName == myName || receivedToName == "ALL") && (receivedFromName != "") && (receivedDetails != "");
     } else {
       receivedMessage += letter;
