@@ -1,5 +1,6 @@
 # based on prerequisites here: https://www.tensorflow.org/lite/models/modify/model_maker/object_detection
 # and https://www.tensorflow.org/lite/api_docs/python/tflite_model_maker/object_detector/DataLoader#from_csv
+# cd Desktop/thesis/tflite/prototype/main-05-new-model-maker-version
 import numpy as np
 from PIL import Image
 import os
@@ -30,7 +31,7 @@ model_path = export_dir+model_filename
 
 threshold = 0.5
 
-image_name = 'test8.jpg' 
+image_name = 'test3.jpg' 
 image_path = test_dir+image_name
 #######################
 

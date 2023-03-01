@@ -1,1 +1,1 @@
-tflite_model_maker
+detection_result_image
