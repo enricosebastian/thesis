@@ -29,10 +29,7 @@ model_filename = 'plastic_bottle.tflite'
 
 model_path = export_dir+model_filename
 
-threshold = 0.5
-
-image_name = 'video_20230203_124131_100.jpg' 
-image_path = test_dir+image_name
+threshold = 0.75
 #######################
 
 # Load the TFLite model
@@ -132,14 +129,22 @@ def run_odt_and_draw_results(image_path, interpreter, threshold=0.5):
   original_uint8 = original_image_np.astype(np.uint8)
   return original_uint8
 
-# Run inference and draw detection result on the local copy of the original file
-detection_result_image = run_odt_and_draw_results(
-    image_path=image_path,
-    interpreter=interpreter,
-    threshold=threshold
-)
 
-# Show the detection result
+for i in range(1,18):
+  image_name = 'test'+str(i)+'.jpg'
+  image_path = test_dir+image_name
+
+  # Run inference and draw detection result on the local copy of the original file
+  detection_result_image = run_odt_and_draw_results(
+      image_path=image_path,
+      interpreter=interpreter,
+      threshold=threshold
+  )
+  
+  png_name = 'test'+str(i)+'.png'
+  im = Image.fromarray(detection_result_image)
+  path = "images/plastic_bottle/test_results/"+png_name
+  im.save(path, 'PNG')
+  print("Done with",image_name)
+  
 print("\n\nDone testing a sample image!")
-im = Image.fromarray(detection_result_image)
-im.show()

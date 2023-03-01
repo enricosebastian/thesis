@@ -1,1 +1,1 @@
-detection_result_image
+sample
