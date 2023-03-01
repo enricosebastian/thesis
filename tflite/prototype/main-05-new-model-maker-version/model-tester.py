@@ -21,7 +21,7 @@ from absl import logging
 logging.set_verbosity(logging.ERROR)
 
 # CHANGE VALUES HERE ONLY
-test_dir = './images/plastic_bottle/test/'
+test_dir = './images/plastic_bottle/sample/'
 classes = ['plastic_bottle']
 
 export_dir = './models/'
@@ -31,7 +31,7 @@ model_path = export_dir+model_filename
 
 threshold = 0.5
 
-image_name = 'test3.jpg' 
+image_name = 'video_20230203_124131_100.jpg' 
 image_path = test_dir+image_name
 #######################
 

@@ -24,6 +24,7 @@ logging.set_verbosity(logging.ERROR)
 model_name = 'efficientdet_lite0'
 train_dir = './images/plastic_bottle/train'
 validate_dir = './images/plastic_bottle/validate'
+test_dir = './images/plastic_bottle/test'
 label_map = ['plastic_bottle']
 
 export_dir = './models/'
@@ -44,16 +45,34 @@ validation_data = object_detector.DataLoader.from_pascal_voc(
     label_map=label_map
 )
 
-model = object_detector.create(train_data, model_spec=spec, batch_size=8, train_whole_model=True, validation_data=validation_data)
+test_data = object_detector.DataLoader.from_pascal_voc(
+    images_dir=test_dir,
+    annotations_dir=test_dir,
+    label_map=label_map
+)
 
+model = object_detector.create(train_data, model_spec=spec, epochs=100, batch_size=8, train_whole_model=True, validation_data=validation_data)
+
+print("=============Validation results 1==============\n")
 print(
     model.evaluate(validation_data)
 )
 
+print("=============Test results 1==============\n")
+print(
+    model.evaluate(test_data)
+)
+
 model.export(export_dir=export_dir, tflite_filename=model_filename)
 
+print("=============Validation results 2==============\n")
 print(
     model.evaluate_tflite(export_dir+model_filename, validation_data)
+)
+
+print("=============Test results 2==============\n")
+print(
+    model.evaluate_tflite(export_dir+model_filename, test_data)
 )
 
 print("\n\nDone!")
