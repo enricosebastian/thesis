@@ -61,6 +61,7 @@ float PID_p, PID_i, PID_d, PID_total;
 
 float savedAngle = 0.0;
 float oppositeSavedAngle = 0.0;
+float homeAngle = 0.0;
 
 float straightAngle = 0.0;
 float oppositeStraightAngle = 0.0;
@@ -201,6 +202,7 @@ void loop() {
         oppositeSavedAngle = oppositeSavedAngle - 360;
       }
       oppositeStraightAngle = oppositeSavedAngle;
+      homeAngle = oppositeStraightAngle;
 
       digitalWrite(greenLed, HIGH);
       digitalWrite(yellowLed, LOW);
@@ -219,6 +221,7 @@ void loop() {
       Serial.println(oppositeSavedAngle);
     } else if(receivedCommand == "STOP" && isDeployed) {
       hasStopped = true;
+      isGoingHome = false;
       startTime = millis();
 
       Serial.print(myName);
@@ -361,10 +364,22 @@ void loop() {
     if(hasStopped && isGoingHome) {
       if(abs(currentX - homeX) > 1) {
         // start moving to home x
+        if(currentX - homeX < 0) {
+          savedAngle = rightAngle;
+        } else if(currentX - homeX > 0) {
+          savedAngle = leftAngle;
+        }
+        move(currentAngle);
       } else if(abs(currentY - homeY) > 1) {
         // start moving to home y
+        savedAngle = homeAngle;
+        move(currentAngle);
       }
 
+      digitalWrite(greenLed, LOW);
+      digitalWrite(yellowLed, LOW);
+      digitalWrite(blueLed, LOW);
+      digitalWrite(redLed, HIGH);
     }
 
   }
