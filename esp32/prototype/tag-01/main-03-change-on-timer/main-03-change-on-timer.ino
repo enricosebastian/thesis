@@ -22,7 +22,7 @@ String tempChannel = "";
 // tag 2
 String channel1 = "5";
 String channel2 = "1";
-String channel3 = "1";
+String channel3 = "7";
 String channel4 = "1";
 String channel5 = "1";
 String channel6 = "1";
