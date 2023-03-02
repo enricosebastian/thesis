@@ -235,33 +235,13 @@ void loop() {
 
       if(receivedDetails == "LEFT") {
         savedAngle = leftAngle;
-
-        digitalWrite(greenLed, LOW);
-        digitalWrite(yellowLed, HIGH);
-        digitalWrite(blueLed, LOW);
-        digitalWrite(redLed, LOW);
       } else if(receivedDetails == "RIGHT") {
         savedAngle = rightAngle;
-
-        digitalWrite(greenLed, LOW);
-        digitalWrite(yellowLed, LOW);
-        digitalWrite(blueLed, HIGH);
-        digitalWrite(redLed, LOW);
       } else if(receivedDetails == "CENTER") {
         savedAngle = straightAngle;
-
-        digitalWrite(greenLed, LOW);
-        digitalWrite(yellowLed, HIGH);
-        digitalWrite(blueLed, HIGH);
-        digitalWrite(redLed, LOW);
       } else if(receivedDetails == "DONE") {
         hasDetectedObject = false;
         savedAngle = straightAngle;
-
-        digitalWrite(greenLed, LOW);
-        digitalWrite(yellowLed, LOW);
-        digitalWrite(blueLed, LOW);
-        digitalWrite(redLed, LOW);
         Serial.println("Object has been acquired.");
       }
     } else if(receivedCommand == "COOR" && isDeployed) {
@@ -340,11 +320,22 @@ void loop() {
 
     // State 2: Detected something, so move there
     if(!hasStopped && hasDetectedObject) {
-      digitalWrite(greenLed, HIGH);
-      digitalWrite(yellowLed, LOW);
-      digitalWrite(blueLed, LOW);
-      digitalWrite(redLed, HIGH);
-
+      if(savedAngle == rightAngle) {
+        digitalWrite(greenLed, LOW);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(blueLed, HIGH);
+        digitalWrite(redLed, LOW);
+      } else if(savedAngle == leftAngle) {
+        digitalWrite(greenLed, LOW);
+        digitalWrite(yellowLed, HIGH);
+        digitalWrite(blueLed, LOW);
+        digitalWrite(redLed, LOW);        
+      } else if(savedAngle == straightAngle) {
+        digitalWrite(greenLed, LOW);
+        digitalWrite(yellowLed, HIGH);
+        digitalWrite(blueLed, HIGH);
+        digitalWrite(redLed, LOW);
+      }
       move(currentAngle);
     }
 
