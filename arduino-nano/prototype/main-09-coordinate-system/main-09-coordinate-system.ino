@@ -233,13 +233,33 @@ void loop() {
       hasDetectedObject = true;
       startTime2 = millis();
 
-      if(receivedDetails == "LEFT") {
+      if(receivedDetails == "LEFT\r") {
+        digitalWrite(greenLed, LOW);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(blueLed, HIGH);
+        digitalWrite(redLed, LOW);
+
         savedAngle = leftAngle;
-      } else if(receivedDetails == "RIGHT") {
+      } else if(receivedDetails == "RIGHT\r") {
+        digitalWrite(greenLed, LOW);
+        digitalWrite(yellowLed, HIGH);
+        digitalWrite(blueLed, LOW);
+        digitalWrite(redLed, LOW);
+
         savedAngle = rightAngle;
-      } else if(receivedDetails == "CENTER") {
+      } else if(receivedDetails == "CENTER\r") {
+        digitalWrite(greenLed, LOW);
+        digitalWrite(yellowLed, HIGH);
+        digitalWrite(blueLed, HIGH);
+        digitalWrite(redLed, LOW);
+
         savedAngle = straightAngle;
-      } else if(receivedDetails == "DONE") {
+      } else if(receivedDetails == "DONE\r") {
+        digitalWrite(greenLed, LOW);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(blueLed, LOW);
+        digitalWrite(redLed, LOW);
+
         hasDetectedObject = false;
         savedAngle = straightAngle;
         Serial.println("Object has been acquired.");
@@ -320,21 +340,9 @@ void loop() {
 
     // State 2: Detected something, so move there
     if(!hasStopped && hasDetectedObject) {
-      if(savedAngle == rightAngle) {
-        digitalWrite(greenLed, LOW);
-        digitalWrite(yellowLed, LOW);
-        digitalWrite(blueLed, HIGH);
-        digitalWrite(redLed, LOW);
-      } else if(savedAngle == leftAngle) {
-        digitalWrite(greenLed, LOW);
-        digitalWrite(yellowLed, HIGH);
-        digitalWrite(blueLed, LOW);
-        digitalWrite(redLed, LOW);        
-      } else if(savedAngle == straightAngle) {
-        digitalWrite(greenLed, LOW);
-        digitalWrite(yellowLed, HIGH);
-        digitalWrite(blueLed, HIGH);
-        digitalWrite(redLed, LOW);
+      if(millis() - startTime2 > 10000) {
+        hasDetectedObject = false;
+        startTime2 = millis();
       }
       move(currentAngle);
     }
