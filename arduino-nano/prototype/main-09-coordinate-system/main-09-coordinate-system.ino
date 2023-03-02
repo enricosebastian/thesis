@@ -38,6 +38,7 @@ bool isConnected = false;
 bool isDeployed = false;
 bool hasStopped = true;
 bool hasDetectedObject = false;
+bool isGoingHome = false;
 
 //Variables
 float d1 = 0;
@@ -291,6 +292,9 @@ void loop() {
       if(rightAngle > 360) rightAngle = rightAngle - 360;
       if(rightAngle < 0) rightAngle = 360 + rightAngle;
       
+    } else if(receivedCommand == "HOME" && isDeployed) {
+      hasStopped = true;
+      isGoingHome = true;
     }
   }
 
@@ -342,7 +346,7 @@ void loop() {
     }
 
     // State 3: Stop moving
-    if(hasStopped) {
+    if(hasStopped && !isGoingHome) {
       if(startTime - millis() > 1000) {
         digitalWrite(greenLed, LOW);
         digitalWrite(yellowLed, LOW);
@@ -352,6 +356,16 @@ void loop() {
         startTime = millis();
       }
     }  
+
+    // State 3: Is going home 
+    if(hasStopped && isGoingHome) {
+      if(abs(currentX - homeX) > 1) {
+        // start moving to home x
+      } else if(abs(currentY - homeY) > 1) {
+        // start moving to home y
+      }
+
+    }
 
   }
 
