@@ -22,10 +22,16 @@ String tempChannel = "";
 // tag 2
 String channel1 = "1";
 String channel2 = "1";
-String channel3 = "5";
-String channel4 = "7";
-String channel5 = "1";
+String channel3 = "1";
+String channel4 = "1";
+String channel5 = "5";
 String channel6 = "1";
+String channel7 = "7";
+String channel8 = "1";
+String channel9 = "1";
+String channel10 = "1";
+String channel11 = "1";
+String channel12 = "1";
 
 float t1 = 0.0;
 float t2 = 0.0;
@@ -88,16 +94,23 @@ void loop() {
     channel1 = channel2;
     channel2 = channel3;
     channel3 = channel4;
-    channel4 = tempChannel;
+    channel4 = channel5;
+    channel5 = channel6;
+    channel6 = channel7;
+    channel7 = channel8;
+    channel8 = channel9;
+    channel9 = channel10;
+    channel10 = channel11;
+    channel11 = channel12;
+    channel12 = tempChannel;
+
+    Serial.print("Changing to channel ");
+    Serial.println(channel1);
 
     if(channel1 == "5") {
       DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
-      Serial.print("Changing to channel ");
-      Serial.println(channel1);
     } else if(channel1 == "7") {
       DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_7,false);
-      Serial.print("Changing to channel ");
-      Serial.println(channel1);
     } else if(channel1 == "1") {
       DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_1,false);
     }
