@@ -309,7 +309,6 @@ void loop() {
 
       if(millis() - startTime > 800) {
         digitalWrite(greenLed, !digitalRead(greenLed));
-        digitalWrite(redLed, LOW);
         startTime = millis();
       } 
 
@@ -343,6 +342,11 @@ void loop() {
       if(millis() - startTime2 > 10000) {
         hasDetectedObject = false;
         startTime2 = millis();
+        
+        digitalWrite(greenLed, LOW);
+        digitalWrite(blueLed, LOW);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(redLed, LOW);
       }
       move(currentAngle);
     }
