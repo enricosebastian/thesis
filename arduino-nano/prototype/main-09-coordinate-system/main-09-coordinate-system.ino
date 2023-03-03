@@ -339,7 +339,8 @@ void loop() {
     // State 2: Detected something, so move there
     if(!hasStopped && hasDetectedObject) {
       if(millis() - startTime2 > 10000) {
-        hasDetectedObject = false;
+        hasStopped = false;
+        startTime = millis();
         startTime2 = millis();
         
         digitalWrite(greenLed, LOW);
