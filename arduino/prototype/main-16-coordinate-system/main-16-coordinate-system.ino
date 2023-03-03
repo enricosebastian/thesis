@@ -142,8 +142,8 @@ void forBaseStation() {
       Serial.println(" wanted to connect. Sending handshake.");
       startTime = millis();
       startTime2 = millis();
-      while(millis() - startTime < waitingTime) {
-        if(millis() - startTime2 >= 800) {
+      while(millis() - startTime < 1000) {
+        if(millis() - startTime2 >= 300) {
           startTime2 = millis();
           sendCommand("CONNREP", receivedFromName, "SUCC");
         }
