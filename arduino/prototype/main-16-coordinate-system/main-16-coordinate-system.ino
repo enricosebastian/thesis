@@ -142,8 +142,8 @@ void forBaseStation() {
       Serial.println(" wanted to connect. Sending handshake.");
       startTime = millis();
       startTime2 = millis();
-      while(millis() - startTime < waitingTime) {
-        if(millis() - startTime2 >= 800) {
+      while(millis() - startTime < 1000) {
+        if(millis() - startTime2 >= 300) {
           startTime2 = millis();
           sendCommand("CONNREP", receivedFromName, "SUCC");
         }
@@ -274,8 +274,6 @@ void forDrone() {
   if(!isConnected && !isDeployed) {
     //TASK 1: Continue to wait for connection acknowledgement
     while(!receivedSpecificCommand("CONNREP")) {
-      
-      Serial.println(receivedFromName);
       if(millis() - startTime > 800) {
         Serial.println("Reply 'CONNREP' was not received. Resending message again.");
         sendCommand("CONN", "BASE", "HELL");
