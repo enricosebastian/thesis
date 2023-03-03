@@ -1,5 +1,6 @@
 # based on prerequisites here: https://www.tensorflow.org/lite/models/modify/model_maker/object_detection
 # and https://www.tensorflow.org/lite/api_docs/python/tflite_model_maker/object_detector/DataLoader#from_csv
+# cd Desktop/thesis/tflite/prototype/main-05-new-model-maker-version
 import numpy as np
 from PIL import Image
 import os
@@ -20,18 +21,15 @@ from absl import logging
 logging.set_verbosity(logging.ERROR)
 
 # CHANGE VALUES HERE ONLY
-test_dir = './images/plastic/test/'
-classes = ['plastic']
+test_dir = './images/plastic_bottle/sample/'
+classes = ['plastic_bottle']
 
 export_dir = './models/'
-model_filename = 'plastic.tflite'
+model_filename = 'plastic_bottle.tflite'
 
 model_path = export_dir+model_filename
 
-threshold = 0.5
-
-image_name = 'output_795.jpg' 
-image_path = test_dir+image_name
+threshold = 0.75
 #######################
 
 # Load the TFLite model
@@ -131,14 +129,21 @@ def run_odt_and_draw_results(image_path, interpreter, threshold=0.5):
   original_uint8 = original_image_np.astype(np.uint8)
   return original_uint8
 
-# Run inference and draw detection result on the local copy of the original file
-detection_result_image = run_odt_and_draw_results(
-    image_path=image_path,
-    interpreter=interpreter,
-    threshold=threshold
-)
+for count, filename in enumerate(os.listdir(test_dir)):
+  image_path = test_dir+filename
 
-# Show the detection result
+  print("Testing", filename)
+  
+  # Run inference and draw detection result on the local copy of the original file
+  detection_result_image = run_odt_and_draw_results(
+      image_path=image_path,
+      interpreter=interpreter,
+      threshold=threshold
+  )
+  
+  im = Image.fromarray(detection_result_image)
+  path = "./images/plastic_bottle/sample_results/"+filename
+  im.save(path, 'JPEG')
+  print("Done with",filename)
+  
 print("\n\nDone testing a sample image!")
-im = Image.fromarray(detection_result_image)
-im.show()

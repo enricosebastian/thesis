@@ -5,9 +5,9 @@
 
 //Name here
 // const String myName = "BASE";
-const String myName = "DRO1";
+// const String myName = "DRO1";
 // const String myName = "DRO2";
-// const String myName = "DRO3";
+const String myName = "DRO3";
 
 //Constants (buttons)
 const int detectionPin = 10;
@@ -32,7 +32,7 @@ const int redLed = 13;
 const int yellowLed = 12;
 const int greenLed = 11;
 
-const float x0 = 2.0;
+const float x0 = 14.8; //3.8 strc
 
 //Booleans for logic
 bool isConnected = false;
@@ -117,7 +117,7 @@ void setup() {
   HC12.listen();
 
   Serial.print(myName);
-  Serial.println(" v15 has initialized.");
+  Serial.println(" v16 has initialized.");
   startTime = millis();
   startTime2 = millis();
   startTime3 = millis();
@@ -137,6 +137,7 @@ void forBaseStation() {
 
     //TASK 1 Waiting for a drone to connect. Add it to list
     if(receivedSpecificCommand("CONN")) {
+
       Serial.print(receivedFromName);
       Serial.println(" wanted to connect. Sending handshake.");
       startTime = millis();
@@ -228,8 +229,7 @@ void forBaseStation() {
       char letter = Serial.read();
 
       if(letter == '\n') {
-        sentMessage += '\n';
-        Serial.print("final: ");
+        Serial.print("Sent via serial: ");
         Serial.println(sentMessage);
 
         int endIndex = sentMessage.indexOf(' ');
@@ -274,6 +274,8 @@ void forDrone() {
   if(!isConnected && !isDeployed) {
     //TASK 1: Continue to wait for connection acknowledgement
     while(!receivedSpecificCommand("CONNREP")) {
+      
+      Serial.println(receivedFromName);
       if(millis() - startTime > 800) {
         Serial.println("Reply 'CONNREP' was not received. Resending message again.");
         sendCommand("CONN", "BASE", "HELL");
@@ -294,7 +296,7 @@ void forDrone() {
         startTime = millis();        
       }
 
-      while(millis() - startTime2 > 800) {
+      while(millis() - startTime2 > 1000) {
         Nano.end();
         HC12.end();
         Esp.listen();
@@ -388,14 +390,6 @@ void forDrone() {
             sendCommand("HERE", receivedFromName, String(currentX) + "," + String(currentY));
           }
         }
-      } else if(receivedCommand == "CHAN") {
-        Serial.print("Changing to channel: ");
-        Serial.print("DETAILS: ");
-        Serial.println(receivedDetails);
-        if(receivedDetails == "CHAN5" || receivedDetails == "CHAN7" || receivedDetails == "CHAN9") {
-          Serial.println(receivedDetails);
-          changeToChannel(receivedDetails);
-        }
       } else {
         sendToNano(receivedCommand, myName, receivedDetails);
       }
@@ -404,9 +398,9 @@ void forDrone() {
     // Task 2: If serial is available, you detected an object...
     while(Serial.available()) {
       char letter = Serial.read();
+
       if(letter == '\n') {
-        receivedMessage += '\n';
-        Serial.print("final: ");
+        Serial.print("Sent via serial: ");
         Serial.println(receivedMessage);
         
         int endIndex = receivedMessage.indexOf(' ');
@@ -475,34 +469,11 @@ void sendToNano(String command, String toName, String details) {
 
   //COMMAND TONAME FROMNAME DETAILS
   if(command != "" && toName != "" && details != "") {
-    sentMessage = command + " " + toName + " " + myName + " " + details + "\n";
-    String bufferMessage = "BUFF " + toName + " " + myName + " " + "BUFF\n";    
-    Nano.println(bufferMessage); //Ned to send a buffer message first before sending actual message to clear port
+    sentMessage = command + " " + toName + " " + myName + " " + details;
     Nano.println(sentMessage);
     sentMessage = "";
   } else {
     Serial.println("Wrong format of command. Try again.");
-  }
-  Nano.end();
-  Esp.end();
-  HC12.listen();
-}
-
-void changeToChannel(String channelName) {
-  HC12.end();
-  Nano.end();
-  Esp.listen();
-
-  //COMMAND TONAME FROMNAME DETAILS
-  if(channelName != "") {
-    String bufferMessage = "BUFF ALL ALL ALL";
-    Serial.print("Changing to channel: ");
-    Serial.println(channelName);
-    
-    Esp.println(bufferMessage); //Ned to send a buffer message first before sending actual message to clear port
-    Esp.println(channelName);
-  } else {
-    Serial.println("Channel doesn't exist. Try again.");
   }
   Nano.end();
   Esp.end();
@@ -526,9 +497,8 @@ bool receiveCommand() {
   while(HC12.available()) {
     char letter = HC12.read();
     if(letter == '\n') {
-      receivedMessage += '\n';
       Serial.print("Received: ");
-      Serial.print(receivedMessage);
+      Serial.println(receivedMessage);
 
       int endIndex = receivedMessage.indexOf(' ');
       receivedCommand = receivedMessage.substring(0, endIndex);
@@ -543,6 +513,9 @@ bool receiveCommand() {
       receivedDetails = receivedMessage.substring(endIndex+1);
 
       receivedMessage = ""; // Erase old message
+
+      if(receivedFromName != "DRO1" && receivedFromName != "DRO2" && receivedFromName != "DRO3" && receivedFromName != "BASE" && receivedFromName != "ALL") return false;
+
       return (receivedCommand != "") && (receivedToName == myName || receivedToName == "ALL") && (receivedFromName != "") && (receivedDetails != "");
     } else {
       receivedMessage += letter;
