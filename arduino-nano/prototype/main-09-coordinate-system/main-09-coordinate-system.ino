@@ -5,8 +5,8 @@
 #include <Servo.h>
 
 //Name here
-const String myName = "DRO1";
-// const String myName = "DRO2";
+// const String myName = "DRO1";
+const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants
@@ -221,6 +221,7 @@ void loop() {
       Serial.println(oppositeSavedAngle);
     } else if(receivedCommand == "STOP" && isDeployed) {
       hasStopped = true;
+      hasDetected = false;
       isGoingHome = false;
       startTime = millis();
 

@@ -137,7 +137,6 @@ void forBaseStation() {
 
     //TASK 1 Waiting for a drone to connect. Add it to list
     if(receivedSpecificCommand("CONN")) {
-
       Serial.print(receivedFromName);
       Serial.println(" wanted to connect. Sending handshake.");
       startTime = millis();
