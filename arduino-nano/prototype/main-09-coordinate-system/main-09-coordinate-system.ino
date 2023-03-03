@@ -5,9 +5,9 @@
 #include <Servo.h>
 
 //Name here
-// const String myName = "DRO1";
+const String myName = "DRO1";
 // const String myName = "DRO2";
-const String myName = "DRO3";
+// const String myName = "DRO3";
 
 //Constants
 const int greenLed = 7;
@@ -231,6 +231,7 @@ void loop() {
       escRight.write(stopSpeed);
     } else if(receivedCommand == "DETE" && isDeployed) {
       hasDetectedObject = true;
+      startTime = millis();
       startTime2 = millis();
 
       if(receivedDetails == "LEFT\r") {
@@ -306,7 +307,7 @@ void loop() {
     // State 1: Continuously moving
     if(!hasStopped && !hasDetectedObject) {
 
-      if(millis() - startTime > 800) {
+      if(millis() - startTime > 1000) {
         digitalWrite(greenLed, !digitalRead(greenLed));
         startTime = millis();
       } 
@@ -340,6 +341,7 @@ void loop() {
     if(!hasStopped && hasDetectedObject) {
       if(millis() - startTime2 > 10000) {
         hasStopped = false;
+        hasDetectedObject = false;
         startTime = millis();
         startTime2 = millis();
         

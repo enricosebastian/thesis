@@ -5,9 +5,9 @@
 
 //Name here
 // const String myName = "BASE";
-// const String myName = "DRO1";
+const String myName = "DRO1";
 // const String myName = "DRO2";
-const String myName = "DRO3";
+// const String myName = "DRO3";
 
 //Constants (buttons)
 const int detectionPin = 10;
@@ -274,8 +274,6 @@ void forDrone() {
   if(!isConnected && !isDeployed) {
     //TASK 1: Continue to wait for connection acknowledgement
     while(!receivedSpecificCommand("CONNREP")) {
-      
-      Serial.println(receivedFromName);
       if(millis() - startTime > 800) {
         Serial.println("Reply 'CONNREP' was not received. Resending message again.");
         sendCommand("CONN", "BASE", "HELL");
@@ -417,11 +415,6 @@ void forDrone() {
   
         receivedMessage = ""; // Erase old message
         if(receivedCommand == "DETE") {
-          if(receivedDetails == "DONE") {
-            hasDetectedObject = false;
-          } else {
-            hasDetectedObject = true;
-          }
           sendToNano(receivedCommand, myName, receivedDetails);
         }
       } else {
