@@ -239,14 +239,14 @@ void loop() {
         digitalWrite(blueLed, HIGH);
         digitalWrite(redLed, LOW);
 
-        savedAngle = leftAngle;
+        savedAngle = rightAngle;
       } else if(receivedDetails == "RIGHT\r") {
         digitalWrite(greenLed, LOW);
         digitalWrite(yellowLed, HIGH);
         digitalWrite(blueLed, LOW);
         digitalWrite(redLed, LOW);
 
-        savedAngle = rightAngle;
+        savedAngle = leftAngle;
       } else if(receivedDetails == "CENTER\r") {
         digitalWrite(greenLed, LOW);
         digitalWrite(yellowLed, HIGH);
