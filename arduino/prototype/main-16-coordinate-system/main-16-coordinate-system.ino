@@ -4,10 +4,10 @@
 #include <LinkedList.h>
 
 //Name here
-const String myName = "BASE";
-// const String myName = "DRO1";g
+// const String myName = "BASE";
+// const String myName = "DRO1";
 // const String myName = "DRO2";
-// const String myName = "DRO3";
+const String myName = "DRO3";
 
 //Constants (buttons)
 const int detectionPin = 10;
@@ -274,6 +274,8 @@ void forDrone() {
   if(!isConnected && !isDeployed) {
     //TASK 1: Continue to wait for connection acknowledgement
     while(!receivedSpecificCommand("CONNREP")) {
+      
+      Serial.println(receivedFromName);
       if(millis() - startTime > 800) {
         Serial.println("Reply 'CONNREP' was not received. Resending message again.");
         sendCommand("CONN", "BASE", "HELL");
@@ -511,7 +513,9 @@ bool receiveCommand() {
       receivedDetails = receivedMessage.substring(endIndex+1);
 
       receivedMessage = ""; // Erase old message
-      if(receivedFromName != "DRO1" && receivedFromName != "DRO2" && receivedFromName != "DRO3" && receivedFromName != "ALL") return false;
+
+      if(receivedFromName != "DRO1" && receivedFromName != "DRO2" && receivedFromName != "DRO3" && receivedFromName != "BASE" && receivedFromName != "ALL") return false;
+
       return (receivedCommand != "") && (receivedToName == myName || receivedToName == "ALL") && (receivedFromName != "") && (receivedDetails != "");
     } else {
       receivedMessage += letter;

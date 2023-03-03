@@ -5,9 +5,9 @@
 #include <Servo.h>
 
 //Name here
-const String myName = "DRO1";
+// const String myName = "DRO1";
 // const String myName = "DRO2";
-// const String myName = "DRO3";
+const String myName = "DRO3";
 
 //Constants
 const int greenLed = 7;
@@ -281,11 +281,9 @@ void loop() {
 
       if(savedAngle > 360) savedAngle = savedAngle - 360;
       else if(savedAngle < 0) savedAngle = 360 + savedAngle;
-      straightAngle = savedAngle;
       
       if(oppositeSavedAngle > 360) oppositeSavedAngle = oppositeSavedAngle - 360;
       else if(oppositeSavedAngle < 0) oppositeSavedAngle = 360 + oppositeSavedAngle;
-      oppositeStraightAngle = oppositeSavedAngle;
 
       leftAngle = savedAngle + detectAngle;
       if(leftAngle > 360) leftAngle = leftAngle - 360;
@@ -294,7 +292,8 @@ void loop() {
       rightAngle = savedAngle + detectAngle;
       if(rightAngle > 360) rightAngle = rightAngle - 360;
       if(rightAngle < 0) rightAngle = 360 + rightAngle;
-      
+      Serial.print("Turning to: ");
+      Serial.println(savedAngle);
     } else if(receivedCommand == "HOME" && isDeployed) {
       hasStopped = true;
       isGoingHome = true;
@@ -429,16 +428,13 @@ void move(float currentAngle) {
   
   if(isStraight) {
     if(isLeft) {
-      // Serial.println("Left++");
       escLeft.write(modifiedSpeed+5);
       escRight.write(minSpeed);
     } else {
-      // Serial.println("Right++");
       escLeft.write(minSpeed);
       escRight.write(modifiedSpeed);
     }
   } else {
-
     float oppositeSavedAngle = savedAngle + 180;
     float oppositeCurrentAngle = 360-currentAngle;
 
@@ -454,8 +450,7 @@ void move(float currentAngle) {
     if(isLeft) {
       escLeft.write(modifiedSpeed+5);
       escRight.write(stopSpeed);
-      
-    } else {
+    } else {      
       escLeft.write(stopSpeed);
       escRight.write(modifiedSpeed);
     }
