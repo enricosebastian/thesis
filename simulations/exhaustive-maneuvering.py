@@ -15,9 +15,18 @@ draw_delay = 0.01
 
 x = x_min
 y = y_min
+
+def plot(x_data, y_data, color):
+    plt.scatter(x_data, y_data, c=color)
+    plt.xlim(0,20)
+    plt.ylim(0,20)
+    plt.draw()
+    plt.pause(draw_delay)
+    plt.clf()
+    
+
 while True:
     y += y_increment
-    plt.scatter(x, y, c ="blue")
     
     if y == y_max:
         y_increment *= -1
@@ -30,19 +39,9 @@ while True:
     if x == x_max+x_increment:
         while x is not x_min:
             x += -1*x_increment
-            plt.scatter(x, y, c ="blue")
-            plt.xlim(0,20)
-            plt.ylim(0,20)
-            plt.draw()
-            plt.pause(draw_delay)
-            plt.clf()
+            plot(x, y, "blue")
         
-    plt.scatter(x, y, c ="blue")
-    plt.xlim(0,20)
-    plt.ylim(0,20)
-    plt.draw()
-    plt.pause(draw_delay)
-    plt.clf()
+    plot(x, y, "blue")
 
             
             
