@@ -23,9 +23,9 @@ y_max = np.ones(num_drones).astype(int) * y_max #<--- edit number constant
 y_min = np.zeros(num_drones).astype(int)
 y_increment = np.ones(num_drones).astype(int) * 1
 y_data = y_min.copy()
+y_data += [1, 2, 5] # random increments
 
 colors = ["red", "blue", "green"]
-
 
 while True:
     for idx, y in enumerate(y_data):
