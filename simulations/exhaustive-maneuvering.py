@@ -3,6 +3,10 @@ import time
 import numpy as np
 
 num_drones = 3 # number of drones
+colors = ["red", 
+          "blue", 
+          "green",
+          ]
 
 x_max = 20
 x_min = 0
@@ -13,9 +17,9 @@ y_min = 0
 draw_delay = 0.01
 
 
-x = (range(x_min, x_max, abs(x_max - x_min)//num_drones))
-x_max = list(x[0:len(x)-1])
-x_min = list(x[1:len(x)])
+x = list(range(x_min, x_max, abs(x_max - x_min)//num_drones))
+x_max = x[0:len(x)-1]
+x_min = x[1:len(x)]
 x_increment = np.ones(num_drones).astype(int) * -1
 x_data = x_min.copy()
 
@@ -23,9 +27,6 @@ y_max = np.ones(num_drones).astype(int) * y_max #<--- edit number constant
 y_min = np.zeros(num_drones).astype(int)
 y_increment = np.ones(num_drones).astype(int) * 1
 y_data = y_min.copy()
-y_data += [1, 2, 5] # random increments
-
-colors = ["red", "blue", "green"]
 
 while True:
     for idx, y in enumerate(y_data):
@@ -38,13 +39,13 @@ while True:
             
     for idx, x in enumerate(x_data):
         if x == x_max[idx]:
-            x_increment *= -1
+            x_increment[idx] *= -1
             temp = x_min[idx]
             x_min[idx] = x_max[idx]
             x_max[idx] = temp
     
     plt.scatter(x_data, y_data, c=colors)
-    plt.xlim(0,20)
+    plt.xlim(-20,20)
     plt.ylim(0,20)
     
     plt.draw()
