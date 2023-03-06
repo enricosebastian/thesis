@@ -5,8 +5,8 @@
 
 //Name here
 // const String myName = "BASE";
-// const String myName = "DRO1";
-const String myName = "DRO2";
+const String myName = "DRO1";
+// const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants (buttons)
@@ -45,7 +45,7 @@ unsigned long startTime3 = 0;
 
 float d1 = 0;
 float d2 = 0;
-float x0 = 14.8; //3.8 strc
+float x0 = 17.79; //3.8 strc
 
 float savedX = 0;
 float savedY = 0;
@@ -524,7 +524,7 @@ void sendToNano(String command, String toName, String details) {
 
   //COMMAND TONAME FROMNAME DETAILS
   if(command != "" && toName != "" && details != "") {
-    sentMessage = command + " " + toName + " " + myName + " " + details;
+    sentMessage = command + " " + toName + " " + myName + " " + details +"\n";
     Nano.println(sentMessage);
     sentMessage = "";
   } else {

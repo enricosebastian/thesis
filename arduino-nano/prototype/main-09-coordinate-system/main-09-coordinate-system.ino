@@ -68,7 +68,7 @@ float straightAngle = 0.0;
 float oppositeStraightAngle = 0.0;
 float leftAngle = 0.0;
 float rightAngle = 0.0;
-float detectAngle = 30.0;
+float detectAngle = -50.0;
 
 //millis time variables for storage
 unsigned long startTime = 0;
@@ -187,7 +187,7 @@ void loop() {
       if(leftAngle > 360) leftAngle = leftAngle - 360;
       if(leftAngle < 0) leftAngle = 360 + leftAngle;
 
-      rightAngle = savedAngle + detectAngle;
+      rightAngle = savedAngle - detectAngle;
       if(rightAngle > 360) rightAngle = rightAngle - 360;
       if(rightAngle < 0) rightAngle = 360 + rightAngle;
 
@@ -237,28 +237,32 @@ void loop() {
       startTime = millis();
       startTime2 = millis();
 
-      if(receivedDetails == "LEFT\r") {
+      Serial.println(receivedDetails == "LEFT\r");
+      Serial.println(receivedDetails == "LEFT");
+      Serial.println(receivedDetails == "LEFT\n");
+
+      if(receivedDetails == "LEFT\r" || receivedDetails == "LEFT") {
         digitalWrite(greenLed, LOW);
         digitalWrite(yellowLed, LOW);
         digitalWrite(blueLed, HIGH);
         digitalWrite(redLed, LOW);
 
         savedAngle = rightAngle;
-      } else if(receivedDetails == "RIGHT\r") {
+      } else if(receivedDetails == "RIGHT\r" || receivedDetails == "RIGHT") {
         digitalWrite(greenLed, LOW);
         digitalWrite(yellowLed, HIGH);
         digitalWrite(blueLed, LOW);
         digitalWrite(redLed, LOW);
 
         savedAngle = leftAngle;
-      } else if(receivedDetails == "CENTER\r") {
+      } else if(receivedDetails == "CENTER\r" || receivedDetails == "CENTER") {
         digitalWrite(greenLed, LOW);
         digitalWrite(yellowLed, HIGH);
         digitalWrite(blueLed, HIGH);
         digitalWrite(redLed, LOW);
 
         savedAngle = savedAngle;
-      } else if(receivedDetails == "DONE\r") {
+      } else if(receivedDetails == "DONE\r" || receivedDetails == "DONE") {
         digitalWrite(greenLed, LOW);
         digitalWrite(yellowLed, LOW);
         digitalWrite(blueLed, LOW);
@@ -293,7 +297,7 @@ void loop() {
       if(leftAngle > 360) leftAngle = leftAngle - 360;
       if(leftAngle < 0) leftAngle = 360 + leftAngle;
 
-      rightAngle = savedAngle + detectAngle;
+      rightAngle = savedAngle - detectAngle;
       if(rightAngle > 360) rightAngle = rightAngle - 360;
       if(rightAngle < 0) rightAngle = 360 + rightAngle;
       Serial.print("Turning to: ");
@@ -341,7 +345,7 @@ void loop() {
         if(leftAngle > 360) leftAngle = leftAngle - 360;
         if(leftAngle < 0) leftAngle = 360 + leftAngle;
 
-        rightAngle = savedAngle + detectAngle;
+        rightAngle = savedAngle - detectAngle;
         if(rightAngle > 360) rightAngle = rightAngle - 360;
         if(rightAngle < 0) rightAngle = 360 + rightAngle;
 
