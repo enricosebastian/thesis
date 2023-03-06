@@ -5,8 +5,8 @@
 
 //Name here
 // const String myName = "BASE";
-// const String myName = "DRO1";
-const String myName = "DRO2";
+const String myName = "DRO1";
+// const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants (buttons)
@@ -32,6 +32,8 @@ const int redLed = 13;
 const int yellowLed = 12;
 const int greenLed = 11;
 
+const float x0 = 14.8; //3.8 strc
+
 //Booleans for logic
 bool isConnected = false;
 bool isDeployed = false;
@@ -45,7 +47,6 @@ unsigned long startTime3 = 0;
 
 float d1 = 0;
 float d2 = 0;
-float x0 = 14.8; //3.8 strc
 
 float savedX = 0;
 float savedY = 0;
@@ -56,8 +57,8 @@ float currentY = 0;
 float homeX = 0;
 float homeY = 0;
 
-float maxY = 11.0;
-float minY = 10.0;
+const float maxY = 11.0;
+const float minY = 10.0;
 
 //received message
 String receivedMessage = "";
@@ -386,40 +387,22 @@ void forDrone() {
         Serial.print("Base station wants to know ");
         Serial.println(receivedDetails);
 
-        if(receivedDetails == "CURR\r") {
+        if(receivedDetails == "CURR") {
           while(millis() - startTime < 800) {
             if(millis() - startTime2 > 300) {
               sendCommand("HERE", receivedFromName, String(currentX) + "," + String(currentY));
             }
           }
-        } else if(receivedDetails == "HOME\r") {
+        } else if(receivedDetails == "HOME") {
           while(millis() - startTime < 800) {
             if(millis() - startTime2 > 300) {
               sendCommand("HERE", receivedFromName, String(homeX) + "," + String(homeY));
             }
           }
-        } else if(receivedDetails == "SAVE\r") {
+        } else if(receivedDetails == "SAVE") {
           while(millis() - startTime < 800) {
             if(millis() - startTime2 > 300) {
               sendCommand("HERE", receivedFromName, String(savedX) + "," + String(savedY));
-            }
-          }
-        } else if(receivedDetails == "XSUB\r") {
-          while(millis() - startTime < 800) {
-            if(millis() - startTime2 > 300) {
-              sendCommand("HERE", receivedFromName, String(x0));
-            }
-          }
-        } else if(receivedDetails == "MAXY\r") {
-          while(millis() - startTime < 800) {
-            if(millis() - startTime2 > 300) {
-              sendCommand("HERE", receivedFromName, String(maxY));
-            }
-          }
-        } else if(receivedDetails == "MINY\r") {
-          while(millis() - startTime < 800) {
-            if(millis() - startTime2 > 300) {
-              sendCommand("HERE", receivedFromName, String(minY));
             }
           }
         }
@@ -432,22 +415,6 @@ void forDrone() {
 
         Serial.print("New x0: ");
         Serial.println(x0);
-      } else if(receivedCommand == "MAXY") {
-        Serial.print("Old maxY: ");
-        Serial.println(maxY);
-
-        maxY = receivedDetails.toFloat();
-
-        Serial.print("New maxY: ");
-        Serial.println(maxY);
-      } else if(receivedCommand == "MINY") {
-        Serial.print("Old minY: ");
-        Serial.println(minY);
-
-        minY = receivedDetails.toFloat();
-
-        Serial.print("New minY: ");
-        Serial.println(minY);
       } else {
         sendToNano(receivedCommand, myName, receivedDetails);
       }

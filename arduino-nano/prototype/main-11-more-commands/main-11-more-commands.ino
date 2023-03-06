@@ -30,6 +30,8 @@ const float maxSpeed = 25;
 
 const float angleAllowance = 5.0;
 const float currentXAllowance = 0.5;
+const float maxY = 11.0;
+const float minY = 10.0;
 
 //Booleans for logic
 bool isConnected = false;
@@ -50,9 +52,6 @@ float currentY = 0;
 
 float homeX = 0;
 float homeY = 0;
-
-float maxY = 11.0;
-float minY = 10.0;
 
 //PID values
 float kp = 2;
@@ -176,7 +175,6 @@ void loop() {
       Serial.println(homeY);
     } else if(receivedCommand == "GO" && isDeployed) {
       hasStopped = false;
-      hasDetectedObject = false;
       startTime = millis();
       startTime2 = millis();
 
@@ -223,7 +221,7 @@ void loop() {
       Serial.println(oppositeSavedAngle);
     } else if(receivedCommand == "STOP" && isDeployed) {
       hasStopped = true;
-      hasDetectedObject = false;
+      hasDetected = false;
       isGoingHome = false;
       startTime = millis();
 
@@ -439,6 +437,14 @@ void move(float currentAngle) {
 
   if(error < 10) isStraight = true;
   else isStraight = false;
+
+  // Serial.print(currentX);
+  // Serial.print(" vs ");
+  // Serial.println(savedX);
+
+  // Serial.print(currentAngle);
+  // Serial.print(" vs ");
+  // Serial.println(savedAngle);
   
   if(isStraight) {
     if(isLeft) {
