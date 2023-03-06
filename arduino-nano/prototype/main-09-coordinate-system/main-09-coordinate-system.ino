@@ -255,7 +255,7 @@ void loop() {
         digitalWrite(blueLed, HIGH);
         digitalWrite(redLed, LOW);
 
-        savedAngle = straightAngle;
+        savedAngle = savedAngle;
       } else if(receivedDetails == "DONE\r") {
         digitalWrite(greenLed, LOW);
         digitalWrite(yellowLed, LOW);
