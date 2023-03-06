@@ -440,6 +440,7 @@ void forDrone() {
 
         Serial.print("New maxY: ");
         Serial.println(maxY);
+        sendToNano(receivedCommand, myName, receivedDetails);
       } else if(receivedCommand == "MINY") {
         Serial.print("Old minY: ");
         Serial.println(minY);
@@ -448,6 +449,7 @@ void forDrone() {
 
         Serial.print("New minY: ");
         Serial.println(minY);
+        sendToNano(receivedCommand, myName, receivedDetails);
       } else {
         sendToNano(receivedCommand, myName, receivedDetails);
       }
