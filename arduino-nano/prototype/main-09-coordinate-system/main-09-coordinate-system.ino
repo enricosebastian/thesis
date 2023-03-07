@@ -141,7 +141,7 @@ void loop() {
   // Correct for when signs are reversed.
   if(heading < 0)
     heading += 2*PI;
-    
+
   // Check for wrap due to addition of declination.
   if(heading > 2*PI)
     heading -= 2*PI;
@@ -390,7 +390,7 @@ void loop() {
 
     // State 3: Is going home 
     if(hasStopped && isGoingHome) {
-      if(abs(currentX - homeX) > 1) {
+      if(abs(currentX - homeX) > 5) {
         // start moving to home x
         if(currentX - homeX < 0) {
           savedAngle = rightAngle;
@@ -398,7 +398,7 @@ void loop() {
           savedAngle = leftAngle;
         }
         move(currentAngle);
-      } else if(abs(currentY - homeY) > 1) {
+      } else if(abs(currentY - homeY) > 5) {
         // start moving to home y
         savedAngle = homeAngle;
         move(currentAngle);
