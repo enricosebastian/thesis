@@ -29,7 +29,7 @@ const float minSpeed = 15;
 const float maxSpeed = 25;
 
 const float angleAllowance = 5.0;
-const float currentXAllowance = 0.5;
+const float currentXAllowance = 2;
 
 //Booleans for logic
 bool isConnected = false;
