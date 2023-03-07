@@ -2,7 +2,7 @@
 #include "DW1000Ranging.h"
 #include "DW1000.h"
 
-#define TAG_ADD "01:20:5B:D5:A9:9A:E2:9C" // Tag 1
+#define TAG_ADD "03:20:5B:D5:A9:9A:E2:9C" // Tag 3
 
 #define TX 16
 #define RX 17
@@ -19,12 +19,12 @@ String message = "";
 
 String tempChannel = "";
 
-// tag 2
-String channel1 = "5"; // drone 1
+// tag 3
+String channel1 = "1"; // drone 3
 String channel2 = "1"; // none
-String channel3 = "7"; // drone 2
+String channel3 = "5"; // drone 1
 String channel4 = "1"; // none
-String channel5 = "1"; // drone 3
+String channel5 = "7"; // drone 2
 String channel6 = "1"; // none
 
 float t1 = 0.0;
@@ -44,9 +44,9 @@ void setup() {
   DW1000Ranging.attachNewDevice(0);
   DW1000Ranging.attachInactiveDevice(0);
 
-  Serial.println("Starting Tag 1");
+  Serial.println("Starting Tag 3");
 
-  DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
+  DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_1,false);
 }
 
 void loop() {
@@ -61,11 +61,11 @@ void loop() {
         r1 = t1;
       }
 
-      // Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
-      // Serial.print(" - ");
-      // Serial.print(r1);
-      // Serial.print(",");
-      // Serial.println(r2);
+      Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
+      Serial.print(" - ");
+      Serial.print(r1);
+      Serial.print(",");
+      Serial.println(r2);
     // For anchor 2
     } else if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1002 && channel1 == "7") {
       
@@ -74,11 +74,11 @@ void loop() {
         r2 = t2;
       }
 
-      // Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
-      // Serial.print(" - ");
-      // Serial.print(r1);
-      // Serial.print(",");
-      // Serial.println(r2);
+      Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
+      Serial.print(" - ");
+      Serial.print(r1);
+      Serial.print(",");
+      Serial.println(r2);
     }
   }
   
