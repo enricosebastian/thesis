@@ -5,8 +5,8 @@
 
 //Name here
 // const String myName = "BASE";
-const String myName = "DRO1";
-// const String myName = "DRO2";
+// const String myName = "DRO1";
+const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants (buttons)
@@ -373,7 +373,9 @@ void forDrone() {
         digitalWrite(recordingPin, LOW);
       } else if(receivedCommand == "GO") {
         hasStopped = false;
-        sendToNano(receivedCommand, myName, String(currentX)+","+String(currentY));
+        homeX = currentX;
+        homeY = currentY;
+        sendToNano(receivedCommand, myName, String(homeX)+","+String(homeY));
         digitalWrite(detectionPin, HIGH); // Turn on camera
         digitalWrite(recordingPin, LOW);
       } else if(receivedCommand == "RECO") {
@@ -385,7 +387,6 @@ void forDrone() {
         startTime = millis();
         Serial.print("Base station wants to know ");
         Serial.println(receivedDetails);
-
         if(receivedDetails == "CURR\r") {
           while(millis() - startTime < 800) {
             if(millis() - startTime2 > 300) {

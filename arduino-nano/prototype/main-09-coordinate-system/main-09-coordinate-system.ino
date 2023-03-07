@@ -68,7 +68,7 @@ float straightAngle = 0.0;
 float oppositeStraightAngle = 0.0;
 float leftAngle = 0.0;
 float rightAngle = 0.0;
-float detectAngle = -50.0;
+float detectAngle = -90.0;
 
 //millis time variables for storage
 unsigned long startTime = 0;
@@ -192,8 +192,8 @@ void loop() {
       if(rightAngle < 0) rightAngle = 360 + rightAngle;
 
       int endIndex = receivedDetails.indexOf(',');
-      savedX = receivedDetails.substring(0, endIndex).toFloat();
-      savedY = receivedDetails.substring(endIndex+1).toFloat();
+      homeX = receivedDetails.substring(0, endIndex).toFloat();
+      homeY = receivedDetails.substring(endIndex+1).toFloat();
       //235 = blue body/dro1/white pbank
       //225 
 
@@ -390,7 +390,7 @@ void loop() {
 
     // State 3: Is going home 
     if(hasStopped && isGoingHome) {
-      if(abs(currentX - homeX) > 5) {
+      if(abs(currentX - homeX) > 1.5) {
         // start moving to home x
         if(currentX - homeX < 0) {
           savedAngle = rightAngle;
@@ -398,15 +398,21 @@ void loop() {
           savedAngle = leftAngle;
         }
         move(currentAngle);
-      } else if(abs(currentY - homeY) > 5) {
+      } else if(abs(currentY - homeY) > 1.5) {
         // start moving to home y
         savedAngle = homeAngle;
         move(currentAngle);
+      } else {
+        isGoingHome = false;
+        hasStopped = true;
+
+        escRight.write(0);
+        escLeft.write(0);
       }
 
-      digitalWrite(greenLed, LOW);
-      digitalWrite(yellowLed, LOW);
-      digitalWrite(blueLed, LOW);
+      digitalWrite(greenLed, HIGH);
+      digitalWrite(yellowLed, HIGH);
+      digitalWrite(blueLed, HIGH);
       digitalWrite(redLed, HIGH);
     }
 
