@@ -2,7 +2,7 @@
 #include "DW1000Ranging.h"
 #include "DW1000.h"
 
-#define TAG_ADD "03:20:5B:D5:A9:9A:E2:9C" // Tag 1
+#define TAG_ADD "03:20:5B:D5:A9:9A:E2:9C" // Tag 3
 
 #define TX 16
 #define RX 17
@@ -61,11 +61,11 @@ void loop() {
         r1 = t1;
       }
 
-      // Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
-      // Serial.print(" - ");
-      // Serial.print(r1);
-      // Serial.print(",");
-      // Serial.println(r2);
+      Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
+      Serial.print(" - ");
+      Serial.print(r1);
+      Serial.print(",");
+      Serial.println(r2);
     // For anchor 2
     } else if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1002 && channel1 == "7") {
       
@@ -74,11 +74,11 @@ void loop() {
         r2 = t2;
       }
 
-      // Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
-      // Serial.print(" - ");
-      // Serial.print(r1);
-      // Serial.print(",");
-      // Serial.println(r2);
+      Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
+      Serial.print(" - ");
+      Serial.print(r1);
+      Serial.print(",");
+      Serial.println(r2);
     }
   }
   
@@ -94,8 +94,8 @@ void loop() {
     channel5 = channel6;
     channel6 = tempChannel;
 
-    Serial.print("Changing to channel ");
-    Serial.println(channel1);
+    // Serial.print("Changing to channel ");
+    // Serial.println(channel1);
 
     if(channel1 == "5") {
       DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
