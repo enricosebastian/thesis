@@ -82,7 +82,10 @@ void loop() {
     }
   }
   
-  if(millis() - startTime > 1000) {
+  if(
+      (channel1 == "5" || channel1 == "7") && (millis() - startTime > 2000) ||
+      (channel1 == "1") && (millis() - startTime > 500)
+    ) {
     tempChannel = channel1;
     channel1 = channel2;
     channel2 = channel3;
