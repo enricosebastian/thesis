@@ -61,11 +61,11 @@ void loop() {
         r1 = t1;
       }
 
-      Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
-      Serial.print(" - ");
-      Serial.print(r1);
-      Serial.print(",");
-      Serial.println(r2);
+      // Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
+      // Serial.print(" - ");
+      // Serial.print(r1);
+      // Serial.print(",");
+      // Serial.println(r2);
     // For anchor 2
     } else if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1002 && channel1 == "7") {
       
@@ -74,11 +74,11 @@ void loop() {
         r2 = t2;
       }
 
-      Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
-      Serial.print(" - ");
-      Serial.print(r1);
-      Serial.print(",");
-      Serial.println(r2);
+      // Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
+      // Serial.print(" - ");
+      // Serial.print(r1);
+      // Serial.print(",");
+      // Serial.println(r2);
     }
   }
   
