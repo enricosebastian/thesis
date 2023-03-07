@@ -82,10 +82,7 @@ void loop() {
     }
   }
   
-  if(
-      (channel1 == "5" || channel1 == "7") && (millis() - startTime > 2000) ||
-      (channel1 == "1") && (millis() - startTime > 500)
-    ) {
+  if((millis() - startTime > 2000)) {
     tempChannel = channel1;
     channel1 = channel2;
     channel2 = channel3;
@@ -94,8 +91,8 @@ void loop() {
     channel5 = channel6;
     channel6 = tempChannel;
 
-    Serial.print("Changing to channel ");
-    Serial.println(channel1);
+    // Serial.print("Changing to channel ");
+    // Serial.println(channel1);
 
     if(channel1 == "5") {
       DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
