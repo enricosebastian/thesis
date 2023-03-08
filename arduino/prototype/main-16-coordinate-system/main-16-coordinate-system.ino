@@ -4,8 +4,8 @@
 #include <LinkedList.h>
 
 //Name here
-// const String myName = "BASE";
-const String myName = "DRO1";
+const String myName = "BASE";
+// const String myName = "DRO1";
 // const String myName = "DRO2";
 // const String myName = "DRO3";
 
@@ -246,7 +246,7 @@ void forBaseStation() {
         sendCommand(sentCommand, sentToName, sentDetails);
 
         while(!receivedSpecificCommand(sentCommand+"REP")) {
-          if(millis() - startTime > 800) {
+          if(millis() - startTime > 1000) {
             Serial.print(sentCommand);
             Serial.println("REP was not received yet. Resending command.");
             sendCommand(sentCommand, sentToName, sentDetails);
@@ -257,14 +257,25 @@ void forBaseStation() {
             Serial.println("Canceling sending of command. Try again.");
             break;
           }
-        }        
+        }
+
+        //Erase data after successful or failed send
+        sentCommand = "";
+        sentToName = "";
+        sentDetails = "";       
       } else {
         sentMessage += letter;
       }
     }
 
     //TASK 2: Wait for base station to send me a command
-    if(receiveCommand()) {      
+    if(receiveCommand()) {
+      Serial.print("Received ");
+      Serial.print(receivedCommand);
+      Serial.print(" from ");
+      Serial.print(receivedFromName);
+      Serial.print(" containing ");
+      Serial.println(receivedDetails);
     }
 
   }
