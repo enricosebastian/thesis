@@ -586,7 +586,9 @@ void sendCommand(String command, String toName, String details) {
     Serial.print("Sending ");
     Serial.print(command);
     Serial.print(" to ");
-    Serial.println(toName);
+    Serial.print(toName);
+    Serial.print(" with ");
+    Serial.println(details);
 
     HC12.println(sentMessage);
     sentMessage = "";
