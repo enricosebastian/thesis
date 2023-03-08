@@ -198,6 +198,10 @@ void forBaseStation() {
             Serial.print(drones.get(i));
             Serial.println("' yet. Sending 'DEPL' again.");
             sendCommand("DEPL", drones.get(i), "HELL");
+            receivedCommand = "";
+            receivedFromName = "";
+            receivedToName = "";
+            receivedDetails = "";
           }
         }
         Serial.print("Successfully deployed: ");
