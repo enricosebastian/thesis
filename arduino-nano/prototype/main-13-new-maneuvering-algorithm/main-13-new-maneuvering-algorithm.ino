@@ -338,10 +338,8 @@ void loop() {
       } 
 
       // State 2: Maneuvering. If Y reaches limit, turn
-      if((currentY > maxY && counter % 2 == 0) || (currentY < minY && counter % 2 != 0)) {
-        float tempAngle = savedAngle;
-        savedAngle = oppositeSavedAngle;
-        oppositeSavedAngle = tempAngle;
+      if(currentY > maxY) {
+        savedAngle = oppositeStraightAngle;
 
         leftAngle = savedAngle + detectAngle;
         if(leftAngle > 360) leftAngle = leftAngle - 360;
@@ -353,10 +351,19 @@ void loop() {
 
         Serial.print("Saved angle: ");
         Serial.println(savedAngle);
-        Serial.print("Opposite angle: ");
-        Serial.println(oppositeSavedAngle);
-        startTime2 = millis();
-        counter++;
+      } else if(currentY < minY) {
+        savedAngle = straightAngle;
+
+        leftAngle = savedAngle + detectAngle;
+        if(leftAngle > 360) leftAngle = leftAngle - 360;
+        if(leftAngle < 0) leftAngle = 360 + leftAngle;
+
+        rightAngle = savedAngle - detectAngle;
+        if(rightAngle > 360) rightAngle = rightAngle - 360;
+        if(rightAngle < 0) rightAngle = 360 + rightAngle;
+
+        Serial.print("Saved angle: ");
+        Serial.println(savedAngle);
       }
       
       move(currentAngle);
