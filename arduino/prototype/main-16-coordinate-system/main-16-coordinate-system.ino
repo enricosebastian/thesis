@@ -577,6 +577,7 @@ void addDrone(String droneName) {
 bool receiveCommand() {
   while(HC12.available()) {
     char letter = HC12.read();
+    Serial.println(letter);
     if(letter == '\n') {
       int endIndex = receivedMessage.indexOf(' ');
       receivedCommand = receivedMessage.substring(0, endIndex);
