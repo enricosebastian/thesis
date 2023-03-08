@@ -382,17 +382,22 @@ void loop() {
         // start moving to home x
         if(currentX - homeX < 0) {
           savedAngle = rightAngle;
+          Serial.println("Move right");
         } else if(currentX - homeX > 0) {
           savedAngle = leftAngle;
+          Serial.println("Move left");
         }
         move(currentAngle);
       } else if(abs(currentY - homeY) > 1.5) {
         // start moving to home y
         savedAngle = oppositeStraightAngle;
+        Serial.println("Turn back");
         move(currentAngle);
       } else {
         isGoingHome = false;
         hasStopped = true;
+
+        Serial.println("Reached home");
 
         escRight.write(stopSpeed);
         escLeft.write(stopSpeed);
