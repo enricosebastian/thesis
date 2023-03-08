@@ -4,8 +4,8 @@
 #include <LinkedList.h>
 
 //Name here
-const String myName = "BASE";
-// const String myName = "DRO1";
+// const String myName = "BASE";
+const String myName = "DRO1";
 // const String myName = "DRO2";
 // const String myName = "DRO3";
 
@@ -381,8 +381,11 @@ void forDrone() {
           Serial.print(receivedCommand+"REP");
           Serial.print(" to ");
           Serial.println(receivedFromName);
-          
-          sendCommand(receivedCommand+"REP", receivedFromName, "SUCC");
+          if(receivedCommand == "GO") {
+            sendCommand(receivedCommand+"REP", receivedFromName, String(currentX)+","+String(currentY));
+          } else {
+            sendCommand(receivedCommand+"REP", receivedFromName, "SUCC");
+          }
           startTime2 = millis();
         }
       }
