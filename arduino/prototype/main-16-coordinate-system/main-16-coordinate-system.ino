@@ -365,11 +365,17 @@ void forDrone() {
       startTime = millis();
       startTime2 = millis();
       while(millis() - startTime < waitingTime) {
-        if(millis() - startTime2 > 800) {
-          sendCommand(receivedCommand+"REP", receivedFromName, "SUCC");
+        if(millis() - startTime2 > 1000) {
+          Serial.println("Sending acknowledgement");
+          if(receivedCommand == "GO") {
+            sendCommand(receivedCommand+"REP", receivedFromName, String(currentX)+","+String(currentY));
+          } else {
+            sendCommand(receivedCommand+"REP", receivedFromName, "SUCC");
+          }
           startTime2 = millis();
         }
       }
+      startTime = millis();
 
       //Interpret the command
       if(receivedCommand == "STOP") {
@@ -460,6 +466,12 @@ void forDrone() {
       } else {
         sendToNano(receivedCommand, myName, receivedDetails);
       }
+      
+      // Erase them after use
+      receivedCommand = "";
+      receivedToName = "";
+      receivedFromName = "";
+      receivedDetails = "";
     }
 
     // Task 2: If serial is available, you detected an object...
