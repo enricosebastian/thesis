@@ -354,6 +354,12 @@ void forDrone() {
 
     // Task 1: Interpret commands
     if(receiveCommand()) {
+      Serial.print("Received ");
+      Serial.print(receivedCommand);
+      Serial.print(" from ");
+      Serial.print(receivedFromName);
+      Serial.print(" containing ");
+      Serial.println(receivedDetails);
 
       //Send acknowledgement that we received the command first
       startTime = millis();
@@ -553,9 +559,6 @@ bool receiveCommand() {
   while(HC12.available()) {
     char letter = HC12.read();
     if(letter == '\n') {
-      Serial.print("Received: ");
-      Serial.println(receivedMessage);
-
       int endIndex = receivedMessage.indexOf(' ');
       receivedCommand = receivedMessage.substring(0, endIndex);
       receivedMessage = receivedMessage.substring(endIndex+1);

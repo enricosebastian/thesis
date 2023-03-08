@@ -149,6 +149,9 @@ void loop() {
   
   // Main task: Continue to check for commands
   if(receiveCommand()) {
+    Serial.print("Received: ");
+    Serial.println(receivedCommand);
+
     if(receivedCommand == "CONN" && !isConnected) {
       digitalWrite(greenLed, LOW);
       digitalWrite(yellowLed, HIGH);
@@ -269,11 +272,6 @@ void loop() {
       int endIndex = receivedDetails.indexOf(',');
       currentX = receivedDetails.substring(0, endIndex).toFloat();
       currentY = receivedDetails.substring(endIndex+1).toFloat();
-
-      Serial.print("X,Y: ");
-      Serial.print(currentX);
-      Serial.print(",");
-      Serial.println(currentY);
     } else if(receivedCommand == "TURN" && isDeployed) {
       savedAngle = savedAngle + receivedDetails.toFloat();
       
@@ -382,15 +380,33 @@ void loop() {
         // start moving to home x
         if(currentX - homeX < 0) {
           savedAngle = rightAngle;
+
+          digitalWrite(greenLed, LOW);
+          digitalWrite(yellowLed, LOW);
+          digitalWrite(blueLed, HIGH);
+          digitalWrite(redLed, LOW);
+
           Serial.println("Move right");
         } else if(currentX - homeX > 0) {
           savedAngle = leftAngle;
+
+          digitalWrite(greenLed, LOW);
+          digitalWrite(yellowLed, HIGH);
+          digitalWrite(blueLed, LOW);
+          digitalWrite(redLed, LOW);
+
           Serial.println("Move left");
         }
         move(currentAngle);
       } else if(abs(currentY - homeY) > 1.5) {
         // start moving to home y
         savedAngle = oppositeStraightAngle;
+
+        digitalWrite(greenLed, LOW);
+        digitalWrite(yellowLed, HIGH);
+        digitalWrite(blueLed, HIGH);
+        digitalWrite(redLed, LOW);
+
         Serial.println("Turn back");
         move(currentAngle);
       } else {
@@ -402,11 +418,6 @@ void loop() {
         escRight.write(stopSpeed);
         escLeft.write(stopSpeed);
       }
-
-      digitalWrite(greenLed, HIGH);
-      digitalWrite(yellowLed, HIGH);
-      digitalWrite(blueLed, HIGH);
-      digitalWrite(redLed, HIGH);
     }
 
   }
@@ -479,9 +490,6 @@ bool receiveCommand() {
   while(Nano.available()) {
     char letter = Nano.read();
     if(letter == '\n') {
-      Serial.print("Received: ");
-      Serial.println(receivedMessage);
-
       int endIndex = receivedMessage.indexOf(' ');
       receivedCommand = receivedMessage.substring(0, endIndex);
       receivedMessage = receivedMessage.substring(endIndex+1);
