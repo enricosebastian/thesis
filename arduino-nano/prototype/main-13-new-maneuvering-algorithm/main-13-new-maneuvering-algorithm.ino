@@ -60,10 +60,8 @@ float ki = 0.2;
 float kd = 3;
 float PID_p, PID_i, PID_d, PID_total;
 
+float tempAngle = 0.0;
 float savedAngle = 0.0;
-float oppositeSavedAngle = 0.0;
-float homeAngle = 0.0;
-
 float straightAngle = 0.0;
 float oppositeStraightAngle = 0.0;
 float leftAngle = 0.0;
@@ -197,14 +195,12 @@ void loop() {
       //235 = blue body/dro1/white pbank
       //225 
 
-      if(myName == "DRO1") oppositeSavedAngle = savedAngle + 235;
-      else if(myName == "DRO2") oppositeSavedAngle = savedAngle + 210;
+      if(myName == "DRO1") oppositeStraightAngle = straightAngle + 235;
+      else if(myName == "DRO2") oppositeStraightAngle = straightAngle + 210;
 
-      if(oppositeSavedAngle > 360) {
-        oppositeSavedAngle = oppositeSavedAngle - 360;
+      if(oppositeStraightAngle > 360) {
+        oppositeStraightAngle = oppositeStraightAngle - 360;
       }
-      oppositeStraightAngle = oppositeSavedAngle;
-      homeAngle = oppositeStraightAngle;
 
       digitalWrite(greenLed, HIGH);
       digitalWrite(yellowLed, LOW);
@@ -219,8 +215,8 @@ void loop() {
       Serial.print(",");
       Serial.println(savedY);
 
-      Serial.print("Opposite saved angle: ");
-      Serial.println(oppositeSavedAngle);
+      Serial.print("Opposite straight angle: ");
+      Serial.println(oppositeStraightAngle);
     } else if(receivedCommand == "STOP" && isDeployed) {
       hasStopped = true;
       hasDetectedObject = false;
@@ -267,11 +263,6 @@ void loop() {
         digitalWrite(yellowLed, LOW);
         digitalWrite(blueLed, LOW);
         digitalWrite(redLed, LOW);
-
-        // add delay here
-
-        hasDetectedObject = false;
-        savedAngle = straightAngle;
         Serial.println("Object has been acquired.");
       }
     } else if(receivedCommand == "COOR" && isDeployed) {
@@ -285,28 +276,13 @@ void loop() {
       Serial.println(currentY);
     } else if(receivedCommand == "TURN" && isDeployed) {
       savedAngle = savedAngle + receivedDetails.toFloat();
-
-      if(myName == "DRO1") oppositeSavedAngle = savedAngle + 235;
-      else if(myName == "DRO2") oppositeSavedAngle = savedAngle + 210;
-
-      if(savedAngle > 360) savedAngle = savedAngle - 360;
-      else if(savedAngle < 0) savedAngle = 360 + savedAngle;
       
-      if(oppositeSavedAngle > 360) oppositeSavedAngle = oppositeSavedAngle - 360;
-      else if(oppositeSavedAngle < 0) oppositeSavedAngle = 360 + oppositeSavedAngle;
-
-      leftAngle = savedAngle + detectAngle;
-      if(leftAngle > 360) leftAngle = leftAngle - 360;
-      if(leftAngle < 0) leftAngle = 360 + leftAngle;
-
-      rightAngle = savedAngle - detectAngle;
-      if(rightAngle > 360) rightAngle = rightAngle - 360;
-      if(rightAngle < 0) rightAngle = 360 + rightAngle;
       Serial.print("Turning to: ");
       Serial.println(savedAngle);
     } else if(receivedCommand == "HOME" && isDeployed) {
       hasStopped = true;
       isGoingHome = true;
+
     } else if(receivedCommand == "MAXY") {
       Serial.print("Old maxY: ");
       Serial.println(maxY);
@@ -365,13 +341,14 @@ void loop() {
         Serial.print("Saved angle: ");
         Serial.println(savedAngle);
       }
-      
+
+      tempAngle = savedAngle;
       move(currentAngle);
     }
 
     // State 2: Detected something, so move there
     if(!hasStopped && hasDetectedObject) {
-      if(millis() - startTime2 > 10000) {
+      if(millis() - startTime2 > 5000) {
         hasStopped = false;
         hasDetectedObject = false;
         startTime = millis();
@@ -381,6 +358,8 @@ void loop() {
         digitalWrite(blueLed, LOW);
         digitalWrite(yellowLed, LOW);
         digitalWrite(redLed, LOW);
+
+        savedAngle = tempAngle;
       }
       move(currentAngle);
     }
@@ -409,14 +388,14 @@ void loop() {
         move(currentAngle);
       } else if(abs(currentY - homeY) > 1.5) {
         // start moving to home y
-        savedAngle = homeAngle;
+        savedAngle = oppositeStraightAngle;
         move(currentAngle);
       } else {
         isGoingHome = false;
         hasStopped = true;
 
-        escRight.write(0);
-        escLeft.write(0);
+        escRight.write(stopSpeed);
+        escLeft.write(stopSpeed);
       }
 
       digitalWrite(greenLed, HIGH);
