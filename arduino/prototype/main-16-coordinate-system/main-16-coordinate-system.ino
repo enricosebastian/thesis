@@ -381,11 +381,6 @@ void forDrone() {
       startTime2 = millis();
       while(millis() - startTime < waitingTime) {
         if(millis() - startTime2 > 1000) {
-          Serial.print("Sending ");
-          Serial.print(receivedCommand+"REP");
-          Serial.print(" to ");
-          Serial.println(receivedFromName);
-          
           sendCommand(receivedCommand+"REP", receivedFromName, "SUCC");
           
           startTime2 = millis();
@@ -609,6 +604,12 @@ void sendCommand(String command, String toName, String details) {
   //COMMAND TONAME FROMNAME DETAILS
   if(command != "" && toName != "" && details != "") {
     sentMessage = command + " " + toName + " " + myName + " " + details;
+
+    Serial.print("Sending ");
+    Serial.print(command);
+    Serial.print(" to ");
+    Serial.println(toName);
+
     HC12.println(sentMessage);
     sentMessage = "";
   } else {
