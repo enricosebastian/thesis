@@ -385,11 +385,9 @@ void forDrone() {
           Serial.print(receivedCommand+"REP");
           Serial.print(" to ");
           Serial.println(receivedFromName);
-          if(receivedCommand == "GO") {
-            sendCommand(receivedCommand+"REP", receivedFromName, String(currentX)+","+String(currentY));
-          } else {
-            sendCommand(receivedCommand+"REP", receivedFromName, "SUCC");
-          }
+          
+          sendCommand(receivedCommand+"REP", receivedFromName, "SUCC");
+          
           startTime2 = millis();
         }
       }
