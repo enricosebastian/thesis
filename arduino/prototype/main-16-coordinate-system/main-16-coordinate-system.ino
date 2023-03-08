@@ -407,43 +407,21 @@ void forDrone() {
         digitalWrite(recordingPin, HIGH);
       } else if(receivedCommand == "WHER") {
         startTime = millis();
+        startTime2 = millis();
+
         Serial.print("Base station wants to know ");
         Serial.println(receivedDetails);
-        if(receivedDetails == "CURR\r") {
-          while(millis() - startTime < 800) {
-            if(millis() - startTime2 > 300) {
-              sendCommand("HERE", receivedFromName, String(currentX) + "," + String(currentY));
+
+        startTime = millis();
+        startTime2 = millis();
+        while(millis() - startTime < 3000) {
+          if(millis() - startTime2 < 500) {
+            if(receivedDetails == "CURR" || receivedDetails == "CURR\r") {
+              sendCommand("HERE", receivedFromName, String(currentX)+","+String(currentY));
+            } else if(receivedDetails == "HOME" || receivedDetails == "HOME\r") {
+              sendCommand("HERE", receivedFromName, String(homeX)+","+String(homeY));
             }
-          }
-        } else if(receivedDetails == "HOME\r") {
-          while(millis() - startTime < 800) {
-            if(millis() - startTime2 > 300) {
-              sendCommand("HERE", receivedFromName, String(homeX) + "," + String(homeY));
-            }
-          }
-        } else if(receivedDetails == "SAVE\r") {
-          while(millis() - startTime < 800) {
-            if(millis() - startTime2 > 300) {
-              sendCommand("HERE", receivedFromName, String(savedX) + "," + String(savedY));
-            }
-          }
-        } else if(receivedDetails == "XSUB\r") {
-          while(millis() - startTime < 800) {
-            if(millis() - startTime2 > 300) {
-              sendCommand("HERE", receivedFromName, String(x0));
-            }
-          }
-        } else if(receivedDetails == "MAXY\r") {
-          while(millis() - startTime < 800) {
-            if(millis() - startTime2 > 300) {
-              sendCommand("HERE", receivedFromName, String(maxY));
-            }
-          }
-        } else if(receivedDetails == "MINY\r") {
-          while(millis() - startTime < 800) {
-            if(millis() - startTime2 > 300) {
-              sendCommand("HERE", receivedFromName, String(minY));
-            }
+            startTime2 = millis();
           }
         }
           
