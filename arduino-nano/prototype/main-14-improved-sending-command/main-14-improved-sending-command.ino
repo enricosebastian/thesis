@@ -61,13 +61,13 @@ float kd = 3;
 float PID_p, PID_i, PID_d, PID_total;
 
 float savedAngle = 0.0;
-float oppositeSavedAngle = 0.0;
-float homeAngle = 0.0;
+float tempAngle = 0.0;
 
 float straightAngle = 0.0;
 float oppositeStraightAngle = 0.0;
 float leftAngle = 0.0;
 float rightAngle = 0.0;
+
 float detectAngle = -90.0;
 
 //millis time variables for storage
@@ -180,8 +180,8 @@ void loop() {
       startTime = millis();
       startTime2 = millis();
 
-      savedAngle = currentAngle;
-      straightAngle = savedAngle;
+      straightAngle = currentAngle;
+      savedAngle = straightAngle;
 
       leftAngle = savedAngle + detectAngle;
       if(leftAngle > 360) leftAngle = leftAngle - 360;
@@ -193,18 +193,14 @@ void loop() {
 
       int endIndex = receivedDetails.indexOf(',');
       homeX = receivedDetails.substring(0, endIndex).toFloat();
-      homeY = receivedDetails.substring(endIndex+1).toFloat();
-      //235 = blue body/dro1/white pbank
-      //225 
+      homeY = receivedDetails.substring(endIndex+1).toFloat(); 
 
-      if(myName == "DRO1") oppositeSavedAngle = savedAngle + 235;
-      else if(myName == "DRO2") oppositeSavedAngle = savedAngle + 210;
+      if(myName == "DRO1") oppositeStraightAngle = straightAngle + 235;
+      else if(myName == "DRO2") oppositeStraightAngle = straightAngle + 210;
 
-      if(oppositeSavedAngle > 360) {
-        oppositeSavedAngle = oppositeSavedAngle - 360;
+      if(oppositeStraightAngle > 360) {
+        oppositeStraightAngle = oppositeStraightAngle - 360;
       }
-      oppositeStraightAngle = oppositeSavedAngle;
-      homeAngle = oppositeStraightAngle;
 
       digitalWrite(greenLed, HIGH);
       digitalWrite(yellowLed, LOW);
@@ -218,9 +214,6 @@ void loop() {
       Serial.print(savedX);
       Serial.print(",");
       Serial.println(savedY);
-
-      Serial.print("Opposite saved angle: ");
-      Serial.println(oppositeSavedAngle);
     } else if(receivedCommand == "STOP" && isDeployed) {
       hasStopped = true;
       hasDetectedObject = false;
@@ -236,10 +229,6 @@ void loop() {
       hasDetectedObject = true;
       startTime = millis();
       startTime2 = millis();
-
-      Serial.println(receivedDetails == "LEFT\r");
-      Serial.println(receivedDetails == "LEFT");
-      Serial.println(receivedDetails == "LEFT\n");
 
       if(receivedDetails == "LEFT\r" || receivedDetails == "LEFT") {
         digitalWrite(greenLed, LOW);
@@ -268,10 +257,6 @@ void loop() {
         digitalWrite(blueLed, LOW);
         digitalWrite(redLed, LOW);
 
-        // add delay here
-
-        hasDetectedObject = false;
-        savedAngle = straightAngle;
         Serial.println("Object has been acquired.");
       }
     } else if(receivedCommand == "COOR" && isDeployed) {
@@ -279,29 +264,13 @@ void loop() {
       currentX = receivedDetails.substring(0, endIndex).toFloat();
       currentY = receivedDetails.substring(endIndex+1).toFloat();
 
-      Serial.print("X,Y: ");
+      Serial.print("Current location: ");
       Serial.print(currentX);
       Serial.print(",");
       Serial.println(currentY);
     } else if(receivedCommand == "TURN" && isDeployed) {
       savedAngle = savedAngle + receivedDetails.toFloat();
-
-      if(myName == "DRO1") oppositeSavedAngle = savedAngle + 235;
-      else if(myName == "DRO2") oppositeSavedAngle = savedAngle + 210;
-
-      if(savedAngle > 360) savedAngle = savedAngle - 360;
-      else if(savedAngle < 0) savedAngle = 360 + savedAngle;
       
-      if(oppositeSavedAngle > 360) oppositeSavedAngle = oppositeSavedAngle - 360;
-      else if(oppositeSavedAngle < 0) oppositeSavedAngle = 360 + oppositeSavedAngle;
-
-      leftAngle = savedAngle + detectAngle;
-      if(leftAngle > 360) leftAngle = leftAngle - 360;
-      if(leftAngle < 0) leftAngle = 360 + leftAngle;
-
-      rightAngle = savedAngle - detectAngle;
-      if(rightAngle > 360) rightAngle = rightAngle - 360;
-      if(rightAngle < 0) rightAngle = 360 + rightAngle;
       Serial.print("Turning to: ");
       Serial.println(savedAngle);
     } else if(receivedCommand == "HOME" && isDeployed) {
@@ -332,16 +301,14 @@ void loop() {
     // State 1: Continuously moving
     if(!hasStopped && !hasDetectedObject) {
 
-      if(millis() - startTime > 1000) {
+      if(millis() - startTime > 500) {
         digitalWrite(greenLed, !digitalRead(greenLed));
         startTime = millis();
       } 
 
       // State 2: Maneuvering. If Y reaches limit, turn
-      if((currentY > maxY && counter % 2 == 0) || (currentY < minY && counter % 2 != 0)) {
-        float tempAngle = savedAngle;
-        savedAngle = oppositeSavedAngle;
-        oppositeSavedAngle = tempAngle;
+      if(currentY > maxY) {
+        savedAngle = oppositeStraightAngle;
 
         leftAngle = savedAngle + detectAngle;
         if(leftAngle > 360) leftAngle = leftAngle - 360;
@@ -351,20 +318,35 @@ void loop() {
         if(rightAngle > 360) rightAngle = rightAngle - 360;
         if(rightAngle < 0) rightAngle = 360 + rightAngle;
 
-        Serial.print("Saved angle: ");
-        Serial.println(savedAngle);
-        Serial.print("Opposite angle: ");
-        Serial.println(oppositeSavedAngle);
-        startTime2 = millis();
-        counter++;
+        Serial.println("Reached Max Y. Turning.");
+      } else if(currentY < minY) {
+        savedAngle = straightAngle;
+
+        leftAngle = savedAngle + detectAngle;
+        if(leftAngle > 360) leftAngle = leftAngle - 360;
+        if(leftAngle < 0) leftAngle = 360 + leftAngle;
+
+        rightAngle = savedAngle - detectAngle;
+        if(rightAngle > 360) rightAngle = rightAngle - 360;
+        if(rightAngle < 0) rightAngle = 360 + rightAngle;
+
+        Serial.println("Reached Min Y. Turning.");
       }
-      
+
       move(currentAngle);
     }
 
     // State 2: Detected something, so move there
     if(!hasStopped && hasDetectedObject) {
-      if(millis() - startTime2 > 10000) {
+      if(receivedCommand == "DETE" && (receivedDetails == "DONE\r" || receivedDetails == "DONE")) {
+        hasDetectedObject = false;
+        digitalWrite(greenLed, LOW);
+        digitalWrite(blueLed, LOW);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(redLed, LOW);
+      }
+
+      if(millis() - startTime2 > 5000) {
         hasStopped = false;
         hasDetectedObject = false;
         startTime = millis();
@@ -375,12 +357,13 @@ void loop() {
         digitalWrite(yellowLed, LOW);
         digitalWrite(redLed, LOW);
       }
+
       move(currentAngle);
     }
 
     // State 3: Stop moving
     if(hasStopped && !isGoingHome) {
-      if(startTime - millis() > 1000) {
+      if(startTime - millis() > 500) {
         digitalWrite(greenLed, LOW);
         digitalWrite(yellowLed, LOW);
         digitalWrite(blueLed, LOW);
@@ -395,14 +378,30 @@ void loop() {
       if(abs(currentX - homeX) > 1.5) {
         // start moving to home x
         if(currentX - homeX < 0) {
-          savedAngle = rightAngle;
-        } else if(currentX - homeX > 0) {
           savedAngle = leftAngle;
+          digitalWrite(greenLed, LOW);
+          digitalWrite(yellowLed, HIGH);
+          digitalWrite(blueLed, LOW);
+          digitalWrite(redLed, LOW);
+
+        } else if(currentX - homeX > 0) {
+          savedAngle = rightAngle;
+
+          digitalWrite(greenLed, LOW);
+          digitalWrite(yellowLed, HIGH);
+          digitalWrite(blueLed, LOW);
+          digitalWrite(redLed, LOW);
+
         }
         move(currentAngle);
       } else if(abs(currentY - homeY) > 1.5) {
         // start moving to home y
-        savedAngle = homeAngle;
+        digitalWrite(greenLed, LOW);
+        digitalWrite(yellowLed, HIGH);
+        digitalWrite(blueLed, HIGH);
+        digitalWrite(redLed, LOW);
+
+        savedAngle = oppositeStraightAngle;
         move(currentAngle);
       } else {
         isGoingHome = false;

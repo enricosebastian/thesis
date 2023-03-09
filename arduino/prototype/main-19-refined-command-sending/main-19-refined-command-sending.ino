@@ -254,7 +254,7 @@ void forBaseStation() {
         sendCommand(sentCommand, sentToName, sentDetails);
 
         while(!(receiveCommand() && receivedCommand == sentCommand+"REP")) {
-          if(millis() - startTime2 > 500) {
+          if(millis() - startTime2 > 1000) {
             Serial.print(sentCommand);
             Serial.println("REP was not received yet. Resending command.");
             sendCommand(sentCommand, sentToName, sentDetails);
