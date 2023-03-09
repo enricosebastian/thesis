@@ -51,8 +51,8 @@ float currentY = 0;
 float homeX = 0;
 float homeY = 0;
 
-float maxY = 4.0;
-float minY = 2.0;
+float maxY = 12.0;
+float minY = 8.0;
 
 //PID values
 float kp = 2;
@@ -195,7 +195,8 @@ void loop() {
       homeX = receivedDetails.substring(0, endIndex).toFloat();
       homeY = receivedDetails.substring(endIndex+1).toFloat(); 
 
-      if(myName == "DRO1") oppositeStraightAngle = straightAngle + 235;
+      //WHITE = 235
+      if(myName == "DRO1") oppositeStraightAngle = straightAngle + 190;
       else if(myName == "DRO2") oppositeStraightAngle = straightAngle + 210;
 
       if(oppositeStraightAngle > 360) {

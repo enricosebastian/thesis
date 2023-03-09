@@ -4,8 +4,8 @@
 #include <LinkedList.h>
 
 //Name here
-const String myName = "BASE";
-// const String myName = "DRO1";
+// const String myName = "BASE";
+const String myName = "DRO1";
 // const String myName = "DRO2";
 // const String myName = "DRO3";
 
@@ -46,7 +46,7 @@ unsigned long startTime4 = 0;
 
 float d1 = 0;
 float d2 = 0;
-float x0 = 3.8; //3.8 strc
+float x0 = 17.8; //3.8 strc
 
 float savedX = 0;
 float savedY = 0;
