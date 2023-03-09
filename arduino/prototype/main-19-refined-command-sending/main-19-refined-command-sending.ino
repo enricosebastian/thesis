@@ -42,6 +42,7 @@ bool hasDetectedObject = false;
 unsigned long startTime = 0;
 unsigned long startTime2 = 0;
 unsigned long startTime3 = 0;
+unsigned long startTime4 = 0;
 
 float d1 = 0;
 float d2 = 0;
@@ -294,14 +295,15 @@ void forDrone() {
   //STATE 1: Not connected to base station
   if(!isConnected && !isDeployed) {
     //TASK 1: Continue to wait for connection acknowledgement
-    while((receiveCommand() && receivedCommand == "CONNREP")) {
+    while(!(receiveCommand() && receivedCommand == "CONNREP")) {
       if(millis() - startTime > 500) {
         Serial.println("Reply 'CONNREP' was not received. Resending message again.");
-        sendCommand("CONN", "BASE", "PLES");
+        sendCommand("CONN", "BASE", "PLEAS");
 
         startTime = millis();        
       }
     }
+
     isConnected = true;
     Serial.println("Successfully detected by base station. Waiting for deployment.");
     sendToNano("CONN", myName, "SUCC");
@@ -309,65 +311,67 @@ void forDrone() {
 
   //STATE 2: Connected, but waiting for deployment
   if(isConnected && !isDeployed) {
-    //TASK 1: Continue to wait for deployment command
-    while(!receivedSpecificCommand("DEPL")) {
-      if(millis() - startTime > waitingTime) {
-        Serial.println("Command 'DEPL' was not received yet. Continue waiting.");
-        startTime = millis();        
-      }
+    //TASK 1: Receiving coordinates
+    while(millis() - startTime > 1000) {
+      Nano.end();
+      HC12.end();
+      Esp.listen();
+      
+      startTime = millis();
 
-      while(millis() - startTime2 > 1000) {
-        Nano.end();
-        HC12.end();
-        Esp.listen();
-        startTime3 = millis();
-        while(millis() - startTime3 < 300) {
-          if(receiveCommand()) {
-            int endIndex = receivedDetails.indexOf(',');
-            d1 = receivedDetails.substring(0, endIndex).toFloat();
-            d2 = receivedDetails.substring(endIndex+1).toFloat();
-            if(d1 != 0 && d2 != 0) {
-              currentX = (x0*x0 - d2*d2 + d1*d1)/(2*x0);
-              currentY = sqrt(abs(d1*d1 - currentX*currentX));
-              Serial.print("Current location: ");
-              Serial.print(currentX);
-              Serial.print(",");
-              Serial.println(currentY);
-              sendToNano("COOR", myName, String(currentX)+","+String(currentY));
-            }
-          }
+      while(millis() - startTime2 < 300) {
+        if(receiveCommand() && receivedCommand == "COOR") {
+          int endIndex = receivedDetails.indexOf(',');
+          d1 = receivedDetails.substring(0, endIndex).toFloat();
+          d2 = receivedDetails.substring(endIndex+1).toFloat();
+          if(d1 != 0 && d2 != 0) {
+            currentX = (x0*x0 - d2*d2 + d1*d1)/(2*x0);
+            currentY = sqrt(abs(d1*d1 - currentX*currentX));
+            Serial.print("Current location: ");
+            Serial.print(currentX);
+            Serial.print(",");
+            Serial.println(currentY);
+            sendToNano("COOR", myName, String(currentX)+","+String(currentY));
+          }          
         }
-        startTime3 = millis();
-        startTime2 = millis();
-        Nano.end();
-        Esp.end();
-        HC12.listen();
       }
+      startTime = millis();
+      startTime2 = millis();
+      Nano.end();
+      Esp.end();
+      HC12.listen();
     }
 
     Serial.println("Base station wants to start deploying. Sending acknowledgement.");
-    startTime = millis();
-    startTime2 = millis();
 
-    while(millis() - startTime < waitingTime) {
-      if(millis() - startTime2 > 800) {
-        sendCommand("DEPLREP", receivedFromName, "SUCC");
-        startTime2 = millis();
+    //TASK 2: Received DEPLOY command. Ready everything
+    if(receiveCommand() && receivedCommand == "DEPL") {
+      startTime = millis();
+      startTime2 = millis();
+      while(millis() - startTime < 2000) {
+        if(millis() - startTime2 > 500) {
+          sendCommand("DEPLREP", "BASE", "SUCC");
+          startTime2 = millis();
+        }
       }
+      
+      isDeployed = true;
+      hasStopped = true;
+
+      startTime = millis();
+      startTime2 = millis();
+      startTime3 = millis();
+
+      homeX = currentX;
+      homeY = currentY;
+
+      Serial.print("Drone has deployed at ");
+      Serial.print(homeX);
+      Serial.print(",");
+      Serial.println(homeY);
+
+      sendToNano("DEPL", myName, String(homeX)+","+String(homeY));
     }
-    
-    isDeployed = true;
-    hasStopped = true;
-    startTime = millis();
-    homeX = currentX;
-    homeY = currentY;
-
-    Serial.print("Drone has deployed at ");
-    Serial.print(homeX);
-    Serial.print(",");
-    Serial.println(homeY);
-
-    sendToNano("DEPL", myName, String(homeX)+","+String(homeY));
   }
 
   //STATE 3: Drone is deployed. Move, receive commands, send commands, and detect objects
@@ -385,10 +389,9 @@ void forDrone() {
       //Send acknowledgement that we received the command first
       startTime = millis();
       startTime2 = millis();
-      while(millis() - startTime < waitingTime) {
-        if(millis() - startTime2 > 1000) {
+      while(millis() - startTime < 2000) {
+        if(millis() - startTime2 > 500) {
           sendCommand(receivedCommand+"REP", receivedFromName, "SUCC");
-          
           startTime2 = millis();
         }
       }
@@ -421,7 +424,7 @@ void forDrone() {
         startTime = millis();
         startTime2 = millis();
         while(millis() - startTime < 3000) {
-          if(millis() - startTime2 < 500) {
+          if(millis() - startTime2 > 500) {
             if(receivedDetails == "CURR" || receivedDetails == "CURR\r") {
               sendCommand("HERE", receivedFromName, String(currentX)+","+String(currentY));
             } else if(receivedDetails == "HOME" || receivedDetails == "HOME\r") {
@@ -467,9 +470,6 @@ void forDrone() {
       char letter = Serial.read();
 
       if(letter == '\n') {
-        Serial.print("Sent via serial: ");
-        Serial.println(receivedMessage);
-        
         int endIndex = receivedMessage.indexOf(' ');
         receivedCommand = receivedMessage.substring(0, endIndex);
         receivedMessage = receivedMessage.substring(endIndex+1);
@@ -492,13 +492,13 @@ void forDrone() {
     }
 
     // Task 3: Wait for any coordinates
-    while(millis() - startTime > 800) {
+    while(millis() - startTime3 > 1000) {
       Nano.end();
       HC12.end();
       Esp.listen();
-      startTime2 = millis();
-      while(millis() - startTime2 < 300) {
-        if(receiveCommand()) {
+      startTime4 = millis();
+      while(millis() - startTime4 < 1000) {
+        if(receiveCommand() && receivedCommand == "COOR") {
           int endIndex = receivedDetails.indexOf(',');
           d1 = receivedDetails.substring(0, endIndex).toFloat();
           d2 = receivedDetails.substring(endIndex+1).toFloat();
@@ -513,13 +513,12 @@ void forDrone() {
           }
         }
       }
-      startTime = millis();
-      startTime2 = millis();
+      startTime3 = millis();
+      startTime4 = millis();
       Nano.end();
       Esp.end();
       HC12.listen();
     }
-
   }
 }
 
