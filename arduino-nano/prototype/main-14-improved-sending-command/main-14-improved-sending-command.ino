@@ -378,30 +378,11 @@ void loop() {
     if(hasStopped && isGoingHome) {
       if(abs(currentX - homeX) > 1.5) {
         // start moving to home x
-        if(currentX - homeX < 0) {
-          savedAngle = leftAngle;
-          digitalWrite(greenLed, LOW);
-          digitalWrite(yellowLed, HIGH);
-          digitalWrite(blueLed, LOW);
-          digitalWrite(redLed, LOW);
-
-        } else if(currentX - homeX > 0) {
-          savedAngle = rightAngle;
-
-          digitalWrite(greenLed, LOW);
-          digitalWrite(yellowLed, HIGH);
-          digitalWrite(blueLed, LOW);
-          digitalWrite(redLed, LOW);
-
-        }
+        if(currentX - homeX < 0) savedAngle = leftAngle;
+        else if(currentX - homeX > 0) savedAngle = rightAngle;
         move(currentAngle);
       } else if(abs(currentY - homeY) > 1.5) {
         // start moving to home y
-        digitalWrite(greenLed, LOW);
-        digitalWrite(yellowLed, HIGH);
-        digitalWrite(blueLed, HIGH);
-        digitalWrite(redLed, LOW);
-
         savedAngle = oppositeStraightAngle;
         move(currentAngle);
       } else {

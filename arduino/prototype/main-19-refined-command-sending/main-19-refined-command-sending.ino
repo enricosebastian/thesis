@@ -428,6 +428,14 @@ void forDrone() {
               sendCommand("HERE", receivedFromName, String(currentX)+","+String(currentY));
             } else if(receivedDetails == "HOME" || receivedDetails == "HOME\r") {
               sendCommand("HERE", receivedFromName, String(homeX)+","+String(homeY));
+            } else if(receivedDetails == "XSUB" || receivedDetails == "XSUB\r") {
+              sendCommand("HERE", receivedFromName, String(x0));
+            } else if(receivedDetails == "MAXY" || receivedDetails == "MAXY\r") {
+              sendCommand("HERE", receivedFromName, String(maxY));
+            } else if(receivedDetails == "MINY" || receivedDetails == "MINY\r") {
+              sendCommand("HERE", receivedFromName, String(minY));
+            } else {
+              sendCommand("HERE", receivedFromName, "N/A");
             }
             startTime2 = millis();
           }
