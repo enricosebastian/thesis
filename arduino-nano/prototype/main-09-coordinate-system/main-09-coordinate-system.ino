@@ -268,8 +268,6 @@ void loop() {
         digitalWrite(blueLed, LOW);
         digitalWrite(redLed, LOW);
 
-        // add delay here
-
         hasDetectedObject = false;
         savedAngle = straightAngle;
         Serial.println("Object has been acquired.");
