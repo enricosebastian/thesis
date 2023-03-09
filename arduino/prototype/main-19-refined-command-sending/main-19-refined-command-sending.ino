@@ -119,7 +119,7 @@ void setup() {
   HC12.listen();
 
   Serial.print(myName);
-  Serial.println(" v16 has initialized.");
+  Serial.println(" v19 has initialized.");
   startTime = millis();
   startTime2 = millis();
   startTime3 = millis();
@@ -138,40 +138,40 @@ void forBaseStation() {
   if(!isDeployed) {
 
     //TASK 1 Waiting for a drone to connect. Add it to list
-    if(receivedSpecificCommand("CONN")) {
+    if(receiveCommand() && receivedCommand == "CONN") {
       Serial.print(receivedFromName);
       Serial.println(" wanted to connect. Sending handshake.");
       startTime = millis();
       startTime2 = millis();
-      while(millis() - startTime < 1000) {
-        if(millis() - startTime2 >= 300) {
-          startTime2 = millis();
+      while(millis() - startTime < 3000) {
+        if(millis() - startTime2 >= 500) {
           sendCommand("CONNREP", receivedFromName, "SUCC");
+          startTime2 = millis();
         }
       }
       addDrone(receivedFromName);
-
-      //Count drones
-      if(drones.size() == 1) {
-        digitalWrite(redLed, HIGH);
-        digitalWrite(yellowLed, LOW);
-        digitalWrite(greenLed, LOW);
-      } else if(drones.size() == 2) {
-        digitalWrite(redLed, HIGH);
-        digitalWrite(yellowLed, HIGH);
-        digitalWrite(greenLed, LOW);
-      } else if(drones.size() == 3) {
-        digitalWrite(redLed, HIGH);
-        digitalWrite(yellowLed, HIGH);
-        digitalWrite(greenLed, HIGH);
-      } else {
-        digitalWrite(redLed, LOW);
-        digitalWrite(yellowLed, LOW);
-        digitalWrite(greenLed, LOW);
-      }
     }
 
-    //TASK 2 If you pressed the button, deploy all drones
+    //Count drones
+    if(drones.size() == 1) {
+      digitalWrite(redLed, HIGH);
+      digitalWrite(yellowLed, LOW);
+      digitalWrite(greenLed, LOW);
+    } else if(drones.size() == 2) {
+      digitalWrite(redLed, HIGH);
+      digitalWrite(yellowLed, HIGH);
+      digitalWrite(greenLed, LOW);
+    } else if(drones.size() == 3) {
+      digitalWrite(redLed, HIGH);
+      digitalWrite(yellowLed, HIGH);
+      digitalWrite(greenLed, HIGH);
+    } else {
+      digitalWrite(redLed, LOW);
+      digitalWrite(yellowLed, LOW);
+      digitalWrite(greenLed, LOW);
+    }
+
+    //TASK 2: If you pressed the button, deploy all drones
     if(digitalRead(btn) == HIGH && drones.size() > 0) {
       Serial.println("Button pressed. Starting deployment.");
       digitalWrite(redLed, LOW);
@@ -188,16 +188,19 @@ void forBaseStation() {
         Serial.print("Deploying: ");
         Serial.println(drones.get(i));
         startTime = millis();
+        startTime2 = millis();
 
-        sendCommand("DEPL", drones.get(i), "HELL");
-        while(!receivedSpecificCommand("DEPLREP") && receivedFromName != drones.get(i)) {
-          if(millis() - startTime > waitingTime) {
+        sendCommand("DEPL", drones.get(i), "MOVE");
+        while(!(receiveCommand() && receivedCommand == "DEPLREP" && receivedFromName == drones.get(i))) {
+          if(millis() - startTime > 500) {
             startTime = millis();
 
             Serial.print("Did not receive 'DEPLREP' from '");
             Serial.print(drones.get(i));
             Serial.println("' yet. Sending 'DEPL' again.");
-            sendCommand("DEPL", drones.get(i), "HELL");
+            
+            sendCommand("DEPL", drones.get(i), "MOVE");
+
             receivedCommand = "";
             receivedFromName = "";
             receivedToName = "";
@@ -224,19 +227,18 @@ void forBaseStation() {
   //STATE 2: Base station has deployed everyone. Read and send commands
   if(isDeployed) {
     //TASK 1: If you typed something, send it to base station
-    if(millis() - startTime > 800) {
+    if(millis() - startTime > 500) {
       digitalWrite(redLed, LOW);
       digitalWrite(yellowLed, LOW);
       digitalWrite(greenLed, !digitalRead(greenLed));
+
+      startTime = millis();
     }
     
     while(Serial.available()) {
       char letter = Serial.read();
 
       if(letter == '\n') {
-        Serial.print("Sent via serial: ");
-        Serial.println(sentMessage);
-
         int endIndex = sentMessage.indexOf(' ');
         sentCommand = sentMessage.substring(0, endIndex);
         sentMessage = sentMessage.substring(endIndex+1);
@@ -246,15 +248,17 @@ void forBaseStation() {
         sentDetails = sentMessage.substring(endIndex+1);
         sentMessage = "";
 
-        startTime = millis();
+        startTime2 = millis();
+
         sendCommand(sentCommand, sentToName, sentDetails);
 
-        while(!receivedSpecificCommand(sentCommand+"REP")) {
-          if(millis() - startTime > 1000) {
+        while(!(receiveCommand() && receivedCommand == sentCommand+"REP")) {
+          if(millis() - startTime2 > 500) {
             Serial.print(sentCommand);
             Serial.println("REP was not received yet. Resending command.");
             sendCommand(sentCommand, sentToName, sentDetails);
-            startTime = millis();            
+
+            startTime2 = millis();            
           }
 
           if(Serial.available() && Serial.readStringUntil('\n') != "wakaflaka") {
@@ -266,7 +270,8 @@ void forBaseStation() {
         //Erase data after successful or failed send
         sentCommand = "";
         sentToName = "";
-        sentDetails = "";       
+        sentFromName = "";
+        sentDetails = "";      
       } else {
         sentMessage += letter;
       }
@@ -289,10 +294,11 @@ void forDrone() {
   //STATE 1: Not connected to base station
   if(!isConnected && !isDeployed) {
     //TASK 1: Continue to wait for connection acknowledgement
-    while(!receivedSpecificCommand("CONNREP")) {
-      if(millis() - startTime > 800) {
+    while((receiveCommand() && receivedCommand == "CONNREP")) {
+      if(millis() - startTime > 500) {
         Serial.println("Reply 'CONNREP' was not received. Resending message again.");
-        sendCommand("CONN", "BASE", "HELL");
+        sendCommand("CONN", "BASE", "PLES");
+
         startTime = millis();        
       }
     }
@@ -595,8 +601,4 @@ void sendCommand(String command, String toName, String details) {
   } else {
     Serial.println("Wrong format of command. Try again.");
   }
-}
-
-bool receivedSpecificCommand(String command) {
-  return receiveCommand() && (receivedCommand == command);
 }
