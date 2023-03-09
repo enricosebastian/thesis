@@ -198,10 +198,6 @@ void forBaseStation() {
             Serial.print(drones.get(i));
             Serial.println("' yet. Sending 'DEPL' again.");
             sendCommand("DEPL", drones.get(i), "HELL");
-            receivedCommand = "";
-            receivedFromName = "";
-            receivedToName = "";
-            receivedDetails = "";
           }
         }
         Serial.print("Successfully deployed: ");
@@ -250,7 +246,7 @@ void forBaseStation() {
         sendCommand(sentCommand, sentToName, sentDetails);
 
         while(!receivedSpecificCommand(sentCommand+"REP")) {
-          if(millis() - startTime > 1000) {
+          if(millis() - startTime > 800) {
             Serial.print(sentCommand);
             Serial.println("REP was not received yet. Resending command.");
             sendCommand(sentCommand, sentToName, sentDetails);
@@ -261,25 +257,14 @@ void forBaseStation() {
             Serial.println("Canceling sending of command. Try again.");
             break;
           }
-        }
-
-        //Erase data after successful or failed send
-        sentCommand = "";
-        sentToName = "";
-        sentDetails = "";       
+        }        
       } else {
         sentMessage += letter;
       }
     }
 
     //TASK 2: Wait for base station to send me a command
-    if(receiveCommand()) {
-      Serial.print("Received ");
-      Serial.print(receivedCommand);
-      Serial.print(" from ");
-      Serial.print(receivedFromName);
-      Serial.print(" containing ");
-      Serial.println(receivedDetails);
+    if(receiveCommand()) {      
     }
 
   }
@@ -369,20 +354,13 @@ void forDrone() {
 
     // Task 1: Interpret commands
     if(receiveCommand()) {
-      Serial.print("Received ");
-      Serial.print(receivedCommand);
-      Serial.print(" from ");
-      Serial.print(receivedFromName);
-      Serial.print(" containing ");
-      Serial.println(receivedDetails);
 
       //Send acknowledgement that we received the command first
       startTime = millis();
       startTime2 = millis();
       while(millis() - startTime < waitingTime) {
-        if(millis() - startTime2 > 1000) {
+        if(millis() - startTime2 > 800) {
           sendCommand(receivedCommand+"REP", receivedFromName, "SUCC");
-          
           startTime2 = millis();
         }
       }
@@ -407,21 +385,43 @@ void forDrone() {
         digitalWrite(recordingPin, HIGH);
       } else if(receivedCommand == "WHER") {
         startTime = millis();
-        startTime2 = millis();
-
         Serial.print("Base station wants to know ");
         Serial.println(receivedDetails);
-
-        startTime = millis();
-        startTime2 = millis();
-        while(millis() - startTime < 3000) {
-          if(millis() - startTime2 < 500) {
-            if(receivedDetails == "CURR" || receivedDetails == "CURR\r") {
-              sendCommand("HERE", receivedFromName, String(currentX)+","+String(currentY));
-            } else if(receivedDetails == "HOME" || receivedDetails == "HOME\r") {
-              sendCommand("HERE", receivedFromName, String(homeX)+","+String(homeY));
+        if(receivedDetails == "CURR\r") {
+          while(millis() - startTime < 800) {
+            if(millis() - startTime2 > 300) {
+              sendCommand("HERE", receivedFromName, String(currentX) + "," + String(currentY));
             }
-            startTime2 = millis();
+          }
+        } else if(receivedDetails == "HOME\r") {
+          while(millis() - startTime < 800) {
+            if(millis() - startTime2 > 300) {
+              sendCommand("HERE", receivedFromName, String(homeX) + "," + String(homeY));
+            }
+          }
+        } else if(receivedDetails == "SAVE\r") {
+          while(millis() - startTime < 800) {
+            if(millis() - startTime2 > 300) {
+              sendCommand("HERE", receivedFromName, String(savedX) + "," + String(savedY));
+            }
+          }
+        } else if(receivedDetails == "XSUB\r") {
+          while(millis() - startTime < 800) {
+            if(millis() - startTime2 > 300) {
+              sendCommand("HERE", receivedFromName, String(x0));
+            }
+          }
+        } else if(receivedDetails == "MAXY\r") {
+          while(millis() - startTime < 800) {
+            if(millis() - startTime2 > 300) {
+              sendCommand("HERE", receivedFromName, String(maxY));
+            }
+          }
+        } else if(receivedDetails == "MINY\r") {
+          while(millis() - startTime < 800) {
+            if(millis() - startTime2 > 300) {
+              sendCommand("HERE", receivedFromName, String(minY));
+            }
           }
         }
           
@@ -552,8 +552,10 @@ void addDrone(String droneName) {
 bool receiveCommand() {
   while(HC12.available()) {
     char letter = HC12.read();
-    Serial.println(letter);
     if(letter == '\n') {
+      Serial.print("Received: ");
+      Serial.println(receivedMessage);
+
       int endIndex = receivedMessage.indexOf(' ');
       receivedCommand = receivedMessage.substring(0, endIndex);
       receivedMessage = receivedMessage.substring(endIndex+1);
@@ -582,14 +584,6 @@ void sendCommand(String command, String toName, String details) {
   //COMMAND TONAME FROMNAME DETAILS
   if(command != "" && toName != "" && details != "") {
     sentMessage = command + " " + toName + " " + myName + " " + details;
-
-    Serial.print("Sending ");
-    Serial.print(command);
-    Serial.print(" to ");
-    Serial.print(toName);
-    Serial.print(" with ");
-    Serial.println(details);
-
     HC12.println(sentMessage);
     sentMessage = "";
   } else {
