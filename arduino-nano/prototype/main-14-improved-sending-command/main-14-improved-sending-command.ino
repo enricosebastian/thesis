@@ -51,8 +51,8 @@ float currentY = 0;
 float homeX = 0;
 float homeY = 0;
 
-float maxY = 11.0;
-float minY = 10.0;
+float maxY = 4.0;
+float minY = 2.0;
 
 //PID values
 float kp = 2;
@@ -211,9 +211,9 @@ void loop() {
       Serial.print(" is now moving at ");
       Serial.print(savedAngle);
       Serial.print(" degrees in ");
-      Serial.print(savedX);
+      Serial.print(homeX);
       Serial.print(",");
-      Serial.println(savedY);
+      Serial.println(homeY);
     } else if(receivedCommand == "STOP" && isDeployed) {
       hasStopped = true;
       hasDetectedObject = false;
@@ -270,7 +270,7 @@ void loop() {
       Serial.println(currentY);
     } else if(receivedCommand == "TURN" && isDeployed) {
       savedAngle = savedAngle + receivedDetails.toFloat();
-      
+
       Serial.print("Turning to: ");
       Serial.println(savedAngle);
     } else if(receivedCommand == "HOME" && isDeployed) {
@@ -307,7 +307,7 @@ void loop() {
       } 
 
       // State 2: Maneuvering. If Y reaches limit, turn
-      if(currentY > maxY) {
+      if(currentY > maxY && currentY > minY) {
         savedAngle = oppositeStraightAngle;
 
         leftAngle = savedAngle + detectAngle;
@@ -317,9 +317,9 @@ void loop() {
         rightAngle = savedAngle - detectAngle;
         if(rightAngle > 360) rightAngle = rightAngle - 360;
         if(rightAngle < 0) rightAngle = 360 + rightAngle;
-
-        Serial.println("Reached Max Y. Turning.");
-      } else if(currentY < minY) {
+        
+        Serial.println("Reached max Y.");
+      } else if(currentY < minY && currentY < maxY) {
         savedAngle = straightAngle;
 
         leftAngle = savedAngle + detectAngle;
@@ -330,7 +330,7 @@ void loop() {
         if(rightAngle > 360) rightAngle = rightAngle - 360;
         if(rightAngle < 0) rightAngle = 360 + rightAngle;
 
-        Serial.println("Reached Min Y. Turning.");
+        Serial.println("Reached min Y.");
       }
 
       move(currentAngle);
@@ -410,11 +410,6 @@ void loop() {
         escRight.write(0);
         escLeft.write(0);
       }
-
-      digitalWrite(greenLed, HIGH);
-      digitalWrite(yellowLed, HIGH);
-      digitalWrite(blueLed, HIGH);
-      digitalWrite(redLed, HIGH);
     }
 
   }

@@ -2,7 +2,7 @@
 #include "DW1000Ranging.h"
 #include "DW1000.h"
 
-#define TAG_ADD "02:20:5B:D5:A9:9A:E2:9C"
+#define TAG_ADD "01:20:5B:D5:A9:9A:E2:9C"
 
 #define TX 16
 #define RX 17
