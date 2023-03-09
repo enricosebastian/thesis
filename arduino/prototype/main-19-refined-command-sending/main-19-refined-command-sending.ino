@@ -342,12 +342,11 @@ void forDrone() {
       HC12.listen();
     }
 
-    Serial.println("Base station wants to start deploying. Sending acknowledgement.");
-
     //TASK 2: Received DEPLOY command. Ready everything
     if(receiveCommand() && receivedCommand == "DEPL") {
       startTime = millis();
       startTime2 = millis();
+      Serial.println("Base station wants to start deploying. Sending acknowledgement.");
       while(millis() - startTime < 2000) {
         if(millis() - startTime2 > 500) {
           sendCommand("DEPLREP", "BASE", "SUCC");
@@ -557,7 +556,6 @@ void addDrone(String droneName) {
 bool receiveCommand() {
   while(HC12.available()) {
     char letter = HC12.read();
-    Serial.println(letter);
     if(letter == '\n') {
       int endIndex = receivedMessage.indexOf(' ');
       receivedCommand = receivedMessage.substring(0, endIndex);
