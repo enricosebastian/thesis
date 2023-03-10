@@ -54,6 +54,9 @@ float homeY = 0;
 float maxY = 12.0;
 float minY = 8.0;
 
+float maxX = 1.0;
+float minX = 17.0;
+
 //PID values
 float kp = 2;
 float ki = 0.2;
@@ -68,7 +71,7 @@ float oppositeStraightAngle = 0.0;
 float leftAngle = 0.0;
 float rightAngle = 0.0;
 
-float detectAngle = -90.0;
+float detectAngle = -55.0;
 
 //millis time variables for storage
 unsigned long startTime = 0;
@@ -196,7 +199,7 @@ void loop() {
       homeY = receivedDetails.substring(endIndex+1).toFloat(); 
 
       //WHITE = 235
-      if(myName == "DRO1") oppositeStraightAngle = straightAngle + 190;
+      if(myName == "DRO1") oppositeStraightAngle = straightAngle + 195;
       else if(myName == "DRO2") oppositeStraightAngle = straightAngle + 210;
 
       if(oppositeStraightAngle > 360) {
@@ -334,6 +337,8 @@ void loop() {
         Serial.println("Reached min Y.");
       }
 
+      // If it reaches X limits
+
       move(currentAngle);
     }
 
@@ -376,12 +381,12 @@ void loop() {
 
     // State 3: Is going home 
     if(hasStopped && isGoingHome) {
-      if(abs(currentX - homeX) > 1.5) {
+      if(abs(currentX - homeX) > 1) {
         // start moving to home x
         if(currentX - homeX < 0) savedAngle = leftAngle;
         else if(currentX - homeX > 0) savedAngle = rightAngle;
         move(currentAngle);
-      } else if(abs(currentY - homeY) > 1.5) {
+      } else if(abs(currentY - homeY) > 1) {
         // start moving to home y
         savedAngle = oppositeStraightAngle;
         move(currentAngle);
