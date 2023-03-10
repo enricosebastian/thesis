@@ -296,6 +296,22 @@ void loop() {
 
       Serial.print("New minY: ");
       Serial.println(minY);
+    } else if(receivedCommand == "MAXX") {
+      Serial.print("Old maxX: ");
+      Serial.println(maxX);
+
+      maxX = receivedDetails.toFloat();
+
+      Serial.print("New maxX: ");
+      Serial.println(maxX);
+    } else if(receivedCommand == "MINX") {
+      Serial.print("Old minX: ");
+      Serial.println(minX);
+
+      minX = receivedDetails.toFloat();
+
+      Serial.print("New minX: ");
+      Serial.println(minX);
     }
   }
 
