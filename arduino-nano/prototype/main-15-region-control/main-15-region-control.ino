@@ -312,6 +312,22 @@ void loop() {
 
       Serial.print("New minX: ");
       Serial.println(minX);
+    } else if(receivedCommand == "LEFT") {
+      Serial.print("Old leftAngle: ");
+      Serial.println(leftAngle);
+
+      leftAngle = receivedDetails.toFloat();
+
+      Serial.print("New leftAngle: ");
+      Serial.println(leftAngle);
+    } else if(receivedCommand == "RIGHT") {
+      Serial.print("Old rightAngle: ");
+      Serial.println(rightAngle);
+
+      rightAngle = receivedDetails.toFloat();
+
+      Serial.print("New rightAngle: ");
+      Serial.println(rightAngle);
     }
   }
 
