@@ -5,8 +5,8 @@
 #include <Servo.h>
 
 //Name here
-// const String myName = "DRO1";
-const String myName = "DRO2";
+const String myName = "DRO1";
+// const String myName = "DRO2";
 // const String myName = "DRO3";
 
 //Constants
@@ -353,6 +353,11 @@ void loop() {
         rightAngle = savedAngle - detectAngle;
         if(rightAngle > 360) rightAngle = rightAngle - 360;
         if(rightAngle < 0) rightAngle = 360 + rightAngle;
+
+        digitalWrite(greenLed, LOW);
+        digitalWrite(blueLed, HIGH);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(redLed, LOW);
         
         Serial.println("Reached max Y.");
       } else if(currentY < minY && currentY < maxY) {
@@ -366,6 +371,11 @@ void loop() {
         if(rightAngle > 360) rightAngle = rightAngle - 360;
         if(rightAngle < 0) rightAngle = 360 + rightAngle;
 
+        digitalWrite(greenLed, LOW);
+        digitalWrite(blueLed, LOW);
+        digitalWrite(yellowLed, HIGH);
+        digitalWrite(redLed, LOW);
+
         Serial.println("Reached min Y.");
       }
 
@@ -373,9 +383,19 @@ void loop() {
       if(currentX - minX < 1) {
         if(savedAngle == oppositeStraightAngle) savedAngle = leftAngle;
         else if (savedAngle == straightAngle) savedAngle = rightAngle;
+
+        digitalWrite(greenLed, HIGH);
+        digitalWrite(blueLed, LOW);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(redLed, LOW);
       } else if(currentX - maxX > 1) {
         if(savedAngle == oppositeStraightAngle) savedAngle = rightAngle;
         else if(savedAngle == straightAngle) savedAngle = leftAngle;
+
+        digitalWrite(greenLed, LOW);
+        digitalWrite(blueLed, LOW);
+        digitalWrite(yellowLed, LOW);
+        digitalWrite(redLed, HIGH);
       }
 
       move(currentAngle);
@@ -451,8 +471,6 @@ void loop() {
 
         startTime = millis();
       }
-      escRight.write(0);
-      escLeft.write(0);
     }  
 
     // State 3: Is going home 
