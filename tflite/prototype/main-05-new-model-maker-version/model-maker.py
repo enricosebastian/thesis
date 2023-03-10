@@ -22,13 +22,13 @@ logging.set_verbosity(logging.ERROR)
 
 # CHANGE VALUES HERE ONLY
 model_name = 'efficientdet_lite0'
-train_dir = './images/plastic_bottle/train'
-validate_dir = './images/plastic_bottle/validate'
-test_dir = './images/plastic_bottle/test'
-label_map = ['plastic_bottle']
+train_dir = './images/drone/train'
+validate_dir = './images/drone/validate'
+test_dir = './images/drone/test'
+label_map = ['drone']
 
 export_dir = './models/'
-model_filename = 'plastic_bottle.tflite'
+model_filename = 'drone.tflite'
 #######################
 
 spec = model_spec.get(model_name)
