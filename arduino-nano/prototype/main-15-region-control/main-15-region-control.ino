@@ -369,6 +369,15 @@ void loop() {
         Serial.println("Reached min Y.");
       }
 
+      // State 2: Make sure you don't reach X limit. If you do,
+      if(currentX - minX < 1) {
+        if(savedAngle == oppositeStraightAngle) savedAngle = leftAngle;
+        else if (savedAngle == straightAngle) savedAngle = rightAngle;
+      } else if(currentX - maxX > 1) {
+        if(savedAngle == oppositeStraightAngle) savedAngle = rightAngle;
+        else if(savedAngle == straightAngle) savedAngle = leftAngle;
+      }
+
       move(currentAngle);
     }
 
