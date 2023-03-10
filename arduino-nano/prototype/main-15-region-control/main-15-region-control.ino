@@ -403,6 +403,41 @@ void loop() {
         digitalWrite(redLed, LOW);
       }
 
+      // State 3: Check also if it hits borders of x and y
+      if(currentY > maxY && currentY > minY) {
+        savedAngle = oppositeStraightAngle;
+
+        leftAngle = savedAngle + detectAngle;
+        if(leftAngle > 360) leftAngle = leftAngle - 360;
+        if(leftAngle < 0) leftAngle = 360 + leftAngle;
+
+        rightAngle = savedAngle - detectAngle;
+        if(rightAngle > 360) rightAngle = rightAngle - 360;
+        if(rightAngle < 0) rightAngle = 360 + rightAngle;
+        
+        Serial.println("Reached max Y.");
+      } else if(currentY < minY && currentY < maxY) {
+        savedAngle = straightAngle;
+
+        leftAngle = savedAngle + detectAngle;
+        if(leftAngle > 360) leftAngle = leftAngle - 360;
+        if(leftAngle < 0) leftAngle = 360 + leftAngle;
+
+        rightAngle = savedAngle - detectAngle;
+        if(rightAngle > 360) rightAngle = rightAngle - 360;
+        if(rightAngle < 0) rightAngle = 360 + rightAngle;
+
+        Serial.println("Reached min Y.");
+      }
+
+      if(currentX - minX < 1 && currentX < maxX) {
+        if(savedAngle == oppositeStraightAngle) savedAngle = leftAngle;
+        else if (savedAngle == straightAngle) savedAngle = rightAngle;
+      } else if(currentX - maxX > 1 && currentX > minY) {
+        if(savedAngle == oppositeStraightAngle) savedAngle = rightAngle;
+        else if(savedAngle == straightAngle) savedAngle = leftAngle;
+      }
+
       move(currentAngle);
     }
 
