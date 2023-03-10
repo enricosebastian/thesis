@@ -51,8 +51,11 @@ float currentY = 0;
 float homeX = 0;
 float homeY = 0;
 
-float maxY = 12.0;
-float minY = 8.0;
+float maxY = 0.0;
+float maxX = 0.0;
+
+float minY = 0.0;
+float minX = 0.0;
 
 //PID values
 float kp = 2;
