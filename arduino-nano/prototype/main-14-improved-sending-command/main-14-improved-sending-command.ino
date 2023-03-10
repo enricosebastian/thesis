@@ -54,8 +54,8 @@ float homeY = 0;
 float maxY = 12.0;
 float minY = 8.0;
 
-float maxX = 1.0;
-float minX = 17.0;
+float maxX = 12.0;
+float minX = 5.0;
 
 //PID values
 float kp = 2;
@@ -308,10 +308,18 @@ void loop() {
       if(millis() - startTime > 500) {
         digitalWrite(greenLed, !digitalRead(greenLed));
         startTime = millis();
-      } 
+      }
 
+      if(currentX > maxX) {
+        savedAngle = rightAngle;
+      } else if(currentX < minX) {
+        savedAngle = leftAngle;
+      } else {
+        savedAngle = straightAngle;
+      }
+      
       // State 2: Maneuvering. If Y reaches limit, turn
-      if(currentY > maxY && currentY > minY) {
+      if(currentY > maxY && currentY > minY) { 
         savedAngle = oppositeStraightAngle;
 
         leftAngle = savedAngle + detectAngle;
@@ -321,7 +329,7 @@ void loop() {
         rightAngle = savedAngle - detectAngle;
         if(rightAngle > 360) rightAngle = rightAngle - 360;
         if(rightAngle < 0) rightAngle = 360 + rightAngle;
-        
+
         Serial.println("Reached max Y.");
       } else if(currentY < minY && currentY < maxY) {
         savedAngle = straightAngle;
@@ -337,7 +345,8 @@ void loop() {
         Serial.println("Reached min Y.");
       }
 
-      // If it reaches X limits
+
+      
 
       move(currentAngle);
     }

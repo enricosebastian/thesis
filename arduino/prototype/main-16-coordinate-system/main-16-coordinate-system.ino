@@ -525,7 +525,14 @@ void sendToNano(String command, String toName, String details) {
 
   //COMMAND TONAME FROMNAME DETAILS
   if(command != "" && toName != "" && details != "") {
-    sentMessage = command + " " + toName + " " + myName + " " + details +"\n";
+    sentMessage.concat(command);
+    sentMessage.concat(" ");
+    sentMessage.concat(toName);
+    sentMessage.concat(" ");
+    sentMessage.concat(myName);
+    sentMessage.concat(" ");
+    sentMessage.concat(details);
+
     Nano.println(sentMessage);
     sentMessage = "";
   } else {
@@ -583,7 +590,14 @@ bool receiveCommand() {
 void sendCommand(String command, String toName, String details) {
   //COMMAND TONAME FROMNAME DETAILS
   if(command != "" && toName != "" && details != "") {
-    sentMessage = command + " " + toName + " " + myName + " " + details;
+    sentMessage.concat(command);
+    sentMessage.concat(" ");
+    sentMessage.concat(toName);
+    sentMessage.concat(" ");
+    sentMessage.concat(myName);
+    sentMessage.concat(" ");
+    sentMessage.concat(details);
+
     HC12.println(sentMessage);
     sentMessage = "";
   } else {
