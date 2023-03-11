@@ -32,8 +32,14 @@ float t2 = 0.0;
 float r1 = 0.0;
 float r2 = 0.0;
 
+float prevT1 = t1;
+float prevT2 = t2;
+
+unsigned long completedTime = 0;
 unsigned long startTime = 0;
 unsigned long startTime2 = 0;
+
+bool hasStartedCounting = false;
 
 void setup() {
   Serial.begin(9600);
@@ -46,7 +52,7 @@ void setup() {
 
   Serial.println("Starting Tag 1");
 
-  DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
+  DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_FAST_ACCURACY,DW1000.CHANNEL_1,false);
 }
 
 void loop() {
@@ -82,7 +88,7 @@ void loop() {
     }
   }
   
-  if((millis() - startTime > 2000)) {
+  if((millis() - startTime > 500)) {
     tempChannel = channel1;
     channel1 = channel2;
     channel2 = channel3;
@@ -95,19 +101,35 @@ void loop() {
     // Serial.println(channel1);
 
     if(channel1 == "5") {
-      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
-    } else if(channel1 == "7") {
-      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_7,false);
-    } else if(channel1 == "1") {
-      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_1,false);
-    }
+      if(!hasStartedCounting) {
+        completedTime = millis();
+        hasStartedCounting = true;
+        prevT1 = t1;
+        prevT2 = t2;
+      }
+      else if(hasStartedCounting && !(t1 == prevT1 || t2 == prevT2)) {
+        Serial.print("Round time takes: ");
+        Serial.print((millis() - completedTime)/1000);
+        Serial.println(" seconds");
 
-    delay(500);
+        Serial.print(r1);
+        Serial.print(",");
+        Serial.println(r2);
+        Serial.println();
+        hasStartedCounting = false;
+      }
+      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_FAST_ACCURACY,DW1000.CHANNEL_5,false);
+    } else if(channel1 == "7") {
+      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_FAST_ACCURACY,DW1000.CHANNEL_7,false);
+    } else if(channel1 == "1") {
+      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_FAST_ACCURACY,DW1000.CHANNEL_1,false);
+    }
     startTime = millis();
   }
 
   if(millis() - startTime2 > 300) {
     message = "COOR ALL ALL " + String(r1) + "," + String(r2);
+    // Serial.println(message);
     Serial2.println(message);
     message = "";
     startTime2 = millis();
