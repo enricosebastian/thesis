@@ -88,7 +88,7 @@ void loop() {
     }
   }
   
-  if((millis() - startTime > 1000)) {
+  if((millis() - startTime > 500)) {
     tempChannel = channel1;
     channel1 = channel2;
     channel2 = channel3;
