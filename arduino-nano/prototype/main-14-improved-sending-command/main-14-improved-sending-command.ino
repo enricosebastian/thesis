@@ -37,6 +37,7 @@ bool isDeployed = false;
 bool hasStopped = true;
 bool hasDetectedObject = false;
 bool isGoingHome = false;
+bool isForward = false;
 
 //Variables
 float d1 = 0;
@@ -180,6 +181,7 @@ void loop() {
     } else if(receivedCommand == "GO" && isDeployed) {
       hasStopped = false;
       hasDetectedObject = false;
+      isForward = true;
       startTime = millis();
       startTime2 = millis();
 
@@ -310,15 +312,20 @@ void loop() {
         startTime = millis();
       }
 
+      // State 2: Normal maneuvering
+      // X limit checker
       if(currentX > maxX) {
         savedAngle = rightAngle;
+        Serial.println("Reached max X");
       } else if(currentX < minX) {
         savedAngle = leftAngle;
+        Serial.println("Reached min X");
       } else {
-        savedAngle = straightAngle;
+        if(isForward) savedAngle = straightAngle;
+        else if(!isForward) savedAngle = oppositeStraightAngle;
       }
-      
-      // State 2: Maneuvering. If Y reaches limit, turn
+
+      // Y limit checker
       if(currentY > maxY && currentY > minY) { 
         savedAngle = oppositeStraightAngle;
 
@@ -344,9 +351,6 @@ void loop() {
 
         Serial.println("Reached min Y.");
       }
-
-
-      
 
       move(currentAngle);
     }
