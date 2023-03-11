@@ -32,6 +32,9 @@ float t2 = 0.0;
 float r1 = 0.0;
 float r2 = 0.0;
 
+float prevT1 = t1;
+float prevT2 = t2;
+
 unsigned long completedTime = 0;
 unsigned long startTime = 0;
 unsigned long startTime2 = 0;
@@ -85,7 +88,7 @@ void loop() {
     }
   }
   
-  if((millis() - startTime > 2000)) {
+  if((millis() - startTime > 300)) {
     tempChannel = channel1;
     channel1 = channel2;
     channel2 = channel3;
@@ -101,8 +104,10 @@ void loop() {
       if(!hasStartedCounting) {
         completedTime = millis();
         hasStartedCounting = true;
+        prevT1 = t1;
+        prevT2 = t2;
       }
-      else {
+      else if(hasStartedCounting && !(t1 == prevT1 || t2 == prevT2)) {
         Serial.print("Round time takes: ");
         Serial.print((millis() - completedTime)/1000);
         Serial.println(" seconds");
