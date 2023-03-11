@@ -434,8 +434,8 @@ void loop() {
     if(hasStopped && isGoingHome) {
       if(abs(currentX - homeX) > 1) {
         // start moving to home x
-        if(currentX - homeX < 0) savedAngle = leftAngle;
-        else if(currentX - homeX > 0) savedAngle = rightAngle;
+        if(currentX - homeX < 0) savedAngle = rightTurnAngle;
+        else if(currentX - homeX > 0) savedAngle = leftTurnAngle;
         move(currentAngle);
       } else if(abs(currentY - homeY) > 1) {
         // start moving to home y
