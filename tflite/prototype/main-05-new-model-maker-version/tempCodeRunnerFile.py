@@ -1,1 +1,0 @@
-cd Desktop/thesis/tflite/prototype/main-05-new-model-maker-version
