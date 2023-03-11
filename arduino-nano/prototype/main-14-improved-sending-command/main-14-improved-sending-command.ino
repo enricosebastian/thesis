@@ -212,7 +212,7 @@ void loop() {
       homeY = receivedDetails.substring(endIndex+1).toFloat(); 
 
       //WHITE = 235
-      if(myName == "DRO1") oppositeStraightAngle = straightAngle + 195;
+      if(myName == "DRO1") oppositeStraightAngle = straightAngle + 190;
       else if(myName == "DRO2") oppositeStraightAngle = straightAngle + 210;
 
       if(oppositeStraightAngle > 360) {
@@ -286,9 +286,14 @@ void loop() {
       Serial.print(",");
       Serial.println(currentY);
     } else if(receivedCommand == "TURN" && isDeployed) {
+      float added = receivedDetails.toFloat();
+      Serial.println("\n\n\n");
+      Serial.print("addded: ");
+      Serial.println(added);
+      Serial.println("\n\n\n");
       savedAngle = savedAngle + receivedDetails.toFloat();
       if(savedAngle > 360) savedAngle = savedAngle - 360;
-      else if(savedAngle < 360) savedAngle = 360 + savedAngle;
+      else if(savedAngle < 0) savedAngle = 360 + savedAngle;
 
       Serial.print("Turning to: ");
       Serial.println(savedAngle);
@@ -328,10 +333,12 @@ void loop() {
       // State 2: Normal maneuvering
       // X limit checker
       if(currentX > maxX) {
-        savedAngle = leftTurnAngle;
+        if(isForward) savedAngle = rightTurnAngle;
+        else if(!isForward) savedAngle = leftTurnAngle;
         Serial.println("Reached max X");
       } else if(currentX < minX) {
-        savedAngle = rightTurnAngle;
+        if(isForward) savedAngle = leftTurnAngle;
+        else if(!isForward) savedAngle = rightTurnAngle;
         Serial.println("Reached min X");
       } else {
         if(isForward) savedAngle = straightAngle;

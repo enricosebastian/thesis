@@ -451,6 +451,10 @@ void forDrone() {
         Serial.print("New minY: ");
         Serial.println(minY);
         sendToNano(receivedCommand, myName, receivedDetails);
+      } else if(receivedCommand == "HOME") {
+        digitalWrite(detectionPin, LOW);
+        sendToNano(receivedCommand, myName, receivedDetails);
+        Serial.println("Drone is going home.");
       } else {
         sendToNano(receivedCommand, myName, receivedDetails);
       }
