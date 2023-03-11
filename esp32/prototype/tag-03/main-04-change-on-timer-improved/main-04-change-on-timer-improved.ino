@@ -32,8 +32,11 @@ float t2 = 0.0;
 float r1 = 0.0;
 float r2 = 0.0;
 
+unsigned long completedTime = 0;
 unsigned long startTime = 0;
 unsigned long startTime2 = 0;
+
+bool hasStartedCounting = false;
 
 void setup() {
   Serial.begin(9600);
@@ -61,11 +64,11 @@ void loop() {
         r1 = t1;
       }
 
-      Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
-      Serial.print(" - ");
-      Serial.print(r1);
-      Serial.print(",");
-      Serial.println(r2);
+      // Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
+      // Serial.print(" - ");
+      // Serial.print(r1);
+      // Serial.print(",");
+      // Serial.println(r2);
     // For anchor 2
     } else if(DW1000Ranging.getDistantDevice()->getShortAddress() == 0x1002 && channel1 == "7") {
       
@@ -74,11 +77,11 @@ void loop() {
         r2 = t2;
       }
 
-      Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
-      Serial.print(" - ");
-      Serial.print(r1);
-      Serial.print(",");
-      Serial.println(r2);
+      // Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress());
+      // Serial.print(" - ");
+      // Serial.print(r1);
+      // Serial.print(",");
+      // Serial.println(r2);
     }
   }
   
@@ -95,14 +98,27 @@ void loop() {
     // Serial.println(channel1);
 
     if(channel1 == "5") {
+      if(!hasStartedCounting) {
+        completedTime = millis();
+        hasStartedCounting = true;
+      }
+      else {
+        Serial.print("Round time takes: ");
+        Serial.print((millis() - completedTime)/1000);
+        Serial.println(" seconds");
+
+        Serial.print(r1);
+        Serial.print(",");
+        Serial.println(r2);
+        Serial.println();
+        hasStartedCounting = false;
+      }
       DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
     } else if(channel1 == "7") {
       DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_7,false);
     } else if(channel1 == "1") {
       DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_1,false);
     }
-
-    delay(500);
     startTime = millis();
   }
 
