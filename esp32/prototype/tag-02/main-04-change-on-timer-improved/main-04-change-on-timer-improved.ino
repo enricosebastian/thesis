@@ -32,8 +32,14 @@ float t2 = 0.0;
 float r1 = 0.0;
 float r2 = 0.0;
 
+float prevT1 = t1;
+float prevT2 = t2;
+
+unsigned long completedTime = 0;
 unsigned long startTime = 0;
 unsigned long startTime2 = 0;
+
+bool hasStartedCounting = false;
 
 void setup() {
   Serial.begin(9600);
@@ -46,7 +52,7 @@ void setup() {
 
   Serial.println("Starting Tag 2");
 
-  DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_7,false);
+  DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_FAST_ACCURACY,DW1000.CHANNEL_7,false);
 }
 
 void loop() {
