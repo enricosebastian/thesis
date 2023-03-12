@@ -5,15 +5,14 @@
 
 //Name here
 // const String myName = "BASE";
-const String myName = "DRO1";
+// const String myName = "DRO1";
 // const String myName = "DRO2";
-// const String myName = "DRO3";
+const String myName = "DRO3";
 
 //Constants (buttons)
 const int detectionPin = 10;
 const int recordingPin = 9;
 const int btn = 7;
-const int coordPin = 6;
 
 // Rule: For ports, green = RX, blue = TXd1
 // For modules/chips, green = TX, blue = RX
@@ -36,12 +35,12 @@ const int greenLed = 11;
 bool isConnected = false;
 bool isDeployed = false;
 bool hasStopped = true;
-bool hasDetectedObject = false;
 
 //millis time variables for storage
 unsigned long startTime = 0;
 unsigned long startTime2 = 0;
 unsigned long startTime3 = 0;
+unsigned long startTime4 = 0;
 
 float savedX = 0;
 float savedY = 0;
@@ -52,13 +51,15 @@ float currentY = 0;
 float homeX = 0;
 float homeY = 0;
 
-float x0 = 0; //3.8 strc, 17.8 pool
+float x0 = 17.8; //3.8 strc, 17.8 pool
 float d1 = 0;
 float d2 = 0;
-float maxY = 0;
-float minY = 0;
-float maxX = 0;
-float minX = 0;
+float maxY = 12;
+float minY = 8;
+float maxX = 12;
+float minX = 5;
+
+int droneSize = 0;
 
 //received message
 String receivedMessage = "";
@@ -127,11 +128,15 @@ void setup() {
 }
 
 void loop() {
-  if(myName == "BASE") {
-    forBaseStation();
-  } else {
-    forDrone();
-  }
+  // forBaseStation();
+  forDrone();
+
+
+  // if(myName == "BASE") {
+  //   forBaseStation();
+  // } else {
+  //   forDrone();
+  // }
 }
 
 void forBaseStation() {
@@ -179,6 +184,10 @@ void forBaseStation() {
       digitalWrite(yellowLed, HIGH);
       digitalWrite(greenLed, LOW);
 
+      float deploymentArea = x0/drones.size();
+      float xMin = 0;
+      float xMax = 0; 
+
       for(int i = 0; i < drones.size(); i++) {
         //Reset values first 
         receivedFromName = "";
@@ -190,7 +199,10 @@ void forBaseStation() {
         Serial.println(drones.get(i));
         startTime = millis();
 
-        sendCommand("DEPL", drones.get(i), "HELL");
+        xMin = xMax;
+        xMax = xMax + (deploymentArea/2);
+
+        sendCommand("DEPL", drones.get(i), String(xMin) + "," + String(xMax));
         while(!receivedSpecificCommand("DEPLREP") && receivedFromName != drones.get(i)) {
           if(millis() - startTime > waitingTime) {
             startTime = millis();
@@ -198,7 +210,7 @@ void forBaseStation() {
             Serial.print("Did not receive 'DEPLREP' from '");
             Serial.print(drones.get(i));
             Serial.println("' yet. Sending 'DEPL' again.");
-            sendCommand("DEPL", drones.get(i), "HELL");
+            sendCommand("DEPL", drones.get(i), String(xMin) + "," + String(xMax));
           }
         }
         Serial.print("Successfully deployed: ");
@@ -335,19 +347,24 @@ void forDrone() {
         startTime2 = millis();
       }
     }
-    
+
+    int endIndex = receivedDetails.indexOf(',');
+    minX = receivedDetails.substring(0, endIndex).toFloat();
+    maxX = receivedDetails.substring(endIndex+1).toFloat();
+  
     isDeployed = true;
     hasStopped = true;
     startTime = millis();
-    homeX = currentX;
-    homeY = currentY;
+    homeX = maxX;
+    homeY = minY;
 
-    Serial.print("Drone has deployed at ");
+    Serial.print(myName);
+    Serial.print(" is deployed. Home is at ");
     Serial.print(homeX);
     Serial.print(",");
     Serial.println(homeY);
 
-    sendToNano("DEPL", myName, String(homeX)+","+String(homeY));
+    sendToNano("DEPL", myName, receivedDetails);
   }
 
   //STATE 3: Drone is deployed. Move, receive commands, send commands, and detect objects
@@ -374,10 +391,16 @@ void forDrone() {
         digitalWrite(recordingPin, LOW);
       } else if(receivedCommand == "GO") {
         hasStopped = false;
-        homeX = currentX;
-        homeY = currentY;
+        homeX = maxX;
+        homeY = minY;
         sendToNano(receivedCommand, myName, String(homeX)+","+String(homeY));
-        digitalWrite(detectionPin, HIGH); // Turn on camera
+        
+        Serial.print("Set x boundaries as ");
+        Serial.print(minX);
+        Serial.print(" to ");
+        Serial.println(maxX);
+
+        digitalWrite(detectionPin, HIGH); // Turn on object detection
         digitalWrite(recordingPin, LOW);
       } else if(receivedCommand == "RECO") {
         hasStopped = false;
@@ -422,6 +445,18 @@ void forDrone() {
           while(millis() - startTime < 800) {
             if(millis() - startTime2 > 300) {
               sendCommand("HERE", receivedFromName, String(minY));
+            }
+          }
+        } else if(receivedDetails == "MAXX\r") {
+          while(millis() - startTime < 800) {
+            if(millis() - startTime2 > 300) {
+              sendCommand("HERE", receivedFromName, String(maxX));
+            }
+          }
+        } else if(receivedDetails == "MINX\r") {
+          while(millis() - startTime < 800) {
+            if(millis() - startTime2 > 300) {
+              sendCommand("HERE", receivedFromName, String(minX));
             }
           }
         }
@@ -603,7 +638,7 @@ bool receiveCommand() {
       if(receivedFromName != "DRO1" && receivedFromName != "DRO2" && receivedFromName != "DRO3" && receivedFromName != "BASE" && receivedFromName != "ALL") return false;
 
       return (receivedCommand != "") && (receivedToName == myName || receivedToName == "ALL") && (receivedFromName != "") && (receivedDetails != "");
-    } else {
+    } else if(letter >= 0) {
       receivedMessage += letter;
     }
   }
