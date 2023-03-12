@@ -238,37 +238,6 @@ void forBaseStation() {
       digitalWrite(yellowLed, LOW);
       digitalWrite(greenLed, !digitalRead(greenLed));
     }
-
-    if(millis() - startTime2 > 10000) {
-      startTime2 = millis();
-      startTime3 = millis();
-      startTime4 = millis();
-
-      int prevDroneSize = drones.size();
-
-      for(int i = 0; i < drones.size(); i++) {
-        sendCommand("ISCO", drones.get(i), "PLES");
-        while(!receivedSpecificCommand("ISCOREP") && receivedFromName != drones.get(i) && startTime3 < 5000) {
-          if(millis() - startTime4 > 500) {
-            startTime4 = millis();
-
-            Serial.print("Did not receive 'ISCOREP' from '");
-            Serial.print(drones.get(i));
-            Serial.println("' yet. Sending 'ISCO' again.");
-            sendCommand("ISCO", drones.get(i), "PLES");
-          }
-        }
-        if(startTime3 > 5000 && receivedCommand != "ISCOREP" && receivedFromName != drones.get(i)) {
-          drones.remove(i);
-        }
-        startTime3 = millis();
-      }
-
-      if(prevDroneSize != drones.size()) {
-        Serial.println("Sent new assignments.");
-      }
-      startTime2 = millis();
-    }
     
     while(Serial.available()) {
       char letter = Serial.read();
@@ -389,8 +358,8 @@ void forDrone() {
     homeX = currentX;
     homeY = currentY;
 
-    Serial.print(droneSize);
-    Serial.print(" drone(s) deployed. Home is at ");
+    Serial.print(myName);
+    Serial.print(" is deployed. Home is at ");
     Serial.print(homeX);
     Serial.print(",");
     Serial.println(homeY);
