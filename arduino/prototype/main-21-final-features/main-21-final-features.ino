@@ -201,7 +201,7 @@ void forBaseStation() {
             Serial.print("Did not receive 'DEPLREP' from '");
             Serial.print(drones.get(i));
             Serial.println("' yet. Sending 'DEPL' again.");
-            sendCommand("DEPL", drones.get(i), drones.size());
+            sendCommand("DEPL", drones.get(i), String(drones.size()));
           }
         }
         Serial.print("Successfully deployed: ");
