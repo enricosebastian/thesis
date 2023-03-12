@@ -346,13 +346,16 @@ void forDrone() {
         startTime2 = millis();
       }
     }
-    
+
+    int endIndex = receivedDetails.indexOf(',');
+    minX = receivedDetails.substring(0, endIndex).toFloat();
+    maxX = receivedDetails.substring(endIndex+1).toFloat();
+  
     isDeployed = true;
     hasStopped = true;
     startTime = millis();
     homeX = currentX;
     homeY = currentY;
-    droneSize = receivedDetails.toInt();
 
     Serial.print(droneSize);
     Serial.print(" drone(s) deployed. Home is at ");
@@ -361,6 +364,8 @@ void forDrone() {
     Serial.println(homeY);
 
     sendToNano("DEPL", myName, String(homeX)+","+String(homeY));
+    sendToNano("MINX", myName, String(minX));
+    sendToNano("MAXX", myName, String(maxX));
   }
 
   //STATE 3: Drone is deployed. Move, receive commands, send commands, and detect objects
