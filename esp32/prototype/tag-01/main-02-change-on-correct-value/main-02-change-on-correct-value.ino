@@ -73,7 +73,7 @@ void loop() {
     // If you are completely sure that the last coordinate from Anchor 1 is correct, switch channels
     if(correctTimes > maxCorrectTimes) {
       Serial.println("Switching to channel 7");
-      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_7,false);
+      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_FAST_ACCURACY,DW1000.CHANNEL_7,false);
       correctTimes = 0;
       isLookingForX = false;
     }
@@ -88,7 +88,7 @@ void loop() {
     // If you are completely sure that the last coordinate from Anchor 2 is correct, switch channels
     if(correctTimes > maxCorrectTimes) {
       Serial.println("Switching to channel 5");
-      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
+      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_FAST_ACCURACY,DW1000.CHANNEL_5,false);
       correctTimes = 0;
       isLookingForX = true;
     }
