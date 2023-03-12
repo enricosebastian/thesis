@@ -51,7 +51,7 @@ test_data = object_detector.DataLoader.from_pascal_voc(
     label_map=label_map
 )
 
-model = object_detector.create(train_data, model_spec=spec, epochs=50, batch_size=8, train_whole_model=True, validation_data=validation_data)
+model = object_detector.create(train_data, model_spec=spec, epochs=75, batch_size=4, train_whole_model=True, validation_data=validation_data)
 
 print("=============Validation results 1==============\n")
 print(
