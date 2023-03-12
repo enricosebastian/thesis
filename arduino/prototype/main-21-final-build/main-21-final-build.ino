@@ -4,8 +4,8 @@
 #include <LinkedList.h>
 
 //Name here
-const String myName = "BASE";
-// const String myName = "DRO1";
+// const String myName = "BASE";
+const String myName = "DRO1";
 // const String myName = "DRO2";
 // const String myName = "DRO3";
 
@@ -128,8 +128,8 @@ void setup() {
 }
 
 void loop() {
-  forBaseStation();
-  // forDrone();
+  // forBaseStation();
+  forDrone();
 
 
   // if(myName == "BASE") {
@@ -396,16 +396,7 @@ void forDrone() {
         homeX = currentX;
         homeY = currentY;
         sendToNano(receivedCommand, myName, String(homeX)+","+String(homeY));
-
-        float regionSize = (x0/droneSize)*(1/2);
-        maxX = homeX + regionSize;
-        if(maxX > x0) maxX = x0;
-        sendToNano("MAXX", myName, String(maxX));
-
-        minX = homeX - regionSize;
-        if(minX < 0) minX = 0;
-        sendToNano("MINX", myName, String(minX));
-
+        
         Serial.print("Set x boundaries as ");
         Serial.print(minX);
         Serial.print(" to ");
