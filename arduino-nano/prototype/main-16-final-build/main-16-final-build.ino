@@ -169,8 +169,11 @@ void loop() {
       hasStopped = true;
 
       int endIndex = receivedDetails.indexOf(',');
-      homeX = receivedDetails.substring(0, endIndex).toFloat();
-      homeY = receivedDetails.substring(endIndex+1).toFloat();
+      minX = receivedDetails.substring(0, endIndex).toFloat();
+      maxX = receivedDetails.substring(endIndex+1).toFloat();
+
+      homeX = maxX;
+      homeY = minY;
 
       startTime = millis();
 
@@ -205,9 +208,8 @@ void loop() {
       if(rightDetectAngle > 360) rightDetectAngle = rightDetectAngle - 360;
       if(rightDetectAngle < 0) rightDetectAngle = 360 + rightDetectAngle;
 
-      int endIndex = receivedDetails.indexOf(',');
-      homeX = receivedDetails.substring(0, endIndex).toFloat();
-      homeY = receivedDetails.substring(endIndex+1).toFloat(); 
+      homeX = maxX;
+      homeY = minY;
 
       //WHITE = 235
       if(myName == "DRO1") oppositeStraightAngle = straightAngle + 190;
@@ -346,11 +348,11 @@ void loop() {
 
       // State 2: Normal maneuvering
       // X limit checker
-      if(currentX > maxX) {
+      if(currentX > (maxX - 2)) {
         if(isForward) savedAngle = rightTurnAngle;
         else if(!isForward) savedAngle = leftTurnAngle;
         Serial.println("Reached max X");
-      } else if(currentX < minX) {
+      } else if(currentX < (minX + 2)) {
         if(isForward) savedAngle = leftTurnAngle;
         else if(!isForward) savedAngle = rightTurnAngle;
         Serial.println("Reached min X");

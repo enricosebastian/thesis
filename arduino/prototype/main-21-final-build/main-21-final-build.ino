@@ -355,8 +355,8 @@ void forDrone() {
     isDeployed = true;
     hasStopped = true;
     startTime = millis();
-    homeX = currentX;
-    homeY = currentY;
+    homeX = maxX;
+    homeY = minY;
 
     Serial.print(myName);
     Serial.print(" is deployed. Home is at ");
@@ -364,9 +364,7 @@ void forDrone() {
     Serial.print(",");
     Serial.println(homeY);
 
-    sendToNano("DEPL", myName, String(homeX)+","+String(homeY));
-    sendToNano("MINX", myName, String(minX));
-    sendToNano("MAXX", myName, String(maxX));
+    sendToNano("DEPL", myName, receivedDetails);
   }
 
   //STATE 3: Drone is deployed. Move, receive commands, send commands, and detect objects
@@ -393,8 +391,8 @@ void forDrone() {
         digitalWrite(recordingPin, LOW);
       } else if(receivedCommand == "GO") {
         hasStopped = false;
-        homeX = currentX;
-        homeY = currentY;
+        homeX = maxX;
+        homeY = minY;
         sendToNano(receivedCommand, myName, String(homeX)+","+String(homeY));
         
         Serial.print("Set x boundaries as ");
