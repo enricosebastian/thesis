@@ -13,7 +13,6 @@ const String myName = "DRO1";
 const int detectionPin = 10;
 const int recordingPin = 9;
 const int btn = 7;
-const int coordPin = 6;
 
 // Rule: For ports, green = RX, blue = TXd1
 // For modules/chips, green = TX, blue = RX
@@ -36,7 +35,6 @@ const int greenLed = 11;
 bool isConnected = false;
 bool isDeployed = false;
 bool hasStopped = true;
-bool hasDetectedObject = false;
 
 //millis time variables for storage
 unsigned long startTime = 0;
@@ -59,6 +57,8 @@ float maxY = 12;
 float minY = 8;
 float maxX = 12;
 float minX = 5;
+
+int droneSize = 0;
 
 //received message
 String receivedMessage = "";
@@ -345,8 +345,10 @@ void forDrone() {
     startTime = millis();
     homeX = currentX;
     homeY = currentY;
+    droneSize = receivedDetails.toInt();
 
-    Serial.print("Drone has deployed at ");
+    Serial.print(droneSize);
+    Serial.print(" drone(s) deployed. Home is at ");
     Serial.print(homeX);
     Serial.print(",");
     Serial.println(homeY);
@@ -381,7 +383,22 @@ void forDrone() {
         homeX = currentX;
         homeY = currentY;
         sendToNano(receivedCommand, myName, String(homeX)+","+String(homeY));
-        digitalWrite(detectionPin, HIGH); // Turn on camera
+
+        float regionSize = (x0/droneSize)*(1/2);
+        maxX = homeX + regionSize;
+        if(maxX > x0) maxX = x0;
+        sendToNano("MAXX", myName, String(maxX));
+
+        minX = homeX - regionSize;
+        if(minX < 0) minX = 0;
+        sendToNano("MINX", myName, String(minX));
+
+        Serial.print("Set x boundaries as ");
+        Serial.print(minX);
+        Serial.print(" to ");
+        Serial.println(maxX);
+
+        digitalWrite(detectionPin, HIGH); // Turn on object detection
         digitalWrite(recordingPin, LOW);
       } else if(receivedCommand == "RECO") {
         hasStopped = false;
