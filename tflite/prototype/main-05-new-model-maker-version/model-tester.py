@@ -131,41 +131,41 @@ def run_odt_and_draw_results(image_path, interpreter, threshold=0.5):
 
 
 # for multiple images
-for count, filename in enumerate(os.listdir(test_dir)):
-  image_path = test_dir+filename
+# for count, filename in enumerate(os.listdir(test_dir)):
+#   image_path = test_dir+filename
 
-  print("Testing", filename)
+#   print("Testing", filename)
   
-  # Run inference and draw detection result on the local copy of the original file
-  detection_result_image = run_odt_and_draw_results(
-      image_path=image_path,
-      interpreter=interpreter,
-      threshold=threshold
-  )
+#   # Run inference and draw detection result on the local copy of the original file
+#   detection_result_image = run_odt_and_draw_results(
+#       image_path=image_path,
+#       interpreter=interpreter,
+#       threshold=threshold
+#   )
   
-  im = Image.fromarray(detection_result_image)
-  path = "./images/all/sample_results/"+filename
-  im.save(path, 'JPEG')
-  print("Done with",filename)
-  
-print("\n\nDone testing a sample image!")
-
-
-# filename = "test_0.jpg"
-# image_path = test_dir+filename
-
-# print("Testing", filename)
-
-# # Run inference and draw detection result on the local copy of the original file
-# detection_result_image = run_odt_and_draw_results(
-#     image_path=image_path,
-#     interpreter=interpreter,
-#     threshold=threshold
-# )
-
-# im = Image.fromarray(detection_result_image)
-# path = "./images/all/sample_results/"+filename
-# im.save(path, 'JPEG')
-# print("Done with",filename)
+#   im = Image.fromarray(detection_result_image)
+#   path = "./images/all/sample_results/"+filename
+#   im.save(path, 'JPEG')
+#   print("Done with",filename)
   
 # print("\n\nDone testing a sample image!")
+
+
+filename = "test_200.jpg"
+image_path = test_dir+filename
+
+print("Testing", filename)
+
+# Run inference and draw detection result on the local copy of the original file
+detection_result_image = run_odt_and_draw_results(
+    image_path=image_path,
+    interpreter=interpreter,
+    threshold=threshold
+)
+
+im = Image.fromarray(detection_result_image)
+path = "./images/all/sample_results/"+filename
+im.save(path, 'JPEG')
+print("Done with",filename)
+  
+print("\n\nDone testing a sample image!")
