@@ -183,6 +183,10 @@ void forBaseStation() {
       digitalWrite(yellowLed, HIGH);
       digitalWrite(greenLed, LOW);
 
+      float deploymentArea = x0/drones.size();
+      float xMin = 0;
+      float xMax = 0; 
+
       for(int i = 0; i < drones.size(); i++) {
         //Reset values first 
         receivedFromName = "";
@@ -194,7 +198,10 @@ void forBaseStation() {
         Serial.println(drones.get(i));
         startTime = millis();
 
-        sendCommand("DEPL", drones.get(i), String(drones.size()));
+        xMin = xMax;
+        xMax = xMax + (deploymentArea/2);
+
+        sendCommand("DEPL", drones.get(i), String(xMin) + "," + String(xMax));
         while(!receivedSpecificCommand("DEPLREP") && receivedFromName != drones.get(i)) {
           if(millis() - startTime > waitingTime) {
             startTime = millis();
@@ -202,7 +209,7 @@ void forBaseStation() {
             Serial.print("Did not receive 'DEPLREP' from '");
             Serial.print(drones.get(i));
             Serial.println("' yet. Sending 'DEPL' again.");
-            sendCommand("DEPL", drones.get(i), String(drones.size()));
+            sendCommand("DEPL", drones.get(i), String(xMin) + "," + String(xMax));
           }
         }
         Serial.print("Successfully deployed: ");
