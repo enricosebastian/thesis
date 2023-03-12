@@ -4,8 +4,8 @@
 #include <LinkedList.h>
 
 //Name here
-// const String myName = "BASE";
-const String myName = "DRO1";
+const String myName = "BASE";
+// const String myName = "DRO1";
 // const String myName = "DRO2";
 // const String myName = "DRO3";
 
@@ -40,6 +40,7 @@ bool hasStopped = true;
 unsigned long startTime = 0;
 unsigned long startTime2 = 0;
 unsigned long startTime3 = 0;
+unsigned long startTime4 = 0;
 
 float savedX = 0;
 float savedY = 0;
@@ -127,8 +128,8 @@ void setup() {
 }
 
 void loop() {
-  // forBaseStation();
-  forDrone();
+  forBaseStation();
+  // forDrone();
 
 
   // if(myName == "BASE") {
@@ -236,6 +237,37 @@ void forBaseStation() {
       digitalWrite(redLed, LOW);
       digitalWrite(yellowLed, LOW);
       digitalWrite(greenLed, !digitalRead(greenLed));
+    }
+
+    if(millis() - startTime2 > 10000) {
+      startTime2 = millis();
+      startTime3 = millis();
+      startTime4 = millis();
+
+      int prevDroneSize = drones.size();
+
+      for(int i = 0; i < drones.size(); i++) {
+        sendCommand("ISCO", drones.get(i), "PLES");
+        while(!receivedSpecificCommand("ISCOREP") && receivedFromName != drones.get(i) && startTime3 < 5000) {
+          if(millis() - startTime4 > 500) {
+            startTime4 = millis();
+
+            Serial.print("Did not receive 'ISCOREP' from '");
+            Serial.print(drones.get(i));
+            Serial.println("' yet. Sending 'ISCO' again.");
+            sendCommand("ISCO", drones.get(i), "PLES");
+          }
+        }
+        if(startTime3 > 5000 && receivedCommand != "ISCOREP" && receivedFromName != drones.get(i)) {
+          drones.remove(i);
+        }
+        startTime3 = millis();
+      }
+
+      if(prevDroneSize != drones.size()) {
+        Serial.println("Sent new assignments.");
+      }
+      startTime2 = millis();
     }
     
     while(Serial.available()) {
