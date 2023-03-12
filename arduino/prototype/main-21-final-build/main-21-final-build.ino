@@ -52,13 +52,13 @@ float currentY = 0;
 float homeX = 0;
 float homeY = 0;
 
-float x0 = 0; //3.8 strc, 17.8 pool
+float x0 = 17.8; //3.8 strc, 17.8 pool
 float d1 = 0;
 float d2 = 0;
-float maxY = 0;
-float minY = 0;
-float maxX = 0;
-float minX = 0;
+float maxY = 12;
+float minY = 8;
+float maxX = 12;
+float minX = 5;
 
 //received message
 String receivedMessage = "";
@@ -127,11 +127,15 @@ void setup() {
 }
 
 void loop() {
-  if(myName == "BASE") {
-    forBaseStation();
-  } else {
-    forDrone();
-  }
+  // forBaseStation();
+  forDrone();
+
+
+  // if(myName == "BASE") {
+  //   forBaseStation();
+  // } else {
+  //   forDrone();
+  // }
 }
 
 void forBaseStation() {
@@ -190,7 +194,7 @@ void forBaseStation() {
         Serial.println(drones.get(i));
         startTime = millis();
 
-        sendCommand("DEPL", drones.get(i), "HELL");
+        sendCommand("DEPL", drones.get(i), String(drones.size()));
         while(!receivedSpecificCommand("DEPLREP") && receivedFromName != drones.get(i)) {
           if(millis() - startTime > waitingTime) {
             startTime = millis();
@@ -198,7 +202,7 @@ void forBaseStation() {
             Serial.print("Did not receive 'DEPLREP' from '");
             Serial.print(drones.get(i));
             Serial.println("' yet. Sending 'DEPL' again.");
-            sendCommand("DEPL", drones.get(i), "HELL");
+            sendCommand("DEPL", drones.get(i), String(drones.size()));
           }
         }
         Serial.print("Successfully deployed: ");
@@ -422,6 +426,18 @@ void forDrone() {
           while(millis() - startTime < 800) {
             if(millis() - startTime2 > 300) {
               sendCommand("HERE", receivedFromName, String(minY));
+            }
+          }
+        } else if(receivedDetails == "MAXX\r") {
+          while(millis() - startTime < 800) {
+            if(millis() - startTime2 > 300) {
+              sendCommand("HERE", receivedFromName, String(maxX));
+            }
+          }
+        } else if(receivedDetails == "MINX\r") {
+          while(millis() - startTime < 800) {
+            if(millis() - startTime2 > 300) {
+              sendCommand("HERE", receivedFromName, String(minX));
             }
           }
         }

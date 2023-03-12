@@ -51,10 +51,10 @@ float homeY = 0;
 
 float d1 = 0;
 float d2 = 0;
-float maxY = 0;
-float minY = 0;
-float maxX = 0;
-float minX = 0;
+float maxY = 12;
+float minY = 8;
+float maxX = 12;
+float minX = 5;
 
 //PID values
 float kp = 2;
