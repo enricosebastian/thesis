@@ -5,9 +5,9 @@
 
 //Name here
 // const String myName = "BASE";
-const String myName = "DRO1";
+// const String myName = "DRO1";
 // const String myName = "DRO2";
-// const String myName = "DRO3";
+const String myName = "DRO3";
 
 //Constants (buttons)
 const int detectionPin = 10;
@@ -638,7 +638,7 @@ bool receiveCommand() {
       if(receivedFromName != "DRO1" && receivedFromName != "DRO2" && receivedFromName != "DRO3" && receivedFromName != "BASE" && receivedFromName != "ALL") return false;
 
       return (receivedCommand != "") && (receivedToName == myName || receivedToName == "ALL") && (receivedFromName != "") && (receivedDetails != "");
-    } else {
+    } else if(letter >= 0) {
       receivedMessage += letter;
     }
   }
