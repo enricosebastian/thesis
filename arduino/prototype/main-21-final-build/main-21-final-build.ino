@@ -43,10 +43,6 @@ unsigned long startTime = 0;
 unsigned long startTime2 = 0;
 unsigned long startTime3 = 0;
 
-float d1 = 0;
-float d2 = 0;
-float x0 = 17.79; //3.8 strc
-
 float savedX = 0;
 float savedY = 0;
 
@@ -56,8 +52,13 @@ float currentY = 0;
 float homeX = 0;
 float homeY = 0;
 
-float maxY = 11.0;
-float minY = 10.0;
+float x0 = 0; //3.8 strc, 17.8 pool
+float d1 = 0;
+float d2 = 0;
+float maxY = 0;
+float minY = 0;
+float maxX = 0;
+float minX = 0;
 
 //received message
 String receivedMessage = "";
@@ -450,6 +451,24 @@ void forDrone() {
 
         Serial.print("New minY: ");
         Serial.println(minY);
+        sendToNano(receivedCommand, myName, receivedDetails);
+      } else if(receivedCommand == "MAXX") {
+        Serial.print("Old maxX: ");
+        Serial.println(maxX);
+
+        maxX = receivedDetails.toFloat();
+
+        Serial.print("New maxX: ");
+        Serial.println(maxX);
+        sendToNano(receivedCommand, myName, receivedDetails);
+      } else if(receivedCommand == "MINX") {
+        Serial.print("Old minX: ");
+        Serial.println(minX);
+
+        minX = receivedDetails.toFloat();
+
+        Serial.print("New minX: ");
+        Serial.println(minX);
         sendToNano(receivedCommand, myName, receivedDetails);
       } else if(receivedCommand == "HOME") {
         digitalWrite(detectionPin, LOW);
