@@ -61,6 +61,8 @@ float minY = 0;
 float maxX = 0;
 float minX = 0;
 
+int droneSize = 0;
+
 //received message
 String receivedMessage = "";
 String receivedCommand = "";
@@ -199,7 +201,7 @@ void forBaseStation() {
             Serial.print("Did not receive 'DEPLREP' from '");
             Serial.print(drones.get(i));
             Serial.println("' yet. Sending 'DEPL' again.");
-            sendCommand("DEPL", drones.get(i), "HELL");
+            sendCommand("DEPL", drones.get(i), drones.size());
           }
         }
         Serial.print("Successfully deployed: ");
@@ -343,10 +345,15 @@ void forDrone() {
     homeX = currentX;
     homeY = currentY;
 
+    droneSize = receivedDetails.toInt();
+
     Serial.print("Drone has deployed at ");
     Serial.print(homeX);
     Serial.print(",");
-    Serial.println(homeY);
+    Serial.print(homeY);
+    Serial.print(" with ");
+    Serial.print(droneSize);
+    Serial.println(" other drones.");
 
     sendToNano("DEPL", myName, String(homeX)+","+String(homeY));
   }
@@ -385,44 +392,56 @@ void forDrone() {
         sendToNano("GO", myName, String(currentX)+","+String(currentY));
         digitalWrite(detectionPin, LOW);
         digitalWrite(recordingPin, HIGH);
-      } else if(receivedCommand == "WHER") {
+      } else if(receivedCommand == "WHAT") {
         startTime = millis();
         Serial.print("Base station wants to know ");
         Serial.println(receivedDetails);
-        if(receivedDetails == "CURR\r") {
+        if(receivedDetails == "CURR\r" || receivedDetails == "CURR") {
           while(millis() - startTime < 800) {
             if(millis() - startTime2 > 300) {
               sendCommand("HERE", receivedFromName, String(currentX) + "," + String(currentY));
             }
           }
-        } else if(receivedDetails == "HOME\r") {
+        } else if(receivedDetails == "HOME\r" || receivedDetails == "HOME") {
           while(millis() - startTime < 800) {
             if(millis() - startTime2 > 300) {
               sendCommand("HERE", receivedFromName, String(homeX) + "," + String(homeY));
             }
           }
-        } else if(receivedDetails == "SAVE\r") {
+        } else if(receivedDetails == "SAVE\r" || receivedDetails == "SAVE") {
           while(millis() - startTime < 800) {
             if(millis() - startTime2 > 300) {
               sendCommand("HERE", receivedFromName, String(savedX) + "," + String(savedY));
             }
           }
-        } else if(receivedDetails == "XSUB\r") {
+        } else if(receivedDetails == "XSUB\r" || receivedDetails == "XSUB") {
           while(millis() - startTime < 800) {
             if(millis() - startTime2 > 300) {
               sendCommand("HERE", receivedFromName, String(x0));
             }
           }
-        } else if(receivedDetails == "MAXY\r") {
+        } else if(receivedDetails == "MAXY\r" || receivedDetails == "MAXY") {
           while(millis() - startTime < 800) {
             if(millis() - startTime2 > 300) {
               sendCommand("HERE", receivedFromName, String(maxY));
             }
           }
-        } else if(receivedDetails == "MINY\r") {
+        } else if(receivedDetails == "MINY\r" || receivedDetails == "MINY") {
           while(millis() - startTime < 800) {
             if(millis() - startTime2 > 300) {
               sendCommand("HERE", receivedFromName, String(minY));
+            }
+          }
+        } else if(receivedDetails == "MAXX\r" || receivedDetails == "MAXX") {
+          while(millis() - startTime < 800) {
+            if(millis() - startTime2 > 300) {
+              sendCommand("HERE", receivedFromName, String(maxX));
+            }
+          }
+        } else if(receivedDetails == "MINX\r" || receivedDetails == "MINX") {
+          while(millis() - startTime < 800) {
+            if(millis() - startTime2 > 300) {
+              sendCommand("HERE", receivedFromName, String(minX));
             }
           }
         }
@@ -453,7 +472,7 @@ void forDrone() {
         Serial.print("New minY: ");
         Serial.println(minY);
         sendToNano(receivedCommand, myName, receivedDetails);
-      } else if(receivedCommand == "MAXX") {
+      } else if(receivedCommand == "MINX") {
         Serial.print("Old minX: ");
         Serial.println(minX);
 

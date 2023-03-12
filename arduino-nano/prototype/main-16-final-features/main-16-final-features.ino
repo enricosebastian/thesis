@@ -52,11 +52,10 @@ float currentY = 0;
 float homeX = 0;
 float homeY = 0;
 
-float maxY = 12.0;
-float minY = 8.0;
-
-float maxX = 12.0;
-float minX = 5.0;
+float maxY = 0;
+float minY = 0;
+float maxX = 0;
+float minX = 0;
 
 //PID values
 float kp = 2;
@@ -316,6 +315,22 @@ void loop() {
 
       Serial.print("New minY: ");
       Serial.println(minY);
+    } else if(receivedCommand == "MINX") {
+      Serial.print("Old minX: ");
+      Serial.println(minX);
+
+      minX = receivedDetails.toFloat();
+
+      Serial.print("New minX: ");
+      Serial.println(minX);
+    } else if(receivedCommand == "MAXX") {
+      Serial.print("Old maxX: ");
+      Serial.println(maxX);
+
+      maxX = receivedDetails.toFloat();
+
+      Serial.print("New maxX: ");
+      Serial.println(maxX);
     }
   }
 
