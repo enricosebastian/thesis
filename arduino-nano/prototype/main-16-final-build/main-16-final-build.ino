@@ -313,6 +313,7 @@ void loop() {
       Serial.println(minY);
 
       minY = receivedDetails.toFloat();
+      homeY = minY;
 
       Serial.print("New minY: ");
       Serial.println(minY);
@@ -321,6 +322,7 @@ void loop() {
       Serial.println(maxX);
 
       maxX = receivedDetails.toFloat();
+      homeX = maxX;
 
       Serial.print("New maxX: ");
       Serial.println(maxX);
