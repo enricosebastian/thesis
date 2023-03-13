@@ -17,7 +17,6 @@ colors = ["red",
           "pink",]
 
 colors = colors[0:num_drones]
-print(colors)
 
 # How fast/slow the coordinates will update
 draw_delay = 0.01
@@ -35,6 +34,10 @@ y_min = 3
 x_lim = (x_min-2,x_max+2)
 y_lim = (y_min-2, y_max+2)
 
+# Random trash
+random_trash_x = list(np.random.randint(low=x_min, high=x_max, size=20))
+random_trash_y = list(np.random.randint(low=y_min, high=y_max, size=20))
+
 # Important x points
 sizeOfArea = abs(x_max - x_min) // num_drones
 x = list(range(x_min, x_max+1, sizeOfArea))
@@ -44,17 +47,24 @@ x_increment = np.ones(num_drones).astype(int) * -1
 x_data = x_min.copy()
 
 y_increment = np.ones(num_drones).astype(int) * 1
-y_data = random.sample(range(y_min,y_min+4), num_drones)
+y_data = list(np.random.randint(low=y_min, high=y_min+3, size=num_drones))
+
+print("\ndrones: ", colors, end="\n\n")
 
 print("x_max: ", end=" ")
 print(x_max)
 print("y_min: ", end=" ")
-print(y_min)
+print(y_min, end='\n\n')
 
 print("x_data: ", end=" ")
 print(x_data)
 print("y_data: ", end=" ")
-print(y_data)
+print(y_data, end='\n\n')
+
+print("random_trash_x: ", end=" ")
+print(random_trash_x)
+print("random_trash_y: ", end=" ")
+print(random_trash_y)
 
 while True:
     for idx, y in enumerate(y_data):
@@ -76,6 +86,7 @@ while True:
             
     
     plt.scatter(x_data, y_data, c=colors)
+    plt.scatter(random_trash_x, random_trash_y, c='green', marker='x')
     plt.xlim(x_lim)
     plt.ylim(y_lim)
     
@@ -85,66 +96,3 @@ while True:
     plt.clf()
     
     y_data += y_increment
-    
-    
-#     for i in enumerate(y):
-#         if y == y_max:
-            
-#     plt.scatter(x, y, c=colors)
-#     plt.xlim(0,20)
-#     plt.ylim(0,20)
-    
-#     plt.draw()
-    
-#     plt.pause(draw_delay)
-#     plt.clf()
-    
-#     y += y_increment
-    
-# for i in arr:
-#     print(i)
-
-# def plot(x_data, y_data, color):
-#     plt.scatter(x_data, y_data, c=color)
-#     plt.xlim(0,20)
-#     plt.ylim(0,20)
-#     plt.draw()
-#     plt.pause(draw_delay)
-#     plt.clf()
-    
-
-# while True:
-#     y += y_increment
-    
-#     if y == y_max:
-#         y_increment *= -1
-#         x += x_increment
-        
-#         temp = y_min
-#         y_min = y_max
-#         y_max = temp
-        
-#     if x == x_max+x_increment:
-#         while x is not x_min:
-#             x += -1*x_increment
-#             plot(x, y, "blue")
-        
-#     plot(x, y, "blue")
-
-            
-            
-        
-    
-
-
-            
-        
-# plt.scatter(x, y, c ="blue")
-# plt.xlim(0,x_max)
-# plt.ylim(0,y_max)
-# plt.draw()
-# plt.pause(draw_delay)
-# plt.clf()
-        
-        
-            
