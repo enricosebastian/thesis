@@ -6,8 +6,8 @@
 
 //Name here
 // const String myName = "DRO1";
-const String myName = "DRO2";
-// const String myName = "DRO3";
+// const String myName = "DRO2";
+const String myName = "DRO3";
 
 //Constants
 const int greenLed = 7;
@@ -25,8 +25,11 @@ const int turnDelay = 30000; //in milliseconds
 
 //movement constants
 const float stopSpeed = 0;
-const float minSpeed = 15;
-const float maxSpeed = 25;
+const float minSpeed = 10;
+const float maxSpeed = 15;
+
+// const float minSpeed = 15;
+// const float maxSpeed = 25;
 
 const float angleAllowance = 5.0;
 const float currentXAllowance = 2;
@@ -212,8 +215,9 @@ void loop() {
       homeY = minY;
 
       //WHITE = 235
-      if(myName == "DRO1") oppositeStraightAngle = straightAngle + 190;
-      else if(myName == "DRO2") oppositeStraightAngle = straightAngle + 210;
+      if(myName == "DRO1") oppositeStraightAngle = straightAngle + 160;
+      else if(myName == "DRO2") oppositeStraightAngle = straightAngle + 190;
+      else if(myName == "DRO3") oppositeStraightAngle = straightAngle + 200;
 
       if(oppositeStraightAngle > 360) {
         oppositeStraightAngle = oppositeStraightAngle - 360;
@@ -306,17 +310,45 @@ void loop() {
       Serial.print(",");
       Serial.println(currentY);
     } else if(receivedCommand == "TURN" && isDeployed) {
-      float added = receivedDetails.toFloat();
-      Serial.println("\n\n\n");
-      Serial.print("addded: ");
-      Serial.println(added);
-      Serial.println("\n\n\n");
-      savedAngle = savedAngle + receivedDetails.toFloat();
-      if(savedAngle > 360) savedAngle = savedAngle - 360;
-      else if(savedAngle < 0) savedAngle = 360 + savedAngle;
+      if(isForward) {
+        isForward = false;
+        savedAngle = oppositeStraightAngle;
 
-      Serial.print("Turning to: ");
-      Serial.println(savedAngle);
+        leftTurnAngle = savedAngle + turnAngle;
+        if(leftTurnAngle > 360) leftTurnAngle = leftTurnAngle - 360;
+        if(leftTurnAngle < 0) leftTurnAngle = 360 + leftTurnAngle;
+
+        leftDetectAngle = savedAngle + detectAngle;
+        if(leftDetectAngle > 360) leftDetectAngle = leftDetectAngle - 360;
+        if(leftDetectAngle < 0) leftDetectAngle = 360 + leftDetectAngle;
+
+        rightTurnAngle = savedAngle - turnAngle;
+        if(rightTurnAngle > 360) rightTurnAngle = rightTurnAngle - 360;
+        if(rightTurnAngle < 0) rightTurnAngle = 360 + rightTurnAngle;
+
+        rightDetectAngle = savedAngle + detectAngle;
+        if(rightDetectAngle > 360) rightDetectAngle = rightDetectAngle - 360;
+        if(rightDetectAngle < 0) rightDetectAngle = 360 + rightDetectAngle;
+      } else {
+        isForward = true;
+        savedAngle = straightAngle;
+
+        leftTurnAngle = savedAngle + turnAngle;
+        if(leftTurnAngle > 360) leftTurnAngle = leftTurnAngle - 360;
+        if(leftTurnAngle < 0) leftTurnAngle = 360 + leftTurnAngle;
+
+        leftDetectAngle = savedAngle + detectAngle;
+        if(leftDetectAngle > 360) leftDetectAngle = leftDetectAngle - 360;
+        if(leftDetectAngle < 0) leftDetectAngle = 360 + leftDetectAngle;
+
+        rightTurnAngle = savedAngle - turnAngle;
+        if(rightTurnAngle > 360) rightTurnAngle = rightTurnAngle - 360;
+        if(rightTurnAngle < 0) rightTurnAngle = 360 + rightTurnAngle;
+
+        rightDetectAngle = savedAngle + detectAngle;
+        if(rightDetectAngle > 360) rightDetectAngle = rightDetectAngle - 360;
+        if(rightDetectAngle < 0) rightDetectAngle = 360 + rightDetectAngle;
+      }
     } else if(receivedCommand == "HOME" && isDeployed) {
       hasStopped = true;
       isGoingHome = true;
@@ -368,65 +400,52 @@ void loop() {
         startTime = millis();
       }
 
-      // State 2: Normal maneuvering
-      // X limit checker
-      if(currentX > (maxX - 2)) {
-        if(isForward) savedAngle = rightTurnAngle;
-        else if(!isForward) savedAngle = leftTurnAngle;
-        Serial.println("Reached max X");
-      } else if(currentX < (minX + 2)) {
-        if(isForward) savedAngle = leftTurnAngle;
-        else if(!isForward) savedAngle = rightTurnAngle;
-        Serial.println("Reached min X");
-      } else {
-        if(isForward) savedAngle = straightAngle;
-        else if(!isForward) savedAngle = oppositeStraightAngle;
-      }
+      // // Y limit checker
+      // if(isForward && startTime2 > 50000) {
+      //   isForward = false;
+      //   savedAngle = oppositeStraightAngle;
 
-      // Y limit checker
-      if(currentY > maxY && currentY > minY) {
-        isForward = false;
-        savedAngle = oppositeStraightAngle;
+      //   leftTurnAngle = savedAngle + turnAngle;
+      //   if(leftTurnAngle > 360) leftTurnAngle = leftTurnAngle - 360;
+      //   if(leftTurnAngle < 0) leftTurnAngle = 360 + leftTurnAngle;
 
-        leftTurnAngle = savedAngle + turnAngle;
-        if(leftTurnAngle > 360) leftTurnAngle = leftTurnAngle - 360;
-        if(leftTurnAngle < 0) leftTurnAngle = 360 + leftTurnAngle;
+      //   leftDetectAngle = savedAngle + detectAngle;
+      //   if(leftDetectAngle > 360) leftDetectAngle = leftDetectAngle - 360;
+      //   if(leftDetectAngle < 0) leftDetectAngle = 360 + leftDetectAngle;
 
-        leftDetectAngle = savedAngle + detectAngle;
-        if(leftDetectAngle > 360) leftDetectAngle = leftDetectAngle - 360;
-        if(leftDetectAngle < 0) leftDetectAngle = 360 + leftDetectAngle;
+      //   rightTurnAngle = savedAngle - turnAngle;
+      //   if(rightTurnAngle > 360) rightTurnAngle = rightTurnAngle - 360;
+      //   if(rightTurnAngle < 0) rightTurnAngle = 360 + rightTurnAngle;
 
-        rightTurnAngle = savedAngle - turnAngle;
-        if(rightTurnAngle > 360) rightTurnAngle = rightTurnAngle - 360;
-        if(rightTurnAngle < 0) rightTurnAngle = 360 + rightTurnAngle;
+      //   rightDetectAngle = savedAngle + detectAngle;
+      //   if(rightDetectAngle > 360) rightDetectAngle = rightDetectAngle - 360;
+      //   if(rightDetectAngle < 0) rightDetectAngle = 360 + rightDetectAngle;
 
-        rightDetectAngle = savedAngle + detectAngle;
-        if(rightDetectAngle > 360) rightDetectAngle = rightDetectAngle - 360;
-        if(rightDetectAngle < 0) rightDetectAngle = 360 + rightDetectAngle;
+      //   Serial.println("Reached max Y.");
+      //   startTime2 = millis();
+      // } else if(!isForward && startTime2 > 50000) {
+      //   isForward = true;
+      //   savedAngle = straightAngle;
 
-        Serial.println("Reached max Y.");
-      } else if(currentY < minY && currentY < maxY) {
-        isForward = true;
-        savedAngle = straightAngle;
+      //   leftTurnAngle = savedAngle + turnAngle;
+      //   if(leftTurnAngle > 360) leftTurnAngle = leftTurnAngle - 360;
+      //   if(leftTurnAngle < 0) leftTurnAngle = 360 + leftTurnAngle;
 
-        leftTurnAngle = savedAngle + turnAngle;
-        if(leftTurnAngle > 360) leftTurnAngle = leftTurnAngle - 360;
-        if(leftTurnAngle < 0) leftTurnAngle = 360 + leftTurnAngle;
+      //   leftDetectAngle = savedAngle + detectAngle;
+      //   if(leftDetectAngle > 360) leftDetectAngle = leftDetectAngle - 360;
+      //   if(leftDetectAngle < 0) leftDetectAngle = 360 + leftDetectAngle;
 
-        leftDetectAngle = savedAngle + detectAngle;
-        if(leftDetectAngle > 360) leftDetectAngle = leftDetectAngle - 360;
-        if(leftDetectAngle < 0) leftDetectAngle = 360 + leftDetectAngle;
+      //   rightTurnAngle = savedAngle - turnAngle;
+      //   if(rightTurnAngle > 360) rightTurnAngle = rightTurnAngle - 360;
+      //   if(rightTurnAngle < 0) rightTurnAngle = 360 + rightTurnAngle;
 
-        rightTurnAngle = savedAngle - turnAngle;
-        if(rightTurnAngle > 360) rightTurnAngle = rightTurnAngle - 360;
-        if(rightTurnAngle < 0) rightTurnAngle = 360 + rightTurnAngle;
+      //   rightDetectAngle = savedAngle + detectAngle;
+      //   if(rightDetectAngle > 360) rightDetectAngle = rightDetectAngle - 360;
+      //   if(rightDetectAngle < 0) rightDetectAngle = 360 + rightDetectAngle;
 
-        rightDetectAngle = savedAngle + detectAngle;
-        if(rightDetectAngle > 360) rightDetectAngle = rightDetectAngle - 360;
-        if(rightDetectAngle < 0) rightDetectAngle = 360 + rightDetectAngle;
-
-        Serial.println("Reached min Y.");
-      }
+      //   Serial.println("Reached min Y.");
+      //   startTime2 = millis();
+      // }
 
       move(currentAngle);
     }
