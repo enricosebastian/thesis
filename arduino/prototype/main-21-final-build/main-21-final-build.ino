@@ -128,8 +128,8 @@ void setup() {
 }
 
 void loop() {
-  // forBaseStation();
-  forDrone();
+  forBaseStation();
+  // forDrone();
 
 
   // if(myName == "BASE") {
@@ -200,13 +200,13 @@ void forBaseStation() {
         startTime = millis();
 
         xMin = xMax;
-        xMax = xMax + (deploymentArea/2);
+        xMax = xMax + deploymentArea;
 
         sendCommand("DEPL", drones.get(i), String(xMin) + "," + String(xMax));
-        while(!receivedSpecificCommand("DEPLREP") && receivedFromName != drones.get(i)) {
-          if(millis() - startTime > waitingTime) {
+        while(!(receivedSpecificCommand("DEPLREP") && receivedFromName == drones.get(i))) {
+          if(millis() - startTime > 1000) {
             startTime = millis();
-
+            
             Serial.print("Did not receive 'DEPLREP' from '");
             Serial.print(drones.get(i));
             Serial.println("' yet. Sending 'DEPL' again.");
