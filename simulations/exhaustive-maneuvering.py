@@ -29,11 +29,11 @@ x_min = 0
 
 # How far or near your drones reach
 y_max = 18
-y_min = -1
+y_min = 3
 
 # How big of small your plot image is
-x_lim = (x_min-5,x_max+5)
-y_lim = (y_min-5, y_max+5)
+x_lim = (x_min-2,x_max+2)
+y_lim = (y_min-2, y_max+2)
 
 # Important x points
 sizeOfArea = abs(x_max - x_min) // num_drones
@@ -42,18 +42,23 @@ x_max = x[0:len(x)-1]
 x_min = x[1:len(x)]
 x_increment = np.ones(num_drones).astype(int) * -1
 x_data = x_min.copy()
-print(x_data)
 
-y_max = np.ones(num_drones).astype(int) * y_max #<--- edit number constant
-y_min = np.zeros(num_drones).astype(int)
 y_increment = np.ones(num_drones).astype(int) * 1
-y_data = y_min.copy()
-y_data = random.sample(range(0,3), num_drones)
+y_data = random.sample(range(y_min,y_min+4), num_drones)
+
+print("x_max: ", end=" ")
+print(x_max)
+print("y_min: ", end=" ")
+print(y_min)
+
+print("x_data: ", end=" ")
+print(x_data)
+print("y_data: ", end=" ")
 print(y_data)
 
 while True:
     for idx, y in enumerate(y_data):
-        if y > y_max[idx] or y < y_min[idx]:
+        if y > y_max or y < y_min:
             y_increment[idx] *= -1
             x_data[idx] += x_increment[idx]
     
@@ -62,10 +67,10 @@ while True:
             y_increment[idx] = 0
             x_increment[idx] *= -1
         if x == x_min[idx]:
-            if y_data[idx] > y_max[idx]:
+            if y_data[idx] > y_max:
                 y_increment[idx] = -1
                 x_increment[idx] = 0
-            elif y_data[idx] < y_min[idx]:
+            elif y_data[idx] < y_min:
                 y_increment[idx] = 1
                 x_increment[idx] = -1
             
