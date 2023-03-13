@@ -161,7 +161,7 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
                 # Object is at the right
                 sentDetails = "RIGHT"
                 
-            if(detection_result.detections[0].categories[0].category_name == "DRONE"):
+            if(detection_result.detections[0].categories[0].category_name == "drone"):
                 # Ignore object
                 sentDetails = "DRONE"
             
