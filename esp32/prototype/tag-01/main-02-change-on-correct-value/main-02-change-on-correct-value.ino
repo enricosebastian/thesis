@@ -2,7 +2,7 @@
 #include "DW1000Ranging.h"
 #include "DW1000.h"
 
-#define TAG_ADD "02:20:5B:D5:A9:9A:E2:9C"
+#define TAG_ADD "01:20:5B:D5:A9:9A:E2:9C"
 
 #define TX 16
 #define RX 17
@@ -51,7 +51,9 @@ void setup() {
   DW1000Ranging.attachNewDevice(0);
   DW1000Ranging.attachInactiveDevice(0);
 
-  DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
+  DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_FAST_ACCURACY,DW1000.CHANNEL_5,false);
+
+  // DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
 
   startTime = millis();
   startTime2 = millis();
@@ -71,7 +73,7 @@ void loop() {
     // If you are completely sure that the last coordinate from Anchor 1 is correct, switch channels
     if(correctTimes > maxCorrectTimes) {
       Serial.println("Switching to channel 7");
-      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_7,false);
+      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_FAST_ACCURACY,DW1000.CHANNEL_7,false);
       correctTimes = 0;
       isLookingForX = false;
     }
@@ -86,7 +88,7 @@ void loop() {
     // If you are completely sure that the last coordinate from Anchor 2 is correct, switch channels
     if(correctTimes > maxCorrectTimes) {
       Serial.println("Switching to channel 5");
-      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_RANGE_LOWPOWER,DW1000.CHANNEL_5,false);
+      DW1000Ranging.startAsTag(TAG_ADD,DW1000.MODE_LONGDATA_FAST_ACCURACY,DW1000.CHANNEL_5,false);
       correctTimes = 0;
       isLookingForX = true;
     }

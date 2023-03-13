@@ -32,8 +32,6 @@ const int redLed = 13;
 const int yellowLed = 12;
 const int greenLed = 11;
 
-const float x0 = 14.8; //3.8 strc
-
 //Booleans for logic
 bool isConnected = false;
 bool isDeployed = false;
@@ -47,6 +45,7 @@ unsigned long startTime3 = 0;
 
 float d1 = 0;
 float d2 = 0;
+float x0 = 17.79; //3.8 strc
 
 float savedX = 0;
 float savedY = 0;
@@ -56,6 +55,9 @@ float currentY = 0;
 
 float homeX = 0;
 float homeY = 0;
+
+float maxY = 11.0;
+float minY = 10.0;
 
 //received message
 String receivedMessage = "";
@@ -137,7 +139,6 @@ void forBaseStation() {
 
     //TASK 1 Waiting for a drone to connect. Add it to list
     if(receivedSpecificCommand("CONN")) {
-
       Serial.print(receivedFromName);
       Serial.println(" wanted to connect. Sending handshake.");
       startTime = millis();
@@ -372,7 +373,9 @@ void forDrone() {
         digitalWrite(recordingPin, LOW);
       } else if(receivedCommand == "GO") {
         hasStopped = false;
-        sendToNano(receivedCommand, myName, String(currentX)+","+String(currentY));
+        homeX = currentX;
+        homeY = currentY;
+        sendToNano(receivedCommand, myName, String(homeX)+","+String(homeY));
         digitalWrite(detectionPin, HIGH); // Turn on camera
         digitalWrite(recordingPin, LOW);
       } else if(receivedCommand == "RECO") {
@@ -382,12 +385,76 @@ void forDrone() {
         digitalWrite(recordingPin, HIGH);
       } else if(receivedCommand == "WHER") {
         startTime = millis();
-        Serial.println("Base station wants to know your location.");
-        while(millis() - startTime < 800) {
-          if(millis() - startTime2 > 300) {
-            sendCommand("HERE", receivedFromName, String(currentX) + "," + String(currentY));
+        Serial.print("Base station wants to know ");
+        Serial.println(receivedDetails);
+        if(receivedDetails == "CURR\r") {
+          while(millis() - startTime < 800) {
+            if(millis() - startTime2 > 300) {
+              sendCommand("HERE", receivedFromName, String(currentX) + "," + String(currentY));
+            }
+          }
+        } else if(receivedDetails == "HOME\r") {
+          while(millis() - startTime < 800) {
+            if(millis() - startTime2 > 300) {
+              sendCommand("HERE", receivedFromName, String(homeX) + "," + String(homeY));
+            }
+          }
+        } else if(receivedDetails == "SAVE\r") {
+          while(millis() - startTime < 800) {
+            if(millis() - startTime2 > 300) {
+              sendCommand("HERE", receivedFromName, String(savedX) + "," + String(savedY));
+            }
+          }
+        } else if(receivedDetails == "XSUB\r") {
+          while(millis() - startTime < 800) {
+            if(millis() - startTime2 > 300) {
+              sendCommand("HERE", receivedFromName, String(x0));
+            }
+          }
+        } else if(receivedDetails == "MAXY\r") {
+          while(millis() - startTime < 800) {
+            if(millis() - startTime2 > 300) {
+              sendCommand("HERE", receivedFromName, String(maxY));
+            }
+          }
+        } else if(receivedDetails == "MINY\r") {
+          while(millis() - startTime < 800) {
+            if(millis() - startTime2 > 300) {
+              sendCommand("HERE", receivedFromName, String(minY));
+            }
           }
         }
+          
+      } else if(receivedCommand == "XSUB") {
+        Serial.print("Current x0: ");
+        Serial.println(x0);
+
+        x0 = receivedDetails.toFloat();
+
+        Serial.print("New x0: ");
+        Serial.println(x0);
+      } else if(receivedCommand == "MAXY") {
+        Serial.print("Old maxY: ");
+        Serial.println(maxY);
+
+        maxY = receivedDetails.toFloat();
+
+        Serial.print("New maxY: ");
+        Serial.println(maxY);
+        sendToNano(receivedCommand, myName, receivedDetails);
+      } else if(receivedCommand == "MINY") {
+        Serial.print("Old minY: ");
+        Serial.println(minY);
+
+        minY = receivedDetails.toFloat();
+
+        Serial.print("New minY: ");
+        Serial.println(minY);
+        sendToNano(receivedCommand, myName, receivedDetails);
+      } else if(receivedCommand == "HOME") {
+        digitalWrite(detectionPin, LOW);
+        sendToNano(receivedCommand, myName, receivedDetails);
+        Serial.println("Drone is going home.");
       } else {
         sendToNano(receivedCommand, myName, receivedDetails);
       }
@@ -462,7 +529,14 @@ void sendToNano(String command, String toName, String details) {
 
   //COMMAND TONAME FROMNAME DETAILS
   if(command != "" && toName != "" && details != "") {
-    sentMessage = command + " " + toName + " " + myName + " " + details;
+    sentMessage.concat(command);
+    sentMessage.concat(" ");
+    sentMessage.concat(toName);
+    sentMessage.concat(" ");
+    sentMessage.concat(myName);
+    sentMessage.concat(" ");
+    sentMessage.concat(details);
+
     Nano.println(sentMessage);
     sentMessage = "";
   } else {
@@ -520,7 +594,14 @@ bool receiveCommand() {
 void sendCommand(String command, String toName, String details) {
   //COMMAND TONAME FROMNAME DETAILS
   if(command != "" && toName != "" && details != "") {
-    sentMessage = command + " " + toName + " " + myName + " " + details;
+    sentMessage.concat(command);
+    sentMessage.concat(" ");
+    sentMessage.concat(toName);
+    sentMessage.concat(" ");
+    sentMessage.concat(myName);
+    sentMessage.concat(" ");
+    sentMessage.concat(details);
+
     HC12.println(sentMessage);
     sentMessage = "";
   } else {

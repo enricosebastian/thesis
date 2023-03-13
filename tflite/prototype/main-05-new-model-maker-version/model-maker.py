@@ -21,14 +21,14 @@ from absl import logging
 logging.set_verbosity(logging.ERROR)
 
 # CHANGE VALUES HERE ONLY
-model_name = 'efficientdet_lite0'
-train_dir = './images/plastic_bottle/train'
-validate_dir = './images/plastic_bottle/validate'
-test_dir = './images/plastic_bottle/test'
-label_map = ['plastic_bottle']
+model_name = 'efficientdet_lite1'
+train_dir = './images/all/train'
+validate_dir = './images/all/validate'
+test_dir = './images/all/test'
+label_map = ['drone', 'plastic_bottle']
 
 export_dir = './models/'
-model_filename = 'plastic_bottle.tflite'
+model_filename = 'all.tflite'
 #######################
 
 spec = model_spec.get(model_name)
@@ -51,7 +51,7 @@ test_data = object_detector.DataLoader.from_pascal_voc(
     label_map=label_map
 )
 
-model = object_detector.create(train_data, model_spec=spec, epochs=50, batch_size=8, train_whole_model=True, validation_data=validation_data)
+model = object_detector.create(train_data, model_spec=spec, epochs=50, batch_size=4, train_whole_model=True, validation_data=validation_data)
 
 print("=============Validation results 1==============\n")
 print(
