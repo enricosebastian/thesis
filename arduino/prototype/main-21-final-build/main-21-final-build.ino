@@ -4,10 +4,10 @@
 #include <LinkedList.h>
 
 //Name here
-const String myName = "BASE";
+// const String myName = "BASE";
 // const String myName = "DRO1";
 // const String myName = "DRO2";
-// const String myName = "DRO3";
+const String myName = "DRO3";
 
 //Constants (buttons)
 const int detectionPin = 10;
@@ -128,8 +128,8 @@ void setup() {
 }
 
 void loop() {
-  forBaseStation();
-  // forDrone();
+  // forBaseStation();
+  forDrone();
 
 
   // if(myName == "BASE") {
