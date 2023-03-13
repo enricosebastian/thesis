@@ -96,11 +96,19 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
     text_location = (left_margin, row_size)
     cv2.putText(image, fps_text, text_location, cv2.FONT_HERSHEY_PLAIN,
                 font_size, text_color, font_thickness)
-
+    
     # Stop the program if the ESC key is pressed.
     if cv2.waitKey(1) == 27:
       break
     cv2.imshow('object_detector', image)
+    
+    if(len(detection_result.detections) > 0):
+      width = detection_result.detections[0].bounding_box.width
+      height = detection_result.detections[0].bounding_box.height
+      origin_x = detection_result.detections[0].bounding_box.origin_x
+      origin_y = detection_result.detections[0].bounding_box.origin_y
+      category = detection_result.detections[0].categories[0].category_name
+      print(width > 600 and height > 400)
 
   cap.release()
   cv2.destroyAllWindows()
