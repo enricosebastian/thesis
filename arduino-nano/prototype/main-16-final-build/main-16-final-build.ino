@@ -5,9 +5,9 @@
 #include <Servo.h>
 
 //Name here
-// const String myName = "DRO1";
+const String myName = "DRO1";
 // const String myName = "DRO2";
-const String myName = "DRO3";
+// const String myName = "DRO3";
 
 //Constants
 const int greenLed = 7;
@@ -268,6 +268,18 @@ void loop() {
         digitalWrite(redLed, LOW);
 
         savedAngle = savedAngle;
+      } else if(receivedDetails == "DRONE\r" || receivedDetails == "DRONE") {
+        digitalWrite(greenLed, LOW);
+        digitalWrite(yellowLed, HIGH);
+        digitalWrite(blueLed, HIGH);
+        digitalWrite(redLed, LOW);
+        if(savedAngle == leftDetectAngle) savedAngle = rightDetectAngle;
+        else if(savedAngle == rightDetectAngle) savedAngle = leftDetectAngle;        
+        else if(savedAngle == straightAngle) savedAngle = oppositeStraightAngle;
+        else if(savedAngle == oppositeStraightAngle) savedAngle = straightAngle;
+        else if(savedAngle == leftTurnAngle) savedAngle = rightTurnAngle;
+        else if(savedAngle == rightTurnAngle) savedAngle = leftTurnAngle;
+        else savedAngle = straightAngle;
       } else if(receivedDetails == "DONE\r" || receivedDetails == "DONE") {
         digitalWrite(greenLed, LOW);
         digitalWrite(yellowLed, LOW);
