@@ -247,6 +247,9 @@ void loop() {
       startTime = millis();
       startTime2 = millis();
 
+      Serial.print("Detected an object at ");
+      Serial.println(receivedDetails);
+
       if(receivedDetails == "LEFT\r" || receivedDetails == "LEFT") {
         digitalWrite(greenLed, LOW);
         digitalWrite(yellowLed, LOW);
@@ -269,10 +272,14 @@ void loop() {
 
         savedAngle = savedAngle;
       } else if(receivedDetails == "DRONE\r" || receivedDetails == "DRONE") {
-        digitalWrite(greenLed, LOW);
+        digitalWrite(greenLed, HIGH);
         digitalWrite(yellowLed, HIGH);
         digitalWrite(blueLed, HIGH);
-        digitalWrite(redLed, LOW);
+        digitalWrite(redLed, HIGH);
+
+        Serial.print("Ignoring drone at ");
+        Serial.print(savedAngle);
+        Serial.print(" by going to ");
         if(savedAngle == leftDetectAngle) savedAngle = rightDetectAngle;
         else if(savedAngle == rightDetectAngle) savedAngle = leftDetectAngle;        
         else if(savedAngle == straightAngle) savedAngle = oppositeStraightAngle;
@@ -280,6 +287,7 @@ void loop() {
         else if(savedAngle == leftTurnAngle) savedAngle = rightTurnAngle;
         else if(savedAngle == rightTurnAngle) savedAngle = leftTurnAngle;
         else savedAngle = straightAngle;
+        Serial.println(savedAngle);
       } else if(receivedDetails == "DONE\r" || receivedDetails == "DONE") {
         digitalWrite(greenLed, LOW);
         digitalWrite(yellowLed, LOW);
