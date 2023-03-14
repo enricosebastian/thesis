@@ -5,7 +5,7 @@ import time
 
 
 # Number of drones to deploy
-num_drones = 3
+num_drones = 2
 trash_amount = 50
 
 # You have to match the amount of colors to the number of drones
