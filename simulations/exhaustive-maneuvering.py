@@ -73,6 +73,8 @@ print(random_trash_x)
 print("random_trash_y: ", end=" ")
 print(random_trash_y)
 
+trash_captured = 0
+
 while True:
     for idx, y in enumerate(y_data):
         if y > y_max or y < y_min:
@@ -97,9 +99,11 @@ while True:
                 
                 if(random_trash_color[trash_i] != 'white' and (trash_x >= x_max[data_i] and trash_x <= x_min[data_i])):
                     print("Captured at (", x, ",", y_data[data_i], ") from trash index", trash_i)
+                    print("Total trash captured:", trash_captured, "out of", trash_amount, end="\n\n")
                     x_data[data_i] = trash_x.copy()
                     y_data[data_i] = random_trash_y[trash_i].copy()
                     random_trash_color[trash_i] = 'white'
+                    trash_captured += 1
                     
                 # random_trash_x.remove(trash_i)
                 # random_trash_y.remove(trash_i)
