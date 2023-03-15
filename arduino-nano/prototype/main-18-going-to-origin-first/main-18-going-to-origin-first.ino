@@ -135,7 +135,7 @@ void setup() {
   digitalWrite(redLed, HIGH);
 
   Serial.print(myName);
-  Serial.println(" - v16 Nano has initialized.");
+  Serial.println(" - v18 Nano has initialized.");
 }
 
 void loop() {
