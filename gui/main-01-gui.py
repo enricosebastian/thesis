@@ -36,22 +36,22 @@ drone_counter.grid(column=0, row=0, columnspan=3, sticky="ew")
 
 # For deploy button
 deploy_button = Button(root, text="Deploy drone")
-deploy_button.grid(column=0, row=2, sticky="ew")
+deploy_button.grid(column=0, row=2, sticky="ew", padx=5, pady=5)
 ##################
 
 # For home button
 home_button = Button(root, text="Send drone home")
-home_button.grid(column=1, row=2, sticky="ew")
+home_button.grid(column=1, row=2, sticky="ew", padx=5, pady=5)
 ##################
 
 # For stop button
 stop_button = Button(root, text="Stop drone")
-stop_button.grid(column=0, row=3, sticky="ew")
+stop_button.grid(column=0, row=3, sticky="ew", padx=5, pady=5)
 ##################
 
 # For where button
 location_button = Button(root, text="Ask location of drone")
-location_button.grid(column=1, row=3, sticky="ew")
+location_button.grid(column=1, row=3, sticky="ew", padx=5, pady=5)
 ##################
 
 root.mainloop()
