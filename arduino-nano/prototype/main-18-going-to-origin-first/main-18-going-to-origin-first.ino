@@ -380,8 +380,7 @@ void loop() {
           else if(!isForward) savedAngle = rightTurnAngle;
 
         } else if(currentX < minX) {
-          if(isForward) savedAngle = rightTurnAngle;
-          else if(!isForward) savedAngle = leftTurnAngle;
+          isAtStartingPoint = false;
           
         } else {
           if(isForward) {
