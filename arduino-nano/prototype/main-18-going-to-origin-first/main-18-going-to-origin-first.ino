@@ -52,10 +52,10 @@ float homeY = 0;
 
 float d1 = 0;
 float d2 = 0;
-float maxY = 12;
+float maxY = 15;
 float minY = 8;
-float maxX = 12;
-float minX = 5;
+float maxX = 12.4;
+float minX = 0;
 
 //PID values
 float kp = 2;
@@ -73,8 +73,8 @@ float rightTurnAngle = 0.0;
 float leftDetectAngle = 0.0;
 float rightDetectAngle = 0.0;
 
-float turnAngle = 90.0;
-float detectAngle = 55.0;
+float turnAngle = -80.0;
+float detectAngle = -55.0;
 
 //millis time variables for storage
 unsigned long startTime = 0;
@@ -188,6 +188,7 @@ void loop() {
       hasDetectedObject = false;
       isAtStartingPoint = false;
       isForward = true;
+
       startTime = millis();
       startTime2 = millis();
 
@@ -214,7 +215,7 @@ void loop() {
       homeY = minY;
 
       //WHITE = 235
-      if(myName == "DRO1") oppositeStraightAngle = straightAngle + 190;
+      if(myName == "DRO1") oppositeStraightAngle = straightAngle + 150;
       else if(myName == "DRO2") oppositeStraightAngle = straightAngle + 210;
 
       if(oppositeStraightAngle > 360) {
@@ -374,51 +375,19 @@ void loop() {
 
         // State 2: Normal maneuvering
         // X limit checker
-        if(currentX > (maxX - 1)) {
-          savedAngle = leftTurnAngle;
+        if(currentX > maxX) {
+          if(isForward) savedAngle = leftTurnAngle;
+          else if(!isForward) savedAngle = rightTurnAngle;
 
-        } else if(currentX < (minX + 1)) {
-          savedAngle = rightTurnAngle;
+        } else if(currentX < minX) {
+          if(isForward) savedAngle = rightTurnAngle;
+          else if(!isForward) savedAngle = leftTurnAngle;
           
         } else {
           if(isForward) {
             savedAngle = straightAngle;
-            isForward = true;
-            
-            leftTurnAngle = savedAngle + turnAngle;
-            if(leftTurnAngle > 360) leftTurnAngle = leftTurnAngle - 360;
-            if(leftTurnAngle < 0) leftTurnAngle = 360 + leftTurnAngle;
-
-            leftDetectAngle = savedAngle + detectAngle;
-            if(leftDetectAngle > 360) leftDetectAngle = leftDetectAngle - 360;
-            if(leftDetectAngle < 0) leftDetectAngle = 360 + leftDetectAngle;
-
-            rightTurnAngle = savedAngle - turnAngle;
-            if(rightTurnAngle > 360) rightTurnAngle = rightTurnAngle - 360;
-            if(rightTurnAngle < 0) rightTurnAngle = 360 + rightTurnAngle;
-
-            rightDetectAngle = savedAngle + detectAngle;
-            if(rightDetectAngle > 360) rightDetectAngle = rightDetectAngle - 360;
-            if(rightDetectAngle < 0) rightDetectAngle = 360 + rightDetectAngle;
           } else if(!isForward) {
             savedAngle = oppositeStraightAngle;
-            isForward = false;
-            
-            leftTurnAngle = savedAngle + turnAngle;
-            if(leftTurnAngle > 360) leftTurnAngle = leftTurnAngle - 360;
-            if(leftTurnAngle < 0) leftTurnAngle = 360 + leftTurnAngle;
-
-            leftDetectAngle = savedAngle + detectAngle;
-            if(leftDetectAngle > 360) leftDetectAngle = leftDetectAngle - 360;
-            if(leftDetectAngle < 0) leftDetectAngle = 360 + leftDetectAngle;
-
-            rightTurnAngle = savedAngle - turnAngle;
-            if(rightTurnAngle > 360) rightTurnAngle = rightTurnAngle - 360;
-            if(rightTurnAngle < 0) rightTurnAngle = 360 + rightTurnAngle;
-
-            rightDetectAngle = savedAngle + detectAngle;
-            if(rightDetectAngle > 360) rightDetectAngle = rightDetectAngle - 360;
-            if(rightDetectAngle < 0) rightDetectAngle = 360 + rightDetectAngle;
           }
         }
 
@@ -470,31 +439,8 @@ void loop() {
         move(currentAngle);
       } else {
 
-        if(currentX < (homeX - 1)) {
+        if(currentX < homeX) {
           savedAngle = rightTurnAngle;
-
-        } else if(currentX > (homeX + 1)) {
-          savedAngle = leftTurnAngle;
-
-        } else if(currentY > homeY) {
-          isForward = false;
-          savedAngle = oppositeStraightAngle;
-
-          leftTurnAngle = savedAngle + turnAngle;
-          if(leftTurnAngle > 360) leftTurnAngle = leftTurnAngle - 360;
-          if(leftTurnAngle < 0) leftTurnAngle = 360 + leftTurnAngle;
-
-          leftDetectAngle = savedAngle + detectAngle;
-          if(leftDetectAngle > 360) leftDetectAngle = leftDetectAngle - 360;
-          if(leftDetectAngle < 0) leftDetectAngle = 360 + leftDetectAngle;
-
-          rightTurnAngle = savedAngle - turnAngle;
-          if(rightTurnAngle > 360) rightTurnAngle = rightTurnAngle - 360;
-          if(rightTurnAngle < 0) rightTurnAngle = 360 + rightTurnAngle;
-
-          rightDetectAngle = savedAngle + detectAngle;
-          if(rightDetectAngle > 360) rightDetectAngle = rightDetectAngle - 360;
-          if(rightDetectAngle < 0) rightDetectAngle = 360 + rightDetectAngle;
 
         } else if(currentY < homeY) {
           isForward = true;
@@ -537,6 +483,8 @@ void loop() {
           if(rightDetectAngle > 360) rightDetectAngle = rightDetectAngle - 360;
           if(rightDetectAngle < 0) rightDetectAngle = 360 + rightDetectAngle;
         }
+
+        move(currentAngle);
       }
     }
 
@@ -582,6 +530,8 @@ void loop() {
 
         startTime = millis();
       }
+      escRight.write(0);
+      escLeft.write(0);
     }  
 
     // State 3: Is going home 
@@ -593,7 +543,7 @@ void loop() {
       } else if(currentX > (homeX + 1)) {
         savedAngle = leftTurnAngle;
 
-      } else if(currentY > homeY) {
+      } else if (currentY > (homeY + 1)) {
         isForward = false;
         savedAngle = oppositeStraightAngle;
 
@@ -613,7 +563,7 @@ void loop() {
         if(rightDetectAngle > 360) rightDetectAngle = rightDetectAngle - 360;
         if(rightDetectAngle < 0) rightDetectAngle = 360 + rightDetectAngle;
 
-      } else if(currentY < homeY) {
+      } else if(currentY < (homeY - 1)) {
         isForward = true;
         savedAngle = straightAngle;
 
@@ -637,8 +587,8 @@ void loop() {
         isGoingHome = false;
         hasStopped = true;
 
-        escRight.write(0);
-        escLeft.write(0);
+        escRight.write(stopSpeed);
+        escLeft.write(stopSpeed);
       }
       move(currentAngle);
     }

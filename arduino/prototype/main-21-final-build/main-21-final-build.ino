@@ -51,13 +51,13 @@ float currentY = 0;
 float homeX = 0;
 float homeY = 0;
 
-float x0 = 17.8; //3.8 strc, 17.8 pool
+float x0 = 12.4; //3.8 strc, 17.8 pool
 float d1 = 0;
 float d2 = 0;
-float maxY = 12;
+float maxY = 15;
 float minY = 8;
-float maxX = 12;
-float minX = 5;
+float maxX = 12.4;
+float minX = 0;
 
 int droneSize = 0;
 
@@ -130,13 +130,6 @@ void setup() {
 void loop() {
   // forBaseStation();
   forDrone();
-
-
-  // if(myName == "BASE") {
-  //   forBaseStation();
-  // } else {
-  //   forDrone();
-  // }
 }
 
 void forBaseStation() {

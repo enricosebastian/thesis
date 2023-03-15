@@ -189,6 +189,8 @@ void loop() {
       hasStopped = false;
       hasDetectedObject = false;
       isForward = true;
+      isAtStartingPoint = false;
+      
       startTime = millis();
       startTime2 = millis();
 
