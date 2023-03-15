@@ -1,53 +1,57 @@
 from tkinter import *
+from tkinter import ttk
+
+import serial.tools.list_ports
 
 root = Tk()
-root.title("calculator test")
+root.title("LinDDA Control Panel")
 
-input_screen = Entry(root, width=50)
+# For port label
+ports = serial.tools.list_ports.comports()
 
-# global variable
-answer = 0
-current_number_as_text = ""
+select_port_label = Label(root, text="Select an Arduino COM port: ", width=50)
+select_port_label.grid(column=0, row=1, sticky="ew")
+#######################
 
-def insert_number_to_input_screen(input_text):
-    global answer
-    global current_number_as_text
-    
-    input_screen.insert(END, input_text)
-    if(input_text == '='):
-        answer += int(current_number_as_text)
-        input_screen.insert(END, answer)
-    elif(input_text == '+'):
-        answer += int(current_number_as_text)
-        current_number_as_text = ""
-    else:
-        current_number_as_text += str(input_text)
+# For port drop down list
+port_list = ["N/A"]
 
-button_1 = Button(root, text="1", padx=40, pady=20, command=lambda: insert_number_to_input_screen(button_1.cget("text")))
-button_2 = Button(root, text="2", padx=40, pady=20, command=lambda: insert_number_to_input_screen(button_2.cget("text")))
-button_3 = Button(root, text="3", padx=40, pady=20, command=lambda: insert_number_to_input_screen(button_3.cget("text")))
-button_4 = Button(root, text="4", padx=40, pady=20, command=lambda: insert_number_to_input_screen(button_4.cget("text")))
-button_5 = Button(root, text="5", padx=40, pady=20, command=lambda: insert_number_to_input_screen(button_5.cget("text")))
-button_6 = Button(root, text="6", padx=40, pady=20, command=lambda: insert_number_to_input_screen(button_6.cget("text")))
+for port in ports:
+    port_list.append(str(port))
 
-button_plus = Button(root, text="+", padx=80, pady=20, command=lambda: insert_number_to_input_screen(button_plus.cget("text")))
-button_equals = Button(root, text="=", padx=40, pady=20, command=lambda: insert_number_to_input_screen(button_equals.cget("text")))
+selected_port = StringVar(root)
+selected_port.set(port_list[0])
 
-input_screen.grid(row=0, column=0, columnspan=3)
+port_dropdown_list = ttk.OptionMenu(root, selected_port, *port_list)
+port_dropdown_list.config(width=50)
+port_dropdown_list.grid(column=1, row=1, sticky="ew")
+#################################
 
-button_1.grid(row=1, column=0)
-button_2.grid(row=1, column=1)
-button_3.grid(row=1, column=2)
-button_4.grid(row=2, column=0)
-button_5.grid(row=2, column=1)
-button_6.grid(row=2, column=2)
+# For drone counter
+drone_count = 3
+drone_counter = Label(root, text="Drones connected: "+str(drone_count))
+drone_counter.grid(column=0, row=0, columnspan=3, sticky="ew")
 
-button_plus.grid(row=3, column=0, columnspan=2)
-button_equals.grid(row=3, column=2)
+################
 
+# For deploy button
+deploy_button = Button(root, text="Deploy drone")
+deploy_button.grid(column=0, row=2, sticky="ew")
+##################
 
+# For home button
+home_button = Button(root, text="Send drone home")
+home_button.grid(column=1, row=2, sticky="ew")
+##################
 
+# For stop button
+stop_button = Button(root, text="Stop drone")
+stop_button.grid(column=0, row=3, sticky="ew")
+##################
 
-
+# For where button
+location_button = Button(root, text="Ask location of drone")
+location_button.grid(column=1, row=3, sticky="ew")
+##################
 
 root.mainloop()
