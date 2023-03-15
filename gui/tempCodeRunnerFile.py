@@ -1,0 +1,1 @@
+current_number_as_text
