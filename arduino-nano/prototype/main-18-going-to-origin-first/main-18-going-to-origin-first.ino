@@ -438,52 +438,73 @@ void loop() {
 
         move(currentAngle);
       } else {
+          if(currentX < (homeX - 1)) {
+            savedAngle = rightTurnAngle;
 
-        if(currentX < homeX) {
-          savedAngle = rightTurnAngle;
+          } else if(currentX > (homeX + 1)) {
+            savedAngle = leftTurnAngle;
 
-        } else if(currentY < homeY) {
-          isForward = true;
-          savedAngle = straightAngle;
+          } else if (currentY > (homeY + 1)) {
+            isForward = false;
+            savedAngle = oppositeStraightAngle;
 
-          leftTurnAngle = savedAngle + turnAngle;
-          if(leftTurnAngle > 360) leftTurnAngle = leftTurnAngle - 360;
-          if(leftTurnAngle < 0) leftTurnAngle = 360 + leftTurnAngle;
+            leftTurnAngle = savedAngle + turnAngle;
+            if(leftTurnAngle > 360) leftTurnAngle = leftTurnAngle - 360;
+            if(leftTurnAngle < 0) leftTurnAngle = 360 + leftTurnAngle;
 
-          leftDetectAngle = savedAngle + detectAngle;
-          if(leftDetectAngle > 360) leftDetectAngle = leftDetectAngle - 360;
-          if(leftDetectAngle < 0) leftDetectAngle = 360 + leftDetectAngle;
+            leftDetectAngle = savedAngle + detectAngle;
+            if(leftDetectAngle > 360) leftDetectAngle = leftDetectAngle - 360;
+            if(leftDetectAngle < 0) leftDetectAngle = 360 + leftDetectAngle;
 
-          rightTurnAngle = savedAngle - turnAngle;
-          if(rightTurnAngle > 360) rightTurnAngle = rightTurnAngle - 360;
-          if(rightTurnAngle < 0) rightTurnAngle = 360 + rightTurnAngle;
+            rightTurnAngle = savedAngle - turnAngle;
+            if(rightTurnAngle > 360) rightTurnAngle = rightTurnAngle - 360;
+            if(rightTurnAngle < 0) rightTurnAngle = 360 + rightTurnAngle;
 
-          rightDetectAngle = savedAngle + detectAngle;
-          if(rightDetectAngle > 360) rightDetectAngle = rightDetectAngle - 360;
-          if(rightDetectAngle < 0) rightDetectAngle = 360 + rightDetectAngle;
-          
-        } else {
-          isAtStartingPoint = true;
-          isForward = true;
-          savedAngle = straightAngle;
+            rightDetectAngle = savedAngle + detectAngle;
+            if(rightDetectAngle > 360) rightDetectAngle = rightDetectAngle - 360;
+            if(rightDetectAngle < 0) rightDetectAngle = 360 + rightDetectAngle;
 
-          leftTurnAngle = savedAngle + turnAngle;
-          if(leftTurnAngle > 360) leftTurnAngle = leftTurnAngle - 360;
-          if(leftTurnAngle < 0) leftTurnAngle = 360 + leftTurnAngle;
+          } else if(currentY < (homeY - 1)) {
+            isForward = true;
+            savedAngle = straightAngle;
 
-          leftDetectAngle = savedAngle + detectAngle;
-          if(leftDetectAngle > 360) leftDetectAngle = leftDetectAngle - 360;
-          if(leftDetectAngle < 0) leftDetectAngle = 360 + leftDetectAngle;
+            leftTurnAngle = savedAngle + turnAngle;
+            if(leftTurnAngle > 360) leftTurnAngle = leftTurnAngle - 360;
+            if(leftTurnAngle < 0) leftTurnAngle = 360 + leftTurnAngle;
 
-          rightTurnAngle = savedAngle - turnAngle;
-          if(rightTurnAngle > 360) rightTurnAngle = rightTurnAngle - 360;
-          if(rightTurnAngle < 0) rightTurnAngle = 360 + rightTurnAngle;
+            leftDetectAngle = savedAngle + detectAngle;
+            if(leftDetectAngle > 360) leftDetectAngle = leftDetectAngle - 360;
+            if(leftDetectAngle < 0) leftDetectAngle = 360 + leftDetectAngle;
 
-          rightDetectAngle = savedAngle + detectAngle;
-          if(rightDetectAngle > 360) rightDetectAngle = rightDetectAngle - 360;
-          if(rightDetectAngle < 0) rightDetectAngle = 360 + rightDetectAngle;
-        }
+            rightTurnAngle = savedAngle - turnAngle;
+            if(rightTurnAngle > 360) rightTurnAngle = rightTurnAngle - 360;
+            if(rightTurnAngle < 0) rightTurnAngle = 360 + rightTurnAngle;
 
+            rightDetectAngle = savedAngle + detectAngle;
+            if(rightDetectAngle > 360) rightDetectAngle = rightDetectAngle - 360;
+            if(rightDetectAngle < 0) rightDetectAngle = 360 + rightDetectAngle;
+            
+          } else {
+            isAtStartingPoint = true;
+            isForward = true;
+            savedAngle = straightAngle;
+
+            leftTurnAngle = savedAngle + turnAngle;
+            if(leftTurnAngle > 360) leftTurnAngle = leftTurnAngle - 360;
+            if(leftTurnAngle < 0) leftTurnAngle = 360 + leftTurnAngle;
+
+            leftDetectAngle = savedAngle + detectAngle;
+            if(leftDetectAngle > 360) leftDetectAngle = leftDetectAngle - 360;
+            if(leftDetectAngle < 0) leftDetectAngle = 360 + leftDetectAngle;
+
+            rightTurnAngle = savedAngle - turnAngle;
+            if(rightTurnAngle > 360) rightTurnAngle = rightTurnAngle - 360;
+            if(rightTurnAngle < 0) rightTurnAngle = 360 + rightTurnAngle;
+
+            rightDetectAngle = savedAngle + detectAngle;
+            if(rightDetectAngle > 360) rightDetectAngle = rightDetectAngle - 360;
+            if(rightDetectAngle < 0) rightDetectAngle = 360 + rightDetectAngle;
+          }
         move(currentAngle);
       }
     }
