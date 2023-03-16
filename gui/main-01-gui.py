@@ -92,4 +92,9 @@ location_button = Button(root, text="Ask location of drone")
 location_button.grid(column=3, row=3, sticky="ew", padx=5, pady=5)
 ##################
 
+# For cancel command button
+cancel_command_button = Button(root, text="Stop sending command")
+cancel_command_button.grid(column=4, row=3, sticky="ew", padx=5, pady=5)
+##################
+
 root.mainloop()
