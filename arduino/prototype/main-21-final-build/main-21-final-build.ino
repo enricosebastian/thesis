@@ -122,6 +122,7 @@ void setup() {
 
   Serial.print(myName);
   Serial.println(" v21 has initialized.");
+
   startTime = millis();
   startTime2 = millis();
   startTime3 = millis();

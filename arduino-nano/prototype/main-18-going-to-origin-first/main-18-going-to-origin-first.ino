@@ -381,13 +381,45 @@ void loop() {
 
         } else if(currentX < minX) {
           isAtStartingPoint = false;
+
+          if(isForward) savedAngle = straightAngle;
+          else if(!isForward) savedAngle = oppositeStraightAngle;
+
+          leftTurnAngle = savedAngle + turnAngle;
+          if(leftTurnAngle > 360) leftTurnAngle = leftTurnAngle - 360;
+          if(leftTurnAngle < 0) leftTurnAngle = 360 + leftTurnAngle;
+
+          leftDetectAngle = savedAngle + detectAngle;
+          if(leftDetectAngle > 360) leftDetectAngle = leftDetectAngle - 360;
+          if(leftDetectAngle < 0) leftDetectAngle = 360 + leftDetectAngle;
+
+          rightTurnAngle = savedAngle - turnAngle;
+          if(rightTurnAngle > 360) rightTurnAngle = rightTurnAngle - 360;
+          if(rightTurnAngle < 0) rightTurnAngle = 360 + rightTurnAngle;
+
+          rightDetectAngle = savedAngle + detectAngle;
+          if(rightDetectAngle > 360) rightDetectAngle = rightDetectAngle - 360;
+          if(rightDetectAngle < 0) rightDetectAngle = 360 + rightDetectAngle;
           
         } else {
-          if(isForward) {
-            savedAngle = straightAngle;
-          } else if(!isForward) {
-            savedAngle = oppositeStraightAngle;
-          }
+          if(isForward) savedAngle = straightAngle;
+          else if(!isForward) savedAngle = oppositeStraightAngle;
+
+          leftTurnAngle = savedAngle + turnAngle;
+          if(leftTurnAngle > 360) leftTurnAngle = leftTurnAngle - 360;
+          if(leftTurnAngle < 0) leftTurnAngle = 360 + leftTurnAngle;
+
+          leftDetectAngle = savedAngle + detectAngle;
+          if(leftDetectAngle > 360) leftDetectAngle = leftDetectAngle - 360;
+          if(leftDetectAngle < 0) leftDetectAngle = 360 + leftDetectAngle;
+
+          rightTurnAngle = savedAngle - turnAngle;
+          if(rightTurnAngle > 360) rightTurnAngle = rightTurnAngle - 360;
+          if(rightTurnAngle < 0) rightTurnAngle = 360 + rightTurnAngle;
+
+          rightDetectAngle = savedAngle + detectAngle;
+          if(rightDetectAngle > 360) rightDetectAngle = rightDetectAngle - 360;
+          if(rightDetectAngle < 0) rightDetectAngle = 360 + rightDetectAngle;
         }
 
         // Y limit checker
@@ -438,10 +470,12 @@ void loop() {
         move(currentAngle);
       } else {
           if(currentX < (homeX - 1)) {
-            savedAngle = rightTurnAngle;
+            if(isForward) savedAngle = rightTurnAngle;
+            else if(!isForward) savedAngle = leftTurnAngle;
 
           } else if(currentX > (homeX + 1)) {
-            savedAngle = leftTurnAngle;
+            if(isForward) savedAngle = leftTurnAngle;
+            else if(!isForward) savedAngle = rightTurnAngle;
 
           } else if (currentY > (homeY + 1)) {
             isForward = false;
@@ -558,10 +592,12 @@ void loop() {
     if(hasStopped && isGoingHome) {
 
       if(currentX < (homeX - 1)) {
-        savedAngle = rightTurnAngle;
+        if(isForward) savedAngle = rightTurnAngle;
+        else if(!isForward) savedAngle = leftTurnAngle;
 
       } else if(currentX > (homeX + 1)) {
-        savedAngle = leftTurnAngle;
+        if(isForward) savedAngle = leftTurnAngle;
+        else if(!isForward) savedAngle = rightTurnAngle;
 
       } else if (currentY > (homeY + 1)) {
         isForward = false;
