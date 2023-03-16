@@ -128,4 +128,11 @@ anchor_distance_input_label = ttk.Entry()
 anchor_distance_input_label.grid(column=3, row=7, sticky="ew", columnspan=2)
 #################################
 
+# For serial log terminal
+serial_terminal = Text(root, width=50)
+serial_terminal.insert(INSERT, "HELLO")
+
+serial_terminal.grid(column=0, row=8, sticky="ew", columnspan=5)
+#################################
+
 root.mainloop()
