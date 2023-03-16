@@ -54,8 +54,8 @@ float d1 = 0;
 float d2 = 0;
 float maxY = 15;
 float minY = 8;
-float maxX = 12.4;
-float minX = 0;
+float maxX = 5; // 12.4
+float minX = 0; //0
 
 //PID values
 float kp = 2;
