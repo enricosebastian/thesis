@@ -10,7 +10,7 @@ root.title("LinDDA Control Panel")
 ports = serial.tools.list_ports.comports()
 
 select_port_label = Label(root, text="Select an Arduino COM port: ", width=50)
-select_port_label.grid(column=0, row=1, sticky="ew")
+select_port_label.grid(column=0, row=2, sticky="ew")
 #######################
 
 # For port drop down list
@@ -24,34 +24,46 @@ selected_port.set(port_list[0])
 
 port_dropdown_list = ttk.OptionMenu(root, selected_port, *port_list)
 port_dropdown_list.config(width=50)
-port_dropdown_list.grid(column=1, row=1, sticky="ew")
+port_dropdown_list.grid(column=1, row=2, sticky="ew")
 #################################
 
 # For drone counter
 drone_count = 3
 drone_counter = Label(root, text="Drones connected: "+str(drone_count))
-drone_counter.grid(column=0, row=0, columnspan=3, sticky="ew")
+drone_counter.grid(column=0, row=1, columnspan=4, sticky="ew")
+
+drone_1_button = Button(root, text=" ", bg="red")
+drone_1_button.grid(column=0, row=0)
+
+drone_2_button = Button(root, text=" ", bg="red")
+drone_2_button.grid(column=1, row=0)
+
+drone_3_button = Button(root, text=" ", bg="red")
+drone_3_button.grid(column=2, row=0)
+
+drone_4_button = Button(root, text=" ", bg="red")
+drone_4_button.grid(column=3, row=0)
 
 ################
 
 # For deploy button
 deploy_button = Button(root, text="Deploy drone")
-deploy_button.grid(column=0, row=2, sticky="ew", padx=5, pady=5)
+deploy_button.grid(column=0, row=3, sticky="ew", padx=5, pady=5)
 ##################
 
 # For home button
 home_button = Button(root, text="Send drone home")
-home_button.grid(column=1, row=2, sticky="ew", padx=5, pady=5)
+home_button.grid(column=1, row=3, sticky="ew", padx=5, pady=5)
 ##################
 
 # For stop button
 stop_button = Button(root, text="Stop drone")
-stop_button.grid(column=0, row=3, sticky="ew", padx=5, pady=5)
+stop_button.grid(column=0, row=4, sticky="ew", padx=5, pady=5)
 ##################
 
 # For where button
 location_button = Button(root, text="Ask location of drone")
-location_button.grid(column=1, row=3, sticky="ew", padx=5, pady=5)
+location_button.grid(column=1, row=4, sticky="ew", padx=5, pady=5)
 ##################
 
 root.mainloop()
