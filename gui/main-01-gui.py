@@ -97,4 +97,35 @@ cancel_command_button = Button(root, text="Stop sending command")
 cancel_command_button.grid(column=4, row=3, sticky="ew", padx=5, pady=5)
 ##################
 
+# For region of responsibility label
+drones = serial.tools.list_ports.comports()
+
+select_drone_label = Label(root, text="Deployment area", width=50)
+select_drone_label.grid(column=0, row=4, sticky="ew", columnspan=5)
+#######################
+
+# For y_max
+y_max_label = Label(root, text="Y max", width=50)
+y_max_label.grid(column=0, row=5, sticky="ew", columnspan=2)
+
+y_max_input_label = ttk.Entry()
+y_max_input_label.grid(column=3, row=5, sticky="ew", columnspan=2)
+#################################
+
+# For y_max
+y_min_label = Label(root, text="Y min", width=50)
+y_min_label.grid(column=0, row=6, sticky="ew", columnspan=2)
+
+y_min_input_label = ttk.Entry()
+y_min_input_label.grid(column=3, row=6, sticky="ew", columnspan=2)
+#################################
+
+# For anchor distance
+anchor_distance_label = Label(root, text="Anchor distance", width=50)
+anchor_distance_label.grid(column=0, row=7, sticky="ew", columnspan=2)
+
+anchor_distance_input_label = ttk.Entry()
+anchor_distance_input_label.grid(column=3, row=7, sticky="ew", columnspan=2)
+#################################
+
 root.mainloop()
