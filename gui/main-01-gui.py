@@ -41,6 +41,7 @@ serial_instance = serial.Serial()
 
 # For port drop down list
 def set_port(port_name):
+    global selected_port
     selected_port = port_name[0:4]
     print("Selected port is:",selected_port)
     serial_instance.port = selected_port
@@ -144,13 +145,22 @@ anchor_distance_input_label.grid(column=3, row=8, sticky="ew", columnspan=2)
 serial_terminal = Text(root, width=50)
 
 def check_serial_port():
-    print("waiting")
+    received_a_message = False
+    
+    while not received_a_message:
+        if selected_port != 0:
+            if serial_instance.in_waiting:
+                message = serial_instance.readline()
+                received_a_message = True
+        else:
+            received_a_message = True
+        
     root.after(500, check_serial_port)
 
 
 serial_terminal.grid(column=0, row=9, sticky="ew", columnspan=5)
 #################################
 
-root.after(ms=500, func=check_serial_port)
+root.after(500, check_serial_port)
 print("Done")
 root.mainloop()
