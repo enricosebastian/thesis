@@ -215,7 +215,7 @@ void loop() {
       homeY = minY;
 
       //WHITE = 235
-      if(myName == "DRO1") oppositeStraightAngle = straightAngle + 150;
+      if(myName == "DRO1") oppositeStraightAngle = straightAngle + 165;
       else if(myName == "DRO2") oppositeStraightAngle = straightAngle + 210;
 
       if(oppositeStraightAngle > 360) {
@@ -718,6 +718,7 @@ void move(float currentAngle) {
 bool receiveCommand() {
   while(Nano.available()) {
     char letter = Nano.read();
+    Serial.println(letter);
     if(letter == '\n') {
       Serial.print("Received: ");
       Serial.println(receivedMessage);
