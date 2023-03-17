@@ -588,6 +588,7 @@ void sendToNano(String command, String toName, String details) {
     sentMessage.concat(details);
 
     Nano.println(sentMessage);
+    Serial.println(sentMessage);
     sentMessage = "";
   } else {
     Serial.println("Wrong format of command. Try again.");
