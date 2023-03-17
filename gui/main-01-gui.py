@@ -143,13 +143,14 @@ anchor_distance_input_label.grid(column=3, row=8, sticky="ew", columnspan=2)
 # For serial log terminal
 serial_terminal = Text(root, width=50)
 
-while selected_port != 0:
-    if serial_instance.in_waiting:
-        character = serian_instance.readline()
-        print(character.decode('utf'))
-        # serial_terminal.insert("1.0", "HELLO "+str(i)+"\n")
+def check_serial_port():
+    print("waiting")
+    root.after(500, check_serial_port)
+
 
 serial_terminal.grid(column=0, row=9, sticky="ew", columnspan=5)
 #################################
 
+root.after(ms=500, func=check_serial_port)
+print("Done")
 root.mainloop()
