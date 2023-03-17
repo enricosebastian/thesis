@@ -152,6 +152,7 @@ def check_serial_port():
             if serial_instance.in_waiting:
                 message = serial_instance.readline()
                 received_a_message = True
+                serial_terminal.insert("1.0", message)
         else:
             received_a_message = True
         
