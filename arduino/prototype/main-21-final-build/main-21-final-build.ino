@@ -218,7 +218,7 @@ void forBaseStation() {
       digitalWrite(redLed, LOW);
       digitalWrite(yellowLed, LOW);
       digitalWrite(greenLed, HIGH);
-      digitalWrite(detectionPin, HIGH);
+      digitalWrite(detectionPin, LOW);
     } else if(digitalRead(btn) == HIGH && drones.size() < 1) {
       Serial.println("No drones to deploy.");
     }
@@ -394,13 +394,16 @@ void forDrone() {
         Serial.print(" to ");
         Serial.println(maxX);
 
-        digitalWrite(detectionPin, HIGH); // Turn on object detection
+        digitalWrite(detectionPin, LOW); // Turn on object detection
         digitalWrite(recordingPin, LOW);
       } else if(receivedCommand == "RECO") {
         hasStopped = false;
         sendToNano("GO", myName, String(currentX)+","+String(currentY));
         digitalWrite(detectionPin, LOW);
         digitalWrite(recordingPin, HIGH);
+      } else if(receivedCommand == "DETP") {
+        digitalWrite(detectionPin, HIGH);
+
       } else if(receivedCommand == "WHER") {
         startTime = millis();
         Serial.print("Base station wants to know ");

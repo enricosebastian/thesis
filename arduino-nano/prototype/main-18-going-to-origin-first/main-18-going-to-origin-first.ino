@@ -152,7 +152,7 @@ void loop() {
   if(heading > 2*PI)
     heading -= 2*PI;
    
-  // Convert radians to degrees for readability.
+  // Convert radians to degreeDs for readability.
   float currentAngle = heading * 180/M_PI; 
   
   // Main task: Continue to check for commands
@@ -215,8 +215,7 @@ void loop() {
       homeY = minY;
 
       //WHITE = 235
-      if(myName == "DRO1") oppositeStraightAngle = straightAngle + 165;
-      else if(myName == "DRO2") oppositeStraightAngle = straightAngle + 210;
+      oppositeStraightAngle = straightAngle + 190;
 
       if(oppositeStraightAngle > 360) {
         oppositeStraightAngle = oppositeStraightAngle - 360;
@@ -357,6 +356,15 @@ void loop() {
 
       Serial.print("New minX: ");
       Serial.println(minX);
+    } else if(receivedCommand == "LEFT") {
+      if(isForward) savedAngle = leftDetectAngle;
+      else if(!isForward) savedAngle = rightDetectAngle;
+    } else if(receivedCommand == "RIGHT") {
+      if(isForward) savedAngle = rightDetectAngle;
+      else if(!isForward) savedAngle = leftDetectAngle;
+    } else if(receivedCommand == "CENTER") {
+      if(isForward) savedAngle = straightAngle;
+      else if(!isForward) savedAngGle = oppositeStraightAngle;
     }
   }
 
