@@ -171,6 +171,11 @@ def check_serial_port():
 serial_terminal.grid(column=0, row=9, sticky="ew", columnspan=5)
 #################################
 
+def interpret_message(message):
+    if message.startswith("CONNNREP"):
+        print("Connected")
+    
+
 root.after(500, check_serial_port_thread)
 print("Done")
 root.mainloop()
