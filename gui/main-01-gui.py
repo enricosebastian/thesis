@@ -1,4 +1,5 @@
 from tkinter import *
+from threading import *
 from tkinter import ttk
 
 import serial.tools.list_ports
@@ -144,6 +145,10 @@ anchor_distance_input_label.grid(column=3, row=8, sticky="ew", columnspan=2)
 # For serial log terminal
 serial_terminal = Text(root, width=50)
 
+def check_serial_port_thread():
+    t1 = Thread(target=check_serial_port)
+    t1.start()
+
 def check_serial_port():
     received_a_message = False
     
@@ -156,12 +161,12 @@ def check_serial_port():
         else:
             received_a_message = True
         
-    root.after(500, check_serial_port)
+    root.after(500, check_serial_port_thread)
 
 
 serial_terminal.grid(column=0, row=9, sticky="ew", columnspan=5)
 #################################
 
-root.after(500, check_serial_port)
+root.after(500, check_serial_port_thread)
 print("Done")
 root.mainloop()
