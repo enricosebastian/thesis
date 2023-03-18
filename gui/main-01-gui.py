@@ -1,6 +1,7 @@
 from tkinter import *
 from threading import *
 from tkinter import ttk
+from datetime import datetime
 
 import serial.tools.list_ports
 
@@ -155,9 +156,12 @@ def check_serial_port():
     while not received_a_message:
         if selected_port != 0:
             if serial_instance.in_waiting:
+                current_time = datetime.now().strftime("%H:%M:%S") + ": "
                 message = serial_instance.readline()
                 received_a_message = True
+                
                 serial_terminal.insert("1.0", message)
+                serial_terminal.insert("1.0", current_time)
         else:
             received_a_message = True
         
