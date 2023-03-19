@@ -27,7 +27,7 @@ drone_5_button.grid(column=4, row=0)
 
 # Drone counter
 drone_count = 3
-drone_counter = Label(root, text="Drones connected: "+str(drone_count), bg="blue")
+drone_counter = Label(root, text="Drones connected: "+str(drone_count), pady=10)
 drone_counter.grid(column=0, row=1, columnspan=6, sticky="ew")
 ################
 
@@ -50,8 +50,6 @@ def set_port(port_name):
     serial_instance.baudrate = 9600
     serial_instance.open()
     
-    
-    
 ports = ["N/A"]
 
 for found_port in found_ports:
@@ -67,21 +65,20 @@ port_dropdown_list.grid(column=3, row=2, sticky="ew", columnspan=3)
 # For drone selection list label
 drones = serial.tools.list_ports.comports()
 
-select_drone_label = Label(root, text="Select drone: ", width=50)
+select_drone_label = Label(root, text="Selected drone: ", width=50)
 select_drone_label.grid(column=0, row=3, sticky="ew", columnspan=2)
 #######################
 
 # For drone selection list
-drone_list = ["N/A"]
-drones = ["DRO1", "DRO2", "DRO3"]
+drones = ["N/A"]
+found_drones = ["ALL"]
 
-for drone in drones:
-    drone_list.append(str(drone))
+for found_drone in found_drones:
+    drones.append(str(found_drone))
 
-print(drone_list)
-selected_drone = StringVar(root)
+drone_list = StringVar(root)
 
-select_drone_dropdown_list = ttk.OptionMenu(root, selected_drone, drone_list[0], *drone_list)
+select_drone_dropdown_list = ttk.OptionMenu(root, drone_list, drones[0], *drones)
 select_drone_dropdown_list.config(width=50)
 select_drone_dropdown_list.grid(column=3, row=3, sticky="ew", columnspan=3)
 #################################
@@ -114,7 +111,7 @@ cancel_command_button.grid(column=4, row=4, sticky="ew", padx=5, pady=5)
 # For region of responsibility label
 drones = serial.tools.list_ports.comports()
 
-select_drone_label = Label(root, text="Deployment area", width=50)
+select_drone_label = Label(root, text="Deployment area", width=50, pady=10)
 select_drone_label.grid(column=0, row=5, sticky="ew", columnspan=5)
 #######################
 
