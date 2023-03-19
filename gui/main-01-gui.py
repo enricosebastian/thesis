@@ -84,59 +84,64 @@ select_drone_dropdown_list.grid(column=3, row=3, sticky="ew", columnspan=3)
 #################################
 
 # For deploy button
-deploy_button = Button(root, text="Deploy drone")
+deploy_button = Button(root, text="Start deployment")
 deploy_button.grid(column=0, row=4, sticky="ew", padx=5, pady=5)
 ##################
 
 # For home button
-home_button = Button(root, text="Send drone home")
-home_button.grid(column=1, row=4, sticky="ew", padx=5, pady=5)
+move_button = Button(root, text="Start moving")
+move_button.grid(column=1, row=4, sticky="ew", padx=5, pady=5)
 ##################
 
 # For stop button
-stop_button = Button(root, text="Stop drone")
+stop_button = Button(root, text="Stop moving")
 stop_button.grid(column=2, row=4, sticky="ew", padx=5, pady=5)
 ##################
 
 # For where button
-location_button = Button(root, text="Ask location of drone")
+location_button = Button(root, text="Ask for location")
 location_button.grid(column=3, row=4, sticky="ew", padx=5, pady=5)
 ##################
 
 # For cancel command button
-cancel_command_button = Button(root, text="Stop sending command")
-cancel_command_button.grid(column=4, row=4, sticky="ew", padx=5, pady=5)
+home_button = Button(root, text="Go home")
+home_button.grid(column=4, row=4, sticky="ew", padx=5, pady=5)
+##################
+
+# For cancel command button
+cancel_command_button = Button(root, text="Cancel command")
+cancel_command_button.grid(column=2, row=5, sticky="ew", padx=5, pady=5)
 ##################
 
 # For region of responsibility label
 drones = serial.tools.list_ports.comports()
 
 select_drone_label = Label(root, text="Deployment area", width=50, pady=10)
-select_drone_label.grid(column=0, row=5, sticky="ew", columnspan=5)
+select_drone_label.grid(column=0, row=6, sticky="ew", columnspan=5)
 #######################
 
 # For y_max
 y_max_label = Label(root, text="Y max", width=50)
-y_max_label.grid(column=0, row=6, sticky="ew", columnspan=2)
+y_max_label.grid(column=0, row=7, sticky="ew", columnspan=2)
 
 y_max_input_label = ttk.Entry()
-y_max_input_label.grid(column=3, row=6, sticky="ew", columnspan=2)
+y_max_input_label.grid(column=3, row=7, sticky="ew", columnspan=2)
 #################################
 
 # For y_max
 y_min_label = Label(root, text="Y min", width=50)
-y_min_label.grid(column=0, row=7, sticky="ew", columnspan=2)
+y_min_label.grid(column=0, row=8, sticky="ew", columnspan=2)
 
 y_min_input_label = ttk.Entry()
-y_min_input_label.grid(column=3, row=7, sticky="ew", columnspan=2)
+y_min_input_label.grid(column=3, row=8, sticky="ew", columnspan=2)
 #################################
 
 # For anchor distance
 anchor_distance_label = Label(root, text="Anchor distance", width=50)
-anchor_distance_label.grid(column=0, row=8, sticky="ew", columnspan=2)
+anchor_distance_label.grid(column=0, row=9, sticky="ew", columnspan=2)
 
 anchor_distance_input_label = ttk.Entry()
-anchor_distance_input_label.grid(column=3, row=8, sticky="ew", columnspan=2)
+anchor_distance_input_label.grid(column=3, row=9, sticky="ew", columnspan=2)
 #################################
 
 # For serial log terminal
@@ -164,7 +169,7 @@ def check_serial_port():
     root.after(500, check_serial_port_thread)
 
 
-serial_terminal.grid(column=0, row=9, sticky="ew", columnspan=5)
+serial_terminal.grid(column=0, row=10, sticky="ew", columnspan=5)
 #################################
 
 def interpret_message(message):
