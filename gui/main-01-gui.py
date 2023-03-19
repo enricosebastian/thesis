@@ -58,9 +58,8 @@ for found_port in found_ports:
     ports.append(str(found_port))
 
 port_list = StringVar(root)
-port_list.set(ports[0])
 
-port_dropdown_list = ttk.OptionMenu(root, port_list, *ports, command=set_port)
+port_dropdown_list = ttk.OptionMenu(root, port_list, ports[0], *ports, command=set_port)
 port_dropdown_list.config(width=50)
 port_dropdown_list.grid(column=3, row=2, sticky="ew", columnspan=3)
 #################################
@@ -79,10 +78,10 @@ drones = ["DRO1", "DRO2", "DRO3"]
 for drone in drones:
     drone_list.append(str(drone))
 
+print(drone_list)
 selected_drone = StringVar(root)
-selected_drone.set(drone_list[0])
 
-select_drone_dropdown_list = ttk.OptionMenu(root, selected_drone, *drone_list)
+select_drone_dropdown_list = ttk.OptionMenu(root, selected_drone, drone_list[0], *drone_list)
 select_drone_dropdown_list.config(width=50)
 select_drone_dropdown_list.grid(column=3, row=3, sticky="ew", columnspan=3)
 #################################
