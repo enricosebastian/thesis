@@ -70,6 +70,21 @@ select_drone_label.grid(column=0, row=3, sticky="ew", columnspan=2)
 #######################
 
 # For drone selection list
+
+selected_drone = "0"
+
+def set_drone(drone_name):
+    global selected_drone
+    selected_drone = drone_name
+    print("Selected drone is:",selected_drone)
+    if selected_drone == "ALL":
+        x_max_input_label.config(state="disabled")
+        x_min_input_label.config(state="disabled")
+    else:
+        x_max_input_label.config(state="enabled")
+        x_min_input_label.config(state="enabled")
+        
+    
 drones = ["N/A"]
 found_drones = ["ALL"]
 
@@ -78,7 +93,7 @@ for found_drone in found_drones:
 
 drone_list = StringVar(root)
 
-select_drone_dropdown_list = ttk.OptionMenu(root, drone_list, drones[0], *drones)
+select_drone_dropdown_list = ttk.OptionMenu(root, drone_list, drones[0], *drones, command=set_drone)
 select_drone_dropdown_list.config(width=50)
 select_drone_dropdown_list.grid(column=3, row=3, sticky="ew", columnspan=3)
 #################################
@@ -142,7 +157,7 @@ y_min_input_label.grid(column=3, row=8, sticky="ew", columnspan=2)
 x_max_label = Label(root, text="X max", width=50)
 x_max_label.grid(column=0, row=9, sticky="ew", columnspan=2)
 
-x_max_input_label = ttk.Entry()
+x_max_input_label = ttk.Entry(state=DISABLED)
 x_max_input_label.insert(0, "0.0")
 x_max_input_label.grid(column=3, row=9, sticky="ew", columnspan=2)
 #################################
@@ -151,7 +166,7 @@ x_max_input_label.grid(column=3, row=9, sticky="ew", columnspan=2)
 x_min_label = Label(root, text="X min", width=50)
 x_min_label.grid(column=0, row=10, sticky="ew", columnspan=2)
 
-x_min_input_label = ttk.Entry()
+x_min_input_label = ttk.Entry(state=DISABLED)
 x_min_input_label.insert(0, "0.0")
 x_min_input_label.grid(column=3, row=10, sticky="ew", columnspan=2)
 #################################
