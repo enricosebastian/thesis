@@ -128,7 +128,7 @@ y_max_input_label = ttk.Entry()
 y_max_input_label.grid(column=3, row=7, sticky="ew", columnspan=2)
 #################################
 
-# For y_max
+# For y_min
 y_min_label = Label(root, text="Y min", width=50)
 y_min_label.grid(column=0, row=8, sticky="ew", columnspan=2)
 
@@ -136,12 +136,28 @@ y_min_input_label = ttk.Entry()
 y_min_input_label.grid(column=3, row=8, sticky="ew", columnspan=2)
 #################################
 
+# For x_max
+x_max_label = Label(root, text="X max", width=50)
+x_max_label.grid(column=0, row=9, sticky="ew", columnspan=2)
+
+x_max_input_label = ttk.Entry()
+x_max_input_label.grid(column=3, row=9, sticky="ew", columnspan=2)
+#################################
+
+# For x_min
+x_min_label = Label(root, text="X min", width=50)
+x_min_label.grid(column=0, row=10, sticky="ew", columnspan=2)
+
+x_min_input_label = ttk.Entry()
+x_min_input_label.grid(column=3, row=10, sticky="ew", columnspan=2)
+#################################
+
 # For anchor distance
 anchor_distance_label = Label(root, text="Anchor distance", width=50)
-anchor_distance_label.grid(column=0, row=9, sticky="ew", columnspan=2)
+anchor_distance_label.grid(column=0, row=11, sticky="ew", columnspan=2)
 
 anchor_distance_input_label = ttk.Entry()
-anchor_distance_input_label.grid(column=3, row=9, sticky="ew", columnspan=2)
+anchor_distance_input_label.grid(column=3, row=11, sticky="ew", columnspan=2)
 #################################
 
 # For serial log terminal
@@ -169,7 +185,7 @@ def check_serial_port():
     root.after(500, check_serial_port_thread)
 
 
-serial_terminal.grid(column=0, row=10, sticky="ew", columnspan=5)
+serial_terminal.grid(column=0, row=12, sticky="ew", columnspan=5)
 #################################
 
 def interpret_message(message):
