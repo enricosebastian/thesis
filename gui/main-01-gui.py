@@ -80,10 +80,10 @@ def set_drone(drone_name):
     if selected_drone == "ALL":
         x_max_input_label.config(state="disabled")
         x_min_input_label.config(state="disabled")
+        
     else:
         x_max_input_label.config(state="enabled")
-        x_min_input_label.config(state="enabled")
-        
+        x_min_input_label.config(state="enabled") 
     
 drones = ["N/A"]
 found_drones = ["ALL"]
@@ -157,8 +157,9 @@ y_min_input_label.grid(column=3, row=8, sticky="ew", columnspan=2)
 x_max_label = Label(root, text="X max", width=50)
 x_max_label.grid(column=0, row=9, sticky="ew", columnspan=2)
 
-x_max_input_label = ttk.Entry(state=DISABLED)
+x_max_input_label = ttk.Entry()
 x_max_input_label.insert(0, "0.0")
+x_max_input_label.config(state="disabled")
 x_max_input_label.grid(column=3, row=9, sticky="ew", columnspan=2)
 #################################
 
@@ -166,8 +167,9 @@ x_max_input_label.grid(column=3, row=9, sticky="ew", columnspan=2)
 x_min_label = Label(root, text="X min", width=50)
 x_min_label.grid(column=0, row=10, sticky="ew", columnspan=2)
 
-x_min_input_label = ttk.Entry(state=DISABLED)
+x_min_input_label = ttk.Entry()
 x_min_input_label.insert(0, "0.0")
+x_min_input_label.config(state="disabled")
 x_min_input_label.grid(column=3, row=10, sticky="ew", columnspan=2)
 #################################
 
