@@ -183,6 +183,18 @@ anchor_distance_input_label.grid(column=3, row=11, sticky="ew", columnspan=2)
 #################################
 
 # For serial log terminal
+def interpret_message(message):
+    message_arr = str(message).split(' ')
+    if message_arr[0] == "b'Received:":
+        command = message_arr[1]
+        to_name = message_arr[2]
+        from_name = message_arr[3]
+        details = message_arr[4]
+        
+        if command == "CONN":    
+            if from_name == "DRO1" or from_name == "DRO2" or from_name == "DRO3":
+                print(from_name, "wants to connect")
+
 serial_terminal = Text(root, width=50)
 
 def check_serial_port_thread():
@@ -198,7 +210,7 @@ def check_serial_port():
                 current_time = datetime.now().strftime("%H:%M:%S") + ": "
                 message = serial_instance.readline()
                 received_a_message = True
-                
+                interpret_message(message)
                 serial_terminal.insert("1.0", message)
                 serial_terminal.insert("1.0", current_time)
         else:
@@ -209,10 +221,6 @@ def check_serial_port():
 
 serial_terminal.grid(column=0, row=12, sticky="ew", columnspan=5)
 #################################
-
-def interpret_message(message):
-    if message.startswith("CONNNREP"):
-        print("Connected")
     
 
 root.after(500, check_serial_port_thread)
