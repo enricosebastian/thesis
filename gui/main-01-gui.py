@@ -85,17 +85,23 @@ def set_drone(drone_name):
         x_max_input_label.config(state="enabled")
         x_min_input_label.config(state="enabled") 
     
-drones = ["N/A"]
+drones = []
 found_drones = ["ALL"]
+
+drone_list = StringVar(root)
 
 for found_drone in found_drones:
     drones.append(str(found_drone))
 
-drone_list = StringVar(root)
-
 select_drone_dropdown_list = ttk.OptionMenu(root, drone_list, drones[0], *drones, command=set_drone)
 select_drone_dropdown_list.config(width=50)
 select_drone_dropdown_list.grid(column=3, row=3, sticky="ew", columnspan=3)
+
+def refresh_drone_list():
+    select_drone_dropdown_list = ttk.OptionMenu(root, drone_list, drones[0], *drones, command=set_drone)
+    select_drone_dropdown_list.config(width=50)
+    select_drone_dropdown_list.grid(column=3, row=3, sticky="ew", columnspan=3)
+
 #################################
 
 # For deploy button
@@ -129,8 +135,6 @@ cancel_command_button.grid(column=2, row=5, sticky="ew", padx=5, pady=5)
 ##################
 
 # For region of responsibility label
-drones = serial.tools.list_ports.comports()
-
 select_drone_label = Label(root, text="Deployment area", width=50, pady=10)
 select_drone_label.grid(column=0, row=6, sticky="ew", columnspan=5)
 #######################
@@ -193,7 +197,12 @@ def interpret_message(message):
         
         if command == "CONN":    
             if from_name == "DRO1" or from_name == "DRO2" or from_name == "DRO3":
-                print(from_name, "wants to connect")
+                if from_name not in drones:
+                    drones.append(from_name)
+                    print(drones)
+                    refresh_drone_list()
+                else:
+                    print(from_name,"is already connected!")
 
 serial_terminal = Text(root, width=50)
 
