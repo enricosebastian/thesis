@@ -85,7 +85,7 @@ def set_drone(drone_name):
         x_max_input_label.config(state="enabled")
         x_min_input_label.config(state="enabled") 
     
-drones = []
+drones = ["N/A"]
 found_drones = ["ALL"]
 
 drone_list = StringVar(root)
@@ -105,7 +105,13 @@ def refresh_drone_list():
 #################################
 
 # For deploy button
-deploy_button = Button(root, text="Start deployment")
+def start_deployment():
+    print("Deploying", selected_drone)
+    deployment_command = "DEPL " + selected_drone + "DETA"
+    serial_instance.write(deployment_command.encode("utf-8"))
+    
+    
+deploy_button = Button(root, text="Start deployment", command=start_deployment)
 deploy_button.grid(column=0, row=4, sticky="ew", padx=5, pady=5)
 ##################
 
