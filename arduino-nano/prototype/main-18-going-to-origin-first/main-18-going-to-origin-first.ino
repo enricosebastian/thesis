@@ -214,8 +214,10 @@ void loop() {
       homeX = maxX;
       homeY = minY;
 
+      savedX = maxX;
+
       //WHITE = 235
-      oppositeStraightAngle = straightAngle + 190;
+      oppositeStraightAngle = straightAngle + 135;
 
       if(oppositeStraightAngle > 360) {
         oppositeStraightAngle = oppositeStraightAngle - 360;
@@ -364,7 +366,7 @@ void loop() {
       else if(!isForward) savedAngle = leftDetectAngle;
     } else if(receivedCommand == "CENTER") {
       if(isForward) savedAngle = straightAngle;
-      else if(!isForward) savedAngGle = oppositeStraightAngle;
+      else if(!isForward) savedAngle = oppositeStraightAngle;
     }
   }
 
@@ -382,6 +384,34 @@ void loop() {
       if(isAtStartingPoint) {
 
         // State 2: Normal maneuvering
+        // Saved X checker
+        if(currentX < (savedX - 2)) {
+          if(isForward) savedAngle = rightTurnAngle;
+          else if(!isForward) savedAngle = leftTurnAngle;
+        } else if(currentX > (savedX + 2)) {
+          if(isForward) savedAngle = leftTurnAngle;
+          else if(!isForward) savedAngle = rightTurnAngle;
+        } else {
+          if(isForward) savedAngle = straightAngle;
+          else if(!isForward) savedAngle = oppositeStraightAngle;
+
+          leftTurnAngle = savedAngle + turnAngle;
+          if(leftTurnAngle > 360) leftTurnAngle = leftTurnAngle - 360;
+          if(leftTurnAngle < 0) leftTurnAngle = 360 + leftTurnAngle;
+
+          leftDetectAngle = savedAngle + detectAngle;
+          if(leftDetectAngle > 360) leftDetectAngle = leftDetectAngle - 360;
+          if(leftDetectAngle < 0) leftDetectAngle = 360 + leftDetectAngle;
+
+          rightTurnAngle = savedAngle - turnAngle;
+          if(rightTurnAngle > 360) rightTurnAngle = rightTurnAngle - 360;
+          if(rightTurnAngle < 0) rightTurnAngle = 360 + rightTurnAngle;
+
+          rightDetectAngle = savedAngle + detectAngle;
+          if(rightDetectAngle > 360) rightDetectAngle = rightDetectAngle - 360;
+          if(rightDetectAngle < 0) rightDetectAngle = 360 + rightDetectAngle;
+        }
+
         // X limit checker
         if(currentX > maxX) {
           if(isForward) savedAngle = leftTurnAngle;
@@ -434,6 +464,8 @@ void loop() {
         if(currentY > maxY) {
           isForward = false;
           savedAngle = oppositeStraightAngle;
+          savedX = savedX - 2;
+          if(savedX < 0) savedX = 0;
 
           leftTurnAngle = savedAngle + turnAngle;
           if(leftTurnAngle > 360) leftTurnAngle = leftTurnAngle - 360;
@@ -455,6 +487,8 @@ void loop() {
         } else if(currentY < minY) {
           isForward = true;
           savedAngle = straightAngle;
+          savedX = savedX - 2;
+          if(savedX < 0) savedX = 0;
 
           leftTurnAngle = savedAngle + turnAngle;
           if(leftTurnAngle > 360) leftTurnAngle = leftTurnAngle - 360;
