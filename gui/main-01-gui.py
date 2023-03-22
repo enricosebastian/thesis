@@ -9,19 +9,19 @@ root = Tk()
 root.title("LinDDA Control Panel")
 
 # Drone LED connection indicator
-drone_1_button = Button(root, text="Drone 1", bg="red")
+drone_1_button = Button(root, text="", bg="red")
 drone_1_button.grid(column=0, row=0)
 
-drone_2_button = Button(root, text="Drone 2", bg="red")
+drone_2_button = Button(root, text="", bg="red")
 drone_2_button.grid(column=1, row=0)
 
-drone_3_button = Button(root, text="Drone 3", bg="red")
+drone_3_button = Button(root, text="", bg="red")
 drone_3_button.grid(column=2, row=0)
 
-drone_4_button = Button(root, text="Drone 4", bg="red")
+drone_4_button = Button(root, text="", bg="red")
 drone_4_button.grid(column=3, row=0)
 
-drone_5_button = Button(root, text="Drone 5", bg="red")
+drone_5_button = Button(root, text="", bg="red")
 drone_5_button.grid(column=4, row=0)
 ################
 
