@@ -192,6 +192,10 @@ anchor_distance_input_label.insert(0, "0.0")
 anchor_distance_input_label.grid(column=3, row=11, sticky="ew", columnspan=2)
 #################################
 
+# For serial terminal label
+serial_terminal_label = Label(root, text="Serial terminal", width=50, pady=5)
+serial_terminal_label.grid(column=0, row=12, sticky="ew", columnspan=5)
+
 # For serial log terminal
 def interpret_message(message):
     message_arr = str(message).split(' ')
@@ -234,7 +238,7 @@ def check_serial_port():
     root.after(500, check_serial_port_thread)
 
 
-serial_terminal.grid(column=0, row=12, sticky="ew", columnspan=5)
+serial_terminal.grid(column=0, row=13, sticky="ew", columnspan=5)
 #################################
     
 
