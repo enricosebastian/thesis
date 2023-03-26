@@ -1,0 +1,123 @@
+(new-model-maker) enricosebastian@enricosebastian-MS-7A66:~/Desktop/thesis/tflite/prototype/main-05-new-model-maker-version$ /home/enricosebastian/miniconda3/envs/new-model-maker/bin/python /home/enricosebastian/Desktop/thesis/tflite/prototype/main-05-new-model-maker-version/model-maker.py
+/home/enricosebastian/miniconda3/envs/new-model-maker/lib/python3.9/site-packages/tensorflow_addons/utils/ensure_tf_install.py:53: UserWarning: Tensorflow Addons supports using Python ops for all Tensorflow versions above or equal to 2.9.0 and strictly below 2.12.0 (nightly versions are not supported). 
+ The versions of TensorFlow you are currently using is 2.8.4 and is not supported. 
+Some things might work, some things might not.
+If you were to encounter a bug, do not file an issue.
+If you want to make sure you're using a tested and supported configuration, either change the TensorFlow version or the TensorFlow Addons's version. 
+You can find the compatibility matrix in TensorFlow Addon's readme:
+https://github.com/tensorflow/addons
+  warnings.warn(
+2023-03-26 17:02:30.610528: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:936] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-03-26 17:02:30.616913: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:936] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-03-26 17:02:30.617180: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:936] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-03-26 17:02:30.617771: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2023-03-26 17:02:30.618323: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:936] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-03-26 17:02:30.618552: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:936] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-03-26 17:02:30.618769: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:936] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-03-26 17:02:31.045745: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:936] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-03-26 17:02:31.046029: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:936] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-03-26 17:02:31.046194: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:936] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-03-26 17:02:31.046320: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 4849 MB memory:  -> device: 0, name: NVIDIA GeForce GTX 1060 6GB, pci bus id: 0000:01:00.0, compute capability: 6.1
+Epoch 1/25
+2023-03-26 17:02:57.597996: I tensorflow/stream_executor/cuda/cuda_dnn.cc:368] Loaded cuDNN version 8100
+2023-03-26 17:02:57.863890: I tensorflow/core/platform/default/subprocess.cc:304] Start cannot spawn child process: No such file or directory
+2023-03-26 17:02:57.864623: I tensorflow/core/platform/default/subprocess.cc:304] Start cannot spawn child process: No such file or directory
+2023-03-26 17:02:57.864646: W tensorflow/stream_executor/gpu/asm_compiler.cc:80] Couldn't get ptxas version string: INTERNAL: Couldn't invoke ptxas --version
+2023-03-26 17:02:57.865291: I tensorflow/core/platform/default/subprocess.cc:304] Start cannot spawn child process: No such file or directory
+2023-03-26 17:02:57.865346: W tensorflow/stream_executor/gpu/redzone_allocator.cc:314] INTERNAL: Failed to launch ptxas
+Relying on driver to perform ptx compilation. 
+Modify $PATH to customize ptxas location.
+This message will be only logged once.
+26/26 [==============================] - 30s 354ms/step - det_loss: 1.5767 - cls_loss: 0.9739 - box_loss: 0.0121 - reg_l2_loss: 0.0630 - loss: 1.6397 - learning_rate: 0.0090 - gradient_norm: 3.2258 - val_det_loss: 1.2949 - val_cls_loss: 0.7805 - val_box_loss: 0.0103 - val_reg_l2_loss: 0.0630 - val_loss: 1.3579
+Epoch 2/25
+26/26 [==============================] - 7s 271ms/step - det_loss: 1.0085 - cls_loss: 0.5176 - box_loss: 0.0098 - reg_l2_loss: 0.0631 - loss: 1.0716 - learning_rate: 0.0099 - gradient_norm: 3.7975 - val_det_loss: 1.1415 - val_cls_loss: 0.6981 - val_box_loss: 0.0089 - val_reg_l2_loss: 0.0631 - val_loss: 1.2046
+Epoch 3/25
+26/26 [==============================] - 7s 275ms/step - det_loss: 0.7177 - cls_loss: 0.3562 - box_loss: 0.0072 - reg_l2_loss: 0.0632 - loss: 0.7809 - learning_rate: 0.0097 - gradient_norm: 4.3627 - val_det_loss: 1.1461 - val_cls_loss: 0.7125 - val_box_loss: 0.0087 - val_reg_l2_loss: 0.0632 - val_loss: 1.2093
+Epoch 4/25
+26/26 [==============================] - 7s 271ms/step - det_loss: 0.6206 - cls_loss: 0.3059 - box_loss: 0.0063 - reg_l2_loss: 0.0632 - loss: 0.6839 - learning_rate: 0.0095 - gradient_norm: 4.1928 - val_det_loss: 1.1226 - val_cls_loss: 0.6353 - val_box_loss: 0.0097 - val_reg_l2_loss: 0.0633 - val_loss: 1.1858
+Epoch 5/25
+26/26 [==============================] - 11s 440ms/step - det_loss: 0.5252 - cls_loss: 0.2817 - box_loss: 0.0049 - reg_l2_loss: 0.0633 - loss: 0.5886 - learning_rate: 0.0092 - gradient_norm: 4.0359 - val_det_loss: 1.3345 - val_cls_loss: 0.8292 - val_box_loss: 0.0101 - val_reg_l2_loss: 0.0634 - val_loss: 1.3979
+Epoch 6/25
+26/26 [==============================] - 7s 276ms/step - det_loss: 0.4922 - cls_loss: 0.2602 - box_loss: 0.0046 - reg_l2_loss: 0.0634 - loss: 0.5555 - learning_rate: 0.0088 - gradient_norm: 3.8566 - val_det_loss: 0.7978 - val_cls_loss: 0.4805 - val_box_loss: 0.0063 - val_reg_l2_loss: 0.0634 - val_loss: 0.8613
+Epoch 7/25
+26/26 [==============================] - 7s 275ms/step - det_loss: 0.4468 - cls_loss: 0.2412 - box_loss: 0.0041 - reg_l2_loss: 0.0634 - loss: 0.5102 - learning_rate: 0.0083 - gradient_norm: 3.9252 - val_det_loss: 0.6731 - val_cls_loss: 0.4405 - val_box_loss: 0.0047 - val_reg_l2_loss: 0.0635 - val_loss: 0.7366
+Epoch 8/25
+26/26 [==============================] - 7s 284ms/step - det_loss: 0.4567 - cls_loss: 0.2409 - box_loss: 0.0043 - reg_l2_loss: 0.0635 - loss: 0.5202 - learning_rate: 0.0078 - gradient_norm: 3.6270 - val_det_loss: 0.7013 - val_cls_loss: 0.4385 - val_box_loss: 0.0053 - val_reg_l2_loss: 0.0635 - val_loss: 0.7648
+Epoch 9/25
+26/26 [==============================] - 7s 278ms/step - det_loss: 0.3929 - cls_loss: 0.2143 - box_loss: 0.0036 - reg_l2_loss: 0.0635 - loss: 0.4564 - learning_rate: 0.0072 - gradient_norm: 3.3424 - val_det_loss: 0.4769 - val_cls_loss: 0.2598 - val_box_loss: 0.0043 - val_reg_l2_loss: 0.0635 - val_loss: 0.5404
+Epoch 10/25
+26/26 [==============================] - 8s 310ms/step - det_loss: 0.3865 - cls_loss: 0.2034 - box_loss: 0.0037 - reg_l2_loss: 0.0635 - loss: 0.4500 - learning_rate: 0.0066 - gradient_norm: 3.1105 - val_det_loss: 0.5068 - val_cls_loss: 0.2765 - val_box_loss: 0.0046 - val_reg_l2_loss: 0.0635 - val_loss: 0.5703
+Epoch 11/25
+26/26 [==============================] - 7s 276ms/step - det_loss: 0.3319 - cls_loss: 0.1872 - box_loss: 0.0029 - reg_l2_loss: 0.0635 - loss: 0.3955 - learning_rate: 0.0060 - gradient_norm: 2.9631 - val_det_loss: 0.4356 - val_cls_loss: 0.2398 - val_box_loss: 0.0039 - val_reg_l2_loss: 0.0635 - val_loss: 0.4992
+Epoch 12/25
+26/26 [==============================] - 7s 286ms/step - det_loss: 0.3581 - cls_loss: 0.2006 - box_loss: 0.0032 - reg_l2_loss: 0.0636 - loss: 0.4217 - learning_rate: 0.0053 - gradient_norm: 3.5108 - val_det_loss: 0.3787 - val_cls_loss: 0.2069 - val_box_loss: 0.0034 - val_reg_l2_loss: 0.0636 - val_loss: 0.4423
+Epoch 13/25
+26/26 [==============================] - 7s 278ms/step - det_loss: 0.2965 - cls_loss: 0.1753 - box_loss: 0.0024 - reg_l2_loss: 0.0636 - loss: 0.3600 - learning_rate: 0.0047 - gradient_norm: 2.6060 - val_det_loss: 0.2809 - val_cls_loss: 0.1642 - val_box_loss: 0.0023 - val_reg_l2_loss: 0.0636 - val_loss: 0.3445
+Epoch 14/25
+26/26 [==============================] - 7s 274ms/step - det_loss: 0.2944 - cls_loss: 0.1650 - box_loss: 0.0026 - reg_l2_loss: 0.0636 - loss: 0.3579 - learning_rate: 0.0040 - gradient_norm: 2.6298 - val_det_loss: 0.2777 - val_cls_loss: 0.1773 - val_box_loss: 0.0020 - val_reg_l2_loss: 0.0636 - val_loss: 0.3412
+Epoch 15/25
+26/26 [==============================] - 8s 312ms/step - det_loss: 0.3125 - cls_loss: 0.1834 - box_loss: 0.0026 - reg_l2_loss: 0.0636 - loss: 0.3761 - learning_rate: 0.0034 - gradient_norm: 3.2654 - val_det_loss: 0.2866 - val_cls_loss: 0.1681 - val_box_loss: 0.0024 - val_reg_l2_loss: 0.0636 - val_loss: 0.3501
+Epoch 16/25
+26/26 [==============================] - 7s 286ms/step - det_loss: 0.2985 - cls_loss: 0.1706 - box_loss: 0.0026 - reg_l2_loss: 0.0636 - loss: 0.3621 - learning_rate: 0.0028 - gradient_norm: 2.9731 - val_det_loss: 0.2686 - val_cls_loss: 0.1704 - val_box_loss: 0.0020 - val_reg_l2_loss: 0.0636 - val_loss: 0.3322
+Epoch 17/25
+26/26 [==============================] - 7s 277ms/step - det_loss: 0.2575 - cls_loss: 0.1506 - box_loss: 0.0021 - reg_l2_loss: 0.0636 - loss: 0.3211 - learning_rate: 0.0022 - gradient_norm: 2.5257 - val_det_loss: 0.2453 - val_cls_loss: 0.1643 - val_box_loss: 0.0016 - val_reg_l2_loss: 0.0636 - val_loss: 0.3088
+Epoch 18/25
+26/26 [==============================] - 7s 276ms/step - det_loss: 0.2701 - cls_loss: 0.1568 - box_loss: 0.0023 - reg_l2_loss: 0.0636 - loss: 0.3337 - learning_rate: 0.0017 - gradient_norm: 2.5458 - val_det_loss: 0.2380 - val_cls_loss: 0.1531 - val_box_loss: 0.0017 - val_reg_l2_loss: 0.0636 - val_loss: 0.3016
+Epoch 19/25
+26/26 [==============================] - 7s 279ms/step - det_loss: 0.2556 - cls_loss: 0.1543 - box_loss: 0.0020 - reg_l2_loss: 0.0636 - loss: 0.3191 - learning_rate: 0.0012 - gradient_norm: 2.4258 - val_det_loss: 0.2332 - val_cls_loss: 0.1531 - val_box_loss: 0.0016 - val_reg_l2_loss: 0.0636 - val_loss: 0.2967
+Epoch 20/25
+26/26 [==============================] - 8s 326ms/step - det_loss: 0.2538 - cls_loss: 0.1541 - box_loss: 0.0020 - reg_l2_loss: 0.0636 - loss: 0.3174 - learning_rate: 8.4632e-04 - gradient_norm: 2.4316 - val_det_loss: 0.2248 - val_cls_loss: 0.1521 - val_box_loss: 0.0015 - val_reg_l2_loss: 0.0636 - val_loss: 0.2883
+Epoch 21/25
+26/26 [==============================] - 7s 278ms/step - det_loss: 0.2570 - cls_loss: 0.1551 - box_loss: 0.0020 - reg_l2_loss: 0.0636 - loss: 0.3205 - learning_rate: 5.1944e-04 - gradient_norm: 2.7069 - val_det_loss: 0.2393 - val_cls_loss: 0.1503 - val_box_loss: 0.0018 - val_reg_l2_loss: 0.0636 - val_loss: 0.3029
+Epoch 22/25
+26/26 [==============================] - 7s 276ms/step - det_loss: 0.2654 - cls_loss: 0.1572 - box_loss: 0.0022 - reg_l2_loss: 0.0636 - loss: 0.3290 - learning_rate: 2.6923e-04 - gradient_norm: 3.0064 - val_det_loss: 0.2227 - val_cls_loss: 0.1461 - val_box_loss: 0.0015 - val_reg_l2_loss: 0.0636 - val_loss: 0.2863
+Epoch 23/25
+26/26 [==============================] - 7s 279ms/step - det_loss: 0.2370 - cls_loss: 0.1498 - box_loss: 0.0017 - reg_l2_loss: 0.0636 - loss: 0.3005 - learning_rate: 9.9967e-05 - gradient_norm: 2.1893 - val_det_loss: 0.2214 - val_cls_loss: 0.1446 - val_box_loss: 0.0015 - val_reg_l2_loss: 0.0636 - val_loss: 0.2850
+Epoch 24/25
+ 1/26 [>.............................] - ETA: 5s - det_loss: 0.1879 - cls_loss: 0.1381 - box_loss: 9.9688e-04 - reg_l2_loss: 0.0636 - loss: 0.2515 - learning_rate: 4.2776e-05 - gradient_norm: 4.6 2/26 [=>............................] - ETA: 5s - det_loss: 0.2056 - cls_loss: 0.1340 - box_loss: 0.0014 - reg_l2_loss: 0.0636 - loss: 0.2692 - learning_rate: 4.1164e-05 - gradient_norm: 3.5288 26/26 [==============================] - 7s 274ms/step - det_loss: 0.2323 - cls_loss: 0.1433 - box_loss: 0.0018 - reg_l2_loss: 0.0636 - loss: 0.2959 - learning_rate: 1.4543e-05 - gradient_norm: 2.5245 - val_det_loss: 0.2217 - val_cls_loss: 0.1445 - val_box_loss: 0.0015 - val_reg_l2_loss: 0.0636 - val_loss: 0.2853
+Epoch 25/25
+26/26 [==============================] - 8s 324ms/step - det_loss: 0.2318 - cls_loss: 0.1429 - box_loss: 0.0018 - reg_l2_loss: 0.0636 - loss: 0.2953 - learning_rate: 1.4421e-05 - gradient_norm: 2.1592 - val_det_loss: 0.2220 - val_cls_loss: 0.1443 - val_box_loss: 0.0016 - val_reg_l2_loss: 0.0636 - val_loss: 0.2855
+=============Validation results==============
+
+1/1 [==============================] - 5s 5s/step
+
+{'AP': 0.7443324, 'AP50': 1.0, 'AP75': 0.8875505, 'APs': -1.0, 'APm': -1.0, 'APl': 0.74442565, 'ARmax1': 0.75555557, 'ARmax10': 0.83111113, 'ARmax100': 0.83111113, 'ARs': -1.0, 'ARm': -1.0, 'ARl': 0.83111113, 'AP_/plastic_bottle': 0.7443324}
+=============Test results==============
+
+2023-03-26 17:06:19.925328: W tensorflow/core/common_runtime/bfc_allocator.cc:275] Allocator (GPU_0_bfc) ran out of memory trying to allocate 2.57GiB with freed_by_count=0. The caller indicates that this is not a failure, but may mean that there could be performance gains if more memory were available.
+1/1 [==============================] - 6s 6s/step
+
+{'AP': 0.7150344, 'AP50': 0.9972687, 'AP75': 0.868065, 'APs': -1.0, 'APm': -1.0, 'APl': 0.7155356, 'ARmax1': 0.7314815, 'ARmax10': 0.80185187, 'ARmax100': 0.80185187, 'ARs': -1.0, 'ARm': -1.0, 'ARl': 0.80185187, 'AP_/plastic_bottle': 0.7150344}
+2023-03-26 17:06:22.087750: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding using them.
+2023-03-26 17:06:41.101382: W tensorflow/core/common_runtime/graph_constructor.cc:803] Node 'resample_p7/PartitionedCall' has 1 outputs but the _output_shapes attribute specifies shapes for 3 outputs. Output shapes may be inaccurate.
+2023-03-26 17:06:45.821245: W tensorflow/compiler/mlir/lite/python/tf_tfl_flatbuffer_helpers.cc:357] Ignored output_format.
+2023-03-26 17:06:45.821289: W tensorflow/compiler/mlir/lite/python/tf_tfl_flatbuffer_helpers.cc:360] Ignored drop_control_dependency.
+2023-03-26 17:06:45.822103: I tensorflow/cc/saved_model/reader.cc:43] Reading SavedModel from: /tmp/tmp0p0iljbj
+2023-03-26 17:06:45.923431: I tensorflow/cc/saved_model/reader.cc:78] Reading meta graph with tags { serve }
+2023-03-26 17:06:45.923482: I tensorflow/cc/saved_model/reader.cc:119] Reading SavedModel debug info (if present) from: /tmp/tmp0p0iljbj
+2023-03-26 17:06:46.232561: I tensorflow/cc/saved_model/loader.cc:228] Restoring SavedModel bundle.
+2023-03-26 17:06:47.863166: I tensorflow/cc/saved_model/loader.cc:212] Running initialization op on SavedModel bundle at path: /tmp/tmp0p0iljbj
+2023-03-26 17:06:48.528692: I tensorflow/cc/saved_model/loader.cc:301] SavedModel load for tags { serve }; Status: success: OK. Took 2706591 microseconds.
+2023-03-26 17:06:49.609253: I tensorflow/compiler/mlir/tensorflow/utils/dump_mlir_util.cc:237] disabling MLIR crash reproducer, set env var `MLIR_CRASH_REPRODUCER_DIRECTORY` to enable.
+2023-03-26 17:06:50.923458: I tensorflow/compiler/mlir/lite/flatbuffer_export.cc:1963] Estimated count of arithmetic ops: 1.752 G  ops, equivalently 0.876 G  MACs
+
+Estimated count of arithmetic ops: 1.752 G  ops, equivalently 0.876 G  MACs
+fully_quantize: 0, inference_type: 6, input_inference_type: 3, output_inference_type: 0
+2023-03-26 17:07:25.468727: I tensorflow/compiler/mlir/lite/flatbuffer_export.cc:1963] Estimated count of arithmetic ops: 1.752 G  ops, equivalently 0.876 G  MACs
+
+Estimated count of arithmetic ops: 1.752 G  ops, equivalently 0.876 G  MACs
+=============Validation results for exported model==============
+
+INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+45/45 [==============================] - 78s 2s/step
+
+{'AP': 0.69849294, 'AP50': 1.0, 'AP75': 0.83548045, 'APs': -1.0, 'APm': -1.0, 'APl': 0.69849294, 'ARmax1': 0.74222225, 'ARmax10': 0.74222225, 'ARmax100': 0.74222225, 'ARs': -1.0, 'ARm': -1.0, 'ARl': 0.74222225, 'AP_/plastic_bottle': 0.69849294}
+=============Test results for exported model==============
+
+54/54 [==============================] - 93s 2s/step
+
+{'AP': 0.68948203, 'AP50': 0.99751765, 'AP75': 0.79001147, 'APs': -1.0, 'APm': -1.0, 'APl': 0.6895146, 'ARmax1': 0.73333335, 'ARmax10': 0.74444443, 'ARmax100': 0.74444443, 'ARs': -1.0, 'ARm': -1.0, 'ARl': 0.74444443, 'AP_/plastic_bottle': 0.68948203}
+
+
+Done with model of batch size 8 and epoch 25
