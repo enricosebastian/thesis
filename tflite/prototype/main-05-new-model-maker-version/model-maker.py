@@ -21,11 +21,14 @@ from absl import logging
 logging.set_verbosity(logging.ERROR)
 
 # CHANGE VALUES HERE ONLY
+batch_size = 8 # default is 8
+epochs = 50 # default is 50
+
 model_name = 'efficientdet_lite1'
 train_dir = './images/all/train'
 validate_dir = './images/all/validate'
 test_dir = './images/all/test'
-label_map = ['drone', 'plastic_bottle']
+label_map = ['plastic_bottle']
 
 export_dir = './models/'
 model_filename = 'all.tflite'
@@ -51,28 +54,28 @@ test_data = object_detector.DataLoader.from_pascal_voc(
     label_map=label_map
 )
 
-model = object_detector.create(train_data, model_spec=spec, epochs=50, batch_size=4, train_whole_model=True, validation_data=validation_data)
+model = object_detector.create(train_data, model_spec=spec, epochs=epochs, batch_size=batch_size, train_whole_model=True, validation_data=validation_data)
 
-print("=============Validation results 1==============\n")
+print("=============Validation results==============\n")
 print(
     model.evaluate(validation_data)
 )
 
-print("=============Test results 1==============\n")
+print("=============Test results==============\n")
 print(
     model.evaluate(test_data)
 )
 
 model.export(export_dir=export_dir, tflite_filename=model_filename)
 
-print("=============Validation results 2==============\n")
+print("=============Validation results for exported model==============\n")
 print(
     model.evaluate_tflite(export_dir+model_filename, validation_data)
 )
 
-print("=============Test results 2==============\n")
+print("=============Test results for exported model==============\n")
 print(
     model.evaluate_tflite(export_dir+model_filename, test_data)
 )
 
-print("\n\nDone!")
+print("\n\nDone with model of batch size " + str(batch_size) + " and epoch " + str(epochs))
