@@ -26,7 +26,7 @@ model_name = 'efficientdet_lite0'
 train_dir = './images/all/train'
 validate_dir = './images/all/validate'
 test_dir = './images/all/test'
-label_map = ['plastic_bottle']
+label_map = ['plastic_bottle', 'drone']
 
 export_dir = './models/'
 model_filename = 'all.tflite'
