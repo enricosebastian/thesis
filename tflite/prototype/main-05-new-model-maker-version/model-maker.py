@@ -2,8 +2,6 @@
 # and https://www.tensorflow.org/lite/api_docs/python/tflite_model_maker/object_detector/DataLoader#from_csv
 
 # cd Desktop/thesis/tflite/prototype/main-05-new-model-maker-version
-
-import numpy as np
 import os
 
 from tflite_model_maker import image_classifier
@@ -12,7 +10,7 @@ from tflite_model_maker.config import QuantizationConfig
 from tflite_model_maker.config import ExportFormat
 from tflite_model_maker import model_spec
 from tflite_model_maker import object_detector
-
+ 
 import tensorflow as tf
 assert tf.__version__.startswith('2')
 
@@ -22,9 +20,9 @@ logging.set_verbosity(logging.ERROR)
 
 # CHANGE VALUES HERE ONLY
 batch_size = 8 # default is 8
-epochs = 50 # default is 50
+epochs = 25 # default is 50
 
-model_name = 'efficientdet_lite1'
+model_name = 'efficientdet_lite0'
 train_dir = './images/all/train'
 validate_dir = './images/all/validate'
 test_dir = './images/all/test'
