@@ -219,6 +219,7 @@ def main():
 if __name__ == '__main__':
   while True:
     if GPIO.input(detectionPin) == True:
+      print("Detection pin is high")
       main()
     if GPIO.input(offPin) == True:
       print("Off pin is high")

@@ -4,10 +4,10 @@
 #include <LinkedList.h>
 
 //Name here
-// const String myName = "BASE";
+const String myName = "BASE";
 // const String myName = "DRO1";
 // const String myName = "DRO2";
-const String myName = "DRO3";
+// const String myName = "DRO3";
 
 //Constants (buttons)
 const int detectionPin = 10;
@@ -51,13 +51,13 @@ float currentY = 0;
 float homeX = 0;
 float homeY = 0;
 
-float x0 = 17.8; //3.8 strc, 17.8 pool
+float x0 = 5; //3.8 strc, 17.8 pool
 float d1 = 0;
 float d2 = 0;
-float maxY = 12;
+float maxY = 15;
 float minY = 8;
-float maxX = 12;
-float minX = 5;
+float maxX = 5;
+float minX = 0;
 
 int droneSize = 0;
 
@@ -122,21 +122,15 @@ void setup() {
 
   Serial.print(myName);
   Serial.println(" v21 has initialized.");
+
   startTime = millis();
   startTime2 = millis();
   startTime3 = millis();
 }
 
 void loop() {
-  // forBaseStation();
-  forDrone();
-
-
-  // if(myName == "BASE") {
-  //   forBaseStation();
-  // } else {
-  //   forDrone();
-  // }
+  forBaseStation();
+  // forDrone();
 }
 
 void forBaseStation() {
@@ -200,13 +194,13 @@ void forBaseStation() {
         startTime = millis();
 
         xMin = xMax;
-        xMax = xMax + (deploymentArea/2);
+        xMax = xMax + deploymentArea;
 
         sendCommand("DEPL", drones.get(i), String(xMin) + "," + String(xMax));
-        while(!receivedSpecificCommand("DEPLREP") && receivedFromName != drones.get(i)) {
-          if(millis() - startTime > waitingTime) {
+        while(!(receivedSpecificCommand("DEPLREP") && receivedFromName == drones.get(i))) {
+          if(millis() - startTime > 1000) {
             startTime = millis();
-
+            
             Serial.print("Did not receive 'DEPLREP' from '");
             Serial.print(drones.get(i));
             Serial.println("' yet. Sending 'DEPL' again.");
@@ -224,7 +218,7 @@ void forBaseStation() {
       digitalWrite(redLed, LOW);
       digitalWrite(yellowLed, LOW);
       digitalWrite(greenLed, HIGH);
-      digitalWrite(detectionPin, HIGH);
+      digitalWrite(detectionPin, LOW);
     } else if(digitalRead(btn) == HIGH && drones.size() < 1) {
       Serial.println("No drones to deploy.");
     }
@@ -400,13 +394,16 @@ void forDrone() {
         Serial.print(" to ");
         Serial.println(maxX);
 
-        digitalWrite(detectionPin, HIGH); // Turn on object detection
+        digitalWrite(detectionPin, LOW); // Turn on object detection
         digitalWrite(recordingPin, LOW);
       } else if(receivedCommand == "RECO") {
         hasStopped = false;
         sendToNano("GO", myName, String(currentX)+","+String(currentY));
         digitalWrite(detectionPin, LOW);
         digitalWrite(recordingPin, HIGH);
+      } else if(receivedCommand == "DETP") {
+        digitalWrite(detectionPin, HIGH);
+
       } else if(receivedCommand == "WHER") {
         startTime = millis();
         Serial.print("Base station wants to know ");
@@ -483,6 +480,7 @@ void forDrone() {
         Serial.println(minY);
 
         minY = receivedDetails.toFloat();
+        homeY = minY;
 
         Serial.print("New minY: ");
         Serial.println(minY);
@@ -492,6 +490,7 @@ void forDrone() {
         Serial.println(maxX);
 
         maxX = receivedDetails.toFloat();
+        homeX = maxX;
 
         Serial.print("New maxX: ");
         Serial.println(maxX);
@@ -592,6 +591,7 @@ void sendToNano(String command, String toName, String details) {
     sentMessage.concat(details);
 
     Nano.println(sentMessage);
+    Serial.println(sentMessage);
     sentMessage = "";
   } else {
     Serial.println("Wrong format of command. Try again.");
