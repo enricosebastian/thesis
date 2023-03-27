@@ -107,7 +107,8 @@ def refresh_drone_list():
 # For deploy button
 def start_deployment():
     print("Deploying", selected_drone)
-    deployment_command = "DEPL " + selected_drone + "DETA"
+    deployment_command = "DEPL " + selected_drone + " DETA"
+    print(deployment_command)
     serial_instance.write(deployment_command.encode("utf-8"))
     
     
