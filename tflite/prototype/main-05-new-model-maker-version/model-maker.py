@@ -19,8 +19,8 @@ from absl import logging
 logging.set_verbosity(logging.ERROR)
 
 # CHANGE VALUES HERE ONLYS
-batch_size = 8 # default is 8
-epochs = 75 # default is 50
+batch_size = 16 # default is 8
+epochs = 100 # default is 50
 
 model_name = 'efficientdet_lite0'
 train_dir = './images/all/train'

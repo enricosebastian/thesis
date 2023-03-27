@@ -1,0 +1,223 @@
+(new-model-maker) enricosebastian@enricosebastian-MS-7A66:~/Desktop/thesis/tflite/prototype/main-05-new-model-maker-version$ /home/enricosebastian/miniconda3/envs/new-model-maker/bin/python /home/enricosebastian/Desktop/thesis/tflite/prototype/main-05-new-model-maker-version/model-maker.py
+/home/enricosebastian/miniconda3/envs/new-model-maker/lib/python3.9/site-packages/tensorflow_addons/utils/ensure_tf_install.py:53: UserWarning: Tensorflow Addons supports using Python ops for all Tensorflow versions above or equal to 2.9.0 and strictly below 2.12.0 (nightly versions are not supported). 
+ The versions of TensorFlow you are currently using is 2.8.4 and is not supported. 
+Some things might work, some things might not.
+If you were to encounter a bug, do not file an issue.
+If you want to make sure you're using a tested and supported configuration, either change the TensorFlow version or the TensorFlow Addons's version. 
+You can find the compatibility matrix in TensorFlow Addon's readme:
+https://github.com/tensorflow/addons
+  warnings.warn(
+2023-03-27 10:13:27.500100: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:936] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-03-27 10:13:27.506455: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:936] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-03-27 10:13:27.506669: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:936] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-03-27 10:13:27.507279: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2023-03-27 10:13:27.507971: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:936] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-03-27 10:13:27.508325: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:936] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-03-27 10:13:27.508554: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:936] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-03-27 10:13:27.922042: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:936] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-03-27 10:13:27.922355: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:936] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-03-27 10:13:27.922546: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:936] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-03-27 10:13:27.922690: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 5087 MB memory:  -> device: 0, name: NVIDIA GeForce GTX 1060 6GB, pci bus id: 0000:01:00.0, compute capability: 6.1
+Epoch 1/75
+2023-03-27 10:13:54.348605: I tensorflow/stream_executor/cuda/cuda_dnn.cc:368] Loaded cuDNN version 8100
+2023-03-27 10:13:54.559661: I tensorflow/core/platform/default/subprocess.cc:304] Start cannot spawn child process: No such file or directory
+2023-03-27 10:13:54.560353: I tensorflow/core/platform/default/subprocess.cc:304] Start cannot spawn child process: No such file or directory
+2023-03-27 10:13:54.560380: W tensorflow/stream_executor/gpu/asm_compiler.cc:80] Couldn't get ptxas version string: INTERNAL: Couldn't invoke ptxas --version
+2023-03-27 10:13:54.561069: I tensorflow/core/platform/default/subprocess.cc:304] Start cannot spawn child process: No such file or directory
+2023-03-27 10:13:54.561120: W tensorflow/stream_executor/gpu/redzone_allocator.cc:314] INTERNAL: Failed to launch ptxas
+Relying on driver to perform ptx compilation. 
+Modify $PATH to customize ptxas location.
+This message will be only logged once.
+81/81 [==============================] - 33s 168ms/step - det_loss: 1.3982 - cls_loss: 0.8692 - box_loss: 0.0106 - reg_l2_loss: 0.0632 - loss: 1.4614 - learning_rate: 0.0065 - gradient_norm: 4.3171 - val_det_loss: 1.0245 - val_cls_loss: 0.6275 - val_box_loss: 0.0079 - val_reg_l2_loss: 0.0633 - val_loss: 1.0877
+Epoch 2/75
+81/81 [==============================] - 12s 143ms/step - det_loss: 0.9621 - cls_loss: 0.5763 - box_loss: 0.0077 - reg_l2_loss: 0.0633 - loss: 1.0254 - learning_rate: 0.0050 - gradient_norm: 5.5774 - val_det_loss: 0.9147 - val_cls_loss: 0.5432 - val_box_loss: 0.0074 - val_reg_l2_loss: 0.0634 - val_loss: 0.9781
+Epoch 3/75
+81/81 [==============================] - 12s 145ms/step - det_loss: 0.7192 - cls_loss: 0.4209 - box_loss: 0.0060 - reg_l2_loss: 0.0635 - loss: 0.7827 - learning_rate: 0.0050 - gradient_norm: 5.2436 - val_det_loss: 0.8110 - val_cls_loss: 0.5010 - val_box_loss: 0.0062 - val_reg_l2_loss: 0.0635 - val_loss: 0.8746
+Epoch 4/75
+81/81 [==============================] - 12s 144ms/step - det_loss: 0.6156 - cls_loss: 0.3546 - box_loss: 0.0052 - reg_l2_loss: 0.0636 - loss: 0.6792 - learning_rate: 0.0050 - gradient_norm: 5.7493 - val_det_loss: 0.8351 - val_cls_loss: 0.6245 - val_box_loss: 0.0042 - val_reg_l2_loss: 0.0637 - val_loss: 0.8987
+Epoch 5/75
+81/81 [==============================] - 16s 200ms/step - det_loss: 0.5551 - cls_loss: 0.3166 - box_loss: 0.0048 - reg_l2_loss: 0.0637 - loss: 0.6189 - learning_rate: 0.0050 - gradient_norm: 5.1292 - val_det_loss: 0.9067 - val_cls_loss: 0.5691 - val_box_loss: 0.0068 - val_reg_l2_loss: 0.0638 - val_loss: 0.9704
+Epoch 6/75
+81/81 [==============================] - 12s 144ms/step - det_loss: 0.5210 - cls_loss: 0.3084 - box_loss: 0.0043 - reg_l2_loss: 0.0638 - loss: 0.5848 - learning_rate: 0.0049 - gradient_norm: 5.0275 - val_det_loss: 0.7992 - val_cls_loss: 0.4597 - val_box_loss: 0.0068 - val_reg_l2_loss: 0.0638 - val_loss: 0.8631
+Epoch 7/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.4571 - cls_loss: 0.2675 - box_loss: 0.0038 - reg_l2_loss: 0.0639 - loss: 0.5210 - learning_rate: 0.0049 - gradient_norm: 4.8441 - val_det_loss: 0.5033 - val_cls_loss: 0.3016 - val_box_loss: 0.0040 - val_reg_l2_loss: 0.0639 - val_loss: 0.5673
+Epoch 8/75
+81/81 [==============================] - 12s 148ms/step - det_loss: 0.4493 - cls_loss: 0.2651 - box_loss: 0.0037 - reg_l2_loss: 0.0640 - loss: 0.5132 - learning_rate: 0.0049 - gradient_norm: 4.7094 - val_det_loss: 1.5867 - val_cls_loss: 1.2906 - val_box_loss: 0.0059 - val_reg_l2_loss: 0.0640 - val_loss: 1.6508
+Epoch 9/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.4118 - cls_loss: 0.2453 - box_loss: 0.0033 - reg_l2_loss: 0.0640 - loss: 0.4758 - learning_rate: 0.0048 - gradient_norm: 4.5348 - val_det_loss: 0.3759 - val_cls_loss: 0.2261 - val_box_loss: 0.0030 - val_reg_l2_loss: 0.0641 - val_loss: 0.4399
+Epoch 10/75
+81/81 [==============================] - 13s 162ms/step - det_loss: 0.3713 - cls_loss: 0.2193 - box_loss: 0.0030 - reg_l2_loss: 0.0641 - loss: 0.4354 - learning_rate: 0.0048 - gradient_norm: 4.1582 - val_det_loss: 0.4852 - val_cls_loss: 0.3384 - val_box_loss: 0.0029 - val_reg_l2_loss: 0.0641 - val_loss: 0.5494
+Epoch 11/75
+81/81 [==============================] - 12s 148ms/step - det_loss: 0.3828 - cls_loss: 0.2396 - box_loss: 0.0029 - reg_l2_loss: 0.0642 - loss: 0.4470 - learning_rate: 0.0048 - gradient_norm: 4.2301 - val_det_loss: 1.2384 - val_cls_loss: 1.0528 - val_box_loss: 0.0037 - val_reg_l2_loss: 0.0642 - val_loss: 1.3026
+Epoch 12/75
+81/81 [==============================] - 12s 145ms/step - det_loss: 0.4032 - cls_loss: 0.2361 - box_loss: 0.0033 - reg_l2_loss: 0.0642 - loss: 0.4674 - learning_rate: 0.0047 - gradient_norm: 3.9883 - val_det_loss: 0.5984 - val_cls_loss: 0.4530 - val_box_loss: 0.0029 - val_reg_l2_loss: 0.0642 - val_loss: 0.6626
+Epoch 13/75
+81/81 [==============================] - 12s 145ms/step - det_loss: 0.3765 - cls_loss: 0.2250 - box_loss: 0.0030 - reg_l2_loss: 0.0643 - loss: 0.4408 - learning_rate: 0.0047 - gradient_norm: 4.1173 - val_det_loss: 0.9156 - val_cls_loss: 0.6917 - val_box_loss: 0.0045 - val_reg_l2_loss: 0.0643 - val_loss: 0.9799
+Epoch 14/75
+81/81 [==============================] - 12s 145ms/step - det_loss: 0.3626 - cls_loss: 0.2153 - box_loss: 0.0029 - reg_l2_loss: 0.0643 - loss: 0.4269 - learning_rate: 0.0046 - gradient_norm: 3.9123 - val_det_loss: 0.3614 - val_cls_loss: 0.2244 - val_box_loss: 0.0027 - val_reg_l2_loss: 0.0643 - val_loss: 0.4258
+Epoch 15/75
+81/81 [==============================] - 13s 167ms/step - det_loss: 0.3197 - cls_loss: 0.1970 - box_loss: 0.0025 - reg_l2_loss: 0.0644 - loss: 0.3840 - learning_rate: 0.0045 - gradient_norm: 3.6281 - val_det_loss: 0.4209 - val_cls_loss: 0.2851 - val_box_loss: 0.0027 - val_reg_l2_loss: 0.0644 - val_loss: 0.4852
+Epoch 16/75
+81/81 [==============================] - 12s 144ms/step - det_loss: 0.3287 - cls_loss: 0.2057 - box_loss: 0.0025 - reg_l2_loss: 0.0644 - loss: 0.3931 - learning_rate: 0.0045 - gradient_norm: 3.8574 - val_det_loss: 0.6384 - val_cls_loss: 0.4406 - val_box_loss: 0.0040 - val_reg_l2_loss: 0.0644 - val_loss: 0.7028
+Epoch 17/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.3450 - cls_loss: 0.2159 - box_loss: 0.0026 - reg_l2_loss: 0.0644 - loss: 0.4095 - learning_rate: 0.0044 - gradient_norm: 3.9646 - val_det_loss: 0.4248 - val_cls_loss: 0.2951 - val_box_loss: 0.0026 - val_reg_l2_loss: 0.0644 - val_loss: 0.4893
+Epoch 18/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.3198 - cls_loss: 0.1978 - box_loss: 0.0024 - reg_l2_loss: 0.0645 - loss: 0.3842 - learning_rate: 0.0043 - gradient_norm: 3.8748 - val_det_loss: 0.4323 - val_cls_loss: 0.2344 - val_box_loss: 0.0040 - val_reg_l2_loss: 0.0645 - val_loss: 0.4968
+Epoch 19/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.3296 - cls_loss: 0.2038 - box_loss: 0.0025 - reg_l2_loss: 0.0645 - loss: 0.3941 - learning_rate: 0.0043 - gradient_norm: 3.7359 - val_det_loss: 0.5596 - val_cls_loss: 0.4006 - val_box_loss: 0.0032 - val_reg_l2_loss: 0.0645 - val_loss: 0.6241
+Epoch 20/75
+81/81 [==============================] - 13s 167ms/step - det_loss: 0.2756 - cls_loss: 0.1769 - box_loss: 0.0020 - reg_l2_loss: 0.0645 - loss: 0.3401 - learning_rate: 0.0042 - gradient_norm: 3.5978 - val_det_loss: 0.5173 - val_cls_loss: 0.3558 - val_box_loss: 0.0032 - val_reg_l2_loss: 0.0645 - val_loss: 0.5819
+Epoch 21/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.2695 - cls_loss: 0.1771 - box_loss: 0.0018 - reg_l2_loss: 0.0646 - loss: 0.3341 - learning_rate: 0.0041 - gradient_norm: 3.5704 - val_det_loss: 0.3143 - val_cls_loss: 0.2068 - val_box_loss: 0.0021 - val_reg_l2_loss: 0.0646 - val_loss: 0.3789
+Epoch 22/75
+81/81 [==============================] - 12s 145ms/step - det_loss: 0.2633 - cls_loss: 0.1653 - box_loss: 0.0020 - reg_l2_loss: 0.0646 - loss: 0.3279 - learning_rate: 0.0040 - gradient_norm: 3.1552 - val_det_loss: 0.3556 - val_cls_loss: 0.2178 - val_box_loss: 0.0028 - val_reg_l2_loss: 0.0646 - val_loss: 0.4202
+Epoch 23/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.2526 - cls_loss: 0.1634 - box_loss: 0.0018 - reg_l2_loss: 0.0646 - loss: 0.3172 - learning_rate: 0.0039 - gradient_norm: 3.2475 - val_det_loss: 0.5183 - val_cls_loss: 0.3899 - val_box_loss: 0.0026 - val_reg_l2_loss: 0.0646 - val_loss: 0.5829
+Epoch 24/75
+81/81 [==============================] - 12s 149ms/step - det_loss: 0.2497 - cls_loss: 0.1578 - box_loss: 0.0018 - reg_l2_loss: 0.0646 - loss: 0.3143 - learning_rate: 0.0039 - gradient_norm: 2.9389 - val_det_loss: 0.2626 - val_cls_loss: 0.1646 - val_box_loss: 0.0020 - val_reg_l2_loss: 0.0646 - val_loss: 0.3272
+Epoch 25/75
+81/81 [==============================] - 13s 163ms/step - det_loss: 0.2684 - cls_loss: 0.1694 - box_loss: 0.0020 - reg_l2_loss: 0.0646 - loss: 0.3330 - learning_rate: 0.0038 - gradient_norm: 3.2995 - val_det_loss: 0.2036 - val_cls_loss: 0.1500 - val_box_loss: 0.0011 - val_reg_l2_loss: 0.0646 - val_loss: 0.2682
+Epoch 26/75
+81/81 [==============================] - 12s 145ms/step - det_loss: 0.2653 - cls_loss: 0.1663 - box_loss: 0.0020 - reg_l2_loss: 0.0646 - loss: 0.3299 - learning_rate: 0.0037 - gradient_norm: 3.5032 - val_det_loss: 0.3995 - val_cls_loss: 0.2557 - val_box_loss: 0.0029 - val_reg_l2_loss: 0.0646 - val_loss: 0.4642
+Epoch 27/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.2377 - cls_loss: 0.1511 - box_loss: 0.0017 - reg_l2_loss: 0.0646 - loss: 0.3024 - learning_rate: 0.0036 - gradient_norm: 3.0116 - val_det_loss: 0.4525 - val_cls_loss: 0.3437 - val_box_loss: 0.0022 - val_reg_l2_loss: 0.0647 - val_loss: 0.5171
+Epoch 28/75
+81/81 [==============================] - 12s 148ms/step - det_loss: 0.2510 - cls_loss: 0.1586 - box_loss: 0.0018 - reg_l2_loss: 0.0647 - loss: 0.3156 - learning_rate: 0.0035 - gradient_norm: 3.1589 - val_det_loss: 0.6142 - val_cls_loss: 0.5191 - val_box_loss: 0.0019 - val_reg_l2_loss: 0.0647 - val_loss: 0.6789
+Epoch 29/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.2434 - cls_loss: 0.1538 - box_loss: 0.0018 - reg_l2_loss: 0.0647 - loss: 0.3081 - learning_rate: 0.0034 - gradient_norm: 3.1750 - val_det_loss: 0.2239 - val_cls_loss: 0.1484 - val_box_loss: 0.0015 - val_reg_l2_loss: 0.0647 - val_loss: 0.2885
+Epoch 30/75
+81/81 [==============================] - 13s 164ms/step - det_loss: 0.2337 - cls_loss: 0.1519 - box_loss: 0.0016 - reg_l2_loss: 0.0647 - loss: 0.2984 - learning_rate: 0.0033 - gradient_norm: 3.0199 - val_det_loss: 0.2318 - val_cls_loss: 0.1757 - val_box_loss: 0.0011 - val_reg_l2_loss: 0.0647 - val_loss: 0.2965
+Epoch 31/75
+81/81 [==============================] - 12s 149ms/step - det_loss: 0.2373 - cls_loss: 0.1543 - box_loss: 0.0017 - reg_l2_loss: 0.0647 - loss: 0.3020 - learning_rate: 0.0032 - gradient_norm: 3.2220 - val_det_loss: 0.2521 - val_cls_loss: 0.1581 - val_box_loss: 0.0019 - val_reg_l2_loss: 0.0647 - val_loss: 0.3168
+Epoch 32/75
+81/81 [==============================] - 12s 145ms/step - det_loss: 0.2218 - cls_loss: 0.1470 - box_loss: 0.0015 - reg_l2_loss: 0.0647 - loss: 0.2864 - learning_rate: 0.0031 - gradient_norm: 3.0374 - val_det_loss: 0.2358 - val_cls_loss: 0.1656 - val_box_loss: 0.0014 - val_reg_l2_loss: 0.0647 - val_loss: 0.3005
+Epoch 33/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.2163 - cls_loss: 0.1415 - box_loss: 0.0015 - reg_l2_loss: 0.0647 - loss: 0.2810 - learning_rate: 0.0030 - gradient_norm: 3.0891 - val_det_loss: 0.2375 - val_cls_loss: 0.1662 - val_box_loss: 0.0014 - val_reg_l2_loss: 0.0647 - val_loss: 0.3022
+Epoch 34/75
+81/81 [==============================] - 12s 145ms/step - det_loss: 0.2284 - cls_loss: 0.1505 - box_loss: 0.0016 - reg_l2_loss: 0.0647 - loss: 0.2931 - learning_rate: 0.0029 - gradient_norm: 2.8726 - val_det_loss: 0.3250 - val_cls_loss: 0.2422 - val_box_loss: 0.0017 - val_reg_l2_loss: 0.0647 - val_loss: 0.3897
+Epoch 35/75
+81/81 [==============================] - 13s 167ms/step - det_loss: 0.2300 - cls_loss: 0.1537 - box_loss: 0.0015 - reg_l2_loss: 0.0647 - loss: 0.2947 - learning_rate: 0.0028 - gradient_norm: 3.1806 - val_det_loss: 0.4057 - val_cls_loss: 0.2935 - val_box_loss: 0.0022 - val_reg_l2_loss: 0.0647 - val_loss: 0.4704
+Epoch 36/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.2279 - cls_loss: 0.1505 - box_loss: 0.0015 - reg_l2_loss: 0.0647 - loss: 0.2926 - learning_rate: 0.0027 - gradient_norm: 3.2050 - val_det_loss: 0.2585 - val_cls_loss: 0.1862 - val_box_loss: 0.0014 - val_reg_l2_loss: 0.0647 - val_loss: 0.3232
+Epoch 37/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.2143 - cls_loss: 0.1416 - box_loss: 0.0015 - reg_l2_loss: 0.0647 - loss: 0.2790 - learning_rate: 0.0026 - gradient_norm: 2.9974 - val_det_loss: 0.2093 - val_cls_loss: 0.1592 - val_box_loss: 0.0010 - val_reg_l2_loss: 0.0647 - val_loss: 0.2740
+Epoch 38/75
+81/81 [==============================] - 12s 145ms/step - det_loss: 0.1990 - cls_loss: 0.1314 - box_loss: 0.0014 - reg_l2_loss: 0.0647 - loss: 0.2637 - learning_rate: 0.0024 - gradient_norm: 2.8367 - val_det_loss: 0.1704 - val_cls_loss: 0.1258 - val_box_loss: 8.9309e-04 - val_reg_l2_loss: 0.0647 - val_loss: 0.2351
+Epoch 39/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.2022 - cls_loss: 0.1352 - box_loss: 0.0013 - reg_l2_loss: 0.0647 - loss: 0.2669 - learning_rate: 0.0023 - gradient_norm: 2.9137 - val_det_loss: 0.2473 - val_cls_loss: 0.1614 - val_box_loss: 0.0017 - val_reg_l2_loss: 0.0647 - val_loss: 0.3120
+Epoch 40/75
+81/81 [==============================] - 13s 167ms/step - det_loss: 0.1929 - cls_loss: 0.1300 - box_loss: 0.0013 - reg_l2_loss: 0.0647 - loss: 0.2576 - learning_rate: 0.0022 - gradient_norm: 2.8336 - val_det_loss: 0.5489 - val_cls_loss: 0.4416 - val_box_loss: 0.0021 - val_reg_l2_loss: 0.0647 - val_loss: 0.6136
+Epoch 41/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.1990 - cls_loss: 0.1292 - box_loss: 0.0014 - reg_l2_loss: 0.0647 - loss: 0.2637 - learning_rate: 0.0021 - gradient_norm: 2.7380 - val_det_loss: 0.2426 - val_cls_loss: 0.1602 - val_box_loss: 0.0016 - val_reg_l2_loss: 0.0647 - val_loss: 0.3073
+Epoch 42/75
+81/81 [==============================] - 12s 145ms/step - det_loss: 0.2016 - cls_loss: 0.1343 - box_loss: 0.0013 - reg_l2_loss: 0.0647 - loss: 0.2663 - learning_rate: 0.0020 - gradient_norm: 3.0932 - val_det_loss: 0.2363 - val_cls_loss: 0.1834 - val_box_loss: 0.0011 - val_reg_l2_loss: 0.0647 - val_loss: 0.3010
+Epoch 43/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.1913 - cls_loss: 0.1292 - box_loss: 0.0012 - reg_l2_loss: 0.0647 - loss: 0.2560 - learning_rate: 0.0019 - gradient_norm: 2.8195 - val_det_loss: 0.2069 - val_cls_loss: 0.1483 - val_box_loss: 0.0012 - val_reg_l2_loss: 0.0647 - val_loss: 0.2717
+Epoch 44/75
+81/81 [==============================] - 12s 148ms/step - det_loss: 0.1912 - cls_loss: 0.1249 - box_loss: 0.0013 - reg_l2_loss: 0.0647 - loss: 0.2559 - learning_rate: 0.0018 - gradient_norm: 2.8934 - val_det_loss: 0.2074 - val_cls_loss: 0.1549 - val_box_loss: 0.0010 - val_reg_l2_loss: 0.0647 - val_loss: 0.2721
+Epoch 45/75
+81/81 [==============================] - 13s 163ms/step - det_loss: 0.1791 - cls_loss: 0.1242 - box_loss: 0.0011 - reg_l2_loss: 0.0647 - loss: 0.2438 - learning_rate: 0.0017 - gradient_norm: 2.8308 - val_det_loss: 0.2244 - val_cls_loss: 0.1630 - val_box_loss: 0.0012 - val_reg_l2_loss: 0.0647 - val_loss: 0.2891
+Epoch 46/75
+81/81 [==============================] - 12s 145ms/step - det_loss: 0.2000 - cls_loss: 0.1363 - box_loss: 0.0013 - reg_l2_loss: 0.0647 - loss: 0.2647 - learning_rate: 0.0016 - gradient_norm: 3.0663 - val_det_loss: 0.1975 - val_cls_loss: 0.1411 - val_box_loss: 0.0011 - val_reg_l2_loss: 0.0647 - val_loss: 0.2622
+Epoch 47/75
+81/81 [==============================] - 12s 147ms/step - det_loss: 0.1820 - cls_loss: 0.1197 - box_loss: 0.0012 - reg_l2_loss: 0.0647 - loss: 0.2467 - learning_rate: 0.0015 - gradient_norm: 2.5923 - val_det_loss: 0.1955 - val_cls_loss: 0.1402 - val_box_loss: 0.0011 - val_reg_l2_loss: 0.0647 - val_loss: 0.2602
+Epoch 48/75
+81/81 [==============================] - 12s 149ms/step - det_loss: 0.1700 - cls_loss: 0.1188 - box_loss: 0.0010 - reg_l2_loss: 0.0647 - loss: 0.2347 - learning_rate: 0.0014 - gradient_norm: 2.5972 - val_det_loss: 0.2334 - val_cls_loss: 0.1657 - val_box_loss: 0.0014 - val_reg_l2_loss: 0.0647 - val_loss: 0.2981
+Epoch 49/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.1685 - cls_loss: 0.1135 - box_loss: 0.0011 - reg_l2_loss: 0.0647 - loss: 0.2332 - learning_rate: 0.0013 - gradient_norm: 2.5798 - val_det_loss: 0.2995 - val_cls_loss: 0.2425 - val_box_loss: 0.0011 - val_reg_l2_loss: 0.0647 - val_loss: 0.3642
+Epoch 50/75
+81/81 [==============================] - 13s 163ms/step - det_loss: 0.1756 - cls_loss: 0.1201 - box_loss: 0.0011 - reg_l2_loss: 0.0647 - loss: 0.2403 - learning_rate: 0.0012 - gradient_norm: 2.8327 - val_det_loss: 0.1711 - val_cls_loss: 0.1244 - val_box_loss: 9.3453e-04 - val_reg_l2_loss: 0.0647 - val_loss: 0.2358
+Epoch 51/75
+81/81 [==============================] - 12s 150ms/step - det_loss: 0.1638 - cls_loss: 0.1146 - box_loss: 9.8517e-04 - reg_l2_loss: 0.0647 - loss: 0.2285 - learning_rate: 0.0011 - gradient_norm: 2.6205 - val_det_loss: 0.1799 - val_cls_loss: 0.1269 - val_box_loss: 0.0011 - val_reg_l2_loss: 0.0647 - val_loss: 0.2446
+Epoch 52/75
+81/81 [==============================] - 12s 145ms/step - det_loss: 0.1819 - cls_loss: 0.1231 - box_loss: 0.0012 - reg_l2_loss: 0.0647 - loss: 0.2466 - learning_rate: 0.0011 - gradient_norm: 2.8467 - val_det_loss: 0.2096 - val_cls_loss: 0.1480 - val_box_loss: 0.0012 - val_reg_l2_loss: 0.0647 - val_loss: 0.2742
+Epoch 53/75
+81/81 [==============================] - 12s 147ms/step - det_loss: 0.1713 - cls_loss: 0.1203 - box_loss: 0.0010 - reg_l2_loss: 0.0647 - loss: 0.2359 - learning_rate: 9.7122e-04 - gradient_norm: 2.8372 - val_det_loss: 0.1962 - val_cls_loss: 0.1452 - val_box_loss: 0.0010 - val_reg_l2_loss: 0.0647 - val_loss: 0.2609
+Epoch 54/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.1713 - cls_loss: 0.1162 - box_loss: 0.0011 - reg_l2_loss: 0.0647 - loss: 0.2360 - learning_rate: 8.8865e-04 - gradient_norm: 2.7241 - val_det_loss: 0.2107 - val_cls_loss: 0.1513 - val_box_loss: 0.0012 - val_reg_l2_loss: 0.0647 - val_loss: 0.2754
+Epoch 55/75
+81/81 [==============================] - 13s 166ms/step - det_loss: 0.1651 - cls_loss: 0.1141 - box_loss: 0.0010 - reg_l2_loss: 0.0647 - loss: 0.2298 - learning_rate: 8.0899e-04 - gradient_norm: 2.4991 - val_det_loss: 0.1754 - val_cls_loss: 0.1325 - val_box_loss: 8.5815e-04 - val_reg_l2_loss: 0.0647 - val_loss: 0.2401
+Epoch 56/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.1550 - cls_loss: 0.1082 - box_loss: 9.3542e-04 - reg_l2_loss: 0.0647 - loss: 0.2196 - learning_rate: 7.3238e-04 - gradient_norm: 2.4922 - val_det_loss: 0.1896 - val_cls_loss: 0.1390 - val_box_loss: 0.0010 - val_reg_l2_loss: 0.0647 - val_loss: 0.2543
+Epoch 57/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.1722 - cls_loss: 0.1210 - box_loss: 0.0010 - reg_l2_loss: 0.0647 - loss: 0.2369 - learning_rate: 6.5895e-04 - gradient_norm: 2.8083 - val_det_loss: 0.1883 - val_cls_loss: 0.1389 - val_box_loss: 9.8969e-04 - val_reg_l2_loss: 0.0647 - val_loss: 0.2530
+Epoch 58/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.1779 - cls_loss: 0.1210 - box_loss: 0.0011 - reg_l2_loss: 0.0647 - loss: 0.2426 - learning_rate: 5.8884e-04 - gradient_norm: 2.7536 - val_det_loss: 0.1798 - val_cls_loss: 0.1358 - val_box_loss: 8.7972e-04 - val_reg_l2_loss: 0.0647 - val_loss: 0.2445
+Epoch 59/75
+81/81 [==============================] - 12s 149ms/step - det_loss: 0.1717 - cls_loss: 0.1147 - box_loss: 0.0011 - reg_l2_loss: 0.0647 - loss: 0.2364 - learning_rate: 5.2217e-04 - gradient_norm: 2.5555 - val_det_loss: 0.1932 - val_cls_loss: 0.1392 - val_box_loss: 0.0011 - val_reg_l2_loss: 0.0647 - val_loss: 0.2578
+Epoch 60/75
+81/81 [==============================] - 13s 163ms/step - det_loss: 0.1584 - cls_loss: 0.1093 - box_loss: 9.8150e-04 - reg_l2_loss: 0.0647 - loss: 0.2231 - learning_rate: 4.5907e-04 - gradient_norm: 2.5684 - val_det_loss: 0.1910 - val_cls_loss: 0.1402 - val_box_loss: 0.0010 - val_reg_l2_loss: 0.0647 - val_loss: 0.2557
+Epoch 61/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.1616 - cls_loss: 0.1126 - box_loss: 9.7940e-04 - reg_l2_loss: 0.0647 - loss: 0.2263 - learning_rate: 3.9965e-04 - gradient_norm: 2.7031 - val_det_loss: 0.1809 - val_cls_loss: 0.1370 - val_box_loss: 8.7773e-04 - val_reg_l2_loss: 0.0647 - val_loss: 0.2456
+Epoch 62/75
+81/81 [==============================] - 12s 145ms/step - det_loss: 0.1704 - cls_loss: 0.1176 - box_loss: 0.0011 - reg_l2_loss: 0.0647 - loss: 0.2351 - learning_rate: 3.4401e-04 - gradient_norm: 2.7890 - val_det_loss: 0.1830 - val_cls_loss: 0.1379 - val_box_loss: 9.0184e-04 - val_reg_l2_loss: 0.0647 - val_loss: 0.2477
+Epoch 63/75
+81/81 [==============================] - 12s 150ms/step - det_loss: 0.1615 - cls_loss: 0.1121 - box_loss: 9.8796e-04 - reg_l2_loss: 0.0647 - loss: 0.2262 - learning_rate: 2.9225e-04 - gradient_norm: 2.6083 - val_det_loss: 0.1876 - val_cls_loss: 0.1373 - val_box_loss: 0.0010 - val_reg_l2_loss: 0.0647 - val_loss: 0.2523
+Epoch 64/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.1438 - cls_loss: 0.1032 - box_loss: 8.1153e-04 - reg_l2_loss: 0.0647 - loss: 0.2085 - learning_rate: 2.4448e-04 - gradient_norm: 2.3978 - val_det_loss: 0.1825 - val_cls_loss: 0.1341 - val_box_loss: 9.6876e-04 - val_reg_l2_loss: 0.0647 - val_loss: 0.2472
+Epoch 65/75
+81/81 [==============================] - 13s 163ms/step - det_loss: 0.1609 - cls_loss: 0.1116 - box_loss: 9.8714e-04 - reg_l2_loss: 0.0647 - loss: 0.2256 - learning_rate: 2.0077e-04 - gradient_norm: 2.7667 - val_det_loss: 0.1719 - val_cls_loss: 0.1273 - val_box_loss: 8.9025e-04 - val_reg_l2_loss: 0.0647 - val_loss: 0.2365
+Epoch 66/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.1501 - cls_loss: 0.1038 - box_loss: 9.2618e-04 - reg_l2_loss: 0.0647 - loss: 0.2147 - learning_rate: 1.6120e-04 - gradient_norm: 2.3585 - val_det_loss: 0.1761 - val_cls_loss: 0.1316 - val_box_loss: 8.8941e-04 - val_reg_l2_loss: 0.0647 - val_loss: 0.2408
+Epoch 67/75
+81/81 [==============================] - 12s 149ms/step - det_loss: 0.1600 - cls_loss: 0.1132 - box_loss: 9.3711e-04 - reg_l2_loss: 0.0647 - loss: 0.2247 - learning_rate: 1.2585e-04 - gradient_norm: 2.5733 - val_det_loss: 0.1790 - val_cls_loss: 0.1328 - val_box_loss: 9.2527e-04 - val_reg_l2_loss: 0.0647 - val_loss: 0.2437
+Epoch 68/75
+81/81 [==============================] - 12s 145ms/step - det_loss: 0.1638 - cls_loss: 0.1131 - box_loss: 0.0010 - reg_l2_loss: 0.0647 - loss: 0.2285 - learning_rate: 9.4773e-05 - gradient_norm: 2.6468 - val_det_loss: 0.1800 - val_cls_loss: 0.1347 - val_box_loss: 9.0447e-04 - val_reg_l2_loss: 0.0647 - val_loss: 0.2446
+Epoch 69/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.1778 - cls_loss: 0.1175 - box_loss: 0.0012 - reg_l2_loss: 0.0647 - loss: 0.2425 - learning_rate: 6.8032e-05 - gradient_norm: 2.8475 - val_det_loss: 0.1805 - val_cls_loss: 0.1342 - val_box_loss: 9.2538e-04 - val_reg_l2_loss: 0.0647 - val_loss: 0.2452
+Epoch 70/75
+81/81 [==============================] - 13s 163ms/step - det_loss: 0.1572 - cls_loss: 0.1051 - box_loss: 0.0010 - reg_l2_loss: 0.0647 - loss: 0.2219 - learning_rate: 4.5675e-05 - gradient_norm: 2.4678 - val_det_loss: 0.1793 - val_cls_loss: 0.1327 - val_box_loss: 9.3178e-04 - val_reg_l2_loss: 0.0647 - val_loss: 0.2440
+Epoch 71/75
+81/81 [==============================] - 12s 150ms/step - det_loss: 0.1554 - cls_loss: 0.1080 - box_loss: 9.4867e-04 - reg_l2_loss: 0.0647 - loss: 0.2201 - learning_rate: 2.7740e-05 - gradient_norm: 2.4187 - val_det_loss: 0.1785 - val_cls_loss: 0.1327 - val_box_loss: 9.1582e-04 - val_reg_l2_loss: 0.0647 - val_loss: 0.2432
+Epoch 72/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.1565 - cls_loss: 0.1097 - box_loss: 9.3511e-04 - reg_l2_loss: 0.0647 - loss: 0.2212 - learning_rate: 1.4260e-05 - gradient_norm: 2.5017 - val_det_loss: 0.1788 - val_cls_loss: 0.1328 - val_box_loss: 9.2063e-04 - val_reg_l2_loss: 0.0647 - val_loss: 0.2435
+Epoch 73/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.1599 - cls_loss: 0.1140 - box_loss: 9.1780e-04 - reg_l2_loss: 0.0647 - loss: 0.2246 - learning_rate: 5.2600e-06 - gradient_norm: 2.6623 - val_det_loss: 0.1803 - val_cls_loss: 0.1341 - val_box_loss: 9.2352e-04 - val_reg_l2_loss: 0.0647 - val_loss: 0.2450
+Epoch 74/75
+81/81 [==============================] - 12s 146ms/step - det_loss: 0.1533 - cls_loss: 0.1115 - box_loss: 8.3689e-04 - reg_l2_loss: 0.0647 - loss: 0.2180 - learning_rate: 7.5554e-07 - gradient_norm: 2.4905 - val_det_loss: 0.1809 - val_cls_loss: 0.1349 - val_box_loss: 9.2131e-04 - val_reg_l2_loss: 0.0647 - val_loss: 0.2456
+Epoch 75/75
+81/81 [==============================] - 13s 167ms/step - det_loss: 0.1406 - cls_loss: 0.1010 - box_loss: 7.9131e-04 - reg_l2_loss: 0.0647 - loss: 0.2053 - learning_rate: 7.5487e-07 - gradient_norm: 2.2092 - val_det_loss: 0.1798 - val_cls_loss: 0.1338 - val_box_loss: 9.2085e-04 - val_reg_l2_loss: 0.0647 - val_loss: 0.2445
+=============Validation results==============
+
+2023-03-27 10:29:16.393883: W tensorflow/core/common_runtime/bfc_allocator.cc:275] Allocator (GPU_0_bfc) ran out of memory trying to allocate 3.04GiB with freed_by_count=0. The caller indicates that this is not a failure, but may mean that there could be performance gains if more memory were available.
+2/2 [==============================] - 10s 3s/step
+
+{'AP': 0.6835308, 'AP50': 0.8540954, 'AP75': 0.82099694, 'APs': -1.0, 'APm': -1.0, 'APl': 0.683853, 'ARmax1': 0.72469133, 'ARmax10': 0.8006803, 'ARmax100': 0.8039557, 'ARs': -1.0, 'ARm': -1.0, 'ARl': 0.8039557, 'AP_/plastic_bottle': 0.81697494, 'AP_/drone': 0.8525148, 'AP_/obtrusion': 0.38110262}
+=============Test results==============
+
+2/2 [==============================] - 9s 3s/step
+
+{'AP': 0.72049546, 'AP50': 0.9728245, 'AP75': 0.8806477, 'APs': -1.0, 'APm': -1.0, 'APl': 0.72078454, 'ARmax1': 0.7289097, 'ARmax10': 0.8146765, 'ARmax100': 0.8153432, 'ARs': -1.0, 'ARm': -1.0, 'ARl': 0.8153432, 'AP_/plastic_bottle': 0.7894654, 'AP_/drone': 0.7906951, 'AP_/obtrusion': 0.58132595}
+2023-03-27 10:29:32.475279: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding using them.
+2023-03-27 10:29:50.412062: W tensorflow/core/common_runtime/graph_constructor.cc:803] Node 'resample_p7/PartitionedCall' has 1 outputs but the _output_shapes attribute specifies shapes for 3 outputs. Output shapes may be inaccurate.
+2023-03-27 10:29:55.466241: W tensorflow/compiler/mlir/lite/python/tf_tfl_flatbuffer_helpers.cc:357] Ignored output_format.
+2023-03-27 10:29:55.466284: W tensorflow/compiler/mlir/lite/python/tf_tfl_flatbuffer_helpers.cc:360] Ignored drop_control_dependency.
+2023-03-27 10:29:55.467019: I tensorflow/cc/saved_model/reader.cc:43] Reading SavedModel from: /tmp/tmpby4bn1ea
+2023-03-27 10:29:55.559276: I tensorflow/cc/saved_model/reader.cc:78] Reading meta graph with tags { serve }
+2023-03-27 10:29:55.559316: I tensorflow/cc/saved_model/reader.cc:119] Reading SavedModel debug info (if present) from: /tmp/tmpby4bn1ea
+2023-03-27 10:29:55.857328: I tensorflow/cc/saved_model/loader.cc:228] Restoring SavedModel bundle.
+2023-03-27 10:29:57.423287: I tensorflow/cc/saved_model/loader.cc:212] Running initialization op on SavedModel bundle at path: /tmp/tmpby4bn1ea
+2023-03-27 10:29:58.077737: I tensorflow/cc/saved_model/loader.cc:301] SavedModel load for tags { serve }; Status: success: OK. Took 2610721 microseconds.
+2023-03-27 10:29:59.133289: I tensorflow/compiler/mlir/tensorflow/utils/dump_mlir_util.cc:237] disabling MLIR crash reproducer, set env var `MLIR_CRASH_REPRODUCER_DIRECTORY` to enable.
+2023-03-27 10:30:00.386102: I tensorflow/compiler/mlir/lite/flatbuffer_export.cc:1963] Estimated count of arithmetic ops: 1.756 G  ops, equivalently 0.878 G  MACs
+
+Estimated count of arithmetic ops: 1.756 G  ops, equivalently 0.878 G  MACs
+fully_quantize: 0, inference_type: 6, input_inference_type: 3, output_inference_type: 0
+2023-03-27 10:30:52.353611: I tensorflow/compiler/mlir/lite/flatbuffer_export.cc:1963] Estimated count of arithmetic ops: 1.756 G  ops, equivalently 0.878 G  MACs
+
+Estimated count of arithmetic ops: 1.756 G  ops, equivalently 0.878 G  MACs
+=============Validation results for exported model==============
+
+INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+83/83 [==============================] - 142s 2s/step
+
+{'AP': 0.642274, 'AP50': 0.83568084, 'AP75': 0.7744999, 'APs': -1.0, 'APm': -1.0, 'APl': 0.6423826, 'ARmax1': 0.6478206, 'ARmax10': 0.70496345, 'ARmax100': 0.70496345, 'ARs': -1.0, 'ARm': -1.0, 'ARl': 0.70496345, 'AP_/plastic_bottle': 0.7862629, 'AP_/drone': 0.8448141, 'AP_/obtrusion': 0.29574502}
+=============Test results for exported model==============
+
+86/86 [==============================] - 148s 2s/step
+
+{'AP': 0.70956147, 'AP50': 0.9793729, 'AP75': 0.8941358, 'APs': -1.0, 'APm': -1.0, 'APl': 0.7095811, 'ARmax1': 0.72577995, 'ARmax10': 0.7788276, 'ARmax100': 0.7788276, 'ARs': -1.0, 'ARm': -1.0, 'ARl': 0.7788276, 'AP_/plastic_bottle': 0.7764272, 'AP_/drone': 0.77618456, 'AP_/obtrusion': 0.57607263}
+
+
+Done with model of batch size 4 and epoch 75
