@@ -96,9 +96,10 @@ def refresh_drone_list():
 # For deploy button
 def start_deployment():
     print("Deploying all drones")
-    for i in range(drone_count):
-        deployment_command = "DEPL ALL DETA\n"
-        print(deployment_command)
+    for drone in drones:
+        if drone != "N/A" or drone != "ALL":
+            deployment_command = "DEPL " + drone + " YEET\n"
+            print(deployment_command)
     # serial_instance.write(deployment_command.encode("utf-8"))
     
     
