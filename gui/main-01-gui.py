@@ -227,16 +227,16 @@ def interpret_message(message):
     message_arr = str(message).split(' ')
     print(message_arr)
     if message_arr[0] == "b'Received:":
-        if len(message_arr) < 3:
+        if len(message_arr) < 3 and len(message_arr) > 1:
             command = message_arr[1]
-        if len(message_arr) < 4:
+        if len(message_arr) < 4 and len(message_arr) > 1:
             command = message_arr[1]
             to_name = message_arr[2]
-        if len(message_arr) < 5:
+        if len(message_arr) < 5 and len(message_arr) > 1:
             command = message_arr[1]
             to_name = message_arr[2]
             from_name = message_arr[3]
-        if len(message_arr) < 6:
+        if len(message_arr) < 6 and len(message_arr) > 1:
             command = message_arr[1]
             to_name = message_arr[2]
             from_name = message_arr[3]
