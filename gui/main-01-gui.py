@@ -93,14 +93,38 @@ def refresh_drone_list():
 
 #################################
 
+successfully_deployed = False
+
 # For deploy button
 def start_deployment():
-    print("Deploying all drones")
-    for drone in drones:
-        if drone != "N/A" or drone != "ALL":
-            deployment_command = "DEPL " + drone + " YEET\n"
-            print(deployment_command)
-    # serial_instance.write(deployment_command.encode("utf-8"))
+    global drone_count, successfully_deployed
+    
+    x_sub = float(x_sub_input_label.get())
+    
+    print("Deploying all", drone_count, "drone(s)")
+    
+    deployment_area = x_sub/drone_count
+    
+    x_min = 0.0
+    x_max = 0.0
+    
+    print(drones)
+    for drone in drones[2::]:
+        x_min = x_max
+        x_max = x_min + deployment_area
+        
+        if x_max > x_sub:
+            x_max = x_sub
+        
+        deployment_command = "DEPL " + drone + " " + str(x_min) +"," + str(x_max) + "\n"
+        print(deployment_command)
+        serial_instance.write(deployment_command.encode("utf-8"))
+        
+        while not successfully_deployed:
+            # do nothing
+            successfully_deployed = False
+        
+        successfully_deployed = False
     
     
 deploy_button = Button(root, text="Start deployment", command=start_deployment)
@@ -224,8 +248,13 @@ serial_terminal_label.grid(column=0, row=13, sticky="ew", columnspan=5)
 
 # For serial log terminal
 def interpret_message(message):
+    global successfully_deployed
+    
     message_arr = str(message).split(' ')
     print(message_arr)
+    if message_arr[0] == "b'Successfully":
+        successfully_deployed = True
+        
     if message_arr[0] == "b'Received:":
         if len(message_arr) < 3 and len(message_arr) > 1:
             command = message_arr[1]
@@ -250,8 +279,26 @@ def interpret_message(message):
                     refresh_drone_list()
                 else:
                     print(from_name,"is already connected!")
+                    
+        elif command == "DEPLREP":
+            if from_name == "DRO1" or from_name == "DRO2" or from_name == "DRO3":
+                print("Drone has acknowledged")
+            
 
 serial_terminal = Text(root, width=50)
+    received_a_message = False
+    
+    while not received_a_message:
+        if selected_port != 0:
+            if serial_instance.in_waiting:
+                current_time = datetime.now().strftime("%H:%M:%S") + ": "
+                message = serial_instance.readline()
+                received_a_message = True
+                interpret_message(message)
+                serial_terminal.insert("1.0", message)
+                serial_terminal.insert("1.0", current_time)
+        else:
+            received_a_message = True
 
 def check_serial_port_thread():
     t1 = Thread(target=check_serial_port)
