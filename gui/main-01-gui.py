@@ -267,6 +267,10 @@ serial_terminal_label.grid(column=0, row=13, sticky="ew", columnspan=5)
 def interpret_message(message):
     message_arr = str(message).split(' ')
     print(message_arr)
+    command = ""
+    to_name = ""
+    from_name = ""
+    details = ""
         
     if message_arr[0] == "b'Received:":
         if len(message_arr) < 3 and len(message_arr) > 1:
@@ -284,14 +288,15 @@ def interpret_message(message):
             from_name = message_arr[3]
             details = message_arr[4]
         
-        if command == "CONN":    
-            if from_name == "DRO1" or from_name == "DRO2" or from_name == "DRO3":
-                if from_name not in drones:
-                    drones.append(from_name)
-                    print(drones)
-                    refresh_drone_list()
-                else:
-                    print(from_name,"is already connected!")
+        if command != "" and to_name != "" and from_name != "" and details != "":
+            if command == "CONN":    
+                if from_name == "DRO1" or from_name == "DRO2" or from_name == "DRO3":
+                    if from_name not in drones:
+                        drones.append(from_name)
+                        print(drones)
+                        refresh_drone_list()
+                    else:
+                        print(from_name,"is already connected!")
 
 serial_terminal = Text(root, width=50)
 
