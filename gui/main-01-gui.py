@@ -107,8 +107,7 @@ def refresh_drone_list():
 # For deploy button
 def start_deployment():
     print("Deploying", selected_drone)
-    deployment_command = "DEPL " + selected_drone + " DETA"
-    print(deployment_command)
+    deployment_command = "DEPL " + selected_drone + " DETA\n"
     serial_instance.write(deployment_command.encode("utf-8"))
     
     
@@ -116,28 +115,52 @@ deploy_button = Button(root, text="Start deployment", command=start_deployment)
 deploy_button.grid(column=0, row=4, sticky="ew", padx=5, pady=5)
 ##################
 
-# For home button
-move_button = Button(root, text="Start moving")
+# For go button
+def start_moving():
+    print("Moving", selected_drone)
+    move_command = "GO " + selected_drone + " DETA\n"
+    serial_instance.write(move_command.encode("utf-8"))
+    
+move_button = Button(root, text="Start moving", command=start_moving)
 move_button.grid(column=1, row=4, sticky="ew", padx=5, pady=5)
 ##################
 
 # For stop button
+def stop_moving():
+    print("Stopping", selected_drone)
+    stop_command = "STOP " + selected_drone + " DETA\n"
+    serial_instance.write(stop_command.encode("utf-8"))
+    
 stop_button = Button(root, text="Stop moving")
 stop_button.grid(column=2, row=4, sticky="ew", padx=5, pady=5)
 ##################
 
 # For where button
-location_button = Button(root, text="Ask for location")
+def ask_drone_location():
+    print("Asking for current location of", selected_drone)
+    where_command = "WHER " + selected_drone + " CURR\n"
+    serial_instance.write(where_command.encode("utf-8"))
+    
+location_button = Button(root, text="Ask for location", command=ask_drone_location)
 location_button.grid(column=3, row=4, sticky="ew", padx=5, pady=5)
 ##################
 
-# For cancel command button
-home_button = Button(root, text="Go home")
+# For home button
+def go_home():
+    print("Sending", selected_drone, "home")
+    home_command = "HOME " + selected_drone + " DETA\n"
+    print(home_command)
+    serial_instance.write(home_command.encode("utf-8"))
+    
+home_button = Button(root, text="Go home", command=go_home)
 home_button.grid(column=4, row=4, sticky="ew", padx=5, pady=5)
 ##################
 
 # For cancel command button
-cancel_command_button = Button(root, text="Cancel command")
+def cancel_command():
+    serial_instance.write("c".encode("utf-8"))
+    
+cancel_command_button = Button(root, text="Cancel command", command=cancel_command)
 cancel_command_button.grid(column=2, row=5, sticky="ew", padx=5, pady=5)
 ##################
 
