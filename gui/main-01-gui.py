@@ -93,42 +93,15 @@ def refresh_drone_list():
 
 #################################
 
-successfully_deployed = False
+# For x_sub button
+def change_x_sub():
+    print("Sending", selected_drone, "new x sub")
+    x_sub_command = "XSUB " + selected_drone + " " + x_sub_input_label.get() + "\n"
+    print(x_sub_command)
+    serial_instance.write(x_sub_command.encode("utf-8"))
 
-# For deploy button
-def start_deployment():
-    global drone_count, successfully_deployed
-    
-    x_sub = float(x_sub_input_label.get())
-    
-    print("Deploying all", drone_count, "drone(s)")
-    
-    deployment_area = x_sub/drone_count
-    
-    x_min = 0.0
-    x_max = 0.0
-    
-    print(drones)
-    for drone in drones[2::]:
-        x_min = x_max
-        x_max = x_min + deployment_area
-        
-        if x_max > x_sub:
-            x_max = x_sub
-        
-        deployment_command = "DEPL " + drone + " " + str(x_min) +"," + str(x_max) + "\n"
-        print(deployment_command)
-        serial_instance.write(deployment_command.encode("utf-8"))
-        
-        while not successfully_deployed:
-            # do nothing
-            successfully_deployed = False
-        
-        successfully_deployed = False
-    
-    
-deploy_button = Button(root, text="Start deployment", command=start_deployment)
-deploy_button.grid(column=0, row=4, sticky="ew", padx=5, pady=5)
+change_x_sub_button = Button(root, text="Change water body width", command=change_x_sub)
+change_x_sub_button.grid(column=0, row=4, sticky="ew", padx=5, pady=5)
 ##################
 
 # For go button
@@ -178,6 +151,50 @@ def cancel_command():
     
 cancel_command_button = Button(root, text="Cancel command", command=cancel_command)
 cancel_command_button.grid(column=2, row=5, sticky="ew", padx=5, pady=5)
+##################
+
+# For change y_max button
+def change_y_max():
+    print("Sending", selected_drone, "new y max")
+    y_max_command = "YMAX " + selected_drone + " " + y_max_input_label.get() + "\n"
+    print(y_max_command)
+    serial_instance.write(y_max_command.encode("utf-8"))
+    
+change_y_max_button = Button(root, text="Change y max", command=change_y_max)
+change_y_max_button.grid(column=0, row=5, sticky="ew", padx=5, pady=5)
+##################
+
+# For change y_min button
+def change_y_min():
+    print("Sending", selected_drone, "new y min")
+    y_min_command = "YMIN " + selected_drone + " " + y_min_input_label.get() + "\n"
+    print(y_min_command)
+    serial_instance.write(y_min_command.encode("utf-8"))
+    
+change_y_min_button = Button(root, text="Change y min", command=change_y_min)
+change_y_min_button.grid(column=1, row=5, sticky="ew", padx=5, pady=5)
+##################
+
+# For change y_max button
+def change_x_max():
+    print("Sending", selected_drone, "new x max")
+    x_max_command = "XMAX " + selected_drone + " " + x_max_input_label.get() + "\n"
+    print(x_max_command)
+    serial_instance.write(x_max_command.encode("utf-8"))
+    
+change_x_max_button = Button(root, text="Change x max", command=change_x_max)
+change_x_max_button.grid(column=3, row=5, sticky="ew", padx=5, pady=5)
+##################
+
+# For change y_max button
+def change_x_min():
+    print("Sending", selected_drone, "new x min")
+    x_min_command = "XMIN " + selected_drone + " " + x_min_input_label.get() + "\n"
+    print(x_min_command)
+    serial_instance.write(x_min_command.encode("utf-8"))
+    
+change_x_min_button = Button(root, text="Change x min", command=change_x_min)
+change_x_min_button.grid(column=4, row=5, sticky="ew", padx=5, pady=5)
 ##################
 
 # For region of responsibility label
@@ -248,12 +265,8 @@ serial_terminal_label.grid(column=0, row=13, sticky="ew", columnspan=5)
 
 # For serial log terminal
 def interpret_message(message):
-    global successfully_deployed
-    
     message_arr = str(message).split(' ')
     print(message_arr)
-    if message_arr[0] == "b'Successfully":
-        successfully_deployed = True
         
     if message_arr[0] == "b'Received:":
         if len(message_arr) < 3 and len(message_arr) > 1:
@@ -279,26 +292,8 @@ def interpret_message(message):
                     refresh_drone_list()
                 else:
                     print(from_name,"is already connected!")
-                    
-        elif command == "DEPLREP":
-            if from_name == "DRO1" or from_name == "DRO2" or from_name == "DRO3":
-                print("Drone has acknowledged")
-            
 
 serial_terminal = Text(root, width=50)
-    received_a_message = False
-    
-    while not received_a_message:
-        if selected_port != 0:
-            if serial_instance.in_waiting:
-                current_time = datetime.now().strftime("%H:%M:%S") + ": "
-                message = serial_instance.readline()
-                received_a_message = True
-                interpret_message(message)
-                serial_terminal.insert("1.0", message)
-                serial_terminal.insert("1.0", current_time)
-        else:
-            received_a_message = True
 
 def check_serial_port_thread():
     t1 = Thread(target=check_serial_port)
