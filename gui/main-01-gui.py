@@ -156,7 +156,7 @@ cancel_command_button.grid(column=2, row=5, sticky="ew", padx=5, pady=5)
 # For change y_max button
 def change_y_max():
     print("Sending", selected_drone, "new y max")
-    y_max_command = "YMAX " + selected_drone + " " + y_max_input_label.get() + "\n"
+    y_max_command = "MAXY " + selected_drone + " " + y_max_input_label.get() + "\n"
     print(y_max_command)
     serial_instance.write(y_max_command.encode("utf-8"))
     
@@ -167,7 +167,7 @@ change_y_max_button.grid(column=0, row=5, sticky="ew", padx=5, pady=5)
 # For change y_min button
 def change_y_min():
     print("Sending", selected_drone, "new y min")
-    y_min_command = "YMIN " + selected_drone + " " + y_min_input_label.get() + "\n"
+    y_min_command = "MINY " + selected_drone + " " + y_min_input_label.get() + "\n"
     print(y_min_command)
     serial_instance.write(y_min_command.encode("utf-8"))
     
@@ -178,7 +178,7 @@ change_y_min_button.grid(column=1, row=5, sticky="ew", padx=5, pady=5)
 # For change y_max button
 def change_x_max():
     print("Sending", selected_drone, "new x max")
-    x_max_command = "XMAX " + selected_drone + " " + x_max_input_label.get() + "\n"
+    x_max_command = "MAXX " + selected_drone + " " + x_max_input_label.get() + "\n"
     print(x_max_command)
     serial_instance.write(x_max_command.encode("utf-8"))
     
@@ -189,7 +189,7 @@ change_x_max_button.grid(column=3, row=5, sticky="ew", padx=5, pady=5)
 # For change y_max button
 def change_x_min():
     print("Sending", selected_drone, "new x min")
-    x_min_command = "XMIN " + selected_drone + " " + x_min_input_label.get() + "\n"
+    x_min_command = "MINX " + selected_drone + " " + x_min_input_label.get() + "\n"
     print(x_min_command)
     serial_instance.write(x_min_command.encode("utf-8"))
     
