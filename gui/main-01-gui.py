@@ -207,7 +207,7 @@ x_sub_label = Label(root, text="Maximum water body width", width=50)
 x_sub_label.grid(column=0, row=7, sticky="ew", columnspan=2)
 
 x_sub_input_label = ttk.Entry()
-x_sub_input_label.insert(0, "0.0")
+x_sub_input_label.insert(0, "20.0")
 x_sub_input_label.grid(column=3, row=7, sticky="ew", columnspan=2)
 
 ########################
