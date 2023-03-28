@@ -8,23 +8,6 @@ import serial.tools.list_ports
 root = Tk()
 root.title("LinDDA Control Panel")
 
-# Drone LED connection indicator
-drone_1_button = Button(root, text="", bg="red")
-drone_1_button.grid(column=0, row=0)
-
-drone_2_button = Button(root, text="", bg="red")
-drone_2_button.grid(column=1, row=0)
-
-drone_3_button = Button(root, text="", bg="red")
-drone_3_button.grid(column=2, row=0)
-
-drone_4_button = Button(root, text="", bg="red")
-drone_4_button.grid(column=3, row=0)
-
-drone_5_button = Button(root, text="", bg="red")
-drone_5_button.grid(column=4, row=0)
-################
-
 # Drone counter
 drone_count = 0
 drone_counter = Label(root, text="Drones connected: "+str(drone_count), pady=10)
@@ -110,7 +93,7 @@ def refresh_drone_list():
 # For deploy button
 def start_deployment():
     print("Deploying", selected_drone)
-    deployment_command = "DEPL " + selected_drone + " DETA\n"
+    deployment_command = "DEPL ALL DETA\n"
     serial_instance.write(deployment_command.encode("utf-8"))
     
     
@@ -172,56 +155,66 @@ select_drone_label = Label(root, text="Deployment area", width=50, pady=10)
 select_drone_label.grid(column=0, row=6, sticky="ew", columnspan=5)
 #######################
 
+# Maximum water body distance
+x_sub_label = Label(root, text="Maximum water body width", width=50)
+x_sub_label.grid(column=0, row=7, sticky="ew", columnspan=2)
+
+x_sub_input_label = ttk.Entry()
+x_sub_input_label.insert(0, "0.0")
+x_sub_input_label.grid(column=3, row=7, sticky="ew", columnspan=2)
+
+########################
+
 # For y_max
 y_max_label = Label(root, text="Y max", width=50)
-y_max_label.grid(column=0, row=7, sticky="ew", columnspan=2)
+y_max_label.grid(column=0, row=8, sticky="ew", columnspan=2)
 
 y_max_input_label = ttk.Entry()
 y_max_input_label.insert(0, "0.0")
-y_max_input_label.grid(column=3, row=7, sticky="ew", columnspan=2)
+y_max_input_label.grid(column=3, row=8, sticky="ew", columnspan=2)
 #################################
 
 # For y_min
 y_min_label = Label(root, text="Y min", width=50)
-y_min_label.grid(column=0, row=8, sticky="ew", columnspan=2)
+y_min_label.grid(column=0, row=9, sticky="ew", columnspan=2)
 
 y_min_input_label = ttk.Entry()
 y_min_input_label.insert(0, "0.0")
-y_min_input_label.grid(column=3, row=8, sticky="ew", columnspan=2)
+y_min_input_label.grid(column=3, row=9, sticky="ew", columnspan=2)
 #################################
 
 # For x_max
 x_max_label = Label(root, text="X max", width=50)
-x_max_label.grid(column=0, row=9, sticky="ew", columnspan=2)
+x_max_label.grid(column=0, row=10, sticky="ew", columnspan=2)
 
 x_max_input_label = ttk.Entry()
 x_max_input_label.insert(0, "0.0")
 x_max_input_label.config(state="disabled")
-x_max_input_label.grid(column=3, row=9, sticky="ew", columnspan=2)
+x_max_input_label.grid(column=3, row=10, sticky="ew", columnspan=2)
 #################################
 
 # For x_min
 x_min_label = Label(root, text="X min", width=50)
-x_min_label.grid(column=0, row=10, sticky="ew", columnspan=2)
+x_min_label.grid(column=0, row=11, sticky="ew", columnspan=2)
 
 x_min_input_label = ttk.Entry()
 x_min_input_label.insert(0, "0.0")
 x_min_input_label.config(state="disabled")
-x_min_input_label.grid(column=3, row=10, sticky="ew", columnspan=2)
+x_min_input_label.grid(column=3, row=11, sticky="ew", columnspan=2)
 #################################
 
 # For anchor distance
 anchor_distance_label = Label(root, text="Anchor distance", width=50)
-anchor_distance_label.grid(column=0, row=11, sticky="ew", columnspan=2)
+anchor_distance_label.grid(column=0, row=12, sticky="ew", columnspan=2)
 
 anchor_distance_input_label = ttk.Entry()
 anchor_distance_input_label.insert(0, "0.0")
-anchor_distance_input_label.grid(column=3, row=11, sticky="ew", columnspan=2)
+anchor_distance_input_label.grid(column=3, row=12, sticky="ew", columnspan=2)
 #################################
 
 # For serial terminal label
 serial_terminal_label = Label(root, text="Serial terminal", width=50, pady=5)
-serial_terminal_label.grid(column=0, row=12, sticky="ew", columnspan=5)
+serial_terminal_label.grid(column=0, row=13, sticky="ew", columnspan=5)
 
 # For serial log terminal
 def interpret_message(message):
@@ -276,7 +269,7 @@ def check_serial_port():
     root.after(500, check_serial_port_thread)
 
 
-serial_terminal.grid(column=0, row=13, sticky="ew", columnspan=5)
+serial_terminal.grid(column=0, row=14, sticky="ew", columnspan=5)
 #################################
     
 

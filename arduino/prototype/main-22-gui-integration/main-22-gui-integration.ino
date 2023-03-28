@@ -203,7 +203,8 @@ void forBaseStation() {
             Serial.println("Canceling sending of command. Try again.");
             break;
           }
-        }        
+        }
+        if(sentCommand == "DEPL") isDeployed = true;                
       } else {
         sentMessage += letter;
       }
