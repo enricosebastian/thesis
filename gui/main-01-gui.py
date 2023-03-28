@@ -26,7 +26,7 @@ drone_5_button.grid(column=4, row=0)
 ################
 
 # Drone counter
-drone_count = 3
+drone_count = 0
 drone_counter = Label(root, text="Drones connected: "+str(drone_count), pady=10)
 drone_counter.grid(column=0, row=1, columnspan=6, sticky="ew")
 ################
@@ -101,6 +101,9 @@ def refresh_drone_list():
     select_drone_dropdown_list = ttk.OptionMenu(root, drone_list, drones[0], *drones, command=set_drone)
     select_drone_dropdown_list.config(width=50)
     select_drone_dropdown_list.grid(column=3, row=3, sticky="ew", columnspan=3)
+    
+    drone_counter = Label(root, text="Drones connected: "+str(len(drones)-2), pady=10)
+    drone_counter.grid(column=0, row=1, columnspan=6, sticky="ew")
 
 #################################
 
@@ -225,10 +228,20 @@ def interpret_message(message):
     message_arr = str(message).split(' ')
     print(message_arr)
     if message_arr[0] == "b'Received:":
-        command = message_arr[1]
-        to_name = message_arr[2]
-        from_name = message_arr[3]
-        details = message_arr[4]
+        if len(message_arr) < 3:
+            command = message_arr[1]
+        if len(message_arr) < 4:
+            command = message_arr[1]
+            to_name = message_arr[2]
+        if len(message_arr) < 5:
+            command = message_arr[1]
+            to_name = message_arr[2]
+            from_name = message_arr[3]
+        if len(message_arr) < 6:
+            command = message_arr[1]
+            to_name = message_arr[2]
+            from_name = message_arr[3]
+            details = message_arr[4]
         
         if command == "CONN":    
             if from_name == "DRO1" or from_name == "DRO2" or from_name == "DRO3":
