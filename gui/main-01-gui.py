@@ -131,7 +131,7 @@ def stop_moving():
     stop_command = "STOP " + selected_drone + " DETA\n"
     serial_instance.write(stop_command.encode("utf-8"))
     
-stop_button = Button(root, text="Stop moving")
+stop_button = Button(root, text="Stop moving", command=stop_moving)
 stop_button.grid(column=2, row=4, sticky="ew", padx=5, pady=5)
 ##################
 
@@ -223,6 +223,7 @@ serial_terminal_label.grid(column=0, row=12, sticky="ew", columnspan=5)
 # For serial log terminal
 def interpret_message(message):
     message_arr = str(message).split(' ')
+    print(message_arr)
     if message_arr[0] == "b'Received:":
         command = message_arr[1]
         to_name = message_arr[2]
