@@ -81,20 +81,25 @@ select_drone_dropdown_list.config(width=50)
 select_drone_dropdown_list.grid(column=3, row=3, sticky="ew", columnspan=3)
 
 def refresh_drone_list():
+    global drone_count
     select_drone_dropdown_list = ttk.OptionMenu(root, drone_list, drones[0], *drones, command=set_drone)
     select_drone_dropdown_list.config(width=50)
     select_drone_dropdown_list.grid(column=3, row=3, sticky="ew", columnspan=3)
     
-    drone_counter = Label(root, text="Drones connected: "+str(len(drones)-2), pady=10)
+    drone_count = len(drones) - 2
+    
+    drone_counter = Label(root, text="Drones connected: "+str(drone_count), pady=10)
     drone_counter.grid(column=0, row=1, columnspan=6, sticky="ew")
 
 #################################
 
 # For deploy button
 def start_deployment():
-    print("Deploying", selected_drone)
-    deployment_command = "DEPL ALL DETA\n"
-    serial_instance.write(deployment_command.encode("utf-8"))
+    print("Deploying all drones")
+    for i in range(drone_count):
+        deployment_command = "DEPL ALL DETA\n"
+        print(deployment_command)
+    # serial_instance.write(deployment_command.encode("utf-8"))
     
     
 deploy_button = Button(root, text="Start deployment", command=start_deployment)
