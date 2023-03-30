@@ -19,14 +19,14 @@ from absl import logging
 logging.set_verbosity(logging.ERROR)
 
 # CHANGE VALUES HERE ONLYS
-batch_size = 16 # default is 8
+batch_size = 2 # default is 8
 epochs = 100 # default is 50
 
 model_name = 'efficientdet_lite0'
 train_dir = './images/all/train'
 validate_dir = './images/all/validate'
 test_dir = './images/all/test'
-label_map = ['plastic_bottle', 'drone', 'obtrusion']
+label_map = ['clear', 'left', 'right', 'center']
 
 export_dir = './models/'
 model_filename = 'all.tflite'
@@ -66,14 +66,14 @@ print(
 
 model.export(export_dir=export_dir, tflite_filename=model_filename)
 
-print("=============Validation results for exported model==============\n")
-print(
-    model.evaluate_tflite(export_dir+model_filename, validation_data)
-)
+# print("=============Validation results for exported model==============\n")
+# print(
+#     model.evaluate_tflite(export_dir+model_filename, validation_data)
+# )
 
-print("=============Test results for exported model==============\n")
-print(
-    model.evaluate_tflite(export_dir+model_filename, test_data)
-)
+# print("=============Test results for exported model==============\n")
+# print(
+#     model.evaluate_tflite(export_dir+model_filename, test_data)
+# )
 
 print("\n\nDone with model of batch size " + str(batch_size) + " and epoch " + str(epochs))
