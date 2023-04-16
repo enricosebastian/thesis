@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./readme/images/capturing_waste3.gif" height="200px" width="350px"/>
+    <img src="./readme-images/capturing_waste3.gif" height="200px" width="350px"/>
 </p>
 
 This is a repository for my group's thesis: a swarm of surface vehicles that are able to communicate with one another in cleaning oceans.
@@ -10,7 +10,7 @@ The Philippines is one of the world's largest ocean polluter. In fact, some stud
 Our idea stems from the fact that picking up trash that floats in the shore is a monotonous task; you see plastic, you pick it up, and then you throw it into a bag. What if you take that action and put it in a loop?
 
 <p align="center">
-    <img src="./readme/images/drone_following_trash.gif" height="200px" width="350px"/>
+    <img src="./readme-images/drone_following_trash.gif" height="200px" width="350px"/>
 </p>
 
 Even better: have machines do it; machines that do not tire and can go to deeper and dangerous parts of bodies of water that an average human won't dare to go.
